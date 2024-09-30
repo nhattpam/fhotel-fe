@@ -49,8 +49,9 @@ const Home = () => {
             {/* Essentials Section */}
             <div className="essentials-section py-5">
                 <div className="container">
-                    <h2 className="heading mb-4 text-center">Essentials in OYO Rooms</h2>
+                    <h2 className="heading mb-4 mt-5 text-center"></h2>
                     <div className="row justify-content-center text-center">
+                        <h4 className='mt-3' style={{ fontWeight: 'bold' }}>FHotel Essentials</h4>
                         <div className="col-md-2 d-flex flex-column align-items-center">
                             <div className="essential-item">
                                 <img src="my_img/ac.png" alt="AC Room" className="img-fluid mb-2" style={{ width: '15%' }} />
@@ -98,36 +99,44 @@ const Home = () => {
                         <div className="col-md-3">
                             <div className="hotel-wrap">
                                 <img src="https://images.oyoroomscdn.com/uploads/hotel_image/101742/medium/9d1a96cae3315d7f.jpg" className="img-fluid" alt="Hotel 1" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Hotel 1</a></h3>
-                                    <p className="price"><span>$99</span> / night</p>
+                                <div className="text p-3 ">
+                                    <h3><a href="#" className='text-dark' style={{ fontWeight: '600' }}>Hotel 1</a></h3>
+                                    <p className="address" style={{ fontSize: '18px' }}>Near Nguyen Trai, Ho Chi Minh</p>
+                                    <button className='btn btn-success'>5 <i class="fa-solid fa-star"></i></button>
+                                    <h2 className="price text-danger" style={{ fontWeight: 'bold' }}>₫600000</h2>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="hotel-wrap">
                                 <img src="https://images.oyoroomscdn.com/uploads/hotel_image/223187/medium/2402f84aa8113521.jpg" className="img-fluid" alt="Hotel 2" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Hotel 2</a></h3>
-                                    <p className="price"><span>$120</span> / night</p>
+                                <div className="text p-3">
+                                    <h3><a href="#" className='text-dark' style={{ fontWeight: '600' }}>Hotel 2</a></h3>
+                                    <p className="address" style={{ fontSize: '18px' }}>Near Nguyen Trai, Ho Chi Minh</p>
+                                    <button className='btn btn-success'>5 <i class="fa-solid fa-star"></i></button>
+                                    <h2 className="price text-danger" style={{ fontWeight: 'bold' }}>₫600000</h2>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="hotel-wrap">
                                 <img src="https://images.oyoroomscdn.com/uploads/hotel_image/86866/medium/2b548ba5156d452b.jpg" className="img-fluid" alt="Hotel 3" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Hotel 3</a></h3>
-                                    <p className="price"><span>$150</span> / night</p>
+                                <div className="text p-3 ">
+                                    <h3><a href="#" className='text-dark' style={{ fontWeight: '600' }}>Hotel 3</a></h3>
+                                    <p className="address" style={{ fontSize: '18px' }}>Near Nguyen Trai, Ho Chi Minh</p>
+                                    <button className='btn btn-success'>5 <i class="fa-solid fa-star"></i></button>
+                                    <h2 className="price text-danger" style={{ fontWeight: 'bold' }}>₫600000</h2>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="hotel-wrap">
                                 <img src="https://images.oyoroomscdn.com/uploads/hotel_image/75028/medium/df1570a0afee8658.JPG" className="img-fluid" alt="Hotel 4" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Hotel 4</a></h3>
-                                    <p className="price"><span>$150</span> / night</p>
+                                <div className="text p-3">
+                                    <h3><a href="#" className='text-dark' style={{ fontWeight: '600' }}>Hotel 4</a></h3>
+                                    <p className="address" style={{ fontSize: '18px' }}>Near Nguyen Trai, Ho Chi Minh</p>
+                                    <button className='btn btn-success'>5 <i class="fa-solid fa-star"></i></button>
+                                    <h2 className="price text-danger" style={{ fontWeight: 'bold' }}>₫600000</h2>
                                 </div>
                             </div>
                         </div>
@@ -140,46 +149,71 @@ const Home = () => {
             <div className="popular-destinations py-5">
                 <div className="container">
                     <div className="row mb-4">
-                        <div className="col-12 ">
+                        <div className="col-12">
                             <h2 className="heading">Popular Cities</h2>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-3">
-                            <div className="destination">
-                                <img src="https://assets.oyoroomscdn.com/cmsMedia/5e7b5497-177f-407a-ae42-0ac00f1ca58c.jpg" className="img-fluid" alt="Destination" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Da Nang</a></h3>
+                            <div className="destination position-relative">
+                                <img
+                                    src="https://assets.oyoroomscdn.com/cmsMedia/5e7b5497-177f-407a-ae42-0ac00f1ca58c.jpg"
+                                    className="img-fluid"
+                                    alt="Da Nang"
+                                />
+                                <div className="text-overlay text-left">
+                                    <h3>
+                                        <a href="#">Da Nang</a>
+                                    </h3>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
-                            <div className="destination">
-                                <img src="https://assets.oyoroomscdn.com/cmsMedia/e2493d7f-8271-47d8-9bc0-035fd2208988.jpg" className="img-fluid" alt="Destination" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Ho Chi Minh</a></h3>
+                            <div className="destination position-relative">
+                                <img
+                                    src="https://assets.oyoroomscdn.com/cmsMedia/e2493d7f-8271-47d8-9bc0-035fd2208988.jpg"
+                                    className="img-fluid"
+                                    alt="Ho Chi Minh"
+                                />
+                                <div className="text-overlay text-left">
+                                    <h3>
+                                        <a href="#">Ho Chi Minh</a>
+                                    </h3>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
-                            <div className="destination">
-                                <img src="https://assets.oyoroomscdn.com/cmsMedia/c3fe6bc9-64da-4961-95c4-d310006e6c25.jpg" className="img-fluid" alt="Destination" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Ha Noi</a></h3>
+                            <div className="destination position-relative">
+                                <img
+                                    src="https://assets.oyoroomscdn.com/cmsMedia/c3fe6bc9-64da-4961-95c4-d310006e6c25.jpg"
+                                    className="img-fluid"
+                                    alt="Ha Noi"
+                                />
+                                <div className="text-overlay text-left">
+                                    <h3>
+                                        <a href="#">Ha Noi</a>
+                                    </h3>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
-                            <div className="destination">
-                                <img src="https://assets.oyoroomscdn.com/cmsMedia/1d317ea8-7426-4324-9033-a5eedbb4e147.jpg" className="img-fluid" alt="Destination" />
-                                <div className="text p-3 text-center">
-                                    <h3><a href="#">Phu Quoc</a></h3>
+                            <div className="destination position-relative">
+                                <img
+                                    src="https://assets.oyoroomscdn.com/cmsMedia/1d317ea8-7426-4324-9033-a5eedbb4e147.jpg"
+                                    className="img-fluid"
+                                    alt="Phu Quoc"
+                                />
+                                <div className="text-overlay text-left">
+                                    <h3>
+                                        <a href="#">Phu Quoc</a>
+                                    </h3>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
 
             {/* Footer */}
             <Footer />
@@ -215,13 +249,15 @@ const Home = () => {
                 }
                 .hotel-wrap, .destination {
                     background: #fff;
-                    border-radius: 10px;
+                    border-radius: 5px;
                     overflow: hidden;
                     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                     margin-bottom: 20px;
                 }
-                .hotel-wrap .text, .destination .text {
+                .hotel-wrap .text, .destination .text, .a {
                     padding: 20px;
+                    text-align: left; /* Aligns text to the left */
+                    color: black;
                 }
 
                 .featured-hotels .heading {
@@ -237,6 +273,35 @@ const Home = () => {
     font-size: 2rem; /* Adjust font size as needed */
     font-weight: bold; /* Make it bold */
 
+.destination {
+  position: relative;
+}
+
+.text-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: white;
+  text-align: left;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for better visibility */
+  width: 100%; /* Makes the overlay span the full width of the image */
+  box-sizing: border-box; /* Ensures padding doesn't affect the width */
+}
+
+.text-overlay h3 {
+  margin: 0;
+}
+
+.text-overlay a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.destination:hover .text-overlay {
+  background: rgba(0, 0, 0, 0.7); /* Darker background on hover */
+}
 
             `}</style>
         </>

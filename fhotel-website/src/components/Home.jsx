@@ -87,93 +87,93 @@ const Home = () => {
 
 
             {/* Featured Hotels Section */}
-<div className="featured-hotels py-5 bg-light">
-    <div className="container">
-        <div className="row mb-4">
-            <div className="col-12">
-                <h2 className="heading">Featured Properties of the Month</h2>
-            </div>
-        </div>
-        <div className="row">
-            <div className="col-md-3">
-                <div className="hotel-wrap">
-                    <img src="images/hotel_1.jpg" className="img-fluid" alt="Hotel 1" />
-                    <div className="text p-3 text-center">
-                        <h3><a href="#">Hotel 1</a></h3>
-                        <p className="price"><span>$99</span> / night</p>
+            <div className="featured-hotels py-5 bg-light">
+                <div className="container">
+                    <div className="row mb-4" >
+                        <div className="col-12">
+                            <h2 className="heading">Featured Properties of the Month</h2>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-3">
+                            <div className="hotel-wrap">
+                                <img src="https://images.oyoroomscdn.com/uploads/hotel_image/101742/medium/9d1a96cae3315d7f.jpg" className="img-fluid" alt="Hotel 1" />
+                                <div className="text p-3 text-center">
+                                    <h3><a href="#">Hotel 1</a></h3>
+                                    <p className="price"><span>$99</span> / night</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <div className="hotel-wrap">
+                                <img src="https://images.oyoroomscdn.com/uploads/hotel_image/223187/medium/2402f84aa8113521.jpg" className="img-fluid" alt="Hotel 2" />
+                                <div className="text p-3 text-center">
+                                    <h3><a href="#">Hotel 2</a></h3>
+                                    <p className="price"><span>$120</span> / night</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <div className="hotel-wrap">
+                                <img src="https://images.oyoroomscdn.com/uploads/hotel_image/86866/medium/2b548ba5156d452b.jpg" className="img-fluid" alt="Hotel 3" />
+                                <div className="text p-3 text-center">
+                                    <h3><a href="#">Hotel 3</a></h3>
+                                    <p className="price"><span>$150</span> / night</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <div className="hotel-wrap">
+                                <img src="https://images.oyoroomscdn.com/uploads/hotel_image/75028/medium/df1570a0afee8658.JPG" className="img-fluid" alt="Hotel 4" />
+                                <div className="text p-3 text-center">
+                                    <h3><a href="#">Hotel 4</a></h3>
+                                    <p className="price"><span>$150</span> / night</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="col-md-3">
-                <div className="hotel-wrap">
-                    <img src="images/hotel_2.jpg" className="img-fluid" alt="Hotel 2" />
-                    <div className="text p-3 text-center">
-                        <h3><a href="#">Hotel 2</a></h3>
-                        <p className="price"><span>$120</span> / night</p>
-                    </div>
-                </div>
-            </div>
-            <div className="col-md-3">
-                <div className="hotel-wrap">
-                    <img src="images/hotel_3.jpg" className="img-fluid" alt="Hotel 3" />
-                    <div className="text p-3 text-center">
-                        <h3><a href="#">Hotel 3</a></h3>
-                        <p className="price"><span>$150</span> / night</p>
-                    </div>
-                </div>
-            </div>
-            <div className="col-md-3">
-                <div className="hotel-wrap">
-                    <img src="images/hotel_4.jpg" className="img-fluid" alt="Hotel 4" />
-                    <div className="text p-3 text-center">
-                        <h3><a href="#">Hotel 4</a></h3>
-                        <p className="price"><span>$150</span> / night</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
             {/* Popular Destinations */}
             <div className="popular-destinations py-5">
                 <div className="container">
                     <div className="row mb-4">
-                        <div className="col-md-7 ">
+                        <div className="col-12 ">
                             <h2 className="heading">Popular Cities</h2>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-3">
                             <div className="destination">
-                                <img src="images/destination_1.jpg" className="img-fluid" alt="Destination" />
+                                <img src="https://assets.oyoroomscdn.com/cmsMedia/5e7b5497-177f-407a-ae42-0ac00f1ca58c.jpg" className="img-fluid" alt="Destination" />
                                 <div className="text p-3 text-center">
-                                    <h3><a href="#">New York</a></h3>
+                                    <h3><a href="#">Da Nang</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="destination">
-                                <img src="images/destination_2.jpg" className="img-fluid" alt="Destination" />
+                                <img src="https://assets.oyoroomscdn.com/cmsMedia/e2493d7f-8271-47d8-9bc0-035fd2208988.jpg" className="img-fluid" alt="Destination" />
                                 <div className="text p-3 text-center">
-                                    <h3><a href="#">Paris</a></h3>
+                                    <h3><a href="#">Ho Chi Minh</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="destination">
-                                <img src="images/destination_3.jpg" className="img-fluid" alt="Destination" />
+                                <img src="https://assets.oyoroomscdn.com/cmsMedia/c3fe6bc9-64da-4961-95c4-d310006e6c25.jpg" className="img-fluid" alt="Destination" />
                                 <div className="text p-3 text-center">
-                                    <h3><a href="#">Tokyo</a></h3>
+                                    <h3><a href="#">Ha Noi</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="destination">
-                                <img src="images/destination_4.jpg" className="img-fluid" alt="Destination" />
+                                <img src="https://assets.oyoroomscdn.com/cmsMedia/1d317ea8-7426-4324-9033-a5eedbb4e147.jpg" className="img-fluid" alt="Destination" />
                                 <div className="text p-3 text-center">
-                                    <h3><a href="#">Dubai</a></h3>
+                                    <h3><a href="#">Phu Quoc</a></h3>
                                 </div>
                             </div>
                         </div>
@@ -229,8 +229,14 @@ const Home = () => {
     margin-bottom: 20px; /* Space below the heading */
     font-size: 2rem; /* Adjust font size as needed */
     font-weight: bold; /* Make it bold */
-    padding-left: 15px; /* Optional: adds some left padding for a neat look */
 }
+
+.popular-destinations .heading {
+    text-align: left; /* Aligns text to the left */
+    margin-bottom: 20px; /* Space below the heading */
+    font-size: 2rem; /* Adjust font size as needed */
+    font-weight: bold; /* Make it bold */
+
 
             `}</style>
         </>

@@ -7,10 +7,10 @@ const Header = () => {
       <header className="header" >
         <div className="page-brand">
           <a className="link" href="index.html">
-            <span className="brand">Admin
-              <span className="brand-tip">CAST</span>
+            <span className="brand">F
+              <span className="brand-tip">Hotel</span>
             </span>
-            <span className="brand-mini">AC</span>
+            <span className="brand-mini">FHotel</span>
           </a>
         </div>
         <div className="flexbox flex-1">
@@ -145,7 +145,7 @@ const Header = () => {
             </li>
             <li className="dropdown dropdown-user">
               <a className="nav-link dropdown-toggle link" data-toggle="dropdown">
-                <img src="./assets/img/admin-avatar.png" />
+                <img src="https://i.pinimg.com/736x/f1/df/7a/f1df7ae4db2763c822af58bf66b69e9d.jpg" style={{width: "30px", height: "30px"}} />
                 <span />Admin<i className="fa fa-angle-down m-l-5" /></a>
               <ul className="dropdown-menu dropdown-menu-right">
                 <a className="dropdown-item" href="profile.html"><i className="fa fa-user" />Profile</a>

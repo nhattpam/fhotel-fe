@@ -1,6 +1,38 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import userService from '../services/user.service';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+
+  //get user information
+  const userId = sessionStorage.getItem('userId');
+  const [user, setUser] = useState({
+    email: "",
+    firstName: "",
+    image: ""
+  });
+
+  useEffect(() => {
+    if (userId) {
+      userService
+        .getUserById(userId)
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [userId]);
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('authToken'); // Assuming you store authentication token in localStorage
+    sessionStorage.removeItem('userId');
+    navigate('/login');
+};
+
   return (
     <>
       {/* START HEADER*/}
@@ -145,14 +177,14 @@ const Header = () => {
             </li>
             <li className="dropdown dropdown-user">
               <a className="nav-link dropdown-toggle link" data-toggle="dropdown">
-                <img src="https://i.pinimg.com/736x/f1/df/7a/f1df7ae4db2763c822af58bf66b69e9d.jpg" style={{width: "30px", height: "30px"}} />
-                <span />Admin<i className="fa fa-angle-down m-l-5" /></a>
+                <img src={user.image} style={{ width: "30px", height: "30px" }} />
+                <span />{user.firstName}<i className="fa fa-angle-down m-l-5" /></a>
               <ul className="dropdown-menu dropdown-menu-right">
                 <a className="dropdown-item" href="profile.html"><i className="fa fa-user" />Profile</a>
                 <a className="dropdown-item" href="profile.html"><i className="fa fa-cog" />Settings</a>
                 <a className="dropdown-item" href="javascript:;"><i className="fa fa-support" />Support</a>
                 <li className="dropdown-divider" />
-                <a className="dropdown-item" href="login.html"><i className="fa fa-power-off" />Logout</a>
+                <a className="dropdown-item" onClick={handleLogout}><i className="fa fa-power-off" />Logout</a>
               </ul>
             </li>
           </ul>

@@ -74,7 +74,7 @@ const Login = () => {
                     sessionStorage.setItem('userId', decodedToken.Id);
 
                     // Navigate to the home page
-                    navigate('/home');
+                    navigate('/admin-home');
                 } else {
                     showErrorMessage('You are not authorized to access this page.');
                 }
@@ -98,10 +98,10 @@ const Login = () => {
                 </div>
                 <div className="main">
                     <div className="col-md-6 col-sm-12">
-                        <div className="login-form">
+                        <div className="login-form" style={{ textAlign: 'left' }}>
                             <form onSubmit={handleLogin}>
                                 <div className="form-group">
-                                    <label>Email</label>
+                                    <label >Email</label>
                                     <input 
                                         type="email" 
                                         className="form-control" 
@@ -122,7 +122,6 @@ const Login = () => {
                                 </div>
                                 {error && <div className="error-text">{error}</div>}
                                 <button type="submit" className="btn btn-black">Login</button>
-                                <button className="btn btn-secondary">Register</button>
                             </form>
                         </div>
                     </div>
@@ -174,10 +173,7 @@ const Login = () => {
                     .login-form {
                         width: 100%;
                         max-width: 400px;
-                        background: #f7f7f7;
-                        padding: 30px;
-                        border-radius: 10px;
-                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                       
                     }
 
                     .form-group label {

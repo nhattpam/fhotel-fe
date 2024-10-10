@@ -55,6 +55,34 @@ const ListHotelRegistration = () => {
     const offsetHotelRegistration = currentHotelRegistrationPage * hotelRegistrationsPerPage;
     const currentHotelRegistrations = filteredHotelRegistrations.slice(offsetHotelRegistration, offsetHotelRegistration + hotelRegistrationsPerPage);
 
+
+
+    //detail hotel registration
+    const [showModalHotelRegistration, setShowModalHotelRegistration] = useState(false);
+
+    const [hotelRegistration, setHotelRegistration] = useState({
+        numberOfRooms: "",
+        description: ""
+    });
+
+
+    const openHotelRegistrationModal = (hotelRegistrationId) => {
+        setShowModalHotelRegistration(true);
+        if (hotelRegistrationId) {
+            hotelRegistrationService
+                .getHotelRegistrationById(hotelRegistrationId)
+                .then((res) => {
+                    setHotelRegistration(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    const closeModalHotelRegistration = () => {
+        setShowModalHotelRegistration(false);
+    };
     return (
         <>
             <Header />
@@ -101,7 +129,7 @@ const ListHotelRegistration = () => {
                                                         <td>{new Date(item.registrationDate).toLocaleString('en-US')}</td>
                                                         <td>{item.registrationStatus}</td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openHotelRegistrationModal(item.hotelRegistrationId)} /></button>
                                                             <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button>
                                                         </td>
                                                     </tr>
@@ -153,14 +181,53 @@ const ListHotelRegistration = () => {
                 </div>
 
             </div>
+            {showModalHotelRegistration && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content">
+                            <form>
 
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Hotel Registration Information</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotelRegistration}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+
+                                    <div className='row'>
+                                        <div className="col-md-12">
+                                            {hotelRegistration.numberOfRooms} rooms
+                                        </div>
+                                        <div className="col-md-12">
+                                            <div dangerouslySetInnerHTML={{ __html: hotelRegistration.description }} />
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-warning" disabled style={{ borderRadius: '50px', padding: `8px 25px` }}>Save</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalHotelRegistration} style={{ borderRadius: '50px', padding: `8px 25px` }}>Close</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style>
                 {`
-                                            .page-item.active .page-link{
+                    .page-item.active .page-link{
                     background-color: #20c997;
                     border-color: #20c997;
                 }
+
+                .custom-modal-xl {
+    max-width: 90%;
+    width: 90%;
+}
                                             `}
             </style>
 

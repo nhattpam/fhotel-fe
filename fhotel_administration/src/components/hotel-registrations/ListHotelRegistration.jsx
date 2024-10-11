@@ -207,8 +207,8 @@ const ListHotelRegistration = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-warning" disabled style={{ borderRadius: '50px', padding: `8px 25px` }}>Save</button>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalHotelRegistration} style={{ borderRadius: '50px', padding: `8px 25px` }}>Close</button>
+                                    <button type="button" className="btn btn-custom">Save</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalHotelRegistration} >Close</button>
                                 </div>
                             </form>
 
@@ -228,6 +228,10 @@ const ListHotelRegistration = () => {
     max-width: 90%;
     width: 90%;
 }
+    .btn-custom{
+    background-color: #3498db;
+    color: white
+    }
                                             `}
             </style>
 

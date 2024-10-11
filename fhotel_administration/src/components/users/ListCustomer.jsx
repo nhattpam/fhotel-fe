@@ -58,6 +58,32 @@ const ListCustomer = () => {
     const currentUsers = filteredUsers.slice(offsetUser, offsetUser + usersPerPage);
 
 
+
+    //detail user modal 
+    const [showModalUser, setShowModalUser] = useState(false);
+
+    const [user, setUser] = useState({
+
+    });
+
+
+    const openUserModal = (userId) => {
+        setShowModalUser(true);
+        if (userId) {
+            userService
+                .getUserById(userId)
+                .then((res) => {
+                    setUser(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    const closeModalUser = () => {
+        setShowModalUser(false);
+    };
     return (
         <>
             <Header />
@@ -93,7 +119,7 @@ const ListCustomer = () => {
                                             <th>Last Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
-                                            <th>Join Date</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -106,9 +132,15 @@ const ListCustomer = () => {
                                                         <td>{item.lastName}</td>
                                                         <td>{item.email}</td>
                                                         <td>{item.role?.roleName}</td>
-                                                        <td>{new Date(item.createdDate).toLocaleString('en-US')}</td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" /></button>
+                                                            {item.isActive ? (
+                                                                <span className="badge label-table badge-success">Active</span>
+                                                            ) : (
+                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                            )}
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
                                                             <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button>
                                                         </td>
                                                     </tr>
@@ -160,8 +192,76 @@ const ListCustomer = () => {
                 </div>
             </div>
 
+            {showModalUser && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header">
+                                    <h5 className="modal-title">User Information</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className="col-md-5">
+                                            <img src={user.image} alt="avatar" style={{ width: '100%' }} />
+
+                                        </div>
+                                        <div className="col-md-7">
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <td>{user.firstName} {user.lastName}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Email:</th>
+                                                        <td>{user.email}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Phone Number:</th>
+                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Unknown Phone Number'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Address:</th>
+                                                        <td>{user && user.address ? user.address : 'Unknown Address'}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
 
 
+                                </div>
+                                <div className="modal-footer">
+                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Close</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )}
+ {`
+                    .page-item.active .page-link{
+                    background-color: #20c997;
+                    border-color: #20c997;
+                }
+
+                .custom-modal-xl {
+    max-width: 90%;
+    width: 90%;
+}
+    .btn-custom{
+    background-color: #3498db;
+    color: white
+    }
+                                            `}
 
         </>
     )

@@ -64,8 +64,7 @@ const ListHotel = () => {
     const [showModalHotel, setShowModalHotel] = useState(false);
 
     const [hotel, setHotel] = useState({
-        numberOfRooms: "",
-        description: ""
+        
     });
 
 
@@ -216,13 +215,13 @@ const ListHotel = () => {
 
         // Validate City ID
         if (createHotel.cityId.trim() === "") {
-            newError.cityId = "City ID is required";
+            newError.cityId = "City is required";
             isValid = false;
         }
 
         // Validate Owner ID
         if (createHotel.ownerId.trim() === "") {
-            newError.ownerId = "Owner ID is required";
+            newError.ownerId = "Owner is required";
             isValid = false;
         }
 
@@ -423,7 +422,7 @@ const ListHotel = () => {
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div className="modal-body">
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
                                         <div className="col-md-5">
                                             <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
@@ -506,7 +505,7 @@ const ListHotel = () => {
                                 )}
 
                                 {/* Modal Body with scrollable content */}
-                                <div className="modal-body" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
 
 
 

@@ -113,20 +113,57 @@ const Header = () => {
 
                 // Post each hotel one by one
                 const hotelResponse = await hotelService.saveHotel(hotelWithOwnerInfo); // Send individual hotel request
-                console.log("Hotel registration response: ", hotelResponse.data);
+                if (hotelResponse.status == 201) {
+                    console.log("Hotel registration response: ", hotelResponse.data);
+                    setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." }); // Set generic error message
+                    setShowSuccess(true); // Show error
+    
+                } else {
+                    console.log("Hotel registration response: ", hotelResponse.data);
+                    setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
+                    setShowError(true); // Show error
+    
+                }
             }
 
             // Reset form and states after all hotels are registered
-            setShowCreateHotelRegistrationModal(false);
+            // setShowCreateHotelRegistrationModal(false);
             // Additional reset logic...
         } catch (error) {
             console.error("Error during hotel registration: ", error.response?.data || error);
             // Handle error...
+            setSuccess({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
+            setShowError(true); // Show error
+
         }
     };
 
 
+    const [success, setSuccess] = useState({}); // State to hold error messages
+    const [showSuccess, setShowSuccess] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+            }, 2000); // Change this value to adjust the duration
+            window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
 
+
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
 
 
 
@@ -164,9 +201,17 @@ const Header = () => {
                                     <button type="button" className="close" onClick={() => setShowCreateHotelRegistrationModal(false)}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
-
+                                    {/* Display success message */}
+                                    
                                     {/* Owner Information Inputs */}
                                     <div className="form-row mb-3">
                                         <div className="form-group col-md-6">
@@ -253,7 +298,7 @@ const Header = () => {
                                                                 <div className="form-group col-md-6">
                                                                     <label>Phone</label>
                                                                     <input
-                                                                        type="tel"
+                                                                        type="number"
                                                                         name="phone"
                                                                         className="form-control"
                                                                         value={hotel.phone}

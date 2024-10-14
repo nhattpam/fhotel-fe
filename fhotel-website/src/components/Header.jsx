@@ -89,47 +89,35 @@ const Header = () => {
     const submitHotelRegistration = async (e) => {
         e.preventDefault();
     
-        const formData = new FormData();
         try {
-            const hotelsWithImages = [];
-            
             for (const hotel of hotels) {
                 let imageUrl = '';
+                
+                // Handle image upload if there's an image
                 if (hotel.image) {
                     const imageData = new FormData();
-                    imageData.append("file", hotel.image);
+                    imageData.append("file", hotel.image); // Upload image
                     const imageResponse = await hotelService.uploadImage(imageData);
-                    imageUrl = imageResponse.data.link;
+                    imageUrl = imageResponse.data.link; // Retrieve image URL from response
                 }
     
+                // Create a new hotel object with the uploaded image URL
                 const hotelWithImage = { ...hotel, image: imageUrl };
-                hotelsWithImages.push(hotelWithImage);
+    
+                // Post each hotel one by one
+                const hotelResponse = await hotelService.saveHotel(hotelWithImage); // Send individual hotel request
+                console.log("Hotel registration response: ", hotelResponse.data);
             }
     
-            // Append hotel data to formData
-            hotelsWithImages.forEach((hotel, index) => {
-                // Make sure to use an appropriate key for each hotel
-                formData.append(`hotels[${index}]`, JSON.stringify(hotel)); // Use a unique key for each hotel entry
-            });
-            
-    
-            // Log FormData contents for debugging
-            console.log("FormData contents:");
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
-    
-            const hotelResponse = await hotelService.saveHotel(formData); // Call the modified saveHotel method
-            console.log("Hotel registration response: ", hotelResponse.data);
-            
-            // Reset form and states
+            // Reset form and states after all hotels are registered
             setShowCreateHotelRegistrationModal(false);
-            // Reset logic...
+            // Additional reset logic...
         } catch (error) {
             console.error("Error during hotel registration: ", error.response?.data || error);
             // Handle error...
         }
     };
+    
     
     
     

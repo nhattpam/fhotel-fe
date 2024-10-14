@@ -283,6 +283,35 @@ const ListHotelManager = () => {
         setShowModalHotel(false);
     };
 
+
+    //update status user
+    const updateUser = async (e, userId) => {
+        e.preventDefault();
+    
+        try {
+            // First, fetch the user data
+            const res = await userService.getUserById(userId);
+            const userData = res.data;
+            
+            // Update the local state with the fetched data and isActive flag
+            setUser({ ...userData, isActive: true });
+    
+            // Now make the update request
+            const updateRes = await userService.updateUser(userId, { ...userData, isActive: true });
+    
+            if (updateRes.status === 200) {
+                window.alert("Update successfully!");
+                window.location.reload();
+            } else {
+                window.alert("Update FAILED!");
+            }
+        } catch (error) {
+            console.log(error);
+            window.alert("An error occurred during the update.");
+        }
+    };
+    
+
     return (
         <>
             <Header />
@@ -352,7 +381,22 @@ const ListHotelManager = () => {
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
-                                                            <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button>
+                                                            <form
+                                                                id="demo-form"
+                                                                onSubmit={(e) => updateUser(e, item.userId)}
+                                                                className="d-inline"
+                                                            >
+                                                                <button
+                                                                    type="submit"
+                                                                    className="btn btn-default btn-xs m-r-5"
+                                                                    data-toggle="tooltip"
+                                                                    data-original-title="Activate"
+                                                                    onClick={() => setUser({ ...user, isActive: true })}
+                                                                >
+                                                                    <i className="fa fa-check font-14 text-success" />
+                                                                </button>
+                                                            </form>
+                                                            <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-times font-14 text-danger" /></button>
                                                         </td>
                                                     </tr>
                                                 </>
@@ -361,6 +405,7 @@ const ListHotelManager = () => {
 
 
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>
@@ -808,6 +853,12 @@ const ListHotelManager = () => {
     background-color: #3498db;
     color: white
     }
+
+    .d-inline {
+  display: inline-block;
+  margin-right: 5px;
+}
+
                                             `}
             </style>
 

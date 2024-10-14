@@ -12,19 +12,17 @@ import AdminHome from './components/home/AdminHome';
 function App() {
   return (
     <div className="App">
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/admin-home" element={<AdminHome />} />
-          <Route path="/login" element={<Login />} />
-          {/* user */}
-          <Route path="/list-hotel-manager" element={<ListHotelManager />} />
-          <Route path="/list-customer" element={<ListCustomer />} />
-          {/* hotel */}
-          <Route path="/list-hotel" element={<ListHotel />} />
-          {/* hotel registration */}
-          <Route path="/list-hotel-registration" element={<ListHotelRegistration />} />
-
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/admin-home" element={<AdminHome />} />
+        <Route path="/login" element={<Login />} />
+        {/* user */}
+        <Route path="/list-hotel-manager" element={<ListHotelManager />} />
+        <Route path="/list-customer" element={<ListCustomer />} />
+        {/* hotel */}
+        <Route path="/list-hotel" element={<ListHotel />} />
+       
+      </Routes>
     </div>
   );
 }

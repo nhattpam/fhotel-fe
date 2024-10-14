@@ -54,7 +54,7 @@ const SideBar = () => {
                                 </li>
                             )
                         }
-                         {
+                        {
                             user.role?.roleName === "Manager" && (
                                 <li>
                                     <Link className="active" to={`/manager-home`}><i className="sidebar-item-icon fa fa-th-large" />
@@ -63,7 +63,7 @@ const SideBar = () => {
                                 </li>
                             )
                         }
-                         {
+                        {
                             user.role?.roleName === "HotelManager" && (
                                 <li>
                                     <Link className="active" to={`/hotel-manager-home`}><i className="sidebar-item-icon fa fa-th-large" />
@@ -72,7 +72,7 @@ const SideBar = () => {
                                 </li>
                             )
                         }
-                         {
+                        {
                             user.role?.roleName === "Receptionist" && (
                                 <li>
                                     <Link className="active" to={`/receptionist-home`}><i className="sidebar-item-icon fa fa-th-large" />
@@ -81,7 +81,7 @@ const SideBar = () => {
                                 </li>
                             )
                         }
-                         {
+                        {
                             user.role?.roleName === "RoomAttendant" && (
                                 <li>
                                     <Link className="active" to={`/room-attendant-home`}><i className="sidebar-item-icon fa fa-th-large" />
@@ -121,6 +121,7 @@ const SideBar = () => {
                                             <span className="nav-label">Hotel</span>
                                         </Link>
                                     </li>
+                                   
                                 </>
                             )
                         }

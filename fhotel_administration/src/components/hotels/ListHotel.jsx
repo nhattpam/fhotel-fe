@@ -67,7 +67,8 @@ const ListHotel = () => {
     const [hotel, setHotel] = useState({
 
     });
-
+    //list hotel amenities
+    const [hotelAmenityList, setHotelAmenityList] = useState([]);
 
     const openHotelModal = (hotelId) => {
         setShowModalHotel(true);
@@ -80,6 +81,14 @@ const ListHotel = () => {
                 .catch((error) => {
                     console.log(error);
                 });
+            hotelService
+                .getAllAmenityHotelById(hotelId)
+                .then((res) => {
+                    setHotelAmenityList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     };
 
@@ -87,19 +96,6 @@ const ListHotel = () => {
         setShowModalHotel(false);
     };
 
-    //list hotel amenities
-    const [hotelAmenityList, setHotelAmenityList] = useState([]);
-
-    useEffect(() => {
-        hotelAmenityService
-            .getAllHotelAmenity()
-            .then((res) => {
-                setHotelAmenityList(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
 
 
 
@@ -240,7 +236,7 @@ const ListHotel = () => {
                                             <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
                                             <div className='row mt-2'>
                                                 <div className='col-md-12'>
-                                                    <h3 style={{fontWeight: "bold"}}>Amenities</h3>
+                                                    <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
                                                 </div>
                                                 <div className='col-md-12'>
                                                     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>

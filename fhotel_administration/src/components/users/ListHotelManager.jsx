@@ -6,6 +6,8 @@ import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import userService from '../../services/user.service';
 import roleService from '../../services/role.service';
+import hotelService from '../../services/hotel.service';
+import hotelAmenityService from '../../services/hotel-amenity.service';
 
 const ListHotelManager = () => {
     //call list user registration
@@ -66,6 +68,8 @@ const ListHotelManager = () => {
 
     });
 
+    //list hotels by hotel manager
+    const [hotelList, setHotelList] = useState([]);
 
     const openUserModal = (userId) => {
         setShowModalUser(true);
@@ -74,6 +78,14 @@ const ListHotelManager = () => {
                 .getUserById(userId)
                 .then((res) => {
                     setUser(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            userService
+                .getAllHotelByUserId(userId)
+                .then((res) => {
+                    setHotelList(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -115,7 +127,7 @@ const ListHotelManager = () => {
 
     const handleChange = (e) => {
         const value = e.target.value;
-        
+
         setCreateUser({ ...createUser, [e.target.name]: value });
     };
 
@@ -227,6 +239,49 @@ const ListHotelManager = () => {
             return () => clearTimeout(timer); // Cleanup timer on unmount
         }
     }, [showError]); // Only run effect if showError changes
+
+
+
+    //open hotel modal
+    const [showModalHotel, setShowModalHotel] = useState(false);
+
+    //list hotel amenities
+    const [hotelAmenityList, setHotelAmenityList] = useState([]);
+
+    useEffect(() => {
+        hotelAmenityService
+            .getAllHotelAmenity()
+            .then((res) => {
+                setHotelAmenityList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+    const [hotel, setHotel] = useState({
+
+    });
+
+
+    const openHotelModal = (hotelId) => {
+        setShowModalHotel(true);
+        setShowModalUser(false);
+        if (hotelId) {
+            hotelService
+                .getHotelById(hotelId)
+                .then((res) => {
+                    setHotel(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    const closeModalHotel = () => {
+        setShowModalUser(true);
+        setShowModalHotel(false);
+    };
 
     return (
         <>
@@ -363,11 +418,14 @@ const ListHotelManager = () => {
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
-                                        <div className="col-md-5">
-                                            <img src={user.image} alt="avatar" style={{ width: '100%' }} />
+                                        <div className="col-md-4">
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px' }} />
+
+                                            </table>
 
                                         </div>
-                                        <div className="col-md-7">
+                                        <div className="col-md-8">
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
@@ -390,6 +448,59 @@ const ListHotelManager = () => {
                                             </table>
 
                                         </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h3 style={{ fontWeight: 'bold' }}>Hotels</h3>
+                                            <div className="ibox-body">
+                                                <div className="table-responsive">
+                                                    <table className="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>No.</th>
+                                                                <th>Image</th>
+                                                                <th>Name</th>
+                                                                <th>Owner</th>
+                                                                <th>City</th>
+                                                                <th>Country</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                hotelList.length > 0 && hotelList.map((item, index) => (
+                                                                    <>
+                                                                        <tr>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>
+                                                                                <img src={item.image} alt="avatar" style={{ width: "100px" }} />
+
+                                                                            </td>
+                                                                            <td>{item.hotelName}</td>
+                                                                            <td>{item.owner?.firstName}</td>
+                                                                            <td>{item.city?.cityName}</td>
+                                                                            <td>{item.city?.country?.countryName}</td>
+                                                                            <td>
+                                                                                {item.isActive ? (
+                                                                                    <span className="badge label-table badge-success">Active</span>
+                                                                                ) : (
+                                                                                    <span className="badge label-table badge-danger">Inactive</span>
+                                                                                )}
+                                                                            </td>
+                                                                            <td>
+                                                                                <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openHotelModal(item.hotelId)} /></button>
+                                                                                {/* <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button> */}
+                                                                            </td>
+                                                                        </tr>
+                                                                    </>
+                                                                ))
+                                                            }
+
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
                                     </div>
 
 
@@ -401,193 +512,287 @@ const ListHotelManager = () => {
                             </form>
 
                         </div>
-                    </div>
-                </div>
+                    </div >
+                </div >
             )}
 
-            {showModalCreateUser && (
+            {
+                showModalCreateUser && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+
+                            <div className="modal-content">
+                                <form
+                                    method="post"
+                                    className="mt-3"
+                                    id="myAwesomeDropzone"
+                                    data-plugin="dropzone"
+                                    data-previews-container="#file-previews"
+                                    data-upload-preview-template="#uploadPreviewTemplate"
+                                    data-parsley-validate
+                                    onSubmit={(e) => submitUser(e)}
+                                    style={{ textAlign: "left" }}
+                                >
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Create a Hotel Manager</h5>
+
+                                        <button
+                                            type="button"
+                                            className="close"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={closeModalCreateUser}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    {/* Display error message */}
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Modal Body with scrollable content */}
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+
+                                        {/* Form Fields */}
+                                        <h4 className="header-title ">Information</h4>
+                                        <div className="form-row">
+                                            <div className="form-group  col-md-6">
+                                                <label htmlFor="hotelName">First Name * :</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="firstName"
+                                                    id="firstName"
+                                                    value={createUser.firstName}
+                                                    onChange={(e) => handleChange(e)}
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="form-group  col-md-6">
+                                                <label htmlFor="hotelName">Last Name * :</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="lastName"
+                                                    id="lastName"
+                                                    value={createUser.lastName}
+                                                    onChange={(e) => handleChange(e)}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+
+                                        <div className="form-row">
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="email">Email * :</label>
+                                                <input
+                                                    type="email"
+                                                    className="form-control"
+                                                    name="email"
+                                                    id="email"
+                                                    value={createUser.email}
+                                                    onChange={(e) => handleChange(e)}
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="password">Password * :</label>
+                                                <input
+                                                    type="password"
+                                                    className="form-control"
+                                                    name="password"
+                                                    id="password"
+                                                    value={createUser.password}
+                                                    onChange={(e) => handleChange(e)}
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="star">Identification Number * :</label>
+                                                <div className="input-group">
+                                                    <input
+                                                        type="number"
+                                                        id="identificationNumber"
+                                                        className="form-control"
+                                                        name="identificationNumber"
+                                                        value={createUser.identificationNumber}
+                                                        onChange={(e) => handleChange(e)}
+                                                        required
+
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="ownerId">Gender * :</label>
+                                                <select
+                                                    className="form-control"
+                                                    id="sex"
+                                                    name="sex"
+                                                    value={createUser.sex}
+                                                    onChange={handleChange}
+                                                    required
+                                                >
+                                                    <option value="">Select Gender</option>
+                                                    <option value={1}>
+                                                        Male
+                                                    </option>
+                                                    <option value={0}>
+                                                        Female
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="address">Address * :</label>
+                                                <div className="input-group">
+                                                    <input
+                                                        type="text"
+                                                        id="address"
+                                                        className="form-control"
+                                                        name="address"
+                                                        value={createUser.address}
+                                                        onChange={(e) => handleChange(e)}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="address">Phone * :</label>
+                                                <div className="input-group">
+                                                    <input
+                                                        type="number"
+                                                        id="phoneNumber"
+                                                        className="form-control"
+                                                        name="phoneNumber"
+                                                        value={createUser.phoneNumber}
+                                                        onChange={(e) => handleChange(e)}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+
+                                    </div>
+
+                                    {/* Modal Footer */}
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-custom">Save</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Close</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div >
+
+                )
+            }
+            {showModalHotel && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
-
                         <div className="modal-content">
-                            <form
-                                method="post"
-                                className="mt-3"
-                                id="myAwesomeDropzone"
-                                data-plugin="dropzone"
-                                data-previews-container="#file-previews"
-                                data-upload-preview-template="#uploadPreviewTemplate"
-                                data-parsley-validate
-                                onSubmit={(e) => submitUser(e)}
-                                style={{ textAlign: "left" }}
-                            >
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Create a Hotel Manager</h5>
+                            <form>
 
-                                    <button
-                                        type="button"
-                                        className="close"
-                                        data-dismiss="modal"
-                                        aria-label="Close"
-                                        onClick={closeModalCreateUser}
-                                    >
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Hotel Information</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                {/* Display error message */}
-                                {showError && Object.entries(error).length > 0 && (
-                                    <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
-                                        {Object.entries(error).map(([key, message]) => (
-                                            <p key={key} style={{ margin: '0' }}>{message}</p>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {/* Modal Body with scrollable content */}
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-
-                                    {/* Form Fields */}
-                                    <h4 className="header-title ">Information</h4>
-                                    <div className="form-row">
-                                        <div className="form-group  col-md-6">
-                                            <label htmlFor="hotelName">First Name * :</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                name="firstName"
-                                                id="firstName"
-                                                value={createUser.firstName}
-                                                onChange={(e) => handleChange(e)}
-                                                required
-                                            />
+                                    <div className="row">
+                                        <div className="col-md-5">
+                                            <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
+                                            <div className='row mt-2'>
+                                                <div className='col-md-12'>
+                                                    <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
+                                                </div>
+                                                <div className='col-md-12'>
+                                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                                                        {
+                                                            hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
+                                                                <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
+                                                                    <img src={item.image} alt="avatar" style={{ width: "40px" }} />
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div className="form-group  col-md-6">
-                                            <label htmlFor="hotelName">Last Name * :</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                name="lastName"
-                                                id="lastName"
-                                                value={createUser.lastName}
-                                                onChange={(e) => handleChange(e)}
-                                                required
-                                            />
+                                        <div className="col-md-7">
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <td>{hotel.hotelName}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Email:</th>
+                                                        <td>{hotel.email}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Phone Number:</th>
+                                                        <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Business License Number:</th>
+                                                        <td>{hotel && hotel.businessLicenseNumber ? hotel.businessLicenseNumber : 'Unknown Business License Number'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tax Identification Number:</th>
+                                                        <td>{hotel && hotel.taxIdentificationNumber ? hotel.taxIdentificationNumber : 'Unknown Tax Identification Number'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>City:</th>
+                                                        <td>{hotel && hotel.city?.cityName ? hotel.city?.cityName : 'Unknown City'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Address:</th>
+                                                        <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Description:</th>
+                                                        <td>{hotel && hotel.description ? hotel.description : 'Unknown Description'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Owner:</th>
+                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
                                         </div>
                                     </div>
-
-
-                                    <div className="form-row">
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="email">Email * :</label>
-                                            <input
-                                                type="email"
-                                                className="form-control"
-                                                name="email"
-                                                id="email"
-                                                value={createUser.email}
-                                                onChange={(e) => handleChange(e)}
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="password">Password * :</label>
-                                            <input
-                                                type="password"
-                                                className="form-control"
-                                                name="password"
-                                                id="password"
-                                                value={createUser.password}
-                                                onChange={(e) => handleChange(e)}
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="star">Identification Number * :</label>
-                                            <div className="input-group">
-                                                <input
-                                                    type="number"
-                                                    id="identificationNumber"
-                                                    className="form-control"
-                                                    name="identificationNumber"
-                                                    value={createUser.identificationNumber}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="ownerId">Gender * :</label>
-                                            <select
-                                                className="form-control"
-                                                id="sex"
-                                                name="sex"
-                                                value={createUser.sex}
-                                                onChange={handleChange}
-                                                required
-                                            >
-                                                <option value="">Select Gender</option>
-                                                <option value={1}>
-                                                    Male
-                                                </option>
-                                                <option value={0}>
-                                                    Female
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="address">Address * :</label>
-                                            <div className="input-group">
-                                                <input
-                                                    type="text"
-                                                    id="address"
-                                                    className="form-control"
-                                                    name="address"
-                                                    value={createUser.address}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="address">Phone * :</label>
-                                            <div className="input-group">
-                                                <input
-                                                    type="number"
-                                                    id="phoneNumber"
-                                                    className="form-control"
-                                                    name="phoneNumber"
-                                                    value={createUser.phoneNumber}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-                                    </div>
-
 
 
                                 </div>
-
-                                {/* Modal Footer */}
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-custom">Save</button>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Close</button>
+                                    <button type="button" className="btn btn-custom"  >Save</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
                                 </div>
                             </form>
 
                         </div>
                     </div>
-                </div >
-
+                </div>
             )}
+
             <style>
                 {`
                     .page-item.active .page-link{

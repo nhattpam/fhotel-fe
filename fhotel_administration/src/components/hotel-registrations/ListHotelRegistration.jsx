@@ -127,7 +127,16 @@ const ListHotelRegistration = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{item.numberOfHotels}</td>
                                                         <td>{new Date(item.registrationDate).toLocaleString('en-US')}</td>
-                                                        <td>{item.registrationStatus}</td>
+                                                        <td>
+                                                            {item.registrationStatus === "Pending" ? (
+                                                                <span className="badge label-table badge-danger">Pending</span>
+                                                            ) : item.registrationStatus === "Approved" ? (
+                                                                <span className="badge label-table badge-success">Approved</span>
+                                                            ) : (
+                                                                <span className="badge label-table badge-secondary">Unknown</span>
+                                                            )}
+                                                        </td>
+
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openHotelRegistrationModal(item.hotelRegistrationId)} /></button>
                                                             <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button>

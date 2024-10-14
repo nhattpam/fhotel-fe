@@ -8,6 +8,7 @@ import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import Dropzone from "react-dropzone";
 import cityService from '../../services/city.service';
 import userService from '../../services/user.service';
+import hotelAmenityService from '../../services/hotel-amenity.service';
 
 const ListHotel = () => {
 
@@ -64,7 +65,7 @@ const ListHotel = () => {
     const [showModalHotel, setShowModalHotel] = useState(false);
 
     const [hotel, setHotel] = useState({
-        
+
     });
 
 
@@ -86,203 +87,20 @@ const ListHotel = () => {
         setShowModalHotel(false);
     };
 
-    //create hotel modal
-
-    //list city & owner
-    const [cityList, setCityList] = useState([]);
-    const [ownerList, setOwnerList] = useState([]);
+    //list hotel amenities
+    const [hotelAmenityList, setHotelAmenityList] = useState([]);
 
     useEffect(() => {
-        cityService
-            .getAllCity()
+        hotelAmenityService
+            .getAllHotelAmenity()
             .then((res) => {
-                setCityList(res.data);
+                setHotelAmenityList(res.data);
             })
             .catch((error) => {
                 console.log(error);
             });
-        userService
-            .getAllUser()
-            .then((res) => {
-                const hotelManagers = res.data.filter((owner) => owner.role?.roleName === "Hotel Manager");
-                setOwnerList(hotelManagers);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-
     }, []);
 
-
-
-    const [createHotel, setCreateHotel] = useState({
-        hotelName: "",
-        address: "",
-        phone: "",
-        email: "",
-        description: "",
-        image: "",
-        star: 0,
-        cityId: "",
-        ownerId: "",
-    });
-    const [showModalCreateHotel, setShowModalCreateHotel] = useState(false);
-
-    const openCreateHotelModal = () => {
-        setShowModalCreateHotel(true);
-
-    };
-
-    const closeModalCreateHotel = () => {
-        setShowModalCreateHotel(false);
-    };
-
-    const [file, setFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState("");
-
-    const handleFileDrop = (acceptedFiles) => {
-        if (acceptedFiles && acceptedFiles.length > 0) {
-            setFile(acceptedFiles[0]);
-
-            // Set the image preview URL
-            const previewUrl = URL.createObjectURL(acceptedFiles[0]);
-            setImagePreview(previewUrl);
-        }
-    };
-
-    const [error, setError] = useState({}); // State to hold error messages
-    const [showError, setShowError] = useState(false); // State to manage error visibility
-
-    const handleChange = (e) => {
-        const value = e.target.value;
-        setCreateHotel({ ...createHotel, [e.target.name]: value });
-    };
-
-    const validateForm = () => {
-        let isValid = true;
-        const newError = {}; // Create a new error object
-
-        // Validate Hotel Name
-        if (createHotel.hotelName.trim() === "") {
-            newError.hotelName = "Hotel Name is required";
-            isValid = false;
-        }
-
-        // Validate Address
-        if (createHotel.address.trim() === "") {
-            newError.address = "Address is required";
-            isValid = false;
-        }
-
-        // Validate Image
-        if (createHotel.image.trim() === "") {
-            newError.image = "Image is required";
-            isValid = false;
-        }
-
-        // Validate Phone
-        if (createHotel.phone.trim() === "") {
-            newError.phone = "Phone number is required";
-            isValid = false;
-        } else if (!/^\d{10}$/.test(createHotel.phone.trim())) {
-            newError.phone = "Phone number must be exactly 10 digits";
-            isValid = false;
-        }
-
-        // Validate Email
-        if (createHotel.email.trim() === "") {
-            newError.email = "Email is required";
-            isValid = false;
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(createHotel.email)) {
-            newError.email = "Email is not valid";
-            isValid = false;
-        }
-
-        // Validate Description
-        if (createHotel.description.trim() === "") {
-            newError.description = "Description is required";
-            isValid = false;
-        }
-
-        // Validate Star Rating
-        if (createHotel.star === 0) {
-            newError.star = "Star rating is required";
-            isValid = false;
-        } else if (isNaN(createHotel.star) || createHotel.star < 1 || createHotel.star > 5) {
-            newError.star = "Star rating must be between 1 and 5";
-            isValid = false;
-        }
-
-        // Validate City ID
-        if (createHotel.cityId.trim() === "") {
-            newError.cityId = "City is required";
-            isValid = false;
-        }
-
-        // Validate Owner ID
-        if (createHotel.ownerId.trim() === "") {
-            newError.ownerId = "Owner is required";
-            isValid = false;
-        }
-
-        setError(newError); // Set the new error object
-        setShowError(Object.keys(newError).length > 0); // Show error if there are any
-        return isValid;
-    };
-
-    const submitHotel = async (e) => {
-        e.preventDefault();
-        setError({}); // Reset any previous errors
-        setShowError(false); // Hide error before validation
-
-        if (validateForm()) {
-            try {
-                let image = createHotel.image;
-                console.log(JSON.stringify(createHotel));
-
-                if (file) {
-                    const imageData = new FormData();
-                    imageData.append("file", file);
-                    const imageResponse = await hotelService.uploadImage(imageData);
-                    if (imageResponse.status === 200) {
-                        image = imageResponse.data.link;
-                    } else {
-                        window.alert("Failed to create image."); // Set error message
-                        return; // Stop further execution if image upload fails
-                    }
-                }
-
-                const hotelData = { ...createHotel, image };
-
-                const hotelResponse = await hotelService.saveHotel(hotelData);
-
-                if (hotelResponse.status === 201) {
-                    window.alert("Hotel created successfully!");
-                    window.location.reload();
-                } else {
-                    setError({ general: "Failed to create hotel." }); // Set error message
-                    setShowError(true); // Show error
-                    return;
-                }
-
-            } catch (error) {
-                console.log(error);
-                setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
-                setShowError(true); // Show error
-            }
-        }
-
-
-    };
-    // Effect to handle error message visibility
-    useEffect(() => {
-        if (showError) {
-            const timer = setTimeout(() => {
-                setShowError(false); // Hide the error after 2 seconds
-            }, 2000); // Change this value to adjust the duration
-            return () => clearTimeout(timer); // Cleanup timer on unmount
-        }
-    }, [showError]); // Only run effect if showError changes
 
 
     return (
@@ -314,12 +132,6 @@ const ListHotel = () => {
                                     value={hotelSearchTerm}
                                     onChange={handleHotelSearch}
                                 />
-                                <button
-                                    className="btn btn-primary ml-3"
-                                    onClick={openCreateHotelModal} // This will trigger the modal for creating a new hotel
-                                >
-                                    Create New Hotel
-                                </button>
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -426,8 +238,24 @@ const ListHotel = () => {
                                     <div className="row">
                                         <div className="col-md-5">
                                             <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
-
+                                            <div className='row mt-2'>
+                                                <div className='col-md-12'>
+                                                    <h3 style={{fontWeight: "bold"}}>Amenities</h3>
+                                                </div>
+                                                <div className='col-md-12'>
+                                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                                                        {
+                                                            hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
+                                                                <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
+                                                                    <img src={item.image} alt="avatar" style={{ width: "40px" }} />
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+
                                         <div className="col-md-7">
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
@@ -444,8 +272,28 @@ const ListHotel = () => {
                                                         <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
                                                     </tr>
                                                     <tr>
+                                                        <th>Business License Number:</th>
+                                                        <td>{hotel && hotel.businessLicenseNumber ? hotel.businessLicenseNumber : 'Unknown Business License Number'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tax Identification Number:</th>
+                                                        <td>{hotel && hotel.taxIdentificationNumber ? hotel.taxIdentificationNumber : 'Unknown Tax Identification Number'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>City:</th>
+                                                        <td>{hotel && hotel.city?.cityName ? hotel.city?.cityName : 'Unknown City'}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <th>Address:</th>
                                                         <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Description:</th>
+                                                        <td>{hotel && hotel.description ? hotel.description : 'Unknown Description'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Owner:</th>
+                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -466,226 +314,6 @@ const ListHotel = () => {
                 </div>
             )}
 
-            {showModalCreateHotel && (
-                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
-
-                        <div className="modal-content">
-                            <form
-                                method="post"
-                                className="mt-3"
-                                id="myAwesomeDropzone"
-                                data-plugin="dropzone"
-                                data-previews-container="#file-previews"
-                                data-upload-preview-template="#uploadPreviewTemplate"
-                                data-parsley-validate
-                                onSubmit={(e) => submitHotel(e)}
-                                style={{ textAlign: "left" }}
-                            >
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Create a Hotel</h5>
-
-                                    <button
-                                        type="button"
-                                        className="close"
-                                        data-dismiss="modal"
-                                        aria-label="Close"
-                                        onClick={closeModalCreateHotel}
-                                    >
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                {/* Display error message */}
-                                {showError && Object.entries(error).length > 0 && (
-                                    <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
-                                        {Object.entries(error).map(([key, message]) => (
-                                            <p key={key} style={{ margin: '0' }}>{message}</p>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {/* Modal Body with scrollable content */}
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-
-
-
-                                    <label htmlFor="image">Image * :</label>
-                                    <Dropzone
-                                        onDrop={handleFileDrop}
-                                        accept="image/*"
-                                        multiple={false}
-                                        maxSize={5000000} // Maximum file size (5MB)
-                                    >
-                                        {({ getRootProps, getInputProps }) => (
-                                            <div {...getRootProps()} className="fallback">
-                                                <input {...getInputProps()} />
-                                                <div className="dz-message needsclick">
-                                                    <i className="h1 text-muted dripicons-cloud-upload" />
-                                                    <h3>Drop files here or click to upload.</h3>
-                                                </div>
-                                                {imagePreview && (
-                                                    <img
-                                                        src={imagePreview}
-                                                        alt="Preview"
-                                                        style={{
-                                                            maxWidth: "100%",
-                                                            maxHeight: "200px",
-                                                            marginTop: "10px",
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
-                                    </Dropzone>
-
-                                    {/* Preview */}
-                                    <div className="dropzone-previews mt-3" id="file-previews" />
-
-                                    {/* Form Fields */}
-                                    <h4 className="header-title mt-4">Information</h4>
-                                    <div className="form-group">
-                                        <label htmlFor="hotelName">Hotel Name * :</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="hotelName"
-                                            id="hotelName"
-                                            value={createHotel.hotelName}
-                                            onChange={(e) => handleChange(e)}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="form-row">
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="email">Email * :</label>
-                                            <input
-                                                type="email"
-                                                className="form-control"
-                                                name="email"
-                                                id="email"
-                                                value={createHotel.email}
-                                                onChange={(e) => handleChange(e)}
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="cityId">City * :</label>
-                                            <select
-                                                className="form-control"
-                                                id="cityId"
-                                                name="cityId"
-                                                value={createHotel.cityId}
-                                                onChange={handleChange}
-                                                required
-                                            >
-                                                <option value="">Select City</option>
-                                                {cityList.map((item) => (
-                                                    <option key={item.cityId} value={item.cityId}>
-                                                        {item ? item.cityName : "Unknown City"}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="star">Star * :</label>
-                                            <div className="input-group">
-                                                <input
-                                                    type="number"
-                                                    id="star"
-                                                    className="form-control"
-                                                    name="star"
-                                                    value={createHotel.star}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-                                                    min="1"
-                                                    max="5"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="ownerId">Owner * :</label>
-                                            <select
-                                                className="form-control"
-                                                id="ownerId"
-                                                name="ownerId"
-                                                value={createHotel.ownerId}
-                                                onChange={handleChange}
-                                                required
-                                            >
-                                                <option value="">Select Owner</option>
-                                                {ownerList.map((item) => (
-                                                    <option key={item.userId} value={item.userId}>
-                                                        {item ? item.firstName : "Unknown Name"}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="address">Address * :</label>
-                                            <div className="input-group">
-                                                <input
-                                                    type="text"
-                                                    id="address"
-                                                    className="form-control"
-                                                    name="address"
-                                                    value={createHotel.address}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="address">Phone * :</label>
-                                            <div className="input-group">
-                                                <input
-                                                    type="number"
-                                                    id="phone"
-                                                    className="form-control"
-                                                    name="phone"
-                                                    value={createHotel.phone}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-
-                                    <div className="form-group">
-                                        <label htmlFor="description">Description * :</label>
-                                        <textarea
-                                            id="description"
-                                            className="form-control"
-                                            name="description"
-                                            value={createHotel.description}
-                                            onChange={(e) => handleChange(e)}
-                                            required
-                                            minLength="20"
-                                            maxLength="100"
-                                        />
-                                    </div>
-
-                                </div>
-
-                                {/* Modal Footer */}
-                                <div className="modal-footer">
-                                    <button type="submit" className="btn btn-custom">Save</button>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotel}>Close</button>
-                                </div>
-                            </form>
-
-                        </div>
-                    </div>
-                </div >
-
-            )}
 
             <style>
                 {`

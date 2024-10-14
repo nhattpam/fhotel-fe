@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_URL } from './api-config';  // Adjust the path as necessary
 
 
-class UserService {
+class HotelAmenityService {
 
     token = '';
 
@@ -11,22 +11,15 @@ class UserService {
         this.token = token;
     }
 
-    loginUser(email, password) {
-        return axios.post(API_URL + "/authentications/login", {
-            email: email,
-            password: password,
-        });
-    }
-
-    saveUser(user) {
-        return axios.post(API_URL + "/users/", user, {
+    saveHotelAmenity(hotelAmenity) {
+        return axios.post(API_URL + "/hotel-amenities/", hotelAmenity, {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
         });
       }
-      getAllUser() {
-        return axios.get(API_URL + "/users", {
+      getAllHotelAmenity() {
+        return axios.get(API_URL + "/hotel-amenities", {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
@@ -34,8 +27,8 @@ class UserService {
       }
     
     
-      updateUser(id, user) {
-        return axios.put(API_URL + "/users/" + id, user, {
+      updateHotelAmenity(id, hotelAmenity) {
+        return axios.put(API_URL + "/hotel-amenities/" + id, hotelAmenity, {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
@@ -43,16 +36,24 @@ class UserService {
       }
     
     
-      getUserById(id) {
-        return axios.get(API_URL + "/users/" + id, {
+      getHotelAmenityById(id) {
+        return axios.get(API_URL + "/hotel-amenities/" + id, {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
         });
       }
 
-      getAllHotelByUserId(id) {
-        return axios.get(API_URL + `/users/${id}/hotels`, {
+      uploadImage(hotelAmenity) {
+        return axios.post(API_URL + "/hotel-amenities/image/", hotelAmenity, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+      getAllAmenityHotelAmenityById(id) {
+        return axios.get(API_URL + `/hotels/${id}/hotel-amenities`, {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
@@ -61,4 +62,4 @@ class UserService {
 
 
 }
-export default new UserService;
+export default new HotelAmenityService;

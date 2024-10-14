@@ -95,11 +95,11 @@ const SideBar = () => {
                         {
                             user.role?.roleName === "Admin" && (
                                 <>
-                                    <li>
+                                    {/* <li>
                                         <Link to="/list-hotel-registration"><i className="sidebar-item-icon fa fa-file-text" />
                                             <span className="nav-label">Hotel Registration</span>
                                         </Link>
-                                    </li>
+                                    </li> */}
                                     <li>
                                         <a href="javascript:;" onClick={toggleUserMenu}>
                                             <i className="sidebar-item-icon fa fa-user" />

@@ -52,6 +52,14 @@ class HotelService {
         });
       }
 
+      getAllAmenityHotelById(id) {
+        return axios.get(API_URL + `/hotels/${id}/hotel-amenities`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new HotelService;

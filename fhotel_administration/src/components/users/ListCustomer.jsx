@@ -247,7 +247,8 @@ const ListCustomer = () => {
                     </div>
                 </div>
             )}
- {`
+            <style>
+                {`
                     .page-item.active .page-link{
                     background-color: #20c997;
                     border-color: #20c997;
@@ -262,6 +263,7 @@ const ListCustomer = () => {
     color: white
     }
                                             `}
+            </style>
 
         </>
     )

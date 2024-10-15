@@ -146,8 +146,8 @@ const Header = () => {
         if (showSuccess) {
             const timer = setTimeout(() => {
                 setShowSuccess(false); // Hide the error after 2 seconds
-            }, 2000); // Change this value to adjust the duration
-            window.location.reload();
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
             return () => clearTimeout(timer); // Cleanup timer on unmount
         }
     }, [showSuccess]); // Only run effect if showError changes

@@ -125,6 +125,35 @@ const SideBar = () => {
                                 </>
                             )
                         }
+                        {
+                            user.role?.roleName === "Hotel Manager" && (
+                                <>
+                                  
+                                    <li>
+                                        <a href="javascript:;" onClick={toggleUserMenu}>
+                                            <i className="sidebar-item-icon fa fa-user" />
+                                            <span className="nav-label">User</span>
+                                            <i className={`fa fa-angle-left arrow ${isUserMenuOpen ? '' : 'collapsed'}`} />
+                                        </a>
+                                        {/* Conditionally apply collapse class based on the state */}
+                                        <ul className={`nav-2-level collapse ${isUserMenuOpen ? 'show' : ''}`}>
+                                            <li>
+                                                <Link to="/list-receptionist">Receptionist</Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/list-room-attendant">Room Attendant</Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <Link to="/list-owner-hotel"><i className="sidebar-item-icon fa fa-building" />
+                                            <span className="nav-label">Hotel</span>
+                                        </Link>
+                                    </li>
+                                   
+                                </>
+                            )
+                        }
 
                     </ul>
                 </div>

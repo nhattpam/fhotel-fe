@@ -72,10 +72,16 @@ const Login = () => {
                 if (decodedToken.role.toString() === "Admin") {
                     sessionStorage.setItem('token', response.data.data);
                     sessionStorage.setItem('userId', decodedToken.Id);
-
                     // Navigate to the home page
                     navigate('/admin-home');
-                } else {
+                }
+                if (decodedToken.role.toString() === "Hotel Manager") {
+                    sessionStorage.setItem('token', response.data.data);
+                    sessionStorage.setItem('userId', decodedToken.Id);
+                    // Navigate to the home page
+                    navigate('/hotel-manager-home');
+                }
+                else {
                     showErrorMessage('You are not authorized to access this page.');
                 }
             } else {
@@ -102,9 +108,9 @@ const Login = () => {
                             <form onSubmit={handleLogin}>
                                 <div className="form-group">
                                     <label >Email</label>
-                                    <input 
-                                        type="email" 
-                                        className="form-control" 
+                                    <input
+                                        type="email"
+                                        className="form-control"
                                         placeholder="Email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -112,9 +118,9 @@ const Login = () => {
                                 </div>
                                 <div className="form-group">
                                     <label>Password</label>
-                                    <input 
-                                        type="password" 
-                                        className="form-control" 
+                                    <input
+                                        type="password"
+                                        className="form-control"
                                         placeholder="Password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}

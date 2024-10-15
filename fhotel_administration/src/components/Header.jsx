@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import userService from '../services/user.service';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
 
@@ -9,7 +9,8 @@ const Header = () => {
   const [user, setUser] = useState({
     email: "",
     firstName: "",
-    image: ""
+    image: "",
+    role: []
   });
 
   useEffect(() => {
@@ -18,6 +19,7 @@ const Header = () => {
         .getUserById(userId)
         .then((res) => {
           setUser(res.data);
+          console.log(JSON.stringify(user))
         })
         .catch((error) => {
           console.log(error);
@@ -31,19 +33,71 @@ const Header = () => {
     sessionStorage.removeItem('authToken'); // Assuming you store authentication token in localStorage
     sessionStorage.removeItem('userId');
     navigate('/login');
-};
+  };
 
   return (
     <>
       {/* START HEADER*/}
       <header className="header" >
         <div className="page-brand">
-          <a className="link" href="index.html">
-            <span className="brand">F
-              <span className="brand-tip">Hotel</span>
-            </span>
-            <span className="brand-mini">FHotel</span>
-          </a>
+          {user?.role?.roleName === "Admin" && (
+            <Link className="link" to={`/admin-home`}>
+              <span className="brand">F
+                <span className="brand-tip">Hotel</span>
+              </span>
+              <span className="brand-mini">FHotel</span>
+            </Link>
+          )}
+
+          {
+            user.role?.roleName === "Hotel Manager" && (
+              <>
+                <Link className="link" to={`/hotel-manager-home`}>
+                  <span className="brand">F
+                    <span className="brand-tip">Hotel</span>
+                  </span>
+                  <span className="brand-mini">FHotel</span>
+                </Link>
+              </>
+            )
+          }
+          {
+            user.role?.roleName === "Manager" && (
+              <>
+                <Link className="link" to={`/manager-home`}>
+                  <span className="brand">F
+                    <span className="brand-tip">Hotel</span>
+                  </span>
+                  <span className="brand-mini">FHotel</span>
+                </Link>
+              </>
+            )
+          }
+          {
+            user.role?.roleName === "Receptionist" && (
+              <>
+                <Link className="link" to={`/receptionist-home`}>
+                  <span className="brand">F
+                    <span className="brand-tip">Hotel</span>
+                  </span>
+                  <span className="brand-mini">FHotel</span>
+                </Link>
+              </>
+            )
+          }
+          {
+            user.role?.roleName === "Room Attendant" && (
+              <>
+                <Link className="link" to={`/room-attendant-home`}>
+                  <span className="brand">F
+                    <span className="brand-tip">Hotel</span>
+                  </span>
+                  <span className="brand-mini">FHotel</span>
+                </Link>
+              </>
+            )
+          }
+
         </div>
         <div className="flexbox flex-1">
           {/* START TOP-LEFT TOOLBAR*/}

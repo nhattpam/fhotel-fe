@@ -84,6 +84,33 @@ const ListCustomer = () => {
     const closeModalUser = () => {
         setShowModalUser(false);
     };
+
+    // Update user status dynamically
+    const updateUser = async (e, userId, isActive) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the user data
+            const res = await userService.getUserById(userId);
+            const userData = res.data;
+
+            // Update the local state with the fetched data and new isActive flag
+            setUser({ ...userData, isActive });
+
+            // Make the update request
+            const updateRes = await userService.updateUser(userId, { ...userData, isActive });
+
+            if (updateRes.status === 200) {
+                window.alert("Update successful!");
+                window.location.reload();
+            } else {
+                window.alert("Update FAILED!");
+            }
+        } catch (error) {
+            console.log(error);
+            window.alert("An error occurred during the update.");
+        }
+    };
     return (
         <>
             <Header />
@@ -141,8 +168,30 @@ const ListCustomer = () => {
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
-                                                            <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button>
-                                                        </td>
+                                                            <form
+                                                                id="demo-form"
+                                                                onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
+                                                                className="d-inline"
+                                                            >
+                                                                <button
+                                                                    type="submit"
+                                                                    className="btn btn-default btn-xs m-r-5"
+                                                                    data-toggle="tooltip"
+                                                                    data-original-title="Activate"
+                                                                    onClick={() => setUser({ ...user, isActive: true })} // Activate
+                                                                >
+                                                                    <i className="fa fa-check font-14 text-success" />
+                                                                </button>
+                                                                <button
+                                                                    type="submit"
+                                                                    className="btn btn-default btn-xs"
+                                                                    data-toggle="tooltip"
+                                                                    data-original-title="Deactivate"
+                                                                    onClick={() => setUser({ ...user, isActive: false })} // Deactivate
+                                                                >
+                                                                    <i className="fa fa-times font-14 text-danger" />
+                                                                </button>
+                                                            </form>                                                        </td>
                                                     </tr>
                                                 </>
                                             ))

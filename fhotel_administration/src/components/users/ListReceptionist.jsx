@@ -284,23 +284,23 @@ const ListReceptionist = () => {
     };
 
 
-    //update status user
-    const updateUser = async (e, userId) => {
+    // Update user status dynamically
+    const updateUser = async (e, userId, isActive) => {
         e.preventDefault();
-    
+
         try {
-            // First, fetch the user data
+            // Fetch the user data
             const res = await userService.getUserById(userId);
             const userData = res.data;
-            
-            // Update the local state with the fetched data and isActive flag
-            setUser({ ...userData, isActive: true });
-    
-            // Now make the update request
-            const updateRes = await userService.updateUser(userId, { ...userData, isActive: true });
-    
+
+            // Update the local state with the fetched data and new isActive flag
+            setUser({ ...userData, isActive });
+
+            // Make the update request
+            const updateRes = await userService.updateUser(userId, { ...userData, isActive });
+
             if (updateRes.status === 200) {
-                window.alert("Update successfully!");
+                window.alert("Update successful!");
                 window.location.reload();
             } else {
                 window.alert("Update FAILED!");
@@ -310,7 +310,7 @@ const ListReceptionist = () => {
             window.alert("An error occurred during the update.");
         }
     };
-    
+
 
     return (
         <>
@@ -383,7 +383,7 @@ const ListReceptionist = () => {
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
                                                             <form
                                                                 id="demo-form"
-                                                                onSubmit={(e) => updateUser(e, item.userId)}
+                                                                onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
                                                                 className="d-inline"
                                                             >
                                                                 <button
@@ -391,12 +391,20 @@ const ListReceptionist = () => {
                                                                     className="btn btn-default btn-xs m-r-5"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Activate"
-                                                                    onClick={() => setUser({ ...user, isActive: true })}
+                                                                    onClick={() => setUser({ ...user, isActive: true })} // Activate
                                                                 >
                                                                     <i className="fa fa-check font-14 text-success" />
                                                                 </button>
+                                                                <button
+                                                                    type="submit"
+                                                                    className="btn btn-default btn-xs"
+                                                                    data-toggle="tooltip"
+                                                                    data-original-title="Deactivate"
+                                                                    onClick={() => setUser({ ...user, isActive: false })} // Deactivate
+                                                                >
+                                                                    <i className="fa fa-times font-14 text-danger" />
+                                                                </button>
                                                             </form>
-                                                            <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-times font-14 text-danger" /></button>
                                                         </td>
                                                     </tr>
                                                 </>

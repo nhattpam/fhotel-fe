@@ -2,14 +2,17 @@ import logo from './logo.svg';
 import './App.css';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
+import SuccessRegister from './components/authentication/SuccessRegister';
 
 function App() {
   return (
     <div className="App">
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={<Home />} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="/home" element={<Home />} />
+        {/* success register */}
+        <Route path="/success-register" element={<SuccessRegister />} />
+      </Routes>
     </div>
   );
 }

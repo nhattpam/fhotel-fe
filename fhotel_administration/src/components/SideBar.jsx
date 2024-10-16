@@ -64,7 +64,7 @@ const SideBar = () => {
                             )
                         }
                         {
-                            user.role?.roleName === "HotelManager" && (
+                            user.role?.roleName === "Hotel Manager" && (
                                 <li>
                                     <Link className="active" to={`/hotel-manager-home`}><i className="sidebar-item-icon fa fa-th-large" />
                                         <span className="nav-label">Dashboard</span>
@@ -82,7 +82,7 @@ const SideBar = () => {
                             )
                         }
                         {
-                            user.role?.roleName === "RoomAttendant" && (
+                            user.role?.roleName === "Room Attendant" && (
                                 <li>
                                     <Link className="active" to={`/room-attendant-home`}><i className="sidebar-item-icon fa fa-th-large" />
                                         <span className="nav-label">Dashboard</span>

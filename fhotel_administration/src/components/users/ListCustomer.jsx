@@ -256,8 +256,10 @@ const ListCustomer = () => {
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
                                         <div className="col-md-5">
-                                            <img src={user.image} alt="avatar" style={{ width: '100%' }} />
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px' }} />
 
+                                            </table>
                                         </div>
                                         <div className="col-md-7">
                                             <table className="table table-responsive table-hover mt-3">

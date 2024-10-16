@@ -60,6 +60,14 @@ class HotelService {
         });
       }
 
+      getAllRoomTypeByHotelId(id) {
+        return axios.get(API_URL + `/hotels/${id}/room-types`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new HotelService;

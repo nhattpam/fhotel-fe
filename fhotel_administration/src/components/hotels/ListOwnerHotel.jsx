@@ -6,6 +6,7 @@ import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import userService from '../../services/user.service';
+import { Link } from 'react-router-dom';
 const ListOwnerHotel = () => {
 
     const loginUserId = sessionStorage.getItem('userId');
@@ -232,22 +233,7 @@ const ListOwnerHotel = () => {
                                         <div className="col-md-5">
                                             <table className="table table-responsive table-hover mt-3">
                                                 <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
-                                                <div className='row mt-2'>
-                                                    <div className='col-md-12'>
-                                                        <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
-                                                    </div>
-                                                    <div className='col-md-12'>
-                                                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                                                            {
-                                                                hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
-                                                                    <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
-                                                                        <img src={item.image} alt="avatar" style={{ width: "40px" }} />
-                                                                    </div>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
+
                                             </table>
 
                                         </div>
@@ -295,20 +281,13 @@ const ListOwnerHotel = () => {
                                             </table>
 
                                         </div>
-                                        <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <div className='row mt-2'>
-                                                    <h3 style={{ fontWeight: "bold" }}>Staffs</h3>
 
-                                                </div>
-                                            </table>
-                                        </div>
                                     </div>
 
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-custom"  >Save</button>
+                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
                                     <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
                                 </div>
                             </form>

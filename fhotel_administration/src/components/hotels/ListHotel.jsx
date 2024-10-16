@@ -9,6 +9,7 @@ import Dropzone from "react-dropzone";
 import cityService from '../../services/city.service';
 import userService from '../../services/user.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
+import { Link } from 'react-router-dom';
 
 const ListHotel = () => {
 
@@ -234,22 +235,6 @@ const ListHotel = () => {
                                     <div className="row">
                                         <div className="col-md-5">
                                             <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
-                                            <div className='row mt-2'>
-                                                <div className='col-md-12'>
-                                                    <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
-                                                </div>
-                                                <div className='col-md-12'>
-                                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                                                        {
-                                                            hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
-                                                                <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
-                                                                    <img src={item.image} alt="avatar" style={{ width: "40px" }} />
-                                                                </div>
-                                                            ))
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
 
                                         <div className="col-md-7">
@@ -300,7 +285,7 @@ const ListHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-custom"  >Save</button>
+                                    <Link type="button" className="btn btn-custom"  to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
                                     <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
                                 </div>
                             </form>

@@ -44,6 +44,14 @@ class RoomTypeService {
         });
       }
 
+      getAllRoomImagebyRoomTypeId(id) {
+        return axios.get(API_URL + `/room-types/${id}/room-images`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new RoomTypeService;

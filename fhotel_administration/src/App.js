@@ -12,6 +12,7 @@ import HotelManagerHome from './components/home/HotelManagerHome';
 import ListOwnerHotel from './components/hotels/ListOwnerHotel';
 import ListReceptionist from './components/users/ListReceptionist';
 import ListRoomAttendant from './components/users/ListRoomAttendant';
+import EditHotel from './components/hotels/EditHotel';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         {/* hotel */}
         <Route path="/list-hotel" element={<ListHotel />} />
         <Route path="/list-owner-hotel" element={<ListOwnerHotel />} />
+        <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
         
        
       </Routes>

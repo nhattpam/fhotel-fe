@@ -11,6 +11,7 @@ import userService from '../../services/user.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
 import { Link, useParams } from 'react-router-dom';
 import roomTypeService from '../../services/room-type.service';
+import roomImageService from '../../services/room-image.service';
 
 const EditHotel = () => {
 
@@ -73,18 +74,74 @@ const EditHotel = () => {
                 .catch((error) => {
                     console.log(error);
                 });
-            roomTypeService
-                .getAllRoomImagebyRoomTypeId(roomTypeId)
-                .then((res) => {
-                    setRoomImageList(res.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+    
+            fetchRoomImages(roomTypeId); // Fetch images
         }
     };
+    
+    // Function to fetch room images based on roomTypeId
+    const fetchRoomImages = (roomTypeId) => {
+        roomTypeService
+            .getAllRoomImagebyRoomTypeId(roomTypeId)
+            .then((res) => {
+                setRoomImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
 
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [imageList, setImageList] = useState(roomImageList);
+    const [roomImage, setRoomImage] = useState({
+        roomTypeId: roomType.roomTypeId,
+        image: "",
+    });
 
+    // Handle file selection
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+
+   // Upload image and refresh the room image list without closing the modal
+const handleUploadAndPost = async () => {
+    if (!selectedFile) {
+        alert("Please select an image");
+        return;
+    }
+
+    try {
+        // Prepare the FormData with the correct key expected by the API
+        const formData = new FormData();
+        formData.append("file", selectedFile); // Adjust key if needed
+        console.log([...formData.entries()]); // Logs the form data before submission
+
+        // Upload the image to the API
+        const uploadResponse = await roomImageService.uploadImage(formData);
+
+        if (uploadResponse && uploadResponse.data) {
+            const imageUrl = uploadResponse.data.link; // Extract the returned image URL from the response
+
+            // Update roomImage object
+            const updatedRoomImage = {
+                roomTypeId: roomType.roomTypeId,
+                image: imageUrl,
+            };
+            setRoomImage(updatedRoomImage);
+
+            // Save the room image to your database
+            await roomImageService.saveRoomImage(updatedRoomImage);
+
+            // Refresh the room image list by calling the fetchRoomImages function
+            fetchRoomImages(roomType.roomTypeId);
+
+            // Optionally, update the local image list without refetching (in case you want instant visual feedback)
+            setImageList((prevList) => [...prevList, { image: imageUrl }]);
+        }
+    } catch (error) {
+        console.error("Error uploading and posting image:", error);
+    }
+};
 
     return (
         <>
@@ -242,11 +299,20 @@ const EditHotel = () => {
                                         <div className="col-md-5" style={{ display: 'flex', flexWrap: 'wrap' }}>
                                             {
                                                 roomImageList.length > 0 && roomImageList.map((item, index) => (
-                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0' }}>
-                                                        <img src={item.image} alt="avatar" style={{ width: "250px" }} />
-                                                    </div>
+                                                    <>
+                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0' }}>
+                                                            <img src={item.image} alt="avatar" style={{ width: "250px" }} />
+                                                        </div>
+                                                    </>
                                                 ))
                                             }
+                                            <div className="form-group mt-3">
+                                                <input type="file" onChange={handleFileChange} />
+                                                <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost}>
+                                                    + Upload
+                                                </button>
+                                            </div>
+
                                         </div>
 
 

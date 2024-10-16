@@ -44,6 +44,14 @@ class RoomImageService {
         });
       }
 
+      deleteRoomImageById(id) {
+        return axios.delete(API_URL + "/room-images/" + id, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
       uploadImage(roomImage) {
         return axios.post(API_URL + "/room-images/image/", roomImage, {
           headers: {

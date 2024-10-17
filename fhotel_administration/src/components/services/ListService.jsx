@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../Header'
 import SideBar from '../SideBar'
+import serviceService from '../../services/service.service';
 import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
-import userService from '../../services/user.service';
 
-const ListCustomer = () => {
-    //call list hotel registration
-    const [userList, setUserList] = useState([]);
-    const [userSearchTerm, setUserSearchTerm] = useState('');
-    const [currentUserPage, setCurrentUserPage] = useState(0);
-    const [usersPerPage] = useState(5);
+import { Link } from 'react-router-dom';
+
+const ListService = () => {
+
+
+    //call list service registration
+    const [serviceList, setServiceList] = useState([]);
+    const [serviceSearchTerm, setServiceSearchTerm] = useState('');
+    const [currentServicePage, setCurrentHotelPage] = useState(0);
+    const [servicesPerPage] = useState(5);
 
 
     useEffect(() => {
-        userService
-            .getAllUser()
+        serviceService
+            .getAllService()
             .then((res) => {
-                const hotelManagers = res.data.filter(user => user.role?.roleName === "Customer");
-
-                const sortedUserList = [...hotelManagers].sort((a, b) => {
-                    // Assuming requestedDate is a string in ISO 8601 format
-                    return new Date(b.createdDate) - new Date(a.createdDate);
-                });
-                setUserList(sortedUserList);
+                setServiceList(res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -32,48 +30,47 @@ const ListCustomer = () => {
     }, []);
 
 
-    const handleUserSearch = (event) => {
-        setUserSearchTerm(event.target.value);
+    const handleHotelSearch = (event) => {
+        setServiceSearchTerm(event.target.value);
     };
 
-    const filteredUsers = userList
-        .filter((user) => {
+    const filteredServices = serviceList
+        .filter((service) => {
             return (
-                user.firstName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.lastName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.role?.roleName.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
+                service.serviceName.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
+                service.price.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
+                service.description.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
+                service.serviceType?.serviceTypeName.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase())
             );
         });
 
-    const pageUserCount = Math.ceil(filteredUsers.length / usersPerPage);
+    const pageServiceCount = Math.ceil(filteredServices.length / servicesPerPage);
 
-    const handleUserPageClick = (data) => {
-        setCurrentUserPage(data.selected);
+    const handleHotelPageClick = (data) => {
+        setCurrentHotelPage(data.selected);
     };
 
-    const offsetUser = currentUserPage * usersPerPage;
-    const currentUsers = filteredUsers.slice(offsetUser, offsetUser + usersPerPage);
+    const offsetService = currentServicePage * servicesPerPage;
+    const currentServices = filteredServices.slice(offsetService, offsetService + servicesPerPage);
 
 
 
-    //detail user modal 
-    const [showModalUser, setShowModalUser] = useState(false);
+    //detail service modal 
+    const [showModalService, setShowModalHotel] = useState(false);
 
-    const [user, setUser] = useState({
+    const [service, setService] = useState({
 
     });
+    //list service types
+    const [serviceTypeList, setServiceTypeList] = useState([]);
 
-
-    const openUserModal = (userId) => {
-        setShowModalUser(true);
-        if (userId) {
-            userService
-                .getUserById(userId)
+    const openServiceModal = (serviceId) => {
+        setShowModalHotel(true);
+        if (serviceId) {
+            serviceService
+                .getServiceById(serviceId)
                 .then((res) => {
-                    setUser(res.data);
+                    setService(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -81,36 +78,35 @@ const ListCustomer = () => {
         }
     };
 
-    const closeModalUser = () => {
-        setShowModalUser(false);
+    const closeModalService = () => {
+        setShowModalHotel(false);
     };
 
-    // Update user status dynamically
-    const updateUser = async (e, userId, isActive) => {
+
+    const [updateService, setUpdateService] = useState({
+
+    });
+
+    //update service status
+    const submitUpdateService = async (e, serviceId, isActive) => {
         e.preventDefault();
 
         try {
             // Fetch the user data
-            const res = await userService.getUserById(userId);
-            const userData = res.data;
+            const res = await serviceService.getServiceById(serviceId);
+            const serviceData = res.data;
 
             // Update the local state with the fetched data and new isActive flag
-            setUser({ ...userData, isActive });
+            setUpdateService({ ...serviceData, isActive });
 
             // Make the update request
-            const updateRes = await userService.updateUser(userId, { ...userData, isActive });
+            const updateRes = await serviceService.updateService(serviceId, { ...serviceData, isActive });
 
             if (updateRes.status === 200) {
                 window.alert("Update successful!");
                 // Refresh the list after update
-                const updatedUsers = await userService.getAllUser();
-                const customers = updatedUsers.data.filter(user => user.role?.roleName === "Customer");
-
-                const sortedUserList = [...customers].sort((a, b) => {
-                    // Assuming requestedDate is a string in ISO 8601 format
-                    return new Date(b.createdDate) - new Date(a.createdDate);
-                });
-                setUserList(sortedUserList);
+                const updatedServices = await serviceService.getAllService();
+                setServiceList(updatedServices.data);  // Update the roomTypeList state with fresh data
             } else {
                 window.alert("Update FAILED!");
             }
@@ -119,6 +115,8 @@ const ListCustomer = () => {
             window.alert("An error occurred during the update.");
         }
     };
+
+
     return (
         <>
             <Header />
@@ -137,11 +135,17 @@ const ListCustomer = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Customers</div>
-                            <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"
-                                    autoComplete="on" value={userSearchTerm}
-                                    onChange={handleUserSearch} />
+                            <div className="ibox-title">List of Services</div>
+                            <div className="form-group d-flex align-items-center">
+                                <input
+                                    id="demo-foo-search"
+                                    type="text"
+                                    placeholder="Search"
+                                    className="form-control form-control-sm"
+                                    autoComplete="on"
+                                    value={serviceSearchTerm}
+                                    onChange={handleHotelSearch}
+                                />
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -150,23 +154,28 @@ const ListCustomer = () => {
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Email</th>
-                                            <th>Role</th>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>Description</th>
+                                            <th>Category</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            currentUsers.length > 0 && currentUsers.map((item, index) => (
+                                            currentServices.length > 0 && currentServices.map((item, index) => (
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.firstName}</td>
-                                                        <td>{item.lastName}</td>
-                                                        <td>{item.email}</td>
-                                                        <td>{item.role?.roleName}</td>
+                                                        <td>
+                                                            <img src={item.image} alt="avatar" style={{ width: "70px", height: '100px' }} />
+
+                                                        </td>
+                                                        <td>{item.serviceName}</td>
+                                                        <td>{item.price} Vnd</td>
+                                                        <td>{item.description}</td>
+                                                        <td>{item.serviceType?.serviceTypeName}</td>
                                                         <td>
                                                             {item.isActive ? (
                                                                 <span className="badge label-table badge-success">Active</span>
@@ -175,10 +184,10 @@ const ListCustomer = () => {
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openServiceModal(item.serviceId)} /></button>
                                                             <form
                                                                 id="demo-form"
-                                                                onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
+                                                                onSubmit={(e) => submitUpdateService(e, item.serviceId, updateService.isActive)} // Use isActive from the local state
                                                                 className="d-inline"
                                                             >
                                                                 <button
@@ -186,7 +195,7 @@ const ListCustomer = () => {
                                                                     className="btn btn-default btn-xs m-r-5"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Activate"
-                                                                    onClick={() => setUser({ ...user, isActive: true })} // Activate
+                                                                    onClick={() => setUpdateService({ ...updateService, isActive: true })} // Activate
                                                                 >
                                                                     <i className="fa fa-check font-14 text-success" />
                                                                 </button>
@@ -195,11 +204,12 @@ const ListCustomer = () => {
                                                                     className="btn btn-default btn-xs"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Deactivate"
-                                                                    onClick={() => setUser({ ...user, isActive: false })} // Deactivate
+                                                                    onClick={() => setUpdateService({ ...updateService, isActive: false })} // Deactivate
                                                                 >
                                                                     <i className="fa fa-times font-14 text-danger" />
                                                                 </button>
-                                                            </form>                                                        </td>
+                                                            </form>
+                                                        </td>
                                                     </tr>
                                                 </>
                                             ))
@@ -230,10 +240,10 @@ const ListCustomer = () => {
                                 } breakLabel={'...'}
                                 breakClassName={'page-item'}
                                 breakLinkClassName={'page-link'}
-                                pageCount={pageUserCount}
+                                pageCount={pageServiceCount}
                                 marginPagesDisplayed={2}
                                 pageRangeDisplayed={5}
-                                onPageChange={handleUserPageClick}
+                                onPageChange={handleHotelPageClick}
                                 containerClassName={'pagination'}
                                 activeClassName={'active'}
                                 previousClassName={'page-item'}
@@ -247,46 +257,40 @@ const ListCustomer = () => {
 
                     </div>
                 </div>
-            </div>
 
-            {showModalUser && (
+            </div>
+            {showModalService && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">User Information</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                    <h5 className="modal-title">Service Information</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalService}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
                                         <div className="col-md-5">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px' }} />
-
-                                            </table>
+                                            <img src={service.image} alt="avatar" style={{ width: '100%' }} />
                                         </div>
+
                                         <div className="col-md-7">
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ width: '30%' }}>Name:</th>
-                                                        <td>{user.firstName} {user.lastName}</td>
+                                                        <td>{service.serviceName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Email:</th>
-                                                        <td>{user.email}</td>
+                                                        <th>Price:</th>
+                                                        <td>{service.price} Vnd</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Unknown Phone Number'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Address:</th>
-                                                        <td>{user && user.address ? user.address : 'Unknown Address'}</td>
+                                                        <th>Description:</th>
+                                                        <td>{service.description} </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -297,8 +301,7 @@ const ListCustomer = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalService} >Close</button>
                                 </div>
                             </form>
 
@@ -306,6 +309,8 @@ const ListCustomer = () => {
                     </div>
                 </div>
             )}
+
+
             <style>
                 {`
                     .page-item.active .page-link{
@@ -328,4 +333,4 @@ const ListCustomer = () => {
     )
 }
 
-export default ListCustomer
+export default ListService

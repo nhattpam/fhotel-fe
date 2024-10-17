@@ -13,6 +13,10 @@ import ListOwnerHotel from './components/hotels/ListOwnerHotel';
 import ListReceptionist from './components/users/ListReceptionist';
 import ListRoomAttendant from './components/users/ListRoomAttendant';
 import EditHotel from './components/hotels/EditHotel';
+import ManagerHome from './components/home/ManagerHome';
+import ReceptionistHome from './components/home/ReceptionistHome';
+import RoomAttendantHome from './components/home/RoomAttendantHome';
+import ListService from './components/services/ListService';
 
 function App() {
   return (
@@ -21,6 +25,9 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/admin-home" element={<AdminHome />} />
         <Route path="/hotel-manager-home" element={<HotelManagerHome />} />
+        <Route path="/manager-home" element={<ManagerHome />} />
+        <Route path="/receptionist-home" element={<ReceptionistHome />} />
+        <Route path="/room-attendant-home" element={<RoomAttendantHome />} />
         <Route path="/login" element={<Login />} />
         {/* user */}
         <Route path="/list-hotel-manager" element={<ListHotelManager />} />
@@ -31,8 +38,8 @@ function App() {
         <Route path="/list-hotel" element={<ListHotel />} />
         <Route path="/list-owner-hotel" element={<ListOwnerHotel />} />
         <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
-        
-       
+        {/* service */}
+        <Route path="/list-service/" element={<ListService />} />
       </Routes>
     </div>
   );

@@ -154,6 +154,19 @@ const SideBar = () => {
                                 </>
                             )
                         }
+                        {
+                            user.role?.roleName === "Manager" && (
+                                <>
+                                  
+                                    <li>
+                                        <Link to="/list-service"><i className="sidebar-item-icon fa fa-coffee" />
+                                            <span className="nav-label">Service</span>
+                                        </Link>
+                                    </li>
+                                   
+                                </>
+                            )
+                        }
 
                     </ul>
                 </div>

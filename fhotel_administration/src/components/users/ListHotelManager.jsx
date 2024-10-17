@@ -301,7 +301,15 @@ const ListHotelManager = () => {
 
             if (updateRes.status === 200) {
                 window.alert("Update successful!");
-                window.location.reload();
+                // Refresh the list after update
+                const updatedUsers = await userService.getAllUser();
+                const hotelManagers = updatedUsers.data.filter(user => user.role?.roleName === "Hotel Manager");
+
+                const sortedUserList = [...hotelManagers].sort((a, b) => {
+                    // Assuming requestedDate is a string in ISO 8601 format
+                    return new Date(b.createdDate) - new Date(a.createdDate);
+                });
+                setUserList(sortedUserList);
             } else {
                 window.alert("Update FAILED!");
             }

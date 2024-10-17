@@ -17,6 +17,24 @@ import 'react-quill/dist/quill.snow.css';
 
 const EditHotel = () => {
 
+    //login user
+    const loginUserId = sessionStorage.getItem('userId');
+
+    const [loginUser, setLoginUser] = useState({
+
+    });
+    useEffect(() => {
+        userService
+            .getUserById(loginUserId)
+            .then((res) => {
+
+                setLoginUser(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, loginUserId);
+
     const { hotelId } = useParams();
 
     const [hotel, setHotel] = useState({
@@ -355,6 +373,39 @@ const EditHotel = () => {
     };
 
 
+    //Admin: Update room type status
+    const [updateRoomTypeStatus, setUpdateRoomTypeStatus] = useState({
+
+    });
+    const submitUpdateRoomTypeStatus = async (e, roomTypeId, isActive) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the user data
+            const res = await roomTypeService.getRoomTypeById(roomTypeId);
+            const roomTypeData = res.data;
+
+            // Update the local state with the fetched data and new isActive flag
+            setUpdateRoomTypeStatus({ ...roomTypeData, isActive });
+
+            // Make the update request
+            const updateRes = await roomTypeService.updateRoomType(roomTypeId, { ...roomTypeData, isActive });
+
+            if (updateRes.status === 200) {
+                window.alert("Update successful!");
+                // Refresh the roomTypeList after update
+                const updatedRoomTypes = await hotelService.getAllRoomTypeByHotelId(hotelId);
+                setRoomTypeList(updatedRoomTypes.data);  // Update the roomTypeList state with fresh data
+            } else {
+                window.alert("Update FAILED!");
+            }
+        } catch (error) {
+            console.log(error);
+            window.alert("An error occurred during the update.");
+        }
+    };
+
+
 
 
     return (
@@ -456,15 +507,24 @@ const EditHotel = () => {
                                 </tbody>
                             </table>
                             <hr />
+
                             <div className="form-group d-flex align-items-center justify-content-between">
                                 <h2 style={{ fontWeight: 'bold' }}>Room Types of Hotel</h2>
-                                <button
-                                    className="btn btn-primary ml-auto"
-                                    onClick={openCreateRoomTypeModal}
-                                >
-                                    Create New Room Type
-                                </button>
+                                {
+                                    loginUser.role?.roleName === "Hotel Manager" && (
+                                        <>
+                                            <button
+                                                className="btn btn-primary ml-auto"
+                                                onClick={openCreateRoomTypeModal}
+                                            >
+                                                Create New Room Type
+                                            </button>
+                                        </>
+                                    )
+                                }
                             </div>
+
+
 
 
                             <div className="table-responsive">
@@ -475,6 +535,7 @@ const EditHotel = () => {
                                             <th data-hide="phone">Name</th>
                                             <th>Room Size</th>
                                             <th data-toggle="true">Max Occupancy</th>
+                                            <th data-toggle="true">Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -486,9 +547,44 @@ const EditHotel = () => {
                                                     <td>{item.typeName}</td>
                                                     <td>{item.roomSize}</td>
                                                     <td>{item.maxOccupancy}</td>
-                                                    <td><button className="btn btn-default btn-xs m-r-5"
-                                                        data-toggle="tooltip" data-original-title="Edit">
-                                                        <i className="fa fa-pencil font-14" onClick={() => openRoomTypeModal(item.roomTypeId)} /></button></td>
+                                                    <td>
+                                                        {item.isActive ? (
+                                                            <span className="badge label-table badge-success">Active</span>
+                                                        ) : (
+                                                            <span className="badge label-table badge-danger">Inactive</span>
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        <button className="btn btn-default btn-xs m-r-5"
+                                                            data-toggle="tooltip" data-original-title="Edit">
+                                                            <i className="fa fa-pencil font-14"
+                                                                onClick={() => openRoomTypeModal(item.roomTypeId)} />
+                                                        </button>
+                                                        <form
+                                                            id="demo-form"
+                                                            onSubmit={(e) => submitUpdateRoomTypeStatus(e, item.roomTypeId, updateRoomTypeStatus.isActive)} // Use isActive from the local state
+                                                            className="d-inline"
+                                                        >
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-default btn-xs m-r-5"
+                                                                data-toggle="tooltip"
+                                                                data-original-title="Activate"
+                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: true })} // Activate
+                                                            >
+                                                                <i className="fa fa-check font-14 text-success" />
+                                                            </button>
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-default btn-xs"
+                                                                data-toggle="tooltip"
+                                                                data-original-title="Deactivate"
+                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: false })} // Deactivate
+                                                            >
+                                                                <i className="fa fa-times font-14 text-danger" />
+                                                            </button>
+                                                        </form>
+                                                    </td>
                                                 </tr>
                                             ))
                                         }
@@ -525,35 +621,47 @@ const EditHotel = () => {
                                                 roomImageList.length > 0 && roomImageList.map((item, index) => (
                                                     <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
                                                         <img src={item.image} alt="avatar" style={{ width: "250px", height: "200px" }} />
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    {/* Delete Icon/Button */}
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '10px',
+                                                                            right: '10px',
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteImage(item.roomImageId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
 
-                                                        {/* Delete Icon/Button */}
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-danger"
-                                                            style={{
-                                                                position: 'absolute',
-                                                                top: '10px',
-                                                                right: '10px',
-                                                                background: 'transparent',
-                                                                border: 'none',
-                                                                color: 'red',
-                                                                fontSize: '20px',
-                                                                cursor: 'pointer',
-                                                            }}
-                                                            onClick={() => handleDeleteImage(item.roomImageId)}
-                                                        >
-                                                            &times; {/* This represents the delete icon (X symbol) */}
-                                                        </button>
                                                     </div>
                                                 ))
                                             }
+                                            {
+                                                loginUser.role?.roleName === "Hotel Manager" && (
+                                                    <>
+                                                        <div className="form-group mt-3">
+                                                            <input type="file" onChange={handleFileChange} />
+                                                            <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost}>
+                                                                + Upload
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )
+                                            }
 
-                                            <div className="form-group mt-3">
-                                                <input type="file" onChange={handleFileChange} />
-                                                <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost}>
-                                                    + Upload
-                                                </button>
-                                            </div>
                                         </div>
 
 
@@ -566,7 +674,7 @@ const EditHotel = () => {
                                                     </tr>
                                                     <tr>
                                                         <th>Room Size:</th>
-                                                        <td>{roomType.roomSize} m2</td>
+                                                        <td>{roomType.roomSize} m²</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Base Price:</th>
@@ -595,7 +703,13 @@ const EditHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link>
+                                    {
+                                        loginUser.role?.roleName === "Hotel Manager" && (
+                                            <>
+                                                <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link>
+                                            </>
+                                        )
+                                    }
                                     <button type="button" className="btn btn-dark" onClick={closeModalRoomType} >Close</button>
                                 </div>
                             </form>

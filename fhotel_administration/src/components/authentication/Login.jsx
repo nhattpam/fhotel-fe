@@ -81,6 +81,24 @@ const Login = () => {
                     // Navigate to the home page
                     navigate('/hotel-manager-home');
                 }
+                if (decodedToken.role.toString() === "Manager") {
+                    sessionStorage.setItem('token', response.data.data);
+                    sessionStorage.setItem('userId', decodedToken.Id);
+                    // Navigate to the home page
+                    navigate('/manager-home');
+                }
+                if (decodedToken.role.toString() === "Receptionist") {
+                    sessionStorage.setItem('token', response.data.data);
+                    sessionStorage.setItem('userId', decodedToken.Id);
+                    // Navigate to the home page
+                    navigate('/receptionist-home');
+                }
+                if (decodedToken.role.toString() === "Room Attendant") {
+                    sessionStorage.setItem('token', response.data.data);
+                    sessionStorage.setItem('userId', decodedToken.Id);
+                    // Navigate to the home page
+                    navigate('/room-attendant-home');
+                }
                 else {
                     showErrorMessage('You are not authorized to access this page.');
                 }

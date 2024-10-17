@@ -98,6 +98,38 @@ const ListHotel = () => {
     };
 
 
+    const [updateHotel, setUpdateHotel] = useState({
+
+    });
+
+    //update hotel status
+    const submitUpdateHotel = async (e, hotelId, isActive) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the user data
+            const res = await hotelService.getHotelById(hotelId);
+            const hotelData = res.data;
+
+            // Update the local state with the fetched data and new isActive flag
+            setUpdateHotel({ ...hotelData, isActive });
+
+            // Make the update request
+            const updateRes = await hotelService.updateHotel(hotelId, { ...hotelData, isActive });
+
+            if (updateRes.status === 200) {
+                window.alert("Update successful!");
+                // Refresh the list after update
+                const updatedHotels = await hotelService.getAllHotel();
+                setHotelRegistrationList(updatedHotels.data);  // Update the roomTypeList state with fresh data
+            } else {
+                window.alert("Update FAILED!");
+            }
+        } catch (error) {
+            console.log(error);
+            window.alert("An error occurred during the update.");
+        }
+    };
 
 
     return (
@@ -168,7 +200,30 @@ const ListHotel = () => {
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openHotelModal(item.hotelId)} /></button>
-                                                            <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button>
+                                                            <form
+                                                                id="demo-form"
+                                                                onSubmit={(e) => submitUpdateHotel(e, item.hotelId, updateHotel.isActive)} // Use isActive from the local state
+                                                                className="d-inline"
+                                                            >
+                                                                <button
+                                                                    type="submit"
+                                                                    className="btn btn-default btn-xs m-r-5"
+                                                                    data-toggle="tooltip"
+                                                                    data-original-title="Activate"
+                                                                    onClick={() => setUpdateHotel({ ...updateHotel, isActive: true })} // Activate
+                                                                >
+                                                                    <i className="fa fa-check font-14 text-success" />
+                                                                </button>
+                                                                <button
+                                                                    type="submit"
+                                                                    className="btn btn-default btn-xs"
+                                                                    data-toggle="tooltip"
+                                                                    data-original-title="Deactivate"
+                                                                    onClick={() => setUpdateHotel({ ...updateHotel, isActive: false })} // Deactivate
+                                                                >
+                                                                    <i className="fa fa-times font-14 text-danger" />
+                                                                </button>
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                 </>
@@ -285,7 +340,7 @@ const ListHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <Link type="button" className="btn btn-custom"  to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
+                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
                                     <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
                                 </div>
                             </form>

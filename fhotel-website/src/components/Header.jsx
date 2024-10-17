@@ -30,10 +30,18 @@ const Header = () => {
         setShowCreateHotelRegistrationModal(true);
     };
 
-    const handleInputChange = (e, index) => {
-        const { name, value } = e.target;
+    // Function to handle input changes
+    const handleInputChange = (e, index, field) => {
         const newHotels = [...hotels];
-        newHotels[index][name] = value;
+
+        // Check if the field is 'description' and handle accordingly
+        if (field === 'description') {
+            newHotels[index][field] = e; // 'e' contains the description text from ReactQuill
+        } else {
+            const { name, value } = e.target;
+            newHotels[index][name] = value; // Handle other form fields
+        }
+
         setHotels(newHotels);
     };
 
@@ -117,12 +125,12 @@ const Header = () => {
                     console.log("Hotel registration response: ", hotelResponse.data);
                     setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." }); // Set generic error message
                     setShowSuccess(true); // Show error
-    
+
                 } else {
                     console.log("Hotel registration response: ", hotelResponse.data);
                     setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
                     setShowError(true); // Show error
-    
+
                 }
             }
 
@@ -146,6 +154,8 @@ const Header = () => {
         if (showSuccess) {
             const timer = setTimeout(() => {
                 setShowSuccess(false); // Hide the error after 2 seconds
+                setShowCreateHotelRegistrationModal(false); // Close the modal
+                window.location.reload();
             }, 3000); // Change this value to adjust the duration
             // window.location.reload();
             return () => clearTimeout(timer); // Cleanup timer on unmount
@@ -211,7 +221,7 @@ const Header = () => {
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
                                     {/* Display success message */}
-                                    
+
                                     {/* Owner Information Inputs */}
                                     <div className="form-row mb-3">
                                         <div className="form-group col-md-6">
@@ -339,7 +349,7 @@ const Header = () => {
                                                             </div>
                                                             <div className="form-row">
                                                                 <div className="form-group col-md-6">
-                                                                    <label>Business Lincense Number</label>
+                                                                    <label>Business License Number</label>
                                                                     <input
                                                                         type="text"
                                                                         name="businessLicenseNumber"
@@ -373,11 +383,22 @@ const Header = () => {
                                                             </div>
                                                             <div className="form-group">
                                                                 <label>Description</label>
-                                                                <textarea
-                                                                    name="description"
-                                                                    className="form-control"
+                                                                <ReactQuill
+                                                                    theme="snow"
                                                                     value={hotel.description}
-                                                                    onChange={(e) => handleInputChange(e, index)}
+                                                                    onChange={(value) => handleInputChange(value, index, 'description')}
+                                                                    modules={{
+                                                                        toolbar: [
+                                                                            [{ header: [1, 2, false] }],
+                                                                            [{ 'direction': 'rtl' }],
+                                                                            [{ 'align': [] }],
+                                                                            ['code-block'],
+                                                                            [{ 'color': [] }, { 'background': [] }],
+                                                                            ['clean']
+                                                                        ]
+                                                                    }}
+                                                                    style={{ height: '300px', marginBottom: '50px' }}
+
                                                                 />
                                                             </div>
                                                         </div>

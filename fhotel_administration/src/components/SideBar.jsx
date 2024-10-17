@@ -32,6 +32,12 @@ const SideBar = () => {
         setIsUserMenuOpen(!isUserMenuOpen); // Toggle the state between true/false
     };
 
+    const [isPolicyMenuOpen, setIsUPolicyMenuOpen] = useState(false); // Track the state of the User submenu
+
+    const togglePolicyMenu = () => {
+        setIsUPolicyMenuOpen(!isPolicyMenuOpen); // Toggle the state between true/false
+    };
+
     return (
         <>
             {/* START SIDEBAR*/}
@@ -95,11 +101,7 @@ const SideBar = () => {
                         {
                             user.role?.roleName === "Admin" && (
                                 <>
-                                    {/* <li>
-                                        <Link to="/list-hotel-registration"><i className="sidebar-item-icon fa fa-file-text" />
-                                            <span className="nav-label">Hotel Registration</span>
-                                        </Link>
-                                    </li> */}
+
                                     <li>
                                         <a href="javascript:;" onClick={toggleUserMenu}>
                                             <i className="sidebar-item-icon fa fa-user" />
@@ -121,14 +123,35 @@ const SideBar = () => {
                                             <span className="nav-label">Hotel</span>
                                         </Link>
                                     </li>
-                                   
+                                    <li>
+                                        <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
+                                            <span className="nav-label">Reservation</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;" onClick={togglePolicyMenu}>
+                                            <i className="sidebar-item-icon fa fa-balance-scale" />
+                                            <span className="nav-label">Policy</span>
+                                            <i className={`fa fa-angle-left arrow ${isPolicyMenuOpen ? '' : 'collapsed'}`} />
+                                        </a>
+                                        {/* Conditionally apply collapse class based on the state */}
+                                        <ul className={`nav-2-level collapse ${isPolicyMenuOpen ? 'show' : ''}`}>
+                                            <li>
+                                                <Link to="/list-refund-policy">Refund Policy</Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/list-late-check-out-policy">Late Checkout Policy</Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+
                                 </>
                             )
                         }
                         {
                             user.role?.roleName === "Hotel Manager" && (
                                 <>
-                                  
+
                                     <li>
                                         <a href="javascript:;" onClick={toggleUserMenu}>
                                             <i className="sidebar-item-icon fa fa-user" />
@@ -146,24 +169,40 @@ const SideBar = () => {
                                         </ul>
                                     </li>
                                     <li>
+                                        <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
+                                            <span className="nav-label">Reservation</span>
+                                        </Link>
+                                    </li>
+                                    <li>
                                         <Link to="/list-owner-hotel"><i className="sidebar-item-icon fa fa-building" />
                                             <span className="nav-label">Hotel</span>
                                         </Link>
                                     </li>
-                                   
+                                    <li>
+                                        <Link to="/list-timetable"><i className="sidebar-item-icon fa fa-calendar" />
+                                            <span className="nav-label">Timetable</span>
+                                        </Link>
+                                    </li>
+
+
                                 </>
                             )
                         }
                         {
                             user.role?.roleName === "Manager" && (
                                 <>
-                                  
+                                    <li>
+                                        <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
+                                            <span className="nav-label">Reservation</span>
+                                        </Link>
+                                    </li>
                                     <li>
                                         <Link to="/list-service"><i className="sidebar-item-icon fa fa-coffee" />
                                             <span className="nav-label">Service</span>
                                         </Link>
                                     </li>
-                                   
+
+
                                 </>
                             )
                         }

@@ -17,6 +17,8 @@ import ManagerHome from './components/home/ManagerHome';
 import ReceptionistHome from './components/home/ReceptionistHome';
 import RoomAttendantHome from './components/home/RoomAttendantHome';
 import ListService from './components/services/ListService';
+import ListRefundPolicy from './components/policies/ListRefundPolicy';
+import ListLateCheckOutPolicy from './components/policies/ListLateCheckOutPolicy';
 
 function App() {
   return (
@@ -40,6 +42,9 @@ function App() {
         <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
         {/* service */}
         <Route path="/list-service/" element={<ListService />} />
+         {/* policy */}
+         <Route path="/list-refund-policy/" element={<ListRefundPolicy />} />
+         <Route path="/list-late-check-out-policy/" element={<ListLateCheckOutPolicy />} />
       </Routes>
     </div>
   );

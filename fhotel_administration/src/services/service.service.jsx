@@ -44,6 +44,14 @@ class ServiceService {
         });
       }
 
+      uploadImage(service) {
+        return axios.post(API_URL + "/services/image/", service, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new ServiceService;

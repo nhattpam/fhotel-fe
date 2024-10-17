@@ -7,6 +7,8 @@ import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 
 import { Link } from 'react-router-dom';
+import Dropzone from 'react-dropzone';
+import serviceTypeService from '../../services/service-type.service';
 
 const ListService = () => {
 
@@ -61,8 +63,7 @@ const ListService = () => {
     const [service, setService] = useState({
 
     });
-    //list service types
-    const [serviceTypeList, setServiceTypeList] = useState([]);
+
 
     const openServiceModal = (serviceId) => {
         setShowModalHotel(true);
@@ -117,6 +118,164 @@ const ListService = () => {
     };
 
 
+
+    //create service modal
+    const [createService, setCreateService] = useState({
+        serviceName: "",
+        price: 0,
+        image: "",
+        description: "",
+        serviceTypeId: "",
+    });
+    const [showModalCreateService, setShowModalCreateService] = useState(false);
+
+    const openCreateServiceModal = () => {
+        setShowModalCreateService(true);
+
+    };
+
+    const closeModalCreateService = () => {
+        setShowModalCreateService(false);
+    };
+
+
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+
+        setCreateService({ ...createService, [e.target.name]: value });
+    };
+
+    const validateForm = () => {
+        let isValid = true;
+        const newError = {}; // Create a new error object
+
+        // Validate First Name
+        if (createService.serviceName.trim() === "") {
+            newError.serviceName = "Name is required";
+            isValid = false;
+        }
+
+        // Validate Last Name
+        if (createService.price.trim() === "") {
+            newError.price = "Price is required";
+            isValid = false;
+        }
+
+        // Validate Address
+        // if (createService.image.trim() === "") {
+        //     newError.image = "Image is required";
+        //     isValid = false;
+        // }
+
+        if (createService.description.trim() === "") {
+            newError.description = "Description is required";
+            isValid = false;
+        }
+
+        if (createService.serviceTypeId.trim() === "") {
+            newError.serviceTypeId = "Service Type is required";
+            isValid = false;
+        }
+
+
+
+        setError(newError); // Set the new error object
+        setShowError(Object.keys(newError).length > 0); // Show error if there are any
+        return isValid;
+    };
+
+    const [file, setFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState("");
+
+
+    const handleFileDrop = (acceptedFiles) => {
+        if (acceptedFiles && acceptedFiles.length > 0) {
+            setFile(acceptedFiles[0]);
+
+            // Set the image preview URL
+            const previewUrl = URL.createObjectURL(acceptedFiles[0]);
+            setImagePreview(previewUrl);
+        }
+    };
+
+    const submitCreateService = async (e) => {
+        e.preventDefault();
+        setError({});
+        setShowError(false);
+
+        if (validateForm()) {
+            try {
+                let image = createService.image;
+
+                if (file) {
+                    const imageData = new FormData();
+                    imageData.append('file', file);
+                    const imageResponse = await serviceService.uploadImage(imageData);
+                    image = imageResponse.data.link;
+                    console.log("this is url: " + image);
+                }
+
+                const serviceData = {
+                    ...createService,
+                    image,
+                    price: parseFloat(createService.price)
+                };
+
+                console.log(JSON.stringify(serviceData));  // Log payload
+
+                const serviceResponse = await serviceService.saveService(serviceData, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (serviceResponse.status === 201) {
+                    window.alert("Service created successfully!");
+                    // Refresh the roomTypeList after update
+                    const updatedServices = await serviceService.getAllService();
+                    setServiceList(updatedServices.data);  // Update the roomTypeList state with fresh data
+                } else {
+                    setError({ general: "Failed to create service." });
+                    setShowError(true);
+                }
+            } catch (error) {
+                console.log(error.response?.data || error.message);  // Log full error
+                setError({ general: "An unexpected error occurred. Please try again." });
+                setShowError(true);
+            }
+        }
+    };
+
+
+    // Effect to handle error message visibility
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 2000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
+
+    //list service types
+    const [serviceTypeList, setServiceTypeList] = useState([]);
+    useEffect(() => {
+        serviceTypeService
+            .getAllServiceType()
+            .then((res) => {
+                setServiceTypeList(res.data);
+
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+
+
     return (
         <>
             <Header />
@@ -146,6 +305,12 @@ const ListService = () => {
                                     value={serviceSearchTerm}
                                     onChange={handleHotelSearch}
                                 />
+                                <button
+                                    className="btn btn-primary ml-3"
+                                    onClick={openCreateServiceModal} // This will trigger the modal for creating a new hotel
+                                >
+                                    Create New Service
+                                </button>
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -309,6 +474,159 @@ const ListService = () => {
                     </div>
                 </div>
             )}
+
+            {
+                showModalCreateService && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+
+                            <div className="modal-content">
+                                <form
+                                    method="post"
+                                    className="mt-3"
+                                    id="myAwesomeDropzone"
+                                    data-plugin="dropzone"
+                                    data-previews-container="#file-previews"
+                                    data-upload-preview-template="#uploadPreviewTemplate"
+                                    data-parsley-validate
+                                    onSubmit={(e) => submitCreateService(e)}
+                                    style={{ textAlign: "left" }}
+                                >
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Create a Service</h5>
+
+                                        <button
+                                            type="button"
+                                            className="close"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={closeModalCreateService}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    {/* Display error message */}
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Modal Body with scrollable content */}
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+
+                                        <div className='row'>
+                                            <div className='col-md-4'>
+                                                <label htmlFor="imageUrl">Image * :</label>
+                                                <Dropzone
+                                                    onDrop={handleFileDrop}
+                                                    accept="image/*" multiple={false}
+                                                    maxSize={5000000} // Maximum file size (5MB)
+                                                >
+                                                    {({ getRootProps, getInputProps }) => (
+                                                        <div {...getRootProps()} className="fallback">
+                                                            <input {...getInputProps()} />
+                                                            <div className="dz-message needsclick">
+                                                                <i className="h1 text-muted dripicons-cloud-upload" />
+                                                                <h3>Drop files here or click to upload.</h3>
+                                                            </div>
+                                                            {imagePreview && (
+                                                                <img src={imagePreview} alt="Preview" style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "10px" }} />
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </Dropzone>
+
+                                                {/* Preview */}
+                                                <div className="dropzone-previews mt-3" id="file-previews" />
+                                            </div>
+                                            <div className='col-md-8'>
+                                                {/* Form Fields */}
+                                                <h4 className="header-title ">Information</h4>
+                                                <div className="form-row">
+                                                    <div className="form-group  col-md-6">
+                                                        <label htmlFor="serviceName">Service Name * :</label>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="serviceName"
+                                                            id="serviceName"
+                                                            value={createService.serviceName}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group  col-md-6">
+                                                        <label htmlFor="price">Price * :</label>
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            name="price"
+                                                            id="price"
+                                                            value={createService.price}
+                                                            onChange={(e) => handleChange(e)}
+                                                            min={0}
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="form-row">
+                                                    <div className="form-group col-md-6">
+                                                        <label htmlFor="description">Description * :</label>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="description"
+                                                            id="description"
+                                                            value={createService.description}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="form-group col-md-6">
+                                                        <label htmlFor="serviceTypeId">Service Type * :</label>
+                                                        <select
+                                                            name="serviceTypeId"
+                                                            className="form-control"
+                                                            value={createService.serviceTypeId}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        >
+                                                            <option value="">Select Type</option>
+                                                            {serviceTypeList.map((type) => (
+                                                                <option key={type.serviceTypeId} value={type.serviceTypeId}>
+                                                                    {type.serviceTypeName}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+
+                                    </div>
+
+                                    {/* Modal Footer */}
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-custom">Save</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateService}>Close</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div >
+
+                )
+            }
 
 
             <style>

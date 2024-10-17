@@ -8,6 +8,7 @@ import userService from '../../services/user.service';
 import roleService from '../../services/role.service';
 import hotelService from '../../services/hotel.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
+import { Link } from 'react-router-dom';
 
 const ListHotelManager = () => {
     //call list user registration
@@ -778,7 +779,7 @@ const ListHotelManager = () => {
                                     <div className="row">
                                         <div className="col-md-5">
                                             <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
-                                            <div className='row mt-2'>
+                                            {/* <div className='row mt-2'>
                                                 <div className='col-md-12'>
                                                     <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
                                                 </div>
@@ -793,7 +794,7 @@ const ListHotelManager = () => {
                                                         }
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> */}
                                         </div>
 
                                         <div className="col-md-7">
@@ -844,7 +845,7 @@ const ListHotelManager = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-custom"  >Save</button>
+                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
                                     <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
                                 </div>
                             </form>

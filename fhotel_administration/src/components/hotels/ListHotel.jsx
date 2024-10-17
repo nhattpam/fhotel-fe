@@ -116,12 +116,16 @@ const ListHotel = () => {
 
             // Make the update request
             const updateRes = await hotelService.updateHotel(hotelId, { ...hotelData, isActive });
-
+            console.log(updateRes)
             if (updateRes.status === 200) {
                 window.alert("Update successful!");
                 // Refresh the list after update
                 const updatedHotels = await hotelService.getAllHotel();
-                setHotelRegistrationList(updatedHotels.data);  // Update the roomTypeList state with fresh data
+                const sortedHotelList = [...updatedHotels.data].sort((a, b) => {
+                    // Assuming requestedDate is a string in ISO 8601 format
+                    return new Date(b.createdDate) - new Date(a.createdDate);
+                });
+                setHotelRegistrationList(sortedHotelList);
             } else {
                 window.alert("Update FAILED!");
             }
@@ -188,7 +192,7 @@ const ListHotel = () => {
 
                                                         </td>
                                                         <td>{item.hotelName}</td>
-                                                        <td>{item.owner?.firstName}</td>
+                                                        <td>{item.ownerName}</td>
                                                         <td>{item.city?.cityName}</td>
                                                         <td>{item.city?.country?.countryName}</td>
                                                         <td>
@@ -323,13 +327,15 @@ const ListHotel = () => {
                                                         <th>Address:</th>
                                                         <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <th>Description:</th>
-                                                        <td>{hotel && hotel.description ? hotel.description : 'Unknown Description'}</td>
-                                                    </tr>
+
                                                     <tr>
                                                         <th>Owner:</th>
                                                         <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Description:</th>
+                                                        <td dangerouslySetInnerHTML={{ __html: hotel.description }}>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>

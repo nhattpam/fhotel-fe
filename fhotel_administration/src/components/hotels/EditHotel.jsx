@@ -450,10 +450,7 @@ const EditHotel = () => {
                                         <th>Email:</th>
                                         <td>{hotel.email}</td>
                                     </tr>
-                                    <tr>
-                                        <th>Description:</th>
-                                        <td>{hotel.description}</td>
-                                    </tr>
+
                                     <tr>
                                         <th>Star:</th>
                                         <td>{hotel.star}</td>
@@ -503,7 +500,11 @@ const EditHotel = () => {
                                             }
                                         </td>
                                     </tr>
-
+                                    <tr>
+                                        <th>Description:</th>
+                                        <td dangerouslySetInnerHTML={{ __html: hotel.description }}>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <hr />

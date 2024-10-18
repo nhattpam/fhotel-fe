@@ -14,6 +14,7 @@ import roomTypeService from '../../services/room-type.service';
 import roomImageService from '../../services/room-image.service';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import amenityService from '../../services/amenity.service';
 
 const EditHotel = () => {
 
@@ -406,6 +407,86 @@ const EditHotel = () => {
     };
 
 
+    //create hotel amenity
+    const [showModalCreateHotelAmenity, setShowModalCreateHotelAmenity] = useState(false);
+
+    const openCreateHotelAmenityModal = () => {
+        setShowModalCreateHotelAmenity(true);
+
+    };
+
+    const closeModalCreateHotelAmenity = () => {
+        setShowModalCreateHotelAmenity(false);
+    };
+
+    const [amenityList, setAmenityList] = useState([]);
+    const [selectedAmenities, setSelectedAmenities] = useState([]);
+
+    useEffect(() => {
+        amenityService
+            .getAllAmenity()
+            .then((res) => {
+                setAmenityList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    });
+
+    // Function to handle amenity selection
+    const handleAmenitySelect = (amenityId) => {
+        setSelectedAmenities((prevSelected) => {
+            if (prevSelected.includes(amenityId)) {
+                // If the amenity is already selected, remove it
+                return prevSelected.filter(id => id !== amenityId);
+            } else {
+                // If the amenity is not selected, add it
+                return [...prevSelected, amenityId];
+            }
+        });
+    };
+
+    // Function to handle form submission
+    const handleSubmit = (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        selectedAmenities.forEach(amenityId => {
+            hotelAmenityService.saveHotelAmenity({ hotelId, amenityId })
+                .then(response => {
+                    console.log("Amenity added:", response);
+                    // After successful creation, refresh the hotel amenity list
+                    hotelService.getAllAmenityHotelById(hotelId)
+                        .then((res) => {
+                            setHotelAmenityList(res.data); // Update the state with new amenities
+                        })
+                        .catch((error) => {
+                            console.log("Error fetching amenities after creation:", error);
+                        });
+                })
+                .catch(error => {
+                    console.error("Error adding amenity:", error);
+                    // Optionally, you can show an error message for each failure
+                });
+        });
+
+        // After submitting, you may want to clear the selected amenities or close the modal
+        setSelectedAmenities([]); // Clear selected amenities after submission
+        closeModalCreateHotelAmenity(); // Close the modal if needed
+    };
+
+
+    const handleDeleteHotelAmenity = async (hotelAmenityId) => {
+        try {
+            // Call the API to delete the image by roomImageId
+            await hotelAmenityService.deleteHotelAmenityById(hotelAmenityId);
+
+            // After successful deletion, remove the image from the imageList
+            setHotelAmenityList(prevList => prevList.filter(item => item.hotelAmenityId !== hotelAmenityId));
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
+    };
+
 
 
     return (
@@ -435,7 +516,7 @@ const EditHotel = () => {
                                     <tr>
                                         <th>Image:</th>
                                         <td>
-                                            <img src={hotel.image} alt="avatar" />
+                                            <img src={hotel.image} alt="avatar" style={{ width: '60%' }} />
                                         </td>
                                     </tr>
                                     <tr>
@@ -490,15 +571,56 @@ const EditHotel = () => {
                                     </tr>
                                     <tr>
                                         <th>Amenities:</th>
-                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
-                                                    <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
-                                                        <img src={item.image} alt="avatar" style={{ width: "40px" }} />
+                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                        <img src={item.amenity?.image} alt="amenity" style={{ width: "40px", margin: '0 5px' }} />
+
+                                                        {/* Delete Button */}
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-danger"
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: '0', // Adjust to position the button as needed
+                                                                right: '0', // Adjust to position the button as needed
+                                                                background: 'transparent',
+                                                                border: 'none',
+                                                                color: 'red',
+                                                                fontSize: '20px',
+                                                                cursor: 'pointer',
+                                                            }}
+                                                            onClick={() => handleDeleteHotelAmenity(item.hotelAmenityId)}
+                                                        >
+                                                            &times; {/* This represents the delete icon (X symbol) */}
+                                                        </button>
                                                     </div>
                                                 ))
                                             }
+
+                                            {/* Square Add Button */}
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    width: '40px', // Adjust the size as needed
+                                                    height: '40px', // Same as width for a square
+                                                    backgroundColor: '#258cd1', // Button color
+                                                    color: '#fff', // Text color
+                                                    borderRadius: '4px', // Optional rounded corners
+                                                    margin: '5px', // Space around the button
+                                                    cursor: 'pointer',
+                                                }}
+                                                onClick={() => openCreateHotelAmenityModal(hotel.hotelId)}
+                                            >
+                                                +
+                                            </div>
                                         </td>
+
+
+
                                     </tr>
                                     <tr>
                                         <th>Description:</th>
@@ -601,7 +723,7 @@ const EditHotel = () => {
 
                 </div>
 
-            </div>
+            </div >
 
             {showModalRoomType && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
@@ -718,7 +840,8 @@ const EditHotel = () => {
                         </div>
                     </div>
                 </div>
-            )}
+            )
+            }
 
             {
                 showModalCreateRoomType && (
@@ -980,6 +1103,50 @@ const EditHotel = () => {
 
                 )
             }
+
+            {showModalCreateHotelAmenity && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-small" role="document">
+                        <div className="modal-content">
+                            <form onSubmit={handleSubmit}> {/* Attach handleSubmit here */}
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Choose Amenity</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelAmenity}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            {
+                                                amenityList.length > 0 && amenityList.map((item, index) => (
+                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                        <img src={item.image} alt="amenity" style={{ width: "40px", margin: '0 5px' }} />
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedAmenities.includes(item.amenityId)} // Check if this amenity is selected
+                                                            onChange={() => handleAmenitySelect(item.amenityId)} // Toggle selection
+                                                            style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
+                                                        />
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    {
+                                        loginUser.role?.roleName === "Hotel Manager" && (
+                                            <button type="submit" className="btn btn-custom">Submit</button>
+                                        )
+                                    }
+                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelAmenity}>Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
             <style>
                 {`
                     .page-item.active .page-link{
@@ -990,6 +1157,11 @@ const EditHotel = () => {
                 .custom-modal-xl {
     max-width: 90%;
     width: 90%;
+}
+
+   .custom-modal-small {
+    max-width: 50%;
+    width: 50%;
 }
     .btn-custom{
     background-color: #3498db;

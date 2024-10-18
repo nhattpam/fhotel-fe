@@ -578,45 +578,59 @@ const EditHotel = () => {
                                                         <img src={item.amenity?.image} alt="amenity" style={{ width: "40px", margin: '0 5px' }} />
 
                                                         {/* Delete Button */}
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-danger"
-                                                            style={{
-                                                                position: 'absolute',
-                                                                top: '0', // Adjust to position the button as needed
-                                                                right: '0', // Adjust to position the button as needed
-                                                                background: 'transparent',
-                                                                border: 'none',
-                                                                color: 'red',
-                                                                fontSize: '20px',
-                                                                cursor: 'pointer',
-                                                            }}
-                                                            onClick={() => handleDeleteHotelAmenity(item.hotelAmenityId)}
-                                                        >
-                                                            &times; {/* This represents the delete icon (X symbol) */}
-                                                        </button>
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '0', // Adjust to position the button as needed
+                                                                            right: '0', // Adjust to position the button as needed
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteHotelAmenity(item.hotelAmenityId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
+
                                                     </div>
                                                 ))
                                             }
 
                                             {/* Square Add Button */}
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    width: '40px', // Adjust the size as needed
-                                                    height: '40px', // Same as width for a square
-                                                    backgroundColor: '#258cd1', // Button color
-                                                    color: '#fff', // Text color
-                                                    borderRadius: '4px', // Optional rounded corners
-                                                    margin: '5px', // Space around the button
-                                                    cursor: 'pointer',
-                                                }}
-                                                onClick={() => openCreateHotelAmenityModal(hotel.hotelId)}
-                                            >
-                                                +
-                                            </div>
+                                            {
+                                                loginUser.role?.roleName === "Hotel Manager" && (
+                                                    <>
+                                                        <div
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                width: '40px', // Adjust the size as needed
+                                                                height: '40px', // Same as width for a square
+                                                                backgroundColor: '#258cd1', // Button color
+                                                                color: '#fff', // Text color
+                                                                borderRadius: '4px', // Optional rounded corners
+                                                                margin: '5px', // Space around the button
+                                                                cursor: 'pointer',
+                                                            }}
+                                                            onClick={() => openCreateHotelAmenityModal(hotel.hotelId)}
+                                                        >
+                                                            +
+                                                        </div>
+                                                    </>
+                                                )
+                                            }
+
                                         </td>
 
 

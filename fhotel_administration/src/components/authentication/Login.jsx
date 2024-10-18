@@ -115,9 +115,12 @@ const Login = () => {
         <>
             <div className="login-container">
                 <div className="sidenav">
-                    <div className="login-main-text">
-                        <h2>Welcome Back!</h2>
-                        <p>Sign in to your account to continue.</p>
+                    <div className="login-main-image">
+                        <img src="/my_img/admin_login.jpg" alt="Welcome" className="welcome-image" />
+                        <div className="centered-text">
+                            <h2>Welcome Back!</h2>
+                            <p>Sign in to your account to continue.</p>
+                        </div>
                     </div>
                 </div>
                 <div className="main">
@@ -125,7 +128,7 @@ const Login = () => {
                         <div className="login-form" style={{ textAlign: 'left' }}>
                             <form onSubmit={handleLogin}>
                                 <div className="form-group">
-                                    <label >Email</label>
+                                    <label>Email</label>
                                     <input
                                         type="email"
                                         className="form-control"
@@ -151,7 +154,7 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-
+    
             <style>
                 {`
                     body {
@@ -178,32 +181,47 @@ const Login = () => {
                         display: flex;
                         align-items: center;
                         justify-content: center;
+                        position: relative;
                     }
                     
-                    .login-main-text {
+                    .login-main-image {
+                        position: relative;
                         text-align: center;
-                        color: #fff;
                     }
-
-                    .login-main-text h2 {
-                        font-weight: 300;
-                        margin-bottom: 20px;
+    
+                    .welcome-image {
+                        max-width: 100%; 
+                        height: 1500px;
+                        display: block;
                     }
-
-                    .login-main-text p {
+    
+                    .centered-text {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        color: white;
+                        text-align: center;
+                    }
+    
+                    .centered-text h2 {
+                        font-weight: bold;
+                        margin-bottom: 10px;
+                    }
+    
+                    .centered-text p {
                         font-size: 18px;
                     }
-
+    
                     .login-form {
                         width: 100%;
                         max-width: 400px;
-                       
                     }
-
+    
                     .form-group label {
                         font-weight: bold;
                     }
-
+    
                     .form-control {
                         margin-bottom: 15px;
                         padding: 10px;
@@ -211,12 +229,12 @@ const Login = () => {
                         border: 1px solid #ccc;
                         border-radius: 4px;
                     }
-
+    
                     .error-text {
                         color: red;
                         margin-bottom: 10px;
                     }
-
+    
                     .btn-black {
                         background-color: #000;
                         color: white;
@@ -227,26 +245,16 @@ const Login = () => {
                         width: 100%;
                         margin-top: 10px;
                     }
-
+    
                     .btn-black:hover {
                         background-color: #333;
                     }
-
-                    .btn-secondary {
-                        background-color: #6c757d;
-                        color: white;
-                        padding: 10px 15px;
-                        border: none;
-                        cursor: pointer;
-                        width: 100%;
-                        margin-top: 10px;
-                    }
-
+    
                     @media screen and (max-width: 768px) {
                         .sidenav {
                             display: none;
                         }
-
+    
                         .login-container {
                             justify-content: center;
                         }
@@ -255,6 +263,8 @@ const Login = () => {
             </style>
         </>
     );
+    
+
 };
 
 export default Login;

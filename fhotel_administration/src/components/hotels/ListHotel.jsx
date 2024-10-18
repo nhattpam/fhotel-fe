@@ -16,6 +16,8 @@ const ListHotel = () => {
 
     //call list hotel registration
     const [hotelList, setHotelRegistrationList] = useState([]);
+    //assign hotel maanager to hotel
+    const [hotelManagerList, setHotelManagerList] = useState([]);
     const [hotelSearchTerm, setHotelSearchTerm] = useState('');
     const [currentHotelPage, setCurrentHotelPage] = useState(0);
     const [hotelsPerPage] = useState(5);
@@ -30,6 +32,20 @@ const ListHotel = () => {
                     return new Date(b.createdDate) - new Date(a.createdDate);
                 });
                 setHotelRegistrationList(sortedHotelList);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        userService
+            .getAllUser()
+            .then((res) => {
+                const hotelManagers = res.data.filter(user => user.role?.roleName === "Hotel Manager");
+
+                const sortedUserList = [...hotelManagers].sort((a, b) => {
+                    // Assuming requestedDate is a string in ISO 8601 format
+                    return new Date(b.createdDate) - new Date(a.createdDate);
+                });
+                setHotelManagerList(sortedUserList);
             })
             .catch((error) => {
                 console.log(error);
@@ -134,6 +150,57 @@ const ListHotel = () => {
             window.alert("An error occurred during the update.");
         }
     };
+
+
+    //assign hotel manager to specific hotel
+    const [updateHotelOwner, setUpdateHotelOwner] = useState({
+
+    });
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setUpdateHotelOwner((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const submitUpdateHotelOwner = async (e, hotelId, ownerId) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the user data
+            const res = await hotelService.getHotelById(hotelId);
+            const hotelData = res.data;
+
+            // Update the local state with the fetched data and new isActive flag
+            setUpdateHotelOwner({ ...hotelData, ownerId });
+            console.log(JSON.stringify(hotelData))
+            // Make the update request
+            const updateRes = await hotelService.updateHotel(hotelId, { ...hotelData, ownerId });
+            console.log(updateRes)
+            if (updateRes.status === 200) {
+                window.alert("Update successful!");
+                // Refresh the list after update
+                const updatedHotels = await hotelService.getAllHotel();
+                const sortedHotelList = [...updatedHotels.data].sort((a, b) => {
+                    // Assuming requestedDate is a string in ISO 8601 format
+                    return new Date(b.createdDate) - new Date(a.createdDate);
+                });
+                setHotelRegistrationList(sortedHotelList);
+            } else {
+                window.alert("Update FAILED!");
+            }
+        } catch (error) {
+            console.log(error);
+            window.alert("An error occurred during the update.");
+        }
+    };
+
+
+
+
 
 
     return (
@@ -282,7 +349,7 @@ const ListHotel = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
+                            <form onSubmit={(e) => submitUpdateHotelOwner(e, hotel.hotelId, updateHotelOwner.ownerId)}>
 
                                 <div className="modal-header">
                                     <h5 className="modal-title">Hotel Information</h5>
@@ -337,6 +404,34 @@ const ListHotel = () => {
                                                         <td dangerouslySetInnerHTML={{ __html: hotel.description }}>
                                                         </td>
                                                     </tr>
+                                                    <tr>
+                                                        <th>Managed by:</th>
+                                                        <td>
+                                                            <select
+                                                                name="ownerId"
+                                                                className="form-control"
+                                                                value={updateHotelOwner.ownerId || hotel.owner?.userId || ""}
+                                                                onChange={handleInputChange}
+                                                                required
+                                                            >
+                                                                {/* If a hotel owner exists, show the current owner as the first option */}
+                                                                {hotel.owner && (
+                                                                    <option value={hotel.owner.userId}>
+                                                                        {hotel.owner.firstName} {hotel.owner.lastName} (Current)
+                                                                    </option>
+                                                                )}
+
+                                                                {/* Option to select a new hotel manager */}
+                                                                <option value="">Select Hotel Manager</option>
+                                                                {hotelManagerList.map((user) => (
+                                                                    <option key={user.userId} value={user.userId}>
+                                                                        {user.firstName} {user.lastName}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+
                                                 </tbody>
                                             </table>
 
@@ -346,6 +441,7 @@ const ListHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
+                                    <button type="submit" className="btn btn-success" >Save</button>
                                     <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
                                     <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
                                 </div>

@@ -137,6 +137,7 @@ const ListOwnerHotel = () => {
                                             <th>Image</th>
                                             <th>Name</th>
                                             <th>Owner</th>
+                                            <th>District</th>
                                             <th>City</th>
                                             <th>Country</th>
                                             <th>Status</th>
@@ -154,8 +155,9 @@ const ListOwnerHotel = () => {
                                                         </td>
                                                         <td>{item.hotelName}</td>
                                                         <td>{item.owner?.firstName}</td>
-                                                        <td>{item.city?.cityName}</td>
-                                                        <td>{item.city?.country?.countryName}</td>
+                                                        <td>{item.district?.districtName}</td>
+                                                        <td>{item.district?.city?.cityName}</td>
+                                                        <td>{item.district?.city?.country?.countryName}</td>
                                                         <td>
                                                             {item.isActive ? (
                                                                 <span className="badge label-table badge-success">Active</span>
@@ -262,16 +264,16 @@ const ListOwnerHotel = () => {
                                                         <td>{hotel && hotel.taxIdentificationNumber ? hotel.taxIdentificationNumber : 'Unknown Tax Identification Number'}</td>
                                                     </tr>
                                                     <tr>
+                                                        <th>District:</th>
+                                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <th>City:</th>
-                                                        <td>{hotel && hotel.city?.cityName ? hotel.city?.cityName : 'Unknown City'}</td>
+                                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Address:</th>
                                                         <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Description:</th>
-                                                        <td>{hotel && hotel.description ? hotel.description : 'Unknown Description'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Owner:</th>

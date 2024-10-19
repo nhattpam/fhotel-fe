@@ -68,6 +68,14 @@ class HotelService {
         });
       }
 
+      getAllHotelStaffByHotelId(id) {
+        return axios.get(API_URL + `/hotels/${id}/hotel-staffs`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new HotelService;

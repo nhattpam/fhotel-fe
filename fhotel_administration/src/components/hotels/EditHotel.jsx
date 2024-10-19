@@ -15,6 +15,7 @@ import roomImageService from '../../services/room-image.service';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import amenityService from '../../services/amenity.service';
+import typeService from '../../services/type.service';
 
 const EditHotel = () => {
 
@@ -44,6 +45,7 @@ const EditHotel = () => {
     //list hotel amenities
     const [hotelAmenityList, setHotelAmenityList] = useState([]);
     const [roomTypeList, setRoomTypeList] = useState([]);
+    const [typeList, setTypeList] = useState([]);
 
     useEffect(() => {
         hotelService
@@ -66,6 +68,14 @@ const EditHotel = () => {
             .getAllRoomTypeByHotelId(hotelId)
             .then((res) => {
                 setRoomTypeList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        typeService
+            .getAllType()
+            .then((res) => {
+                setTypeList(res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -193,11 +203,11 @@ const EditHotel = () => {
 
     const [createRoomType, setCreateRoomType] = useState({
         hotelId: hotelId,
-        typeName: "",
+        typeId: "",
         description: "",
         roomSize: 0,
-        basePrice: 0,
-        maxOccupancy: 0,
+        // basePrice: 0,
+        // maxOccupancy: 0,
         totalRooms: 0,
         availableRooms: 0
 
@@ -227,8 +237,8 @@ const EditHotel = () => {
         const errors = {};
 
         // Type Name validation
-        if (!createRoomType.typeName.trim()) {
-            errors.typeName = "Type Name is required";
+        if (!createRoomType.typeId.trim()) {
+            errors.typeId = "Type Name is required";
         }
 
         // Room Size validation
@@ -236,15 +246,15 @@ const EditHotel = () => {
             errors.roomSize = "Room Size must be greater than 0";
         }
 
-        // Base Price validation
-        if (createRoomType.basePrice <= 0) {
-            errors.basePrice = "Base Price must be greater than 0";
-        }
+        // // Base Price validation
+        // if (createRoomType.basePrice <= 0) {
+        //     errors.basePrice = "Base Price must be greater than 0";
+        // }
 
-        // Max Occupancy validation
-        if (!createRoomType.maxOccupancy) {
-            errors.maxOccupancy = "Max Occupancy is required";
-        }
+        // // Max Occupancy validation
+        // if (!createRoomType.maxOccupancy) {
+        //     errors.maxOccupancy = "Max Occupancy is required";
+        // }
 
         // Total Rooms validation
         if (!createRoomType.totalRooms) {
@@ -545,8 +555,12 @@ const EditHotel = () => {
                                         <td>{hotel.taxIdentificationNumber}</td>
                                     </tr>
                                     <tr>
+                                        <th>District:</th>
+                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
+                                    </tr>
+                                    <tr>
                                         <th>City:</th>
-                                        <td>{hotel.city?.cityName}</td>
+                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                     </tr>
                                     <tr>
                                         <th>Status:</th>
@@ -671,7 +685,6 @@ const EditHotel = () => {
                                             <th>No.</th>
                                             <th data-hide="phone">Name</th>
                                             <th>Room Size</th>
-                                            <th data-toggle="true">Max Occupancy</th>
                                             <th data-toggle="true">Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -681,9 +694,8 @@ const EditHotel = () => {
                                             roomTypeList.length > 0 && roomTypeList.map((item, index) => (
                                                 <tr key={item.roomTypeId}>
                                                     <td>{index + 1}</td>
-                                                    <td>{item.typeName}</td>
-                                                    <td>{item.roomSize}</td>
-                                                    <td>{item.maxOccupancy}</td>
+                                                    <td>{item.type?.typeName}</td>
+                                                    <td>{item.roomSize} m²</td>
                                                     <td>
                                                         {item.isActive ? (
                                                             <span className="badge label-table badge-success">Active</span>
@@ -904,17 +916,20 @@ const EditHotel = () => {
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
                                                 <label htmlFor="hotelName">Type Name * :</label>
-                                                <input
-                                                    type="text"
+                                                <select
+                                                    name="typeId"
                                                     className="form-control"
-                                                    name="typeName"
-                                                    id="typeName"
-                                                    value={createRoomType.typeName}
+                                                    value={createRoomType.typeId}
                                                     onChange={(e) => handleChange(e)}
                                                     required
-                                                    disabled={formSubmitted} // Disable if form submitted
-
-                                                />
+                                                >
+                                                    <option value="">Select Type</option>
+                                                    {typeList.map((type) => (
+                                                        <option key={type.typeId} value={type.typeId}>
+                                                            {type.typeName}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
 
                                             <div className="form-group  col-md-6">
@@ -944,7 +959,7 @@ const EditHotel = () => {
 
 
                                         <div className="form-row">
-                                            <div className="form-group col-md-6">
+                                            {/* <div className="form-group col-md-6">
                                                 <label htmlFor="email">Base Price * :</label>
                                                 <div className="input-group">
                                                     <input
@@ -990,7 +1005,7 @@ const EditHotel = () => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                            </div>
+                                            </div> */}
 
 
                                             <div className="form-group col-md-6">

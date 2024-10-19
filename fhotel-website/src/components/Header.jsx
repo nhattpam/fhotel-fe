@@ -5,6 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 import hotelService from '../services/hotel.service';
 import Dropzone from 'react-dropzone';
 import cityService from '../services/city.service';
+import districtService from '../services/district.service';
 
 
 const Header = () => {
@@ -21,7 +22,7 @@ const Header = () => {
         businessLicenseNumber: '',
         taxIdentificationNumber: '',
         image: '', // This will hold the uploaded image URL
-        cityId: ''
+        districtId: ''
     }]);
     const [expandedHotels, setExpandedHotels] = useState([true]);
     const [imagePreviews, setImagePreviews] = useState(['']); // Separate state for image previews
@@ -62,12 +63,21 @@ const Header = () => {
 
     // Cities
     const [cityList, setCityList] = useState([]);
+    const [districtList, setDistrictList] = useState([]);
 
     useEffect(() => {
         cityService
             .getAllCity()
             .then((res) => {
                 setCityList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        districtService
+            .getAllDistrict()
+            .then((res) => {
+                setDistrictList(res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -84,7 +94,7 @@ const Header = () => {
             businessLicenseNumber: '',
             taxIdentificationNumber: '',
             image: '',
-            cityId: ''
+            districtId: ''
         }]);
         setImagePreviews([...imagePreviews, '']); // Add an empty string for the new hotel's image preview
         setExpandedHotels([...expandedHotels, true]);
@@ -120,6 +130,7 @@ const Header = () => {
                 };
 
                 // Post each hotel one by one
+                console.log(JSON.stringify(hotelWithOwnerInfo))
                 const hotelResponse = await hotelService.saveHotel(hotelWithOwnerInfo); // Send individual hotel request
                 if (hotelResponse.status == 201) {
                     console.log("Hotel registration response: ", hotelResponse.data);
@@ -332,21 +343,51 @@ const Header = () => {
                                                                 <div className="form-group col-md-6">
                                                                     <label>City</label>
                                                                     <select
-                                                                        name="cityId"
+                                                                        // name="cityId"
                                                                         className="form-control"
-                                                                        value={hotel.cityId}
-                                                                        onChange={(e) => handleInputChange(e, index)}
+                                                                        // value={hotel.cityId}
+                                                                        // onChange={(e) => handleInputChange(e, index)}
                                                                         required
                                                                     >
                                                                         <option value="">Select City</option>
                                                                         {cityList.map((city) => (
-                                                                            <option key={city.cityId} value={city.cityId}>
+                                                                            <option>
                                                                                 {city.cityName}
                                                                             </option>
                                                                         ))}
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                                            <div className="form-row">
+                                                                <div className="form-group col-md-6">
+                                                                    <label>District</label>
+                                                                    <select
+                                                                        name="districtId"
+                                                                        className="form-control"
+                                                                        value={hotel.districtId}
+                                                                        onChange={(e) => handleInputChange(e, index)}
+                                                                        required
+                                                                    >
+                                                                        <option value="">Select District</option>
+                                                                        {districtList.map((district) => (
+                                                                            <option key={district.districtId} value={district.districtId}>
+                                                                                {district.districtName}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                                <div className="form-group col-md-6">
+                                                                    <label>Address</label>
+                                                                    <textarea
+                                                                        name="address"
+                                                                        className="form-control"
+                                                                        value={hotel.address}
+                                                                        onChange={(e) => handleInputChange(e, index)}
+                                                                        required
+                                                                    />
+                                                                </div>
+                                                            </div>
+
                                                             <div className="form-row">
                                                                 <div className="form-group col-md-6">
                                                                     <label>Business License Number</label>
@@ -371,16 +412,7 @@ const Header = () => {
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            <div className="form-group">
-                                                                <label>Address</label>
-                                                                <textarea
-                                                                    name="address"
-                                                                    className="form-control"
-                                                                    value={hotel.address}
-                                                                    onChange={(e) => handleInputChange(e, index)}
-                                                                    required
-                                                                />
-                                                            </div>
+
                                                             <div className="form-group">
                                                                 <label>Description</label>
                                                                 <ReactQuill

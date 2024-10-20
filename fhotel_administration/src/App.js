@@ -19,6 +19,7 @@ import RoomAttendantHome from './components/home/RoomAttendantHome';
 import ListService from './components/services/ListService';
 import ListRefundPolicy from './components/policies/ListRefundPolicy';
 import ListLateCheckOutPolicy from './components/policies/ListLateCheckOutPolicy';
+import ListTypePricing from './components/type-pricings/ListTypePricing';
 
 function App() {
   return (
@@ -45,6 +46,8 @@ function App() {
          {/* policy */}
          <Route path="/list-refund-policy/" element={<ListRefundPolicy />} />
          <Route path="/list-late-check-out-policy/" element={<ListLateCheckOutPolicy />} />
+          {/* type-pricing */}
+        <Route path="/list-type-pricing/:typeId" element={<ListTypePricing />} />
       </Routes>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'
 import userService from '../services/user.service';
+import typeService from '../services/type.service';
 
 const SideBar = () => {
 
@@ -37,6 +38,26 @@ const SideBar = () => {
     const togglePolicyMenu = () => {
         setIsUPolicyMenuOpen(!isPolicyMenuOpen); // Toggle the state between true/false
     };
+
+    const [isPricingMenuOpen, setIsPricingMenuOpen] = useState(false); // Track the state of the User submenu
+
+    const togglePricingMenu = () => {
+        setIsPricingMenuOpen(!isPricingMenuOpen); // Toggle the state between true/false
+    };
+
+    const [typeList, setTypeList] = useState([]);
+
+    useEffect(() => {
+        typeService
+            .getAllType()
+            .then((res) => {
+                setTypeList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
 
     return (
         <>
@@ -141,6 +162,26 @@ const SideBar = () => {
                                             </li>
                                             <li>
                                                 <Link to="/list-late-check-out-policy">Late Checkout Policy</Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;" onClick={togglePricingMenu}>
+                                            <i className="sidebar-item-icon fa fa-usd" />
+                                            <span className="nav-label">Pricing</span>
+                                            <i className={`fa fa-angle-left arrow ${isPricingMenuOpen ? '' : 'collapsed'}`} />
+                                        </a>
+                                        {/* Conditionally apply collapse class based on the state */}
+                                        <ul className={`nav-2-level collapse ${isPricingMenuOpen ? 'show' : ''}`}>
+                                            {
+                                                typeList.length > 0 && typeList.map((item, index) => (
+                                                    <li>
+                                                        <a href={`/list-type-pricing/${item.typeId}`}>{item.typeName}</a>
+                                                    </li>
+                                                ))
+                                            }
+                                            <li>
+                                                <Link to={`/create-type-pricing/`}>Create Pricing</Link>
                                             </li>
                                         </ul>
                                     </li>

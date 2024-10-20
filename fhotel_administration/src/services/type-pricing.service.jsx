@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_URL } from './api-config';  // Adjust the path as necessary
 
 
-class TypeService {
+class TypePricingService {
 
     token = '';
 
@@ -11,25 +11,22 @@ class TypeService {
         this.token = token;
     }
 
+    loginTypePricing(email, password) {
+        return axios.post(API_URL + "/authentications/login", {
+            email: email,
+            password: password,
+        });
+    }
 
-    saveType(type) {
-        return axios.post(API_URL + "/types/", type, {
+    saveTypePricing(typePricing) {
+        return axios.post(API_URL + "/type-pricings/", typePricing, {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
         });
       }
-      getAllType() {
-        return axios.get(API_URL + "/types", {
-          headers: {
-            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
-          }
-        });
-      }
-    
-    
-      updateType(id, type) {
-        return axios.put(API_URL + "/types/" + id, type, {
+      getAllTypePricing() {
+        return axios.get(API_URL + "/type-pricings", {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
@@ -37,16 +34,25 @@ class TypeService {
       }
     
     
-      getTypeById(id) {
-        return axios.get(API_URL + "/types/" + id, {
+      updateTypePricing(id, typePricing) {
+        return axios.put(API_URL + "/type-pricings/" + id, typePricing, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+    
+    
+      getTypePricingById(id) {
+        return axios.get(API_URL + "/type-pricings/" + id, {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
         });
       }
 
-      getAllTypePricingByTypeId(id) {
-        return axios.get(API_URL + `/types/${id}/type-pricings`, {
+      getAllHotelByTypePricingId(id) {
+        return axios.get(API_URL + `/type-pricings/${id}/hotels`, {
           headers: {
             Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
           }
@@ -55,4 +61,4 @@ class TypeService {
 
 
 }
-export default new TypeService;
+export default new TypePricingService;

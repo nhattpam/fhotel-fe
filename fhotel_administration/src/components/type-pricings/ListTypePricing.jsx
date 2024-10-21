@@ -149,6 +149,7 @@ const ListTypePricing = () => {
 
     const [cityList, setCityList] = useState([]);
     const [districtList, setDistrictList] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(''); // Add state for selected city
 
     useEffect(() => {
         cityService
@@ -159,15 +160,23 @@ const ListTypePricing = () => {
             .catch((error) => {
                 console.log(error);
             });
-        districtService
-            .getAllDistrict()
-            .then((res) => {
-                setDistrictList(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
     }, []);
+
+    // Fetch districts when selectedCity changes
+    useEffect(() => {
+        if (selectedCity) {
+            cityService
+                .getAllDistrictByCityId(selectedCity)
+                .then((res) => {
+                    setDistrictList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            setDistrictList([]); // Clear district list if no city is selected
+        }
+    }, [selectedCity]);
 
     const submitCreateTypePricing = async (e) => {
         e.preventDefault();
@@ -203,7 +212,7 @@ const ListTypePricing = () => {
                         .catch((error) => {
                             console.log(error);
                         });
-                        setShowModalCreateTypePricing(false);
+                    setShowModalCreateTypePricing(false);
                 } else {
                     setError({ general: "Failed to create price." }); // Set error message
                     setShowError(true); // Show error
@@ -229,6 +238,8 @@ const ListTypePricing = () => {
             return () => clearTimeout(timer); // Cleanup timer on unmount
         }
     }, [showError]); // Only run effect if showError changes
+
+
 
 
 
@@ -439,23 +450,26 @@ const ListTypePricing = () => {
                                             <div className="form-group  col-md-6">
                                                 <label>City</label>
                                                 <select
-                                                    // name="cityId"
+                                                    name="cityId"
                                                     className="form-control"
-                                                    // value={hotel.cityId}
-                                                    // onChange={(e) => handleInputChange(e, index)}
+                                                    // value={hotel.cityId} // Set the value to the selected city id
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setSelectedCity(e.target.value); // Update selected city
+                                                    }}
                                                     required
                                                 >
                                                     <option value="">Select City</option>
                                                     {cityList.map((city) => (
-                                                        <option>
+                                                        <option key={city.cityId} value={city.cityId}>
                                                             {city.cityName}
                                                         </option>
                                                     ))}
                                                 </select>
                                             </div>
 
-                                            <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">District * :</label>
+                                            <div className="form-group col-md-6">
+                                                <label>District</label>
                                                 <select
                                                     name="districtId"
                                                     className="form-control"

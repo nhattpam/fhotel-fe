@@ -52,6 +52,14 @@ class RoomTypeService {
         });
       }
 
+      getTodayPricebyRoomTypeId(id) {
+        return axios.get(API_URL + `/room-types/${id}/today-price`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new RoomTypeService;

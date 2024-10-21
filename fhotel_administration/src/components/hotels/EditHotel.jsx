@@ -46,6 +46,7 @@ const EditHotel = () => {
     const [hotelAmenityList, setHotelAmenityList] = useState([]);
     const [roomTypeList, setRoomTypeList] = useState([]);
     const [typeList, setTypeList] = useState([]);
+    const [roomPrices, setRoomPrices] = useState({}); // New state to store room prices
 
     useEffect(() => {
         hotelService
@@ -67,7 +68,21 @@ const EditHotel = () => {
         hotelService
             .getAllRoomTypeByHotelId(hotelId)
             .then((res) => {
-                setRoomTypeList(res.data);
+                const roomTypes = res.data;
+                setRoomTypeList(roomTypes);
+                // Fetch price for each room type
+                roomTypes.forEach((roomType) => {
+                    roomTypeService.getTodayPricebyRoomTypeId(roomType.roomTypeId)
+                        .then((priceRes) => {
+                            setRoomPrices(prevPrices => ({
+                                ...prevPrices,
+                                [roomType.roomTypeId]: priceRes.data // Save the price by room type ID
+                            }));
+                        })
+                        .catch((error) => {
+                            console.log("Error fetching price for roomTypeId:", roomType.roomTypeId, error);
+                        });
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -301,6 +316,14 @@ const EditHotel = () => {
                 //o day la dong thong bao tao thanh cong mau success
                 setRoomType(res.data);
                 setFormSubmitted(true); // Mark form as submitted
+                hotelService
+                    .getAllRoomTypeByHotelId(hotelId)
+                    .then((res) => {
+                        setRoomTypeList(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             })
             .catch((error) => {
                 console.log(error);
@@ -682,8 +705,6 @@ const EditHotel = () => {
                             </div>
 
 
-
-
                             <div className="table-responsive">
                                 <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
                                     <thead className="thead-light">
@@ -691,6 +712,7 @@ const EditHotel = () => {
                                             <th>No.</th>
                                             <th data-hide="phone">Name</th>
                                             <th>Room Size</th>
+                                            <th>Price</th> {/* Add a new column for the price */}
                                             <th data-toggle="true">Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -702,6 +724,13 @@ const EditHotel = () => {
                                                     <td>{index + 1}</td>
                                                     <td>{item.type?.typeName}</td>
                                                     <td>{item.roomSize} m²</td>
+                                                    <td>
+                                                        {
+                                                            roomPrices[item.roomTypeId] !== undefined
+                                                                ? `${roomPrices[item.roomTypeId]} VND` // Show price if available
+                                                                : "Loading..." // Show loading message while fetching price
+                                                        }
+                                                    </td>
                                                     <td>
                                                         {item.isActive ? (
                                                             <span className="badge label-table badge-success">Active</span>
@@ -717,7 +746,7 @@ const EditHotel = () => {
                                                         </button>
                                                         <form
                                                             id="demo-form"
-                                                            onSubmit={(e) => submitUpdateRoomTypeStatus(e, item.roomTypeId, updateRoomTypeStatus.isActive)} // Use isActive from the local state
+                                                            onSubmit={(e) => submitUpdateRoomTypeStatus(e, item.roomTypeId, updateRoomTypeStatus.isActive)}
                                                             className="d-inline"
                                                         >
                                                             <button
@@ -725,7 +754,7 @@ const EditHotel = () => {
                                                                 className="btn btn-default btn-xs m-r-5"
                                                                 data-toggle="tooltip"
                                                                 data-original-title="Activate"
-                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: true })} // Activate
+                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: true })}
                                                             >
                                                                 <i className="fa fa-check font-14 text-success" />
                                                             </button>
@@ -734,7 +763,7 @@ const EditHotel = () => {
                                                                 className="btn btn-default btn-xs"
                                                                 data-toggle="tooltip"
                                                                 data-original-title="Deactivate"
-                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: false })} // Deactivate
+                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: false })}
                                                             >
                                                                 <i className="fa fa-times font-14 text-danger" />
                                                             </button>
@@ -743,10 +772,7 @@ const EditHotel = () => {
                                                 </tr>
                                             ))
                                         }
-
-
                                     </tbody>
-
                                 </table>
                                 {
                                     roomTypeList.length === 0 && (
@@ -755,7 +781,8 @@ const EditHotel = () => {
                                         </div>
                                     )
                                 }
-                            </div> {/* end .table-responsive*/}
+                            </div> {/* end .table-responsive */}
+
                         </div>
 
                     </div>
@@ -972,53 +999,6 @@ const EditHotel = () => {
 
 
                                         <div className="form-row">
-                                            {/* <div className="form-group col-md-6">
-                                                <label htmlFor="email">Base Price * :</label>
-                                                <div className="input-group">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        name="basePrice"
-                                                        id="basePrice"
-                                                        value={createRoomType.basePrice}
-                                                        onChange={(e) => handleChange(e)}
-                                                        placeholder="Enter the base price"
-                                                        min="0"
-                                                        required
-                                                        disabled={formSubmitted} // Disable if form submitted
-
-                                                        aria-describedby="basePriceHelp"
-                                                    />
-                                                    <div className="input-group-append">
-                                                        <span className="input-group-text custom-append">VND</span>
-                                                    </div>
-                                                </div>
-                                                <small id="basePriceHelp" className="form-text text-muted">
-                                                    Enter the price in Viet Nam Dong.
-                                                </small>
-                                            </div>
-
-
-                                            <div className="form-group col-md-6">
-                                                <label htmlFor="maxOccupancy">Max Occupancy * :</label>
-                                                <select
-                                                    className="form-control"
-                                                    id="maxOccupancy"
-                                                    name="maxOccupancy"
-                                                    value={createRoomType.maxOccupancy}
-                                                    onChange={handleChange}
-                                                    required
-                                                    disabled={formSubmitted} // Disable if form submitted
-
-                                                >
-                                                    <option value="">Select</option>
-                                                    {[...Array(3).keys()].map((_, index) => (
-                                                        <option key={index + 1} value={index + 1}>
-                                                            {index + 1}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div> */}
 
 
                                             <div className="form-group col-md-6">

@@ -452,6 +452,10 @@ const ListHotel = () => {
                                                         <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
                                                     </tr>
                                                     <tr>
+                                                        <th>Owner Email:</th>
+                                                        <td>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <th>Description:</th>
                                                         <td dangerouslySetInnerHTML={{ __html: hotel.description }}>
                                                         </td>

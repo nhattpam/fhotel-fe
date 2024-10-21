@@ -521,8 +521,8 @@ const ListHotelManager = () => {
                                                                 <th>Image</th>
                                                                 <th>Name</th>
                                                                 <th>Owner</th>
+                                                                <th>District</th>
                                                                 <th>City</th>
-                                                                <th>Country</th>
                                                                 <th>Status</th>
                                                             </tr>
                                                         </thead>
@@ -538,8 +538,8 @@ const ListHotelManager = () => {
                                                                             </td>
                                                                             <td>{item.hotelName}</td>
                                                                             <td>{item.owner?.firstName}</td>
-                                                                            <td>{item.city?.cityName}</td>
-                                                                            <td>{item.city?.country?.countryName}</td>
+                                                                            <td>{item.district?.districtName}</td>
+                                                                            <td>{item.district?.city?.cityName}</td>
                                                                             <td>
                                                                                 {item.isActive ? (
                                                                                     <span className="badge label-table badge-success">Active</span>
@@ -779,22 +779,6 @@ const ListHotelManager = () => {
                                     <div className="row">
                                         <div className="col-md-5">
                                             <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
-                                            {/* <div className='row mt-2'>
-                                                <div className='col-md-12'>
-                                                    <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
-                                                </div>
-                                                <div className='col-md-12'>
-                                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                                                        {
-                                                            hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
-                                                                <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
-                                                                    <img src={item.image} alt="avatar" style={{ width: "40px" }} />
-                                                                </div>
-                                                            ))
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div> */}
                                         </div>
 
                                         <div className="col-md-7">
@@ -813,29 +797,18 @@ const ListHotelManager = () => {
                                                         <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Business License Number:</th>
-                                                        <td>{hotel && hotel.businessLicenseNumber ? hotel.businessLicenseNumber : 'Unknown Business License Number'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Tax Identification Number:</th>
-                                                        <td>{hotel && hotel.taxIdentificationNumber ? hotel.taxIdentificationNumber : 'Unknown Tax Identification Number'}</td>
+                                                        <th>District:</th>
+                                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>City:</th>
-                                                        <td>{hotel && hotel.city?.cityName ? hotel.city?.cityName : 'Unknown City'}</td>
+                                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Address:</th>
                                                         <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <th>Description:</th>
-                                                        <td>{hotel && hotel.description ? hotel.description : 'Unknown Description'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Owner:</th>
-                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
-                                                    </tr>
+                                                   
                                                 </tbody>
                                             </table>
 

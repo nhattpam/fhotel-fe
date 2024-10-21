@@ -134,7 +134,7 @@ const ListHotel = () => {
             const updateRes = await hotelService.updateHotel(hotelId, { ...hotelData, isActive });
             console.log(updateRes)
             if (updateRes.status === 200) {
-                window.alert("Update successful!");
+                // window.alert("Update successful!");
                 // Refresh the list after update
                 const updatedHotels = await hotelService.getAllHotel();
                 const sortedHotelList = [...updatedHotels.data].sort((a, b) => {
@@ -181,7 +181,8 @@ const ListHotel = () => {
             const updateRes = await hotelService.updateHotel(hotelId, { ...hotelData, ownerId });
             console.log(updateRes)
             if (updateRes.status === 200) {
-                window.alert("Update successful!");
+                setSuccess({ general: "Update successfully!" });
+                setShowSuccess(true); // Show error
                 // Refresh the list after update
                 const updatedHotels = await hotelService.getAllHotel();
                 const sortedHotelList = [...updatedHotels.data].sort((a, b) => {
@@ -190,15 +191,44 @@ const ListHotel = () => {
                 });
                 setHotelRegistrationList(sortedHotelList);
             } else {
-                window.alert("Update FAILED!");
+                setError({ general: "An error occurred during the update." }); // Set generic error message
+                setShowError(true); // Show error
             }
         } catch (error) {
             console.log(error);
-            window.alert("An error occurred during the update.");
+            setError({ general: "An error occurred during the update." }); // Set generic error message
+            setShowError(true); // Show error
         }
     };
 
 
+    /// notification
+    const [success, setSuccess] = useState({}); // State to hold error messages
+    const [showSuccess, setShowSuccess] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+                // window.location.reload();
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
+
+
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
 
 
 
@@ -217,6 +247,7 @@ const ListHotel = () => {
                         {/* <li className="breadcrumb-item">Basic Tables</li> */}
                     </ol>
                 </div>
+
                 <div className="page-content fade-in-up">
                     {/* start ibox */}
                     <div className="ibox">
@@ -234,6 +265,7 @@ const ListHotel = () => {
                                 />
                             </div>
                         </div>
+
                         <div className="ibox-body">
                             <div className="table-responsive">
                                 <table className="table">
@@ -358,6 +390,20 @@ const ListHotel = () => {
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">

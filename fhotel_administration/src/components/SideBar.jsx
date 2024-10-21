@@ -180,9 +180,6 @@ const SideBar = () => {
                                                     </li>
                                                 ))
                                             }
-                                            <li>
-                                                <Link to={`/create-type-pricing/`}>Create Pricing</Link>
-                                            </li>
                                         </ul>
                                     </li>
 

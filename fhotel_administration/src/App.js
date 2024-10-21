@@ -20,6 +20,7 @@ import ListService from './components/services/ListService';
 import ListRefundPolicy from './components/policies/ListRefundPolicy';
 import ListLateCheckOutPolicy from './components/policies/ListLateCheckOutPolicy';
 import ListTypePricing from './components/type-pricings/ListTypePricing';
+import ListReservation from './components/reservations/ListReservation';
 
 function App() {
   return (
@@ -42,12 +43,14 @@ function App() {
         <Route path="/list-owner-hotel" element={<ListOwnerHotel />} />
         <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
         {/* service */}
-        <Route path="/list-service/" element={<ListService />} />
+        <Route path="/list-service" element={<ListService />} />
          {/* policy */}
-         <Route path="/list-refund-policy/" element={<ListRefundPolicy />} />
-         <Route path="/list-late-check-out-policy/" element={<ListLateCheckOutPolicy />} />
+         <Route path="/list-refund-policy" element={<ListRefundPolicy />} />
+         <Route path="/list-late-check-out-policy" element={<ListLateCheckOutPolicy />} />
           {/* type-pricing */}
         <Route path="/list-type-pricing/:typeId" element={<ListTypePricing />} />
+        {/* reservation */}
+        <Route path="/list-reservation" element={<ListReservation />} />
       </Routes>
     </div>
   );

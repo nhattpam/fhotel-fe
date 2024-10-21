@@ -4,21 +4,25 @@ import SideBar from '../SideBar'
 import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
-import lateCheckOutPolicyService from '../../services/late-check-out.service';
+import reservationService from '../../services/reservation.service';
 
-const ListLateCheckOutPolicy = () => {
-
-    const [lateCheckOutPolicyList, setLateCheckOutPolicyList] = useState([]);
-    const [lateCheckOutPolicySearchTerm, setLateCheckOutPolicySearchTerm] = useState('');
-    const [currentLateCheckOutPolicyPage, setCurrentLateCheckOutPolicyPage] = useState(0);
-    const [lateCheckOutPolicysPerPage] = useState(5);
+const ListReservation = () => {
+    //call list hotel registration
+    const [reservationList, setReservationList] = useState([]);
+    const [reservationSearchTerm, setReservationSearchTerm] = useState('');
+    const [currentReservationPage, setCurrentReservationPage] = useState(0);
+    const [reservationsPerPage] = useState(5);
 
 
     useEffect(() => {
-        lateCheckOutPolicyService
-            .getAllLateCheckOutPolicy()
+        reservationService
+            .getAllReservation()
             .then((res) => {
-                setLateCheckOutPolicyList(res.data);
+                const sortedReservationList = [...res.data].sort((a, b) => {
+                    // Assuming requestedDate is a string in ISO 8601 format
+                    return new Date(b.createdDate) - new Date(a.createdDate);
+                });
+                setReservationList(sortedReservationList);
             })
             .catch((error) => {
                 console.log(error);
@@ -26,44 +30,46 @@ const ListLateCheckOutPolicy = () => {
     }, []);
 
 
-    const handleLateCheckOutPolicySearch = (event) => {
-        setLateCheckOutPolicySearchTerm(event.target.value);
+    const handleReservationSearch = (event) => {
+        setReservationSearchTerm(event.target.value);
     };
 
-    const filteredLateCheckOutPolicys = lateCheckOutPolicyList
-        .filter((lateCheckOutPolicy) => {
+    const filteredReservations = reservationList
+        .filter((reservation) => {
             return (
-                lateCheckOutPolicy.description.toString().toLowerCase().includes(lateCheckOutPolicySearchTerm.toLowerCase()) ||
-                lateCheckOutPolicy.chargePercentage.toString().toLowerCase().includes(lateCheckOutPolicySearchTerm.toLowerCase()) 
+                reservation.user?.firstName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.type?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.createdDate.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.numberOfRooms?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())
             );
         });
 
-    const pageLateCheckOutPolicyCount = Math.ceil(filteredLateCheckOutPolicys.length / lateCheckOutPolicysPerPage);
+    const pageReservationCount = Math.ceil(filteredReservations.length / reservationsPerPage);
 
-    const handleLateCheckOutPolicyPageClick = (data) => {
-        setCurrentLateCheckOutPolicyPage(data.selected);
+    const handleReservationPageClick = (data) => {
+        setCurrentReservationPage(data.selected);
     };
 
-    const offsetLateCheckOutPolicy = currentLateCheckOutPolicyPage * lateCheckOutPolicysPerPage;
-    const currentLateCheckOutPolicys = filteredLateCheckOutPolicys.slice(offsetLateCheckOutPolicy, offsetLateCheckOutPolicy + lateCheckOutPolicysPerPage);
+    const offsetReservation = currentReservationPage * reservationsPerPage;
+    const currentReservations = filteredReservations.slice(offsetReservation, offsetReservation + reservationsPerPage);
 
 
 
-    //detail lateCheckOutPolicy modal 
-    const [showModalLateCheckOutPolicy, setShowModalLateCheckOutPolicy] = useState(false);
+    //detail reservation modal 
+    const [showModalReservation, setShowModalReservation] = useState(false);
 
-    const [lateCheckOutPolicy, setLateCheckOutPolicy] = useState({
+    const [reservation, setReservation] = useState({
 
     });
 
 
-    const openLateCheckOutPolicyModal = (lateCheckOutPolicyId) => {
-        setShowModalLateCheckOutPolicy(true);
-        if (lateCheckOutPolicyId) {
-            lateCheckOutPolicyService
-                .getLateCheckOutPolicyById(lateCheckOutPolicyId)
+    const openReservationModal = (reservationId) => {
+        setShowModalReservation(true);
+        if (reservationId) {
+            reservationService
+                .getReservationById(reservationId)
                 .then((res) => {
-                    setLateCheckOutPolicy(res.data);
+                    setReservation(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -71,11 +77,11 @@ const ListLateCheckOutPolicy = () => {
         }
     };
 
-    const closeModalLateCheckOutPolicy = () => {
-        setShowModalLateCheckOutPolicy(false);
+    const closeModalReservation = () => {
+        setShowModalReservation(false);
     };
 
-    
+
     return (
         <>
             <Header />
@@ -94,11 +100,11 @@ const ListLateCheckOutPolicy = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Policies</div>
+                            <div className="ibox-title">List of Reservations</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"
-                                    autoComplete="on" value={lateCheckOutPolicySearchTerm}
-                                    onChange={handleLateCheckOutPolicySearch} />
+                                    autoComplete="on" value={reservationSearchTerm}
+                                    onChange={handleReservationSearch} />
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -107,25 +113,33 @@ const ListLateCheckOutPolicy = () => {
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Charge Percentage</th>
-                                            <th>Description</th>
+                                            <th>Customer</th>
+                                            <th>Room Type</th>
+                                            <th>Number of Rooms</th>
                                             <th>Created Date</th>
-                                            <th>Updated Date</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            currentLateCheckOutPolicys.length > 0 && currentLateCheckOutPolicys.map((item, index) => (
+                                            currentReservations.length > 0 && currentReservations.map((item, index) => (
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.chargePercentage} %</td>
-                                                        <td>{item.description}</td>
-                                                        <td> {item.createdDate === null ? "None" : new Date(item.createdDate).toLocaleString('en-US')}</td>
-                                                        <td> {item.updatedDate === null ? "None" : new Date(item.updatedDate).toLocaleString('en-US')}</td>
-                                                       
+                                                        <td>{item.customer?.firstName}</td>
+                                                        <td>{item.roomType?.type?.typeName}</td>
+                                                        <td>{item.numberOfRooms}</td>
+                                                        <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openLateCheckOutPolicyModal(item.lateCheckOutPolicyId)} /></button>
+                                                            {item.reservationStatus === "Pending" &&  (
+                                                                 <span className="badge label-table badge-warning">Peding</span>
+                                                            )}
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-default btn-xs m-r-5"
+                                                                data-toggle="tooltip" data-original-title="Edit">
+                                                                <i className="fa fa-pencil font-14"
+                                                                    onClick={() => openReservationModal(item.reservationId)} /></button>
                                                         </td>
                                                     </tr>
                                                 </>
@@ -157,10 +171,10 @@ const ListLateCheckOutPolicy = () => {
                                 } breakLabel={'...'}
                                 breakClassName={'page-item'}
                                 breakLinkClassName={'page-link'}
-                                pageCount={pageLateCheckOutPolicyCount}
+                                pageCount={pageReservationCount}
                                 marginPagesDisplayed={2}
                                 pageRangeDisplayed={5}
-                                onPageChange={handleLateCheckOutPolicyPageClick}
+                                onPageChange={handleReservationPageClick}
                                 containerClassName={'pagination'}
                                 activeClassName={'active'}
                                 previousClassName={'page-item'}
@@ -176,30 +190,44 @@ const ListLateCheckOutPolicy = () => {
                 </div>
             </div>
 
-            {showModalLateCheckOutPolicy && (
+            {showModalReservation && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Refund Policy Information</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalLateCheckOutPolicy}>
+                                    <h5 className="modal-title">Reservation Information</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
-                                        <div className="col-md-12">
+                                        <div className="col-md-5">
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <img src={reservation.image} alt="avatar" style={{ width: '150px', height: '150px' }} />
+
+                                            </table>
+                                        </div>
+                                        <div className="col-md-7">
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th>Charge Percentage:</th>
-                                                        <td>{lateCheckOutPolicy.chargePercentage} %</td>
+                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <td>{reservation.firstName} {reservation.lastName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Description:</th>
-                                                        <td>{lateCheckOutPolicy.description}</td>
+                                                        <th>Email:</th>
+                                                        <td>{reservation.email}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Phone Number:</th>
+                                                        <td>{reservation && reservation.phoneNumber ? reservation.phoneNumber : 'Unknown Phone Number'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Address:</th>
+                                                        <td>{reservation && reservation.address ? reservation.address : 'Unknown Address'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -211,7 +239,7 @@ const ListLateCheckOutPolicy = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalLateCheckOutPolicy} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalReservation} >Close</button>
                                 </div>
                             </form>
 
@@ -227,8 +255,8 @@ const ListLateCheckOutPolicy = () => {
                 }
 
                 .custom-modal-xl {
-    max-width:30%;
-    width: 30%;
+    max-width: 90%;
+    width: 90%;
 }
     .btn-custom{
     background-color: #3498db;
@@ -241,4 +269,4 @@ const ListLateCheckOutPolicy = () => {
     )
 }
 
-export default ListLateCheckOutPolicy
+export default ListReservation

@@ -288,7 +288,7 @@ const ListTypePricing = () => {
                                                         <td>{item.price} Vnd</td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
-                                                        <td> {new Date(item.updatedDate).toLocaleString('en-US')}</td>
+                                                        <td> {item.updatedDate === null ? "None" : new Date(item.updatedDate).toLocaleString('en-US')}</td>
 
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">

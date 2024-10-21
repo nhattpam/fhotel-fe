@@ -403,7 +403,7 @@ const EditHotel = () => {
             const updateRes = await roomTypeService.updateRoomType(roomTypeId, { ...roomTypeData, isActive });
 
             if (updateRes.status === 200) {
-                window.alert("Update successful!");
+                // window.alert("Update successful!");
                 // Refresh the roomTypeList after update
                 const updatedRoomTypes = await hotelService.getAllRoomTypeByHotelId(hotelId);
                 setRoomTypeList(updatedRoomTypes.data);  // Update the roomTypeList state with fresh data
@@ -544,8 +544,9 @@ const EditHotel = () => {
 
                                     <tr>
                                         <th>Star:</th>
-                                        <td>{hotel.star}</td>
+                                        <td>{hotel.star === null ? 0 : hotel.star} <i className="fa fa-star text-warning" aria-hidden="true"></i></td>
                                     </tr>
+
                                     <tr>
                                         <th>Business License Number:</th>
                                         <td>{hotel.businessLicenseNumber}</td>
@@ -587,7 +588,7 @@ const EditHotel = () => {
                                         <th>Amenities:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
-                                                hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
+                                                hotelAmenityList.length > 0 ? hotelAmenityList.map((item, index) => (
                                                     <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
                                                         <img src={item.amenity?.image} alt="amenity" style={{ width: "40px", margin: '0 5px' }} />
 
@@ -618,6 +619,11 @@ const EditHotel = () => {
 
                                                     </div>
                                                 ))
+                                                    : (
+                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                            No amenities available.
+                                                        </div>
+                                                    )
                                             }
 
                                             {/* Square Add Button */}
@@ -738,9 +744,17 @@ const EditHotel = () => {
                                             ))
                                         }
 
+
                                     </tbody>
 
                                 </table>
+                                {
+                                    roomTypeList.length === 0 && (
+                                        <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
+                                            No Room Types available.
+                                        </div>
+                                    )
+                                }
                             </div> {/* end .table-responsive*/}
                         </div>
 
@@ -767,37 +781,44 @@ const EditHotel = () => {
                                     <div className="row">
                                         <div className="col-md-5" style={{ display: 'flex', flexWrap: 'wrap' }}>
                                             {
-                                                roomImageList.length > 0 && roomImageList.map((item, index) => (
-                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                        <img src={item.image} alt="avatar" style={{ width: "250px", height: "200px" }} />
-                                                        {
-                                                            loginUser.role?.roleName === "Hotel Manager" && (
-                                                                <>
-                                                                    {/* Delete Icon/Button */}
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn-danger"
-                                                                        style={{
-                                                                            position: 'absolute',
-                                                                            top: '10px',
-                                                                            right: '10px',
-                                                                            background: 'transparent',
-                                                                            border: 'none',
-                                                                            color: 'red',
-                                                                            fontSize: '20px',
-                                                                            cursor: 'pointer',
-                                                                        }}
-                                                                        onClick={() => handleDeleteImage(item.roomImageId)}
-                                                                    >
-                                                                        &times; {/* This represents the delete icon (X symbol) */}
-                                                                    </button>
-                                                                </>
-                                                            )
-                                                        }
-
+                                                roomImageList.length > 0 ? (
+                                                    roomImageList.map((item, index) => (
+                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                            {
+                                                                loginUser.role?.roleName === "Hotel Manager" && (
+                                                                    <>
+                                                                        {/* Delete Icon/Button */}
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn btn-danger"
+                                                                            style={{
+                                                                                position: 'absolute',
+                                                                                top: '10px',
+                                                                                right: '10px',
+                                                                                background: 'transparent',
+                                                                                border: 'none',
+                                                                                color: 'red',
+                                                                                fontSize: '20px',
+                                                                                cursor: 'pointer',
+                                                                            }}
+                                                                            onClick={() => handleDeleteImage(item.roomImageId)}
+                                                                        >
+                                                                            &times; {/* This represents the delete icon (X symbol) */}
+                                                                        </button>
+                                                                    </>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
+                                                        No images available.
                                                     </div>
-                                                ))
+                                                )
                                             }
+
+
                                             {
                                                 loginUser.role?.roleName === "Hotel Manager" && (
                                                     <>
@@ -818,20 +839,12 @@ const EditHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
-                                                        <td>{roomType.typeName}</td>
+                                                        <th style={{ width: '30%' }}>Type:</th>
+                                                        <td>{roomType.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Room Size:</th>
                                                         <td>{roomType.roomSize} m²</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Base Price:</th>
-                                                        <td>{roomType.basePrice} VND</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Max Occupancy:</th>
-                                                        <td>{roomType.maxOccupancy}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Total Rooms:</th>

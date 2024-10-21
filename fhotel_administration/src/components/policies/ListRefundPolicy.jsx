@@ -124,8 +124,8 @@ const ListRefundPolicy = () => {
                                                         <td>{item.cancellationTime}</td>
                                                         <td>{item.refundPercentage} %</td>
                                                         <td>{item.description}</td>
-                                                        <td>{item.createdDate}</td>
-                                                        <td>{item.updatedDate}</td>
+                                                        <td> {item.createdDate === null ? "None" : new Date(item.createdDate).toLocaleString('en-US')}</td>
+                                                        <td> {item.updatedDate === null ? "None" : new Date(item.updatedDate).toLocaleString('en-US')}</td>
                                                        
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openRefundPolicyModal(item.refundPolicyId)} /></button>

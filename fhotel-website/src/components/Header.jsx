@@ -13,17 +13,21 @@ const Header = () => {
     const [showCreateHotelRegistrationModal, setShowCreateHotelRegistrationModal] = useState(false);
     const [ownerName, setOwnerName] = useState(''); // Owner Name - single input
     const [ownerEmail, setOwnerEmail] = useState(''); // Owner Email - single input
-    const [hotels, setHotels] = useState([{
-        hotelName: '',
-        address: '',
-        phone: '',
-        email: '',
-        description: '',
-        businessLicenseNumber: '',
-        taxIdentificationNumber: '',
-        image: '', // This will hold the uploaded image URL
-        districtId: ''
-    }]);
+    // Update the hotels state structure to store selectedCity and districtList for each hotel
+    const [hotels, setHotels] = useState([
+        {
+            hotelName: "",
+            phone: "",
+            email: "",
+            address: "",
+            businessLicenseNumber: "",
+            taxIdentificationNumber: "",
+            description: "",
+            selectedCity: "", // Add selected city for each hotel
+            districtList: [], // Add district list for each hotel
+            districtId: "" // Add selected district ID for each hotel
+        }
+    ]);
     const [expandedHotels, setExpandedHotels] = useState([true]);
     const [imagePreviews, setImagePreviews] = useState(['']); // Separate state for image previews
 
@@ -64,6 +68,7 @@ const Header = () => {
     // Cities
     const [cityList, setCityList] = useState([]);
     const [districtList, setDistrictList] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(''); // Add state for selected city
 
     useEffect(() => {
         cityService
@@ -74,15 +79,23 @@ const Header = () => {
             .catch((error) => {
                 console.log(error);
             });
-        districtService
-            .getAllDistrict()
-            .then((res) => {
-                setDistrictList(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
+    }, []); // Fetch cities only once when component mounts
+
+    // Fetch districts when selectedCity changes
+    useEffect(() => {
+        if (selectedCity) {
+            cityService
+                .getAllDistrictByCityId(selectedCity)
+                .then((res) => {
+                    setDistrictList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            setDistrictList([]); // Clear district list if no city is selected
+        }
+    }, [selectedCity]);
 
     const addNewHotel = () => {
         setHotels([...hotels, {
@@ -343,15 +356,18 @@ const Header = () => {
                                                                 <div className="form-group col-md-6">
                                                                     <label>City</label>
                                                                     <select
-                                                                        // name="cityId"
+                                                                        name="cityId"
                                                                         className="form-control"
-                                                                        // value={hotel.cityId}
-                                                                        // onChange={(e) => handleInputChange(e, index)}
+                                                                        value={hotel.cityId} // Set the value to the selected city id
+                                                                        onChange={(e) => {
+                                                                            handleInputChange(e, index);
+                                                                            setSelectedCity(e.target.value); // Update selected city
+                                                                        }}
                                                                         required
                                                                     >
                                                                         <option value="">Select City</option>
                                                                         {cityList.map((city) => (
-                                                                            <option>
+                                                                            <option key={city.cityId} value={city.cityId}>
                                                                                 {city.cityName}
                                                                             </option>
                                                                         ))}
@@ -359,23 +375,23 @@ const Header = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="form-row">
-                                                                <div className="form-group col-md-6">
-                                                                    <label>District</label>
-                                                                    <select
-                                                                        name="districtId"
-                                                                        className="form-control"
-                                                                        value={hotel.districtId}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    >
-                                                                        <option value="">Select District</option>
-                                                                        {districtList.map((district) => (
-                                                                            <option key={district.districtId} value={district.districtId}>
-                                                                                {district.districtName}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
+                                                            <div className="form-group col-md-6">
+                                                        <label>District</label>
+                                                        <select
+                                                            name="districtId"
+                                                            className="form-control"
+                                                            value={hotel.districtId}
+                                                            onChange={(e) => handleInputChange(e, index)}
+                                                            required
+                                                        >
+                                                            <option value="">Select District</option>
+                                                            {districtList.map((district) => (
+                                                                <option key={district.districtId} value={district.districtId}>
+                                                                    {district.districtName}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                                 <div className="form-group col-md-6">
                                                                     <label>Address</label>
                                                                     <textarea

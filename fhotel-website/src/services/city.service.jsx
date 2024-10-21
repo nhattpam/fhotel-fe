@@ -43,6 +43,14 @@ class CityService {
     });
   }
 
+  getAllDistrictByCityId(id) {
+    return axios.get(API_URL + `/cities/${id}/districts`, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
+
 
 }
 export default new CityService;

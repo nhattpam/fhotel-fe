@@ -8,8 +8,29 @@ import userService from '../../services/user.service';
 import roleService from '../../services/role.service';
 import hotelService from '../../services/hotel.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
+import hotelStaffService from '../../services/hotel-staff.service';
 
 const ListReceptionist = () => {
+
+    //get user information
+    const loginUserId = sessionStorage.getItem('userId');
+    const [loginUser, setLoginUser] = useState({
+
+    });
+
+    useEffect(() => {
+        if (loginUserId) {
+            userService
+                .getUserById(loginUserId)
+                .then((res) => {
+                    setLoginUser(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [loginUserId]);
+
     //call list user registration
     const [userList, setUserList] = useState([]);
     const [userSearchTerm, setUserSearchTerm] = useState('');
@@ -19,9 +40,9 @@ const ListReceptionist = () => {
 
     useEffect(() => {
         userService
-            .getAllUser()
+            .getAllStaffByOwnerId(loginUserId)
             .then((res) => {
-                const receptionists = res.data.filter(user => user.role?.roleName === "Receptionist");
+                const receptionists = res.data.filter(item => item.user?.role?.roleName === "Receptionist");
 
                 const sortedUserList = [...receptionists].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
@@ -40,14 +61,14 @@ const ListReceptionist = () => {
     };
 
     const filteredUsers = userList
-        .filter((user) => {
+        .filter((item) => {
             return (
-                user.firstName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.lastName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.role?.roleName.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
+                item.user?.firstName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                item.user?.lastName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                item.user?.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                item.user?.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                item.user?.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                item.user?.role?.roleName.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
             );
         });
 
@@ -82,14 +103,7 @@ const ListReceptionist = () => {
                 .catch((error) => {
                     console.log(error);
                 });
-            userService
-                .getAllHotelByUserId(userId)
-                .then((res) => {
-                    setHotelList(res.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+
         }
     };
 
@@ -110,11 +124,25 @@ const ListReceptionist = () => {
         sex: false,
         roleId: "",
     });
+
+    const [createHotelStaff, setCreateHotelStaff] = useState({
+        hotelId: "",
+        userId: ""
+    });
     const [showModalCreateUser, setShowModalCreateUser] = useState(false);
 
     const openCreateUserModal = () => {
         setShowModalCreateUser(true);
-
+        if (loginUserId) {
+            userService
+                .getAllHotelByUserId(loginUserId)
+                .then((res) => {
+                    setHotelList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     };
 
     const closeModalCreateUser = () => {
@@ -171,6 +199,12 @@ const ListReceptionist = () => {
         }
 
 
+        // Validate Hotel
+        if (createHotelStaff.hotelId.trim() === "") {
+            newError.hotelId = "Hotel is required";
+            isValid = false;
+        }
+
         setError(newError); // Set the new error object
         setShowError(Object.keys(newError).length > 0); // Show error if there are any
         return isValid;
@@ -188,6 +222,12 @@ const ListReceptionist = () => {
             });
 
     }, []);
+
+    // Make sure you have a function to handle changes in the hotel staff selection
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setCreateHotelStaff({ ...createHotelStaff, [e.target.name]: value });
+    };
 
     const submitUser = async (e) => {
         e.preventDefault();
@@ -213,18 +253,59 @@ const ListReceptionist = () => {
                 const userResponse = await userService.saveUser(createUser);
 
                 if (userResponse.status === 201) {
-                    window.alert("User created successfully!");
-                    window.location.reload();
+                    // Create hotel staff
+                    createHotelStaff.userId = userResponse.data.userId; // Assuming the response contains the created user's ID
+                    createHotelStaff.hotelId = createHotelStaff.hotelId; // Get the selected hotel ID from state
+
+                    console.log(JSON.stringify(createHotelStaff))
+                    // Make API call to create hotel staff
+                    const staffResponse = await hotelStaffService.saveHotelStaff(createHotelStaff); // Replace with your actual service call
+
+                    if (staffResponse.status === 201) {
+                        setSuccess({ general: "User created successfully!" });
+                        setShowSuccess(true); // Show success
+                        userService
+                            .getAllStaffByOwnerId(loginUserId)
+                            .then((res) => {
+                                const receptionists = res.data.filter(item => item.user?.role?.roleName === "Receptionist");
+
+                                const sortedUserList = [...receptionists].sort((a, b) => {
+                                    // Assuming requestedDate is a string in ISO 8601 format
+                                    return new Date(b.createdDate) - new Date(a.createdDate);
+                                });
+                                setUserList(sortedUserList);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    } else {
+                        setError({ general: "Failed to create hotel staff." }); // Set error message
+                        setShowError(true); // Show error
+                    }
                 } else {
-                    setError({ general: "Failed to create user." }); // Set error message
-                    setShowError(true); // Show error
-                    return;
+                    if (error.response && error.response.status === 400) {
+                        // Extract the validation errors if available
+                        const validationErrors = error.response.data.errors || [];
+                        setError({ validation: validationErrors });
+                    } else {
+                        // For other types of errors (e.g., network issues, unexpected status codes)
+                        setError({ general: "An unexpected error occurred. Please try again." });
+                    }
+
+                    setShowError(true); // Show error modal or message
                 }
 
             } catch (error) {
-                console.log(error);
-                setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
-                setShowError(true); // Show error
+                if (error.response && error.response.status === 400) {
+                    // Extract the validation errors if available
+                    const validationErrors = error.response.data.errors || [];
+                    setError({ validation: validationErrors });
+                } else {
+                    // For other types of errors (e.g., network issues, unexpected status codes)
+                    setError({ general: "An unexpected error occurred. Please try again." });
+                }
+
+                setShowError(true); // Show error modal or message
             }
         }
 
@@ -239,6 +320,22 @@ const ListReceptionist = () => {
             return () => clearTimeout(timer); // Cleanup timer on unmount
         }
     }, [showError]); // Only run effect if showError changes
+
+    const [success, setSuccess] = useState({}); // State to hold error messages
+    const [showSuccess, setShowSuccess] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
+
+
+
 
 
 
@@ -285,7 +382,7 @@ const ListReceptionist = () => {
 
 
     // Update user status dynamically
-    const updateUser = async (e, userId, isActive) => {
+    const updateUserStatus = async (e, userId, isActive) => {
         e.preventDefault();
 
         try {
@@ -300,8 +397,21 @@ const ListReceptionist = () => {
             const updateRes = await userService.updateUser(userId, { ...userData, isActive });
 
             if (updateRes.status === 200) {
-                window.alert("Update successful!");
-                window.location.reload();
+                // window.alert("Update successful!");
+                userService
+                    .getAllStaffByOwnerId(loginUserId)
+                    .then((res) => {
+                        const receptionists = res.data.filter(item => item.user?.role?.roleName === "Receptionist");
+
+                        const sortedUserList = [...receptionists].sort((a, b) => {
+                            // Assuming requestedDate is a string in ISO 8601 format
+                            return new Date(b.createdDate) - new Date(a.createdDate);
+                        });
+                        setUserList(sortedUserList);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             } else {
                 window.alert("Update FAILED!");
             }
@@ -368,12 +478,12 @@ const ListReceptionist = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.firstName}</td>
-                                                        <td>{item.lastName}</td>
-                                                        <td>{item.email}</td>
-                                                        <td>{item.role?.roleName}</td>
+                                                        <td>{item.user?.firstName}</td>
+                                                        <td>{item.user?.lastName}</td>
+                                                        <td>{item.user?.email}</td>
+                                                        <td>{item.user?.role?.roleName}</td>
                                                         <td>
-                                                            {item.isActive ? (
+                                                            {item.user?.isActive ? (
                                                                 <span className="badge label-table badge-success">Active</span>
                                                             ) : (
                                                                 <span className="badge label-table badge-danger">Inactive</span>
@@ -383,7 +493,7 @@ const ListReceptionist = () => {
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
                                                             <form
                                                                 id="demo-form"
-                                                                onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
+                                                                onSubmit={(e) => updateUserStatus(e, item.user?.userId, user.isActive)} // Use isActive from the local state
                                                                 className="d-inline"
                                                             >
                                                                 <button
@@ -457,117 +567,6 @@ const ListReceptionist = () => {
             </div>
 
 
-            {showModalUser && (
-                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
-                        <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header">
-                                    <h5 className="modal-title">User Information</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-4">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px' }} />
-
-                                            </table>
-
-                                        </div>
-                                        <div className="col-md-8">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
-                                                        <td>{user.firstName} {user.lastName}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Email:</th>
-                                                        <td>{user.email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Unknown Phone Number'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Address:</th>
-                                                        <td>{user && user.address ? user.address : 'Unknown Address'}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                        </div>
-                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h3 style={{ fontWeight: 'bold' }}>Hotel Management</h3>
-                                            <div className="ibox-body">
-                                                <div className="table-responsive">
-                                                    <table className="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>No.</th>
-                                                                <th>Image</th>
-                                                                <th>Name</th>
-                                                                <th>Owner</th>
-                                                                <th>City</th>
-                                                                <th>Country</th>
-                                                                <th>Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                hotelList.length > 0 && hotelList.map((item, index) => (
-                                                                    <>
-                                                                        <tr>
-                                                                            <td>{index + 1}</td>
-                                                                            <td>
-                                                                                <img src={item.image} alt="avatar" style={{ width: "100px" }} />
-
-                                                                            </td>
-                                                                            <td>{item.hotelName}</td>
-                                                                            <td>{item.owner?.firstName}</td>
-                                                                            <td>{item.city?.cityName}</td>
-                                                                            <td>{item.city?.country?.countryName}</td>
-                                                                            <td>
-                                                                                {item.isActive ? (
-                                                                                    <span className="badge label-table badge-success">Active</span>
-                                                                                ) : (
-                                                                                    <span className="badge label-table badge-danger">Inactive</span>
-                                                                                )}
-                                                                            </td>
-                                                                            <td>
-                                                                                <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openHotelModal(item.hotelId)} /></button>
-                                                                                {/* <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button> */}
-                                                                            </td>
-                                                                        </tr>
-                                                                    </>
-                                                                ))
-                                                            }
-
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Close</button>
-                                </div>
-                            </form>
-
-                        </div>
-                    </div >
-                </div >
-            )}
 
             {
                 showModalCreateUser && (
@@ -599,6 +598,13 @@ const ListReceptionist = () => {
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                     {/* Display error message */}
                                     {showError && Object.entries(error).length > 0 && (
                                         <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
@@ -733,6 +739,23 @@ const ListReceptionist = () => {
                                                         required
                                                     />
                                                 </div>
+                                            </div>
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="address">Hotel * :</label>
+                                                <select
+                                                    name="hotelId"
+                                                    className="form-control"
+                                                    value={createHotelStaff.hotelId}
+                                                    onChange={(e) => handleInputChange(e)}
+                                                    required
+                                                >
+                                                    <option value="">Select Hotel</option>
+                                                    {hotelList.map((hotel) => (
+                                                        <option key={hotel.hotelId} value={hotel.hotelId}>
+                                                            {hotel.hotelName}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
 
                                         </div>

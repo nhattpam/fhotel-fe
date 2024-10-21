@@ -143,32 +143,50 @@ const Header = () => {
                 };
 
                 // Post each hotel one by one
-                console.log(JSON.stringify(hotelWithOwnerInfo))
+                console.log(JSON.stringify(hotelWithOwnerInfo));
                 const hotelResponse = await hotelService.saveHotel(hotelWithOwnerInfo); // Send individual hotel request
-                if (hotelResponse.status == 201) {
-                    console.log("Hotel registration response: ", hotelResponse.data);
-                    setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." }); // Set generic error message
-                    setShowSuccess(true); // Show error
 
+                // Handle 201 success
+                if (hotelResponse.status === 201) {
+                    console.log("Hotel registration response: ", hotelResponse.data);
+                    setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." }); // Set success message
+                    setShowSuccess(true); // Show success
+
+                    // Handle 400 validation error
+                } else if (hotelResponse.status === 400) {
+                    const validationErrors = hotelResponse.data.errors || [];
+                    setError({ general: hotelResponse.data.message, validation: validationErrors }); // Set the message and validation errors
+                    setShowError(true); // Show error
+
+                    // Handle other unexpected responses
                 } else {
                     console.log("Hotel registration response: ", hotelResponse.data);
                     setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
                     setShowError(true); // Show error
-
                 }
             }
 
             // Reset form and states after all hotels are registered
             // setShowCreateHotelRegistrationModal(false);
             // Additional reset logic...
+
         } catch (error) {
             console.error("Error during hotel registration: ", error.response?.data || error);
-            // Handle error...
-            setSuccess({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
-            setShowError(true); // Show error
 
+            if (error.response && error.response.status === 400) {
+                // Extract the validation errors if available
+                const validationErrors = error.response.data.errors || [];
+                setError({ validation: validationErrors });
+            } else {
+                // For other types of errors (e.g., network issues, unexpected status codes)
+                setError({ general: "An unexpected error occurred. Please try again." });
+            }
+
+            setShowError(true); // Show error modal or message
         }
+
     };
+
 
 
     const [success, setSuccess] = useState({}); // State to hold error messages
@@ -242,6 +260,15 @@ const Header = () => {
                                             ))}
                                         </div>
                                     )}
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+
+
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
                                     {/* Display success message */}
@@ -375,23 +402,23 @@ const Header = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="form-row">
-                                                            <div className="form-group col-md-6">
-                                                        <label>District</label>
-                                                        <select
-                                                            name="districtId"
-                                                            className="form-control"
-                                                            value={hotel.districtId}
-                                                            onChange={(e) => handleInputChange(e, index)}
-                                                            required
-                                                        >
-                                                            <option value="">Select District</option>
-                                                            {districtList.map((district) => (
-                                                                <option key={district.districtId} value={district.districtId}>
-                                                                    {district.districtName}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
+                                                                <div className="form-group col-md-6">
+                                                                    <label>District</label>
+                                                                    <select
+                                                                        name="districtId"
+                                                                        className="form-control"
+                                                                        value={hotel.districtId}
+                                                                        onChange={(e) => handleInputChange(e, index)}
+                                                                        required
+                                                                    >
+                                                                        <option value="">Select District</option>
+                                                                        {districtList.map((district) => (
+                                                                            <option key={district.districtId} value={district.districtId}>
+                                                                                {district.districtName}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
                                                                 <div className="form-group col-md-6">
                                                                     <label>Address</label>
                                                                     <textarea

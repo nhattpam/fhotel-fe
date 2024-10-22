@@ -67,6 +67,14 @@ class RoomTypeService {
           }
         });
       }
+      
+      getAllFacilityByRoomTyeId(id) {
+        return axios.get(API_URL + `/room-types/${id}/room-facilities`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
 
 
 }

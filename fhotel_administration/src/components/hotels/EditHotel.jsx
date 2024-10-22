@@ -16,6 +16,8 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import amenityService from '../../services/amenity.service';
 import typeService from '../../services/type.service';
+import facilityService from '../../services/facility.service';
+import roomFacilityService from '../../services/room-facility.service';
 
 const EditHotel = () => {
 
@@ -46,6 +48,7 @@ const EditHotel = () => {
     const [hotelAmenityList, setHotelAmenityList] = useState([]);
     const [roomTypeList, setRoomTypeList] = useState([]);
     const [typeList, setTypeList] = useState([]);
+    const [hotelStaffList, setHotelStaffList] = useState([]);
     const [roomPrices, setRoomPrices] = useState({}); // New state to store room prices
 
     useEffect(() => {
@@ -87,6 +90,17 @@ const EditHotel = () => {
             .catch((error) => {
                 console.log(error);
             });
+        hotelService
+            .getAllHotelStaffByHotelId(hotelId)
+            .then((res) => {
+                setHotelStaffList(res.data);
+                hotelStaffList.forEach(element => {
+                    console.log(JSON.stringify(element))
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         typeService
             .getAllType()
             .then((res) => {
@@ -95,10 +109,11 @@ const EditHotel = () => {
             .catch((error) => {
                 console.log(error);
             });
-    }, hotelId);
+    }, [hotelId]);
 
     //detail room type modal 
     const [roomImageList, setRoomImageList] = useState([]);
+    const [roomFacilities, setRoomFacilities] = useState([]);
     const [roomList, setRoomList] = useState([]);
 
     const [roomType, setRoomType] = useState({
@@ -135,6 +150,9 @@ const EditHotel = () => {
                     console.log(error);
                 });
 
+
+            fetchRoomFacilities(roomTypeId); // Fetch images
+
         }
     };
 
@@ -144,6 +162,17 @@ const EditHotel = () => {
             .getAllRoomImagebyRoomTypeId(roomTypeId)
             .then((res) => {
                 setRoomImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    //  Function to fetch room facilities based on roomTypeId
+    const fetchRoomFacilities = (roomTypeId) => {
+        roomTypeService
+            .getAllFacilityByRoomTyeId(roomTypeId)
+            .then((res) => {
+                setRoomFacilities(res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -272,31 +301,11 @@ const EditHotel = () => {
             errors.roomSize = "Room Size must be greater than 0";
         }
 
-        // // Base Price validation
-        // if (createRoomType.basePrice <= 0) {
-        //     errors.basePrice = "Base Price must be greater than 0";
-        // }
-
-        // // Max Occupancy validation
-        // if (!createRoomType.maxOccupancy) {
-        //     errors.maxOccupancy = "Max Occupancy is required";
-        // }
 
         // Total Rooms validation
         if (!createRoomType.totalRooms) {
             errors.totalRooms = "Total Rooms is required";
         }
-
-        // // Available Rooms validation
-        // if (!createRoomType.availableRooms) {
-        //     errors.availableRooms = "Available Rooms is required";
-        // }
-
-        // // Check if availableRooms is greater than totalRooms
-        // if (createRoomType.availableRooms > createRoomType.totalRooms) {
-        //     errors.availableRooms = "Available Rooms cannot exceed Total Rooms";
-        // }
-
         // Description validation
         if (!createRoomType.description.trim()) {
             errors.description = "Description is required";
@@ -464,7 +473,9 @@ const EditHotel = () => {
     };
 
     const [amenityList, setAmenityList] = useState([]);
+    const [facilityList, setFacilityList] = useState([]);
     const [selectedAmenities, setSelectedAmenities] = useState([]);
+    const [selectedFacilities, setSelectedFacilities] = useState([]);
 
     useEffect(() => {
         amenityService
@@ -475,7 +486,15 @@ const EditHotel = () => {
             .catch((error) => {
                 console.log(error);
             });
-    });
+        facilityService
+            .getAllFacility()
+            .then((res) => {
+                setFacilityList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     // Function to handle amenity selection
     const handleAmenitySelect = (amenityId) => {
@@ -531,6 +550,73 @@ const EditHotel = () => {
         }
     };
 
+
+    //submit room facility
+    // Add a state to store the roomTypeId
+    const [selectedRoomTypeId, setSelectedRoomTypeId] = useState(null);
+
+    const [showModalCreateRoomFacility, setShowModalCreateRoomFacility] = useState(false);
+
+    const openCreateRoomFacilityModal = (roomTypeId) => {
+        setSelectedRoomTypeId(roomTypeId); // Set the roomTypeId in the state
+        setShowModalCreateRoomFacility(true);
+
+    };
+
+    const closeModalCreateRoomFacility = () => {
+        setShowModalCreateRoomFacility(false);
+    };
+    // Function to handle amenity selection
+    const handleFacilitySelect = (facilityId) => {
+        setSelectedFacilities((prevSelected) => {
+            if (prevSelected.includes(facilityId)) {
+                // If the amenity is already selected, remove it
+                return prevSelected.filter(id => id !== facilityId);
+            } else {
+                // If the amenity is not selected, add it
+                return [...prevSelected, facilityId];
+            }
+        });
+    };
+
+    // Use the roomTypeId when submitting the form
+    const handleSubmitRoomFacility = (event) => {
+        event.preventDefault();
+
+        if (!selectedRoomTypeId) {
+            console.error("Room type ID is missing");
+            return;
+        }
+
+        selectedFacilities.forEach(facilityId => {
+            roomFacilityService.saveRoomFacility({ roomTypeId: selectedRoomTypeId, facilityId })
+                .then(response => {
+                    console.log("Facility added:", response);
+                    // Optionally refresh the facilities list or perform other actions
+                    fetchRoomFacilities(selectedRoomTypeId)
+                })
+                .catch(error => {
+                    console.error("Error adding facility:", error);
+                });
+        });
+
+        // Optionally clear selections and close modal
+        setSelectedFacilities([]);
+        closeModalCreateRoomFacility();
+    };
+
+
+    const handleDeleteRoomFacility = async (roomFacilityId) => {
+        try {
+            // Call the API to delete the image by roomImageId
+            await roomFacilityService.deleteRoomFacilityById(roomFacilityId);
+            fetchRoomFacilities(selectedRoomTypeId);
+            // After successful deletion, remove the image from the imageList
+            // setHotelAmenityList(prevList => prevList.filter(item => item.hotelAmenityId !== hotelAmenityId));
+        } catch (error) {
+            console.error('Error deleting room facility:', error);
+        }
+    };
 
 
     return (
@@ -794,6 +880,59 @@ const EditHotel = () => {
                                 }
                             </div> {/* end .table-responsive */}
 
+                            <hr />
+                            <div className="form-group d-flex align-items-center justify-content-between">
+                                <h2 style={{ fontWeight: 'bold' }}>Staffs of Hotel</h2>
+                            </div>
+
+
+                            <div className="table-responsive">
+                                <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            hotelStaffList.length > 0 && hotelStaffList.map((item, index) => (
+                                                <>
+                                                    <tr>
+                                                        <td>{index + 1}</td>
+                                                        <td>{item.user?.firstName}</td>
+                                                        <td>{item.user?.lastName}</td>
+                                                        <td>{item.user?.email}</td>
+                                                        <td>{item.user?.role?.roleName}</td>
+                                                        <td>
+                                                            {item.user?.isActive ? (
+                                                                <span className="badge label-table badge-success">Active</span>
+                                                            ) : (
+                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                            )}
+                                                        </td>
+
+                                                    </tr>
+                                                </>
+                                            ))
+                                        }
+
+
+                                    </tbody>
+                                </table>
+                                {
+                                    roomTypeList.length === 0 && (
+                                        <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
+                                            No Room Types available.
+                                        </div>
+                                    )
+                                }
+                            </div> {/* end .table-responsive */}
+
                         </div>
 
                     </div>
@@ -909,6 +1048,82 @@ const EditHotel = () => {
                                                         </div>
                                                     ))}
                                                 </div>
+                                                {roomList.length === 0 && (
+                                                    <>
+                                                        <p>No rooms available.</p>
+                                                    </>
+                                                )}
+                                            </div>
+                                            <hr />
+                                            <div>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Facilities</h3>
+                                                <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                    {
+                                                        roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
+                                                            <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                <h4>{item.facility?.facilityName}</h4>
+
+                                                                {/* Delete Button */}
+                                                                {
+                                                                    loginUser.role?.roleName === "Hotel Manager" && (
+                                                                        <>
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn btn-danger"
+                                                                                style={{
+                                                                                    position: 'absolute',
+                                                                                    top: '0', // Adjust to position the button as needed
+                                                                                    right: '0', // Adjust to position the button as needed
+                                                                                    background: 'transparent',
+                                                                                    border: 'none',
+                                                                                    color: 'red',
+                                                                                    fontSize: '20px',
+                                                                                    cursor: 'pointer',
+                                                                                }}
+                                                                                onClick={() => handleDeleteRoomFacility(item.hotelAmenityId)}
+                                                                            >
+                                                                                &times; {/* This represents the delete icon (X symbol) */}
+                                                                            </button>
+                                                                        </>
+                                                                    )
+                                                                }
+
+                                                            </div>
+                                                        ))
+                                                            : (
+                                                                <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                    No facilities available.
+                                                                </div>
+                                                            )
+                                                    }
+
+                                                    {/* Square Add Button */}
+                                                    {
+                                                        loginUser.role?.roleName === "Hotel Manager" && (
+                                                            <>
+                                                                <div
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        width: '40px', // Adjust the size as needed
+                                                                        height: '40px', // Same as width for a square
+                                                                        backgroundColor: '#258cd1', // Button color
+                                                                        color: '#fff', // Text color
+                                                                        borderRadius: '4px', // Optional rounded corners
+                                                                        margin: '5px', // Space around the button
+                                                                        cursor: 'pointer',
+                                                                    }}
+                                                                    onClick={() => openCreateRoomFacilityModal(roomType.roomTypeId)}
+                                                                >
+                                                                    +
+                                                                </div>
+                                                            </>
+                                                        )
+                                                    }
+
+                                                </td>
+
                                             </div>
                                         </div>
 
@@ -1047,26 +1262,6 @@ const EditHotel = () => {
                                                 </select>
                                             </div>
 
-                                            {/* <div className="form-group col-md-6">
-                                                <label htmlFor="maxOccupancy">Available Rooms * :</label>
-                                                <select
-                                                    className="form-control"
-                                                    id="availableRooms"
-                                                    name="availableRooms"
-                                                    value={createRoomType.availableRooms}
-                                                    onChange={handleChange}
-                                                    required
-                                                    disabled={formSubmitted} // Disable if form submitted
-
-                                                >
-                                                    <option value="">Select</option>
-                                                    {[...Array(10).keys()].map((_, index) => (
-                                                        <option key={index + 1} value={index + 1}>
-                                                            {index + 1}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div> */}
                                             <div className="form-group col-md-12">
                                                 <label htmlFor="description">Description * :</label>
                                                 <ReactQuill
@@ -1151,34 +1346,81 @@ const EditHotel = () => {
                 )
             }
 
-            {showModalCreateHotelAmenity && (
-                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-small" role="document">
-                        <div className="modal-content">
-                            <form onSubmit={handleSubmit}> {/* Attach handleSubmit here */}
+            {
+                showModalCreateHotelAmenity && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable custom-modal-small" role="document">
+                            <div className="modal-content">
+                                <form onSubmit={handleSubmit}> {/* Attach handleSubmit here */}
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Choose Amenity</h5>
+                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelAmenity}>
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                        <div className="row">
+                                            <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                {
+                                                    amenityList.length > 0 && amenityList.map((item, index) => (
+                                                        <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                            <img src={item.image} alt="amenity" style={{ width: "40px", margin: '0 5px' }} />
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedAmenities.includes(item.amenityId)} // Check if this amenity is selected
+                                                                onChange={() => handleAmenitySelect(item.amenityId)} // Toggle selection
+                                                                style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
+                                                            />
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="modal-footer">
+                                        {
+                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                <button type="submit" className="btn btn-custom">Submit</button>
+                                            )
+                                        }
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelAmenity}>Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                showModalCreateRoomFacility && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable custom-modal-small" role="document">
+                            <div className="modal-content">
+                                <form onSubmit={handleSubmitRoomFacility}> {/* Attach handleSubmit here */}
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Choose Amenity</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelAmenity}>
+                                    <h5 className="modal-title">Choose Facility</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
-                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                            {
-                                                amenityList.length > 0 && amenityList.map((item, index) => (
-                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                        <img src={item.image} alt="amenity" style={{ width: "40px", margin: '0 5px' }} />
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedAmenities.includes(item.amenityId)} // Check if this amenity is selected
-                                                            onChange={() => handleAmenitySelect(item.amenityId)} // Toggle selection
-                                                            style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
-                                                        />
-                                                    </div>
-                                                ))
-                                            }
+                                        <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                            {facilityList.length > 0 && facilityList.map((item, index) => (
+                                                <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
+                                                        onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
+                                                        style={{ marginRight: '10px' }} // Add space between checkbox and text
+                                                    />
+                                                    <h3 style={{ margin: 0 }}>{item.facilityName}</h3>
+                                                </div>
+                                            ))}
                                         </div>
+
+
                                     </div>
                                 </div>
                                 <div className="modal-footer">
@@ -1187,15 +1429,16 @@ const EditHotel = () => {
                                             <button type="submit" className="btn btn-custom">Submit</button>
                                         )
                                     }
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelAmenity}>Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomFacility}>Close</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                </div>
-            )}
-            <style>
-                {`
+                    </div >
+                )
+            }
+<style>
+    {`
                     .page-item.active .page-link{
                     background-color: #20c997;
                     border-color: #20c997;
@@ -1247,7 +1490,7 @@ const EditHotel = () => {
 
 
                                             `}
-            </style>
+</style>
 
         </>
     )

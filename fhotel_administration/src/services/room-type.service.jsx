@@ -60,6 +60,14 @@ class RoomTypeService {
         });
       }
 
+      getAllRoombyRoomTypeId(id) {
+        return axios.get(API_URL + `/room-types/${id}/rooms`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new RoomTypeService;

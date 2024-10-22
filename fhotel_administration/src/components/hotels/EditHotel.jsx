@@ -99,6 +99,7 @@ const EditHotel = () => {
 
     //detail room type modal 
     const [roomImageList, setRoomImageList] = useState([]);
+    const [roomList, setRoomList] = useState([]);
 
     const [roomType, setRoomType] = useState({
 
@@ -124,6 +125,16 @@ const EditHotel = () => {
                 });
 
             fetchRoomImages(roomTypeId); // Fetch images
+            roomTypeService
+                .getAllRoombyRoomTypeId(roomTypeId)
+                .then((res) => {
+                    const sortedRooms = res.data.sort((a, b) => a.roomNumber - b.roomNumber);
+                    setRoomList(sortedRooms);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
         }
     };
 
@@ -224,7 +235,7 @@ const EditHotel = () => {
         // basePrice: 0,
         // maxOccupancy: 0,
         totalRooms: 0,
-        availableRooms: 0
+        // availableRooms: 0
 
     });
     const [roomImageList2, setRoomImageList2] = useState([]);
@@ -276,15 +287,15 @@ const EditHotel = () => {
             errors.totalRooms = "Total Rooms is required";
         }
 
-        // Available Rooms validation
-        if (!createRoomType.availableRooms) {
-            errors.availableRooms = "Available Rooms is required";
-        }
+        // // Available Rooms validation
+        // if (!createRoomType.availableRooms) {
+        //     errors.availableRooms = "Available Rooms is required";
+        // }
 
-        // Check if availableRooms is greater than totalRooms
-        if (createRoomType.availableRooms > createRoomType.totalRooms) {
-            errors.availableRooms = "Available Rooms cannot exceed Total Rooms";
-        }
+        // // Check if availableRooms is greater than totalRooms
+        // if (createRoomType.availableRooms > createRoomType.totalRooms) {
+        //     errors.availableRooms = "Available Rooms cannot exceed Total Rooms";
+        // }
 
         // Description validation
         if (!createRoomType.description.trim()) {
@@ -885,8 +896,22 @@ const EditHotel = () => {
 
                                                 </tbody>
                                             </table>
-
+                                            <div>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Rooms</h3>
+                                                <div className="room-list">
+                                                    {roomList.map((room) => (
+                                                        <div
+                                                            key={room.roomNumber}
+                                                            className="room-box"
+                                                            style={{ backgroundColor: room.status === 'Available' ? 'green' : 'red' }}
+                                                        >
+                                                            <p>{room.roomNumber}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
+
                                     </div>
 
 
@@ -1022,7 +1047,7 @@ const EditHotel = () => {
                                                 </select>
                                             </div>
 
-                                            <div className="form-group col-md-6">
+                                            {/* <div className="form-group col-md-6">
                                                 <label htmlFor="maxOccupancy">Available Rooms * :</label>
                                                 <select
                                                     className="form-control"
@@ -1041,7 +1066,7 @@ const EditHotel = () => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                            </div>
+                                            </div> */}
                                             <div className="form-group col-md-12">
                                                 <label htmlFor="description">Description * :</label>
                                                 <ReactQuill
@@ -1201,6 +1226,25 @@ const EditHotel = () => {
     border-left: 0; /* Removes the border between the input and append */
     line-height: calc(2.25rem); /* Matches the default height of Bootstrap input */
 }
+
+.room-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.room-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 
                                             `}
             </style>

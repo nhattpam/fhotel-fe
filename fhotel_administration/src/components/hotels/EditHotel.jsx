@@ -49,6 +49,8 @@ const EditHotel = () => {
     const [roomTypeList, setRoomTypeList] = useState([]);
     const [typeList, setTypeList] = useState([]);
     const [hotelStaffList, setHotelStaffList] = useState([]);
+    const [hotelDocumentList, setHotelDocumentList] = useState([]);
+    const [hotelImageList, setHotelImageList] = useState([]);
     const [roomPrices, setRoomPrices] = useState({}); // New state to store room prices
 
     useEffect(() => {
@@ -94,9 +96,7 @@ const EditHotel = () => {
             .getAllHotelStaffByHotelId(hotelId)
             .then((res) => {
                 setHotelStaffList(res.data);
-                hotelStaffList.forEach(element => {
-                    console.log(JSON.stringify(element))
-                });
+
             })
             .catch((error) => {
                 console.log(error);
@@ -105,6 +105,22 @@ const EditHotel = () => {
             .getAllType()
             .then((res) => {
                 setTypeList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        hotelService
+            .getAllHotelDocumentByHotelId(hotelId)
+            .then((res) => {
+                setHotelDocumentList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        hotelService
+            .getAllHotelImageByHotelId(hotelId)
+            .then((res) => {
+                setHotelImageList(res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -645,8 +661,71 @@ const EditHotel = () => {
                                 <tbody>
                                     <tr>
                                         <th>Image:</th>
-                                        <td>
-                                            <img src={hotel.image} alt="avatar" style={{ width: '60%' }} />
+                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                            {
+                                                hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
+                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                        <img src={item.image} alt="amenity" style={{ width: "100px", margin: '0 5px' }} />
+
+                                                        {/* Delete Button */}
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '0', // Adjust to position the button as needed
+                                                                            right: '0', // Adjust to position the button as needed
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteHotelAmenity(item.hotelAmenityId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
+
+                                                    </div>
+                                                ))
+                                                    : (
+                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                            No hotel images available.
+                                                        </div>
+                                                    )
+                                            }
+
+                                            {/* Square Add Button */}
+                                            {
+                                                loginUser.role?.roleName === "Hotel Manager" && (
+                                                    <>
+                                                        <div
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                width: '40px', // Adjust the size as needed
+                                                                height: '40px', // Same as width for a square
+                                                                backgroundColor: '#258cd1', // Button color
+                                                                color: '#fff', // Text color
+                                                                borderRadius: '4px', // Optional rounded corners
+                                                                margin: '5px', // Space around the button
+                                                                cursor: 'pointer',
+                                                            }}
+                                                            onClick={() => openCreateHotelAmenityModal(hotel.hotelId)}
+                                                        >
+                                                            +
+                                                        </div>
+                                                    </>
+                                                )
+                                            }
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -668,13 +747,75 @@ const EditHotel = () => {
                                     </tr>
 
                                     <tr>
-                                        <th>Business License Number:</th>
-                                        <td>{hotel.businessLicenseNumber}</td>
+                                        <th>Business Documents:</th>
+                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                            {
+                                                hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
+                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                        <img src={item.image} alt="amenity" style={{ width: "100px", margin: '0 5px' }} />
+
+                                                        {/* Delete Button */}
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '0', // Adjust to position the button as needed
+                                                                            right: '0', // Adjust to position the button as needed
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteHotelAmenity(item.hotelAmenityId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
+
+                                                    </div>
+                                                ))
+                                                    : (
+                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                            No hotel documents available.
+                                                        </div>
+                                                    )
+                                            }
+
+                                            {/* Square Add Button */}
+                                            {
+                                                loginUser.role?.roleName === "Hotel Manager" && (
+                                                    <>
+                                                        <div
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                width: '40px', // Adjust the size as needed
+                                                                height: '40px', // Same as width for a square
+                                                                backgroundColor: '#258cd1', // Button color
+                                                                color: '#fff', // Text color
+                                                                borderRadius: '4px', // Optional rounded corners
+                                                                margin: '5px', // Space around the button
+                                                                cursor: 'pointer',
+                                                            }}
+                                                            onClick={() => openCreateHotelAmenityModal(hotel.hotelId)}
+                                                        >
+                                                            +
+                                                        </div>
+                                                    </>
+                                                )
+                                            }
+
+                                        </td>
                                     </tr>
-                                    <tr>
-                                        <th>Tax Identification Number:</th>
-                                        <td>{hotel.taxIdentificationNumber}</td>
-                                    </tr>
+
                                     <tr>
                                         <th>District:</th>
                                         <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
@@ -927,7 +1068,7 @@ const EditHotel = () => {
                                 {
                                     roomTypeList.length === 0 && (
                                         <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
-                                            No Room Types available.
+                                            No Staffs available.
                                         </div>
                                     )
                                 }
@@ -1398,47 +1539,47 @@ const EditHotel = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-small" role="document">
                             <div className="modal-content">
                                 <form onSubmit={handleSubmitRoomFacility}> {/* Attach handleSubmit here */}
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Choose Facility</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                            {facilityList.length > 0 && facilityList.map((item, index) => (
-                                                <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
-                                                        onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
-                                                        style={{ marginRight: '10px' }} // Add space between checkbox and text
-                                                    />
-                                                    <h3 style={{ margin: 0 }}>{item.facilityName}</h3>
-                                                </div>
-                                            ))}
-                                        </div>
-
-
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Choose Facility</h5>
+                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
-                                </div>
-                                <div className="modal-footer">
-                                    {
-                                        loginUser.role?.roleName === "Hotel Manager" && (
-                                            <button type="submit" className="btn btn-custom">Submit</button>
-                                        )
-                                    }
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomFacility}>Close</button>
-                                </div>
-                            </form>
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                        <div className="row">
+                                            <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                                {facilityList.length > 0 && facilityList.map((item, index) => (
+                                                    <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
+                                                            onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
+                                                            style={{ marginRight: '10px' }} // Add space between checkbox and text
+                                                        />
+                                                        <h3 style={{ margin: 0 }}>{item.facilityName}</h3>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div className="modal-footer">
+                                        {
+                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                <button type="submit" className="btn btn-custom">Submit</button>
+                                            )
+                                        }
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomFacility}>Close</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
                     </div >
                 )
             }
-<style>
-    {`
+            <style>
+                {`
                     .page-item.active .page-link{
                     background-color: #20c997;
                     border-color: #20c997;
@@ -1490,7 +1631,7 @@ const EditHotel = () => {
 
 
                                             `}
-</style>
+            </style>
 
         </>
     )

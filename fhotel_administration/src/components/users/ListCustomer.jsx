@@ -39,8 +39,7 @@ const ListCustomer = () => {
     const filteredUsers = userList
         .filter((user) => {
             return (
-                user.firstName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.lastName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                user.name.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
@@ -150,8 +149,7 @@ const ListCustomer = () => {
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
+                                            <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
                                             <th>Status</th>
@@ -163,8 +161,7 @@ const ListCustomer = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.firstName}</td>
-                                                        <td>{item.lastName}</td>
+                                                        <td>{item.name}</td>
                                                         <td>{item.email}</td>
                                                         <td>{item.role?.roleName}</td>
                                                         <td>
@@ -274,7 +271,7 @@ const ListCustomer = () => {
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ width: '30%' }}>Name:</th>
-                                                        <td>{user.firstName} {user.lastName}</td>
+                                                        <td>{user.name}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Email:</th>

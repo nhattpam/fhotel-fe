@@ -77,6 +77,21 @@ class HotelService {
         });
       }
 
+      getAllHotelImageByHotelId(id) {
+        return axios.get(API_URL + `/hotels/${id}/hotel-images`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+      getAllHotelDocumentByHotelId(id) {
+        return axios.get(API_URL + `/hotels/${id}/hotel-documents`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
 
 }
 export default new HotelService;

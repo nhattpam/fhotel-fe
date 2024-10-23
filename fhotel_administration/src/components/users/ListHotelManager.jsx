@@ -43,8 +43,7 @@ const ListHotelManager = () => {
     const filteredUsers = userList
         .filter((user) => {
             return (
-                user.firstName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.lastName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                user.name.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
@@ -100,8 +99,7 @@ const ListHotelManager = () => {
 
     //create user manager modal
     const [createUser, setCreateUser] = useState({
-        firstName: "",
-        lastName: "",
+        name: "",
         email: "",
         password: "",
         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTviPcm8hnra4ykrOsbYH2xoPqqI_9xb91Bdg&s",
@@ -136,15 +134,10 @@ const ListHotelManager = () => {
         let isValid = true;
         const newError = {}; // Create a new error object
 
-        // Validate First Name
-        if (createUser.firstName.trim() === "") {
-            newError.firstName = "First Name is required";
-            isValid = false;
-        }
-
+      
         // Validate Last Name
-        if (createUser.lastName.trim() === "") {
-            newError.lastName = "Last Name is required";
+        if (createUser.name.trim() === "") {
+            newError.name = "Name is required";
             isValid = false;
         }
 
@@ -349,12 +342,12 @@ const ListHotelManager = () => {
                                     value={userSearchTerm}
                                     onChange={handleUserSearch}
                                 />
-                                <button
+                                {/* <button
                                     className="btn btn-primary ml-3"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
                                     Create New Hotel Manager
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -363,8 +356,7 @@ const ListHotelManager = () => {
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
+                                            <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
                                             <th>Status</th>
@@ -376,8 +368,7 @@ const ListHotelManager = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.firstName}</td>
-                                                        <td>{item.lastName}</td>
+                                                        <td>{item.name}</td>
                                                         <td>{item.email}</td>
                                                         <td>{item.role?.roleName}</td>
                                                         <td>
@@ -492,7 +483,7 @@ const ListHotelManager = () => {
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ width: '30%' }}>Name:</th>
-                                                        <td>{user.firstName} {user.lastName}</td>
+                                                        <td>{user.name} </td>
                                                     </tr>
                                                     <tr>
                                                         <th>Email:</th>
@@ -518,7 +509,6 @@ const ListHotelManager = () => {
                                                         <thead>
                                                             <tr>
                                                                 <th>No.</th>
-                                                                <th>Image</th>
                                                                 <th>Name</th>
                                                                 <th>Owner</th>
                                                                 <th>District</th>
@@ -532,12 +522,9 @@ const ListHotelManager = () => {
                                                                     <>
                                                                         <tr>
                                                                             <td>{index + 1}</td>
-                                                                            <td>
-                                                                                <img src={item.image} alt="avatar" style={{ width: "100px" }} />
-
-                                                                            </td>
+                                                                           
                                                                             <td>{item.hotelName}</td>
-                                                                            <td>{item.owner?.firstName}</td>
+                                                                            <td>{item.owner?.name}</td>
                                                                             <td>{item.district?.districtName}</td>
                                                                             <td>{item.district?.city?.cityName}</td>
                                                                             <td>
@@ -548,7 +535,7 @@ const ListHotelManager = () => {
                                                                                 )}
                                                                             </td>
                                                                             <td>
-                                                                                <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openHotelModal(item.hotelId)} /></button>
+                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit" to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14"  /></Link>
                                                                                 {/* <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button> */}
                                                                             </td>
                                                                         </tr>

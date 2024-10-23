@@ -10,6 +10,7 @@ import cityService from '../../services/city.service';
 import userService from '../../services/user.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
 import { Link } from 'react-router-dom';
+import roleService from '../../services/role.service';
 
 const ListHotel = () => {
 
@@ -22,6 +23,10 @@ const ListHotel = () => {
     const [currentHotelPage, setCurrentHotelPage] = useState(0);
     const [hotelsPerPage] = useState(5);
 
+
+    //
+    const [hotelDocumentList, setHotelDocumentList] = useState([]);
+    const [hotelImageList, setHotelImageList] = useState([]);
 
     useEffect(() => {
         hotelService
@@ -86,6 +91,7 @@ const ListHotel = () => {
     });
     //list hotel amenities
     const [hotelAmenityList, setHotelAmenityList] = useState([]);
+    const [roleList, setRoleList] = useState([]);
 
     const openHotelModal = (hotelId) => {
         setShowModalHotel(true);
@@ -102,6 +108,30 @@ const ListHotel = () => {
                 .getAllAmenityHotelById(hotelId)
                 .then((res) => {
                     setHotelAmenityList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            hotelService
+                .getAllHotelDocumentByHotelId(hotelId)
+                .then((res) => {
+                    setHotelDocumentList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            hotelService
+                .getAllHotelImageByHotelId(hotelId)
+                .then((res) => {
+                    setHotelImageList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            roleService
+                .getAllRole()
+                .then((res) => {
+                    setRoleList(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -232,6 +262,75 @@ const ListHotel = () => {
 
 
 
+    //create hotel manager
+    const [createUser, setCreateUser] = useState({
+        name: "",
+        email: "",
+        password: "",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTviPcm8hnra4ykrOsbYH2xoPqqI_9xb91Bdg&s",
+        identificationNumber: "",
+        phoneNumber: "",
+        address: "None",
+        roleId: "",
+    });
+
+
+    const handleCreateHotelManager = async (e) => {
+        e.preventDefault();
+        setError({}); // Reset any previous errors
+        setShowError(false); // Hide error before validation
+
+        try {
+            // Find the role ID where role is "Hotel Manager"
+            const hotelManagerRole = roleList.find(role => role.roleName === "Hotel Manager");
+
+            if (hotelManagerRole) {
+                createUser.roleId = hotelManagerRole.roleId; // Set roleId to the found role's ID
+                createUser.email = hotel.ownerEmail; // Set roleId to the found role's ID
+                createUser.name = hotel.ownerName; // Set roleId to the found role's ID
+                createUser.password = "123456"; // Set roleId to the found role's ID
+                createUser.phoneNumber = hotel.ownerPhoneNumber; // Set roleId to the found role's ID
+                createUser.identificationNumber = hotel.ownerIdentificationNumber; // Set roleId to the found role's ID
+                createUser.isActive = true;
+            } else {
+                setError({ general: "Role 'Hotel Manager' not found." });
+                setShowError(true);
+                return; // Stop execution if the role is not found
+            }
+
+            console.log(JSON.stringify(createUser))
+            const userResponse = await userService.saveUser(createUser);
+
+            if (userResponse.status === 201) {
+                window.alert("User created successfully!");
+                hotel.ownerId = userResponse.data.userId;
+                hotel.isActive = true;
+                const updateRes = await hotelService.updateHotel(hotel.hotelId, hotel);
+                window.location.reload();
+            } else {
+                setError({ general: "Failed to create user." }); // Set error message
+                setShowError(true); // Show error
+                return;
+            }
+
+        } catch (error) {
+            console.log(error);
+            setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
+            setShowError(true); // Show error
+        }
+
+
+    };
+
+    // Effect to handle error message visibility
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 2000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
 
     return (
         <>
@@ -272,7 +371,7 @@ const ListHotel = () => {
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Image</th>
+                                            {/* <th>Image</th> */}
                                             <th>Name</th>
                                             <th>Owner</th>
                                             <th>Disctrict</th>
@@ -287,10 +386,10 @@ const ListHotel = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>
+                                                        {/* <td>
                                                             <img src={item.image} alt="avatar" style={{ width: "100px" }} />
 
-                                                        </td>
+                                                        </td> */}
                                                         <td>{item.hotelName}</td>
                                                         <td>{item.ownerName}</td>
                                                         <td>{item.district?.districtName}</td>
@@ -408,7 +507,47 @@ const ListHotel = () => {
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
                                         <div className="col-md-5">
-                                            <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Image:</th>
+                                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                            {
+                                                                hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
+                                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }} />
+
+                                                                    </div>
+                                                                ))
+                                                                    : (
+                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                            No hotel images available.
+                                                                        </div>
+                                                                    )
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Business document:</th>
+                                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                            {
+                                                                hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
+                                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }} />
+
+                                                                    </div>
+                                                                ))
+                                                                    : (
+                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                            No hotel images available.
+                                                                        </div>
+                                                                    )
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
                                         </div>
 
                                         <div className="col-md-7">
@@ -455,38 +594,7 @@ const ListHotel = () => {
                                                         <th>Owner Email:</th>
                                                         <td>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <th>Description:</th>
-                                                        <td dangerouslySetInnerHTML={{ __html: hotel.description }}>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Managed by:</th>
-                                                        <td>
-                                                            <select
-                                                                name="ownerId"
-                                                                className="form-control"
-                                                                value={updateHotelOwner.ownerId || hotel.owner?.userId || ""}
-                                                                onChange={handleInputChange}
-                                                                required
-                                                            >
-                                                                {/* If a hotel owner exists, show the current owner as the first option */}
-                                                                {hotel.owner && (
-                                                                    <option value={hotel.owner?.userId}>
-                                                                        {hotel.owner?.firstName} {hotel.owner?.lastName} (Current)
-                                                                    </option>
-                                                                )}
 
-                                                                {/* Option to select a new hotel manager */}
-                                                                <option value="">Select Hotel Manager</option>
-                                                                {hotelManagerList.map((user) => (
-                                                                    <option key={user.userId} value={user.userId}>
-                                                                        {user.firstName} {user.lastName}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </td>
-                                                    </tr>
 
                                                 </tbody>
                                             </table>
@@ -497,7 +605,7 @@ const ListHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-success" >Save</button>
+                                    <button type="button" className="btn btn-success" onClick={handleCreateHotelManager}>Create owner account</button>
                                     <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
                                     <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
                                 </div>

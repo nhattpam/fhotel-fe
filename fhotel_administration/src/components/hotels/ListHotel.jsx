@@ -104,14 +104,7 @@ const ListHotel = () => {
                 .catch((error) => {
                     console.log(error);
                 });
-            hotelService
-                .getAllAmenityHotelById(hotelId)
-                .then((res) => {
-                    setHotelAmenityList(res.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+           
             hotelService
                 .getAllHotelDocumentByHotelId(hotelId)
                 .then((res) => {

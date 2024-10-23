@@ -21,6 +21,7 @@ import ListRefundPolicy from './components/policies/ListRefundPolicy';
 import ListLateCheckOutPolicy from './components/policies/ListLateCheckOutPolicy';
 import ListTypePricing from './components/type-pricings/ListTypePricing';
 import ListReservation from './components/reservations/ListReservation';
+import ListManager from './components/users/ListManager';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         {/* user */}
         <Route path="/list-hotel-manager" element={<ListHotelManager />} />
         <Route path="/list-customer" element={<ListCustomer />} />
+        <Route path="/list-manager" element={<ListManager />} />
         <Route path="/list-receptionist" element={<ListReceptionist />} />
         <Route path="/list-room-attendant" element={<ListRoomAttendant />} />
         {/* hotel */}

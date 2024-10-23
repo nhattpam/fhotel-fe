@@ -44,7 +44,7 @@ const ListOwnerHotel = () => {
                 hotel.hotelName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
                 hotel.city?.cityName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
                 hotel.city?.country?.countryName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
-                hotel.owner?.firstName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase())
+                hotel.owner?.name.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase())
             );
         });
 
@@ -66,8 +66,9 @@ const ListOwnerHotel = () => {
 
     });
     //list hotel amenities
-    const [hotelAmenityList, setHotelAmenityList] = useState([]);
-
+    //
+    const [hotelDocumentList, setHotelDocumentList] = useState([]);
+    const [hotelImageList, setHotelImageList] = useState([]);
     const openHotelModal = (hotelId) => {
         setShowModalHotel(true);
         if (hotelId) {
@@ -79,10 +80,19 @@ const ListOwnerHotel = () => {
                 .catch((error) => {
                     console.log(error);
                 });
+
             hotelService
-                .getAllAmenityHotelById(hotelId)
+                .getAllHotelDocumentByHotelId(hotelId)
                 .then((res) => {
-                    setHotelAmenityList(res.data);
+                    setHotelDocumentList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            hotelService
+                .getAllHotelImageByHotelId(hotelId)
+                .then((res) => {
+                    setHotelImageList(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -134,7 +144,6 @@ const ListOwnerHotel = () => {
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Image</th>
                                             <th>Name</th>
                                             <th>Owner</th>
                                             <th>District</th>
@@ -149,12 +158,8 @@ const ListOwnerHotel = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>
-                                                            <img src={item.image} alt="avatar" style={{ width: "100px" }} />
-
-                                                        </td>
                                                         <td>{item.hotelName}</td>
-                                                        <td>{item.owner?.firstName}</td>
+                                                        <td>{item.owner?.name}</td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td>{item.district?.city?.country?.countryName}</td>
@@ -234,8 +239,44 @@ const ListOwnerHotel = () => {
                                     <div className="row">
                                         <div className="col-md-5">
                                             <table className="table table-responsive table-hover mt-3">
-                                                <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Image:</th>
+                                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                            {
+                                                                hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
+                                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }} />
 
+                                                                    </div>
+                                                                ))
+                                                                    : (
+                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                            No hotel images available.
+                                                                        </div>
+                                                                    )
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Business document:</th>
+                                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                            {
+                                                                hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
+                                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }} />
+
+                                                                    </div>
+                                                                ))
+                                                                    : (
+                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                            No hotel images available.
+                                                                        </div>
+                                                                    )
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
                                             </table>
 
                                         </div>

@@ -137,6 +137,9 @@ const SideBar = () => {
                                             <li>
                                                 <Link to="/list-customer">Customer</Link>
                                             </li>
+                                            <li>
+                                                <Link to="/list-manager">Manager</Link>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li>

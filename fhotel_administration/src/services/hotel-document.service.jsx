@@ -51,6 +51,13 @@ class HotelDocumentService {
     });
   }
 
+  deleteHotelDocumentById(id) {
+    return axios.delete(API_URL + "/hotel-documents/" + id, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
 
 
 }

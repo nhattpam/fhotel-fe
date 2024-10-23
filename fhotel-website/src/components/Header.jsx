@@ -6,64 +6,18 @@ import hotelService from '../services/hotel.service';
 import Dropzone from 'react-dropzone';
 import cityService from '../services/city.service';
 import districtService from '../services/district.service';
+import hotelImageService from '../services/hotel-image.service';
 
 
 const Header = () => {
 
     const [showCreateHotelRegistrationModal, setShowCreateHotelRegistrationModal] = useState(false);
-    const [ownerName, setOwnerName] = useState(''); // Owner Name - single input
-    const [ownerEmail, setOwnerEmail] = useState(''); // Owner Email - single input
-    // Update the hotels state structure to store selectedCity and districtList for each hotel
-    const [hotels, setHotels] = useState([
-        {
-            hotelName: "",
-            phone: "",
-            email: "",
-            address: "",
-            businessLicenseNumber: "",
-            taxIdentificationNumber: "",
-            description: "",
-            selectedCity: "", // Add selected city for each hotel
-            districtList: [], // Add district list for each hotel
-            districtId: "" // Add selected district ID for each hotel
-        }
-    ]);
-    const [expandedHotels, setExpandedHotels] = useState([true]);
-    const [imagePreviews, setImagePreviews] = useState(['']); // Separate state for image previews
+
 
     const handleOpenHotelRegistrationModal = () => {
         setShowCreateHotelRegistrationModal(true);
     };
 
-    // Function to handle input changes
-    const handleInputChange = (e, index, field) => {
-        const newHotels = [...hotels];
-
-        // Check if the field is 'description' and handle accordingly
-        if (field === 'description') {
-            newHotels[index][field] = e; // 'e' contains the description text from ReactQuill
-        } else {
-            const { name, value } = e.target;
-            newHotels[index][name] = value; // Handle other form fields
-        }
-
-        setHotels(newHotels);
-    };
-
-    // Handle file uploads
-    const handleFileDrop = (acceptedFiles, index) => {
-        if (acceptedFiles && acceptedFiles.length > 0) {
-            const newHotels = [...hotels];
-            newHotels[index].image = acceptedFiles[0]; // Store the file object
-            setHotels(newHotels);
-
-            // Preview URL for the dropped file
-            const previewUrl = URL.createObjectURL(acceptedFiles[0]);
-            const newImagePreviews = [...imagePreviews];
-            newImagePreviews[index] = previewUrl; // Store the preview URL separately
-            setImagePreviews(newImagePreviews);
-        }
-    };
 
     // Cities
     const [cityList, setCityList] = useState([]);
@@ -97,107 +51,107 @@ const Header = () => {
         }
     }, [selectedCity]);
 
-    const addNewHotel = () => {
-        setHotels([...hotels, {
-            hotelName: '',
-            address: '',
-            phone: '',
-            email: '',
-            description: '',
-            businessLicenseNumber: '',
-            taxIdentificationNumber: '',
-            image: '',
-            districtId: ''
-        }]);
-        setImagePreviews([...imagePreviews, '']); // Add an empty string for the new hotel's image preview
-        setExpandedHotels([...expandedHotels, true]);
+    //create hotel
+    const [createHotel, setCreateHotel] = useState({
+        hotelName: "",
+        ownerName: "",
+        ownerEmail: "",
+        ownerIdentificationNumber: "",
+        ownerPhoneNumber: "",
+        address: "",
+        phone: "",
+        email: "",
+        description: "",
+        districtId: ""
+    });
+
+    const [createHotelImage, setCreateHotelImage] = useState({
+        hotelId: "",
+        image: "",
+    });
+
+    const [files, setFiles] = useState([]); // Change to array for multiple images
+    const [imagePreviews, setImagePreviews] = useState([]); // Array for previews
+    const [success, setSuccess] = useState({});
+    const [error, setError] = useState({});
+    const [showError, setShowError] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+    const handleFileDrop = (acceptedFiles) => {
+        const newImagePreviews = acceptedFiles.map((file) => URL.createObjectURL(file));
+        setImagePreviews((prev) => [...prev, ...newImagePreviews]);
+        setFiles((prev) => [...prev, ...acceptedFiles]); // Add this line
     };
 
-    const toggleHotelExpansion = (index) => {
-        const newExpandedHotels = [...expandedHotels];
-        newExpandedHotels[index] = !newExpandedHotels[index];
-        setExpandedHotels(newExpandedHotels);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setCreateHotel(prevState => ({ ...prevState, [name]: value }));
     };
+
+    const handleDescriptionChange = (value) => {
+        setCreateHotel({ ...createHotel, description: value });
+    };
+
+
 
     const submitHotelRegistration = async (e) => {
         e.preventDefault();
 
         try {
-            for (const hotel of hotels) {
-                let imageUrl = '';
+            console.log(JSON.stringify(createHotel))
+            // Post the hotel first
+            const hotelResponse = await hotelService.saveHotel(createHotel);
 
-                // Handle image upload if there's an image
-                if (hotel.image) {
+            // Handle 201 success
+            if (hotelResponse.status === 201) {
+                console.log("Hotel registration response: ", hotelResponse.data);
+                const hotelId = hotelResponse.data.hotelId;
+
+                // Upload each image
+                for (let file of files) {
                     const imageData = new FormData();
-                    imageData.append("file", hotel.image); // Upload image
-                    const imageResponse = await hotelService.uploadImage(imageData);
-                    imageUrl = imageResponse.data.link; // Retrieve image URL from response
+                    imageData.append('file', file);
+
+                    const imageResponse = await hotelImageService.uploadImage(imageData);
+                    const imageUrl = imageResponse.data.link; // Assuming this gives you the URL
+                    // Create hotel image object
+                    const createHotelImageData = { hotelId, image: imageUrl };
+
+                    await hotelImageService.saveHotelImage(createHotelImageData);
                 }
 
-                // Add owner info to each hotel object
-                const hotelWithOwnerInfo = {
-                    ...hotel,
-                    ownerName,
-                    ownerEmail,
-                    image: imageUrl
-                };
-
-                // Post each hotel one by one
-                console.log(JSON.stringify(hotelWithOwnerInfo));
-                const hotelResponse = await hotelService.saveHotel(hotelWithOwnerInfo); // Send individual hotel request
-
-                // Handle 201 success
-                if (hotelResponse.status === 201) {
-                    console.log("Hotel registration response: ", hotelResponse.data);
-                    setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." }); // Set success message
-                    setShowSuccess(true); // Show success
-
-                    // Handle 400 validation error
-                } else if (hotelResponse.status === 400) {
-                    const validationErrors = hotelResponse.data.errors || [];
-                    setError({ general: hotelResponse.data.message, validation: validationErrors }); // Set the message and validation errors
-                    setShowError(true); // Show error
-
-                    // Handle other unexpected responses
-                } else {
-                    console.log("Hotel registration response: ", hotelResponse.data);
-                    setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
-                    setShowError(true); // Show error
-                }
+                setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." });
+                setShowSuccess(true); // Show success
+            } else {
+                handleResponseError(hotelResponse);
             }
-
-            // Reset form and states after all hotels are registered
-            // setShowCreateHotelRegistrationModal(false);
-            // Additional reset logic...
-
         } catch (error) {
             console.error("Error during hotel registration: ", error.response?.data || error);
-
-            if (error.response && error.response.status === 400) {
-                // Extract the validation errors if available
-                const validationErrors = error.response.data.errors || [];
-                setError({ validation: validationErrors });
-            } else {
-                // For other types of errors (e.g., network issues, unexpected status codes)
-                setError({ general: "An unexpected error occurred. Please try again." });
-            }
-
-            setShowError(true); // Show error modal or message
+            handleResponseError(error.response);
         }
+    };
 
+    const handleResponseError = (response) => {
+        if (response && response.status === 400) {
+            const validationErrors = response.data.errors || [];
+            setError({ general: response.data.message, validation: validationErrors });
+        } else {
+            setError({ general: "An unexpected error occurred. Please try again." });
+        }
+        setShowError(true); // Show error modal or message
     };
 
 
 
-    const [success, setSuccess] = useState({}); // State to hold error messages
-    const [showSuccess, setShowSuccess] = useState(false); // State to manage error visibility
     //notification after creating
     useEffect(() => {
         if (showSuccess) {
             const timer = setTimeout(() => {
                 setShowSuccess(false); // Hide the error after 2 seconds
-                setShowCreateHotelRegistrationModal(false); // Close the modal
-                window.location.reload();
+                // setShowCreateHotelRegistrationModal(false); // Close the modal
+                // window.location.reload();
             }, 3000); // Change this value to adjust the duration
             // window.location.reload();
             return () => clearTimeout(timer); // Cleanup timer on unmount
@@ -205,8 +159,6 @@ const Header = () => {
     }, [showSuccess]); // Only run effect if showError changes
 
 
-    const [error, setError] = useState({}); // State to hold error messages
-    const [showError, setShowError] = useState(false); // State to manage error visibility
     //notification after creating
     useEffect(() => {
         if (showError) {
@@ -244,7 +196,7 @@ const Header = () => {
             {/* END nav */}
 
             {showCreateHotelRegistrationModal && (
-                <form id="hotel-registration-form" onSubmit={submitHotelRegistration}>
+                <form onSubmit={(e) => submitHotelRegistration(e)}>
                     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                             <div className="modal-content">
@@ -271,227 +223,219 @@ const Header = () => {
 
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
-                                    {/* Display success message */}
-
-                                    {/* Owner Information Inputs */}
                                     <div className="form-row mb-3">
                                         <div className="form-group col-md-6">
                                             <label>Owner Name</label>
                                             <input
+                                                name='ownerName'
                                                 type="text"
                                                 className="form-control"
-                                                value={ownerName}
-                                                onChange={(e) => setOwnerName(e.target.value)}
+                                                value={createHotel.ownerName}
+                                                onChange={(e) => handleChange(e)}
                                                 required
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
                                             <label>Owner Email</label>
                                             <input
+                                                name='ownerEmail'
                                                 type="email"
                                                 className="form-control"
-                                                value={ownerEmail}
-                                                onChange={(e) => setOwnerEmail(e.target.value)}
+                                                value={createHotel.ownerEmail}
+                                                onChange={(e) => handleChange(e)}
                                                 required
                                             />
                                         </div>
+                                        <div className="form-group col-md-6">
+                                            <label>Owner Identification Number</label>
+                                            <input
+                                                name='ownerIdentificationNumber'
+                                                type="text"
+                                                className="form-control"
+                                                value={createHotel.ownerIdentificationNumber}
+                                                onChange={(e) => handleChange(e)}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-group col-md-6">
+                                            <label>Owner Phone Number</label>
+                                            <input
+                                                name='ownerPhoneNumber'
+                                                type="text"
+                                                className="form-control"
+                                                value={createHotel.ownerPhoneNumber}
+                                                onChange={(e) => handleChange(e)}
+                                                required
+                                            />
+                                        </div>
+
                                     </div>
 
-                                    {/* Render all hotel entries */}
-                                    {hotels.map((hotel, index) => (
-                                        <div key={index} className="mb-3">
-                                            <button
-                                                type="button"
-                                                className="btn btn-link"
-                                                onClick={() => toggleHotelExpansion(index)}
-                                                style={{ textDecoration: 'none' }}
-                                            >
-                                                {expandedHotels[index] ? 'Collapse' : 'Expand'} Hotel {index + 1}
-                                            </button>
-                                            {expandedHotels[index] && (
-                                                <div className="border p-3 mt-2">
-                                                    <div className="row">
-                                                        <div className="col-md-5">
-                                                            <div className="form-group">
-                                                                <label htmlFor="imageUrl">Image * :</label>
-                                                                <Dropzone
-                                                                    onDrop={(acceptedFiles) => handleFileDrop(acceptedFiles, index)}
-                                                                    accept="image/*"
-                                                                    multiple={false}
-                                                                    maxSize={5000000}
-                                                                >
-                                                                    {({ getRootProps, getInputProps }) => (
-                                                                        <div {...getRootProps()} className="fallback">
-                                                                            <input {...getInputProps()} />
-                                                                            <div className="dz-message needsclick">
-                                                                                <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                                <h3>Drop files here or click to upload.</h3>
-                                                                            </div>
-                                                                            {imagePreviews[index] && (
-                                                                                <img
-                                                                                    src={imagePreviews[index]}
-                                                                                    alt="Preview"
-                                                                                    style={{
-                                                                                        maxWidth: "100%",
-                                                                                        maxHeight: "200px",
-                                                                                        marginTop: "10px",
-                                                                                    }}
-                                                                                />
-                                                                            )}
-                                                                        </div>
-                                                                    )}
-                                                                </Dropzone>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-md-7">
-                                                            <div className="form-row">
-                                                                <div className="form-group col-md-6">
-                                                                    <label>Hotel Name</label>
-                                                                    <input
-                                                                        type="text"
-                                                                        name="hotelName"
-                                                                        className="form-control"
-                                                                        value={hotel.hotelName}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    />
+
+                                    <div className="border p-3 mt-2">
+                                        <div className="row">
+                                            <div className="col-md-5">
+                                                <div className="form-group">
+                                                    <label htmlFor="imageUrl">Image * :</label>
+                                                    <Dropzone
+                                                        onDrop={(acceptedFiles) => handleFileDrop(acceptedFiles)}
+                                                        accept="image/*"
+                                                        multiple={false}
+                                                        maxSize={5000000}
+                                                    >
+                                                        {({ getRootProps, getInputProps }) => (
+                                                            <div {...getRootProps()} className="fallback">
+                                                                <input {...getInputProps()} />
+                                                                <div className="dz-message needsclick">
+                                                                    <i className="h1 text-muted dripicons-cloud-upload" />
+                                                                    <h3>Drop files here or click to upload.</h3>
                                                                 </div>
-                                                                <div className="form-group col-md-6">
-                                                                    <label>Phone</label>
-                                                                    <input
-                                                                        type="number"
-                                                                        name="phone"
-                                                                        className="form-control"
-                                                                        value={hotel.phone}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="form-row">
-                                                                <div className="form-group col-md-6">
-                                                                    <label>Email</label>
-                                                                    <input
-                                                                        type="email"
-                                                                        name="email"
-                                                                        className="form-control"
-                                                                        value={hotel.email}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    />
-                                                                </div>
-                                                                <div className="form-group col-md-6">
-                                                                    <label>City</label>
-                                                                    <select
-                                                                        name="cityId"
-                                                                        className="form-control"
-                                                                        value={hotel.cityId} // Set the value to the selected city id
-                                                                        onChange={(e) => {
-                                                                            handleInputChange(e, index);
-                                                                            setSelectedCity(e.target.value); // Update selected city
-                                                                        }}
-                                                                        required
-                                                                    >
-                                                                        <option value="">Select City</option>
-                                                                        {cityList.map((city) => (
-                                                                            <option key={city.cityId} value={city.cityId}>
-                                                                                {city.cityName}
-                                                                            </option>
+                                                                {imagePreviews.length > 0 && (
+                                                                    <div className="image-previews">
+                                                                        {imagePreviews.map((preview, index) => (
+                                                                            <img
+                                                                                key={index}
+                                                                                src={preview}
+                                                                                alt={`Preview ${index}`}
+                                                                                style={{
+                                                                                    maxWidth: "60%",
+                                                                                    maxHeight: "50px",
+                                                                                    marginTop: "10px",
+                                                                                    cursor: "pointer",
+                                                                                    border: selectedImageIndex === index ? '2px solid blue' : 'none' // Highlight selected image
+                                                                                }}
+                                                                                onClick={() => setSelectedImageIndex(index)} // Change selected image on click
+                                                                            />
                                                                         ))}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="form-row">
-                                                                <div className="form-group col-md-6">
-                                                                    <label>District</label>
-                                                                    <select
-                                                                        name="districtId"
-                                                                        className="form-control"
-                                                                        value={hotel.districtId}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    >
-                                                                        <option value="">Select District</option>
-                                                                        {districtList.map((district) => (
-                                                                            <option key={district.districtId} value={district.districtId}>
-                                                                                {district.districtName}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                                <div className="form-group col-md-6">
-                                                                    <label>Address</label>
-                                                                    <textarea
-                                                                        name="address"
-                                                                        className="form-control"
-                                                                        value={hotel.address}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    />
-                                                                </div>
-                                                            </div>
+                                                                    </div>
+                                                                )}
 
-                                                            <div className="form-row">
-                                                                <div className="form-group col-md-6">
-                                                                    <label>Business License Number</label>
-                                                                    <input
-                                                                        type="text"
-                                                                        name="businessLicenseNumber"
-                                                                        className="form-control"
-                                                                        value={hotel.businessLicenseNumber}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    />
-                                                                </div>
-                                                                <div className="form-group col-md-6">
-                                                                    <label>Tax Identification Number</label>
-                                                                    <input
-                                                                        type="text"
-                                                                        name="taxIdentificationNumber"
-                                                                        className="form-control"
-                                                                        value={hotel.taxIdentificationNumber}
-                                                                        onChange={(e) => handleInputChange(e, index)}
-                                                                        required
-                                                                    />
-                                                                </div>
                                                             </div>
-
-                                                            <div className="form-group">
-                                                                <label>Description</label>
-                                                                <ReactQuill
-                                                                    theme="snow"
-                                                                    value={hotel.description}
-                                                                    onChange={(value) => handleInputChange(value, index, 'description')}
-                                                                    modules={{
-                                                                        toolbar: [
-                                                                            [{ header: [1, 2, false] }],
-                                                                            [{ 'direction': 'rtl' }],
-                                                                            [{ 'align': [] }],
-                                                                            ['code-block'],
-                                                                            [{ 'color': [] }, { 'background': [] }],
-                                                                            ['clean']
-                                                                        ]
-                                                                    }}
-                                                                    style={{ height: '300px', marginBottom: '50px' }}
-
-                                                                />
-                                                            </div>
-                                                        </div>
+                                                        )}
+                                                    </Dropzone>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-7">
+                                                <div className="form-row">
+                                                    <div className="form-group col-md-6">
+                                                        <label>Hotel Name</label>
+                                                        <input
+                                                            type="text"
+                                                            name="hotelName"
+                                                            className="form-control"
+                                                            value={createHotel.hotelName}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="form-group col-md-6">
+                                                        <label>Phone</label>
+                                                        <input
+                                                            type="number"
+                                                            name="phone"
+                                                            className="form-control"
+                                                            value={createHotel.phone}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        />
                                                     </div>
                                                 </div>
-                                            )}
+                                                <div className="form-row">
+                                                    <div className="form-group col-md-6">
+                                                        <label>Email</label>
+                                                        <input
+                                                            type="email"
+                                                            name="email"
+                                                            className="form-control"
+                                                            value={createHotel.email}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="form-group col-md-6">
+                                                        <label>City</label>
+                                                        <select
+                                                            className="form-control"
+                                                            onChange={(e) => {
+                                                                setSelectedCity(e.target.value); // Update selected city
+                                                            }}
+                                                            required
+                                                        >
+                                                            <option value="">Select City</option>
+                                                            {cityList.map((city) => (
+                                                                <option key={city.cityId} value={city.cityId}>
+                                                                    {city.cityName}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div className="form-row">
+                                                    <div className="form-group col-md-6">
+                                                        <label>District</label>
+                                                        <select
+                                                            name="districtId"
+                                                            className="form-control"
+                                                            value={createHotel.districtId}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        >
+                                                            <option value="">Select District</option>
+                                                            {districtList.map((district) => (
+                                                                <option key={district.districtId} value={district.districtId}>
+                                                                    {district.districtName}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group col-md-6">
+                                                        <label>Address</label>
+                                                        <textarea
+                                                            name="address"
+                                                            className="form-control"
+                                                            value={createHotel.address}
+                                                            onChange={(e) => handleChange(e)}
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div className="form-group">
+                                                    <label>Description</label>
+                                                    <ReactQuill
+                                                        theme="snow"
+                                                        value={createHotel.description}
+                                                        onChange={handleDescriptionChange}
+                                                        modules={{
+                                                            toolbar: [
+                                                                [{ header: [1, 2, false] }],
+                                                                [{ 'direction': 'rtl' }],
+                                                                [{ 'align': [] }],
+                                                                ['code-block'],
+                                                                [{ 'color': [] }, { 'background': [] }],
+                                                                ['clean']
+                                                            ]
+                                                        }}
+                                                        style={{ height: '300px', marginBottom: '50px' }}
+
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={() => setShowCreateHotelRegistrationModal(false)}>Close</button>
-                                    <button type="button" className="btn btn-info" onClick={addNewHotel}>Add More</button>
+                                    <button type="button" className="btn btn-secondary" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Close</button>
                                     <button type="submit" className="btn btn-primary">Submit</button>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
-                </form>
+                </form >
             )}
 
             <style>

@@ -19,6 +19,8 @@ import typeService from '../../services/type.service';
 import facilityService from '../../services/facility.service';
 import roomFacilityService from '../../services/room-facility.service';
 import hotelImageService from '../../services/hotel-image.service';
+import hotelDocumentService from '../../services/hotel-document.service';
+import documentService from '../../services/document.service';
 
 const EditHotel = () => {
 
@@ -53,6 +55,7 @@ const EditHotel = () => {
     const [hotelDocumentList, setHotelDocumentList] = useState([]);
     const [hotelImageList, setHotelImageList] = useState([]);
     const [roomPrices, setRoomPrices] = useState({}); // New state to store room prices
+    const [documentList, setDocumentList] = useState([]);
 
     useEffect(() => {
         hotelService
@@ -122,6 +125,14 @@ const EditHotel = () => {
             .getAllHotelImageByHotelId(hotelId)
             .then((res) => {
                 setHotelImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        documentService
+            .getAllDocument()
+            .then((res) => {
+                setDocumentList(res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -727,6 +738,107 @@ const EditHotel = () => {
             console.error('Error deleting image:', error);
         }
     };
+
+
+    ///upload and delete hotel document
+    const [showModalCreateHotelDocument, setShowModalCreateHotelDocument] = useState(false);
+    const closeModalCreateHotelDocument = () => {
+        setShowModalCreateHotelDocument(false);
+    };
+
+
+    const openCreateHotelDocumentModal = (hotelId) => {
+        setShowModalCreateHotelDocument(true);
+        // Clear the image list first to avoid showing images from the previous room type
+        setRoomImageList([]); // Reset roomImageList to an empty array
+        if (hotelId) {
+
+        }
+    };
+    const [hotelDocument, setHotelDocument] = useState({
+        hotelId: hotelId,
+        image: "",
+    });
+
+
+
+    const [selectedFile4, setSelectedFile4] = useState(null);
+
+    // Handle file selection
+    const handleFileChange4 = (event) => {
+        setSelectedFile4(event.target.files[0]);
+    };
+
+    const [imageList4, setImageList4] = useState(hotelDocumentList);
+
+
+    // Upload image and refresh the room image list without closing the modal
+    const handleUploadAndPost4 = async () => {
+        if (!selectedFile4) {
+            alert("Please select an image");
+            return;
+        }
+
+        try {
+            // Prepare the FormData with the correct key expected by the API
+            const formData = new FormData();
+            formData.append("file", selectedFile4); // Adjust key if needed
+            console.log([...formData.entries()]); // Logs the form data before submission
+
+            // Upload the image to the API
+            const uploadResponse = await roomImageService.uploadImage(formData);
+
+            if (uploadResponse && uploadResponse.data) {
+                const imageUrl = uploadResponse.data.link; // Extract the returned image URL from the response
+                const document = documentList.find(doc => doc.documentName === "Hotel Registration");
+                if (document) {
+                    const documentId = document.documentId;
+                    // Update roomImage object
+                    const updatedHotelDocument = {
+                        hotelId: hotelId,
+                        image: imageUrl,
+                        documentId: documentId
+                    };
+                    setHotelDocument(updatedHotelDocument);
+
+                    // Save the room image to your database
+                    await hotelDocumentService.saveHotelDocument(updatedHotelDocument);
+
+                    // Refresh the room image list by calling the fetchRoomImages function
+                    fetchHotelDocuments(hotelId);
+
+                    // Optionally, update the local image list without refetching (in case you want instant visual feedback)
+                    setImageList4((prevList) => [...prevList, { image: imageUrl }]);
+                }
+
+            }
+        } catch (error) {
+            console.error("Error uploading and posting image:", error);
+        }
+    };
+
+    const fetchHotelDocuments = (hotelId) => {
+        hotelService
+            .getAllHotelDocumentByHotelId(hotelId)
+            .then((res) => {
+                setHotelDocumentList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const handleDeleteImage4 = async (hotelDocumentId) => {
+        try {
+            // Call the API to delete the image by roomImageId
+            await hotelDocumentService.deleteHotelDocumentById(hotelDocumentId);
+
+            // After successful deletion, remove the image from the imageList
+            setHotelDocumentList(prevList => prevList.filter(item => item.hotelDocumentId !== hotelDocumentId));
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
+    };
     return (
         <>
             <Header />
@@ -863,7 +975,7 @@ const EditHotel = () => {
                                                                             fontSize: '20px',
                                                                             cursor: 'pointer',
                                                                         }}
-                                                                        onClick={() => handleDeleteHotelAmenity(item.hotelAmenityId)}
+                                                                        onClick={() => handleDeleteImage4(item.hotelDocumentId)}
                                                                     >
                                                                         &times; {/* This represents the delete icon (X symbol) */}
                                                                     </button>
@@ -897,7 +1009,7 @@ const EditHotel = () => {
                                                                 margin: '5px', // Space around the button
                                                                 cursor: 'pointer',
                                                             }}
-                                                            onClick={() => openCreateHotelAmenityModal(hotel.hotelId)}
+                                                            onClick={() => openCreateHotelDocumentModal(hotel.hotelId)}
                                                         >
                                                             +
                                                         </div>
@@ -1124,8 +1236,7 @@ const EditHotel = () => {
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
+                                            <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
                                             <th>Status</th>
@@ -1137,8 +1248,7 @@ const EditHotel = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.user?.firstName}</td>
-                                                        <td>{item.user?.lastName}</td>
+                                                        <td>{item.user?.name}</td>
                                                         <td>{item.user?.email}</td>
                                                         <td>{item.user?.role?.roleName}</td>
                                                         <td>
@@ -1748,6 +1858,92 @@ const EditHotel = () => {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelImage} >Close</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )
+            }
+
+            {showModalCreateHotelDocument && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Upload Hotel Document</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelDocument}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            {
+                                                hotelDocumentList.length > 0 ? (
+                                                    hotelDocumentList.map((item, index) => (
+                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                            {
+                                                                loginUser.role?.roleName === "Hotel Manager" && (
+                                                                    <>
+                                                                        {/* Delete Icon/Button */}
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn btn-danger"
+                                                                            style={{
+                                                                                position: 'absolute',
+                                                                                top: '10px',
+                                                                                right: '10px',
+                                                                                background: 'transparent',
+                                                                                border: 'none',
+                                                                                color: 'red',
+                                                                                fontSize: '20px',
+                                                                                cursor: 'pointer',
+                                                                            }}
+                                                                            onClick={() => handleDeleteImage4(item.hotelDocumentId)}
+                                                                        >
+                                                                            &times; {/* This represents the delete icon (X symbol) */}
+                                                                        </button>
+                                                                    </>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
+                                                        No documents available.
+                                                    </div>
+                                                )
+                                            }
+
+
+                                            {
+                                                loginUser.role?.roleName === "Hotel Manager" && (
+                                                    <>
+                                                        <div className="form-group mt-3">
+                                                            <input type="file" onChange={handleFileChange4} />
+                                                            <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost4}>
+                                                                + Upload
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )
+                                            }
+
+                                        </div>
+
+
+
+                                    </div>
+
+
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelDocument} >Close</button>
                                 </div>
                             </form>
 

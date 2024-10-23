@@ -63,8 +63,7 @@ const ListReceptionist = () => {
     const filteredUsers = userList
         .filter((item) => {
             return (
-                item.user?.firstName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                item.user?.lastName.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                item.user?.name.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 item.user?.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 item.user?.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 item.user?.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
@@ -113,15 +112,13 @@ const ListReceptionist = () => {
 
     //create user manager modal
     const [createUser, setCreateUser] = useState({
-        firstName: "",
-        lastName: "",
+        name: "",
         email: "",
         password: "",
         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTviPcm8hnra4ykrOsbYH2xoPqqI_9xb91Bdg&s",
         identificationNumber: "",
         phoneNumber: "",
-        address: "",
-        sex: false,
+        address: "None",
         roleId: "",
     });
 
@@ -163,23 +160,13 @@ const ListReceptionist = () => {
         let isValid = true;
         const newError = {}; // Create a new error object
 
-        // Validate First Name
-        if (createUser.firstName.trim() === "") {
-            newError.firstName = "First Name is required";
-            isValid = false;
-        }
-
         // Validate Last Name
-        if (createUser.lastName.trim() === "") {
-            newError.lastName = "Last Name is required";
+        if (createUser.name.trim() === "") {
+            newError.name = "Full Name is required";
             isValid = false;
         }
 
-        // Validate Address
-        if (createUser.address.trim() === "") {
-            newError.address = "Address is required";
-            isValid = false;
-        }
+     
         // Validate Phone
         if (createUser.phoneNumber.trim() === "") {
             newError.phoneNumber = "Phone number is required";
@@ -197,7 +184,6 @@ const ListReceptionist = () => {
             newError.email = "Email is not valid";
             isValid = false;
         }
-
 
         // Validate Hotel
         if (createHotelStaff.hotelId.trim() === "") {
@@ -478,8 +464,7 @@ const ListReceptionist = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.user?.firstName}</td>
-                                                        <td>{item.user?.lastName}</td>
+                                                        <td>{item.user?.name}</td>
                                                         <td>{item.user?.email}</td>
                                                         <td>{item.user?.role?.roleName}</td>
                                                         <td>
@@ -621,34 +606,19 @@ const ListReceptionist = () => {
                                         <h4 className="header-title ">Information</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">First Name * :</label>
+                                                <label htmlFor="hotelName">Full Name * :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
-                                                    name="firstName"
-                                                    id="firstName"
-                                                    value={createUser.firstName}
+                                                    name="name"
+                                                    id="name"
+                                                    value={createUser.name}
                                                     onChange={(e) => handleChange(e)}
                                                     required
                                                 />
+                                                
                                             </div>
 
-                                            <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Last Name * :</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    name="lastName"
-                                                    id="lastName"
-                                                    value={createUser.lastName}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-
-                                        <div className="form-row">
                                             <div className="form-group col-md-6">
                                                 <label htmlFor="email">Email * :</label>
                                                 <input
@@ -661,6 +631,11 @@ const ListReceptionist = () => {
                                                     required
                                                 />
                                             </div>
+                                        </div>
+
+
+                                        <div className="form-row">
+                                           
 
                                             <div className="form-group col-md-6">
                                                 <label htmlFor="password">Password * :</label>
@@ -687,41 +662,6 @@ const ListReceptionist = () => {
                                                         onChange={(e) => handleChange(e)}
                                                         required
 
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="form-group col-md-6">
-                                                <label htmlFor="ownerId">Gender * :</label>
-                                                <select
-                                                    className="form-control"
-                                                    id="sex"
-                                                    name="sex"
-                                                    value={createUser.sex}
-                                                    onChange={handleChange}
-                                                    required
-                                                >
-                                                    <option value="">Select Gender</option>
-                                                    <option value={1}>
-                                                        Male
-                                                    </option>
-                                                    <option value={0}>
-                                                        Female
-                                                    </option>
-                                                </select>
-                                            </div>
-
-                                            <div className="form-group col-md-6">
-                                                <label htmlFor="address">Address * :</label>
-                                                <div className="input-group">
-                                                    <input
-                                                        type="text"
-                                                        id="address"
-                                                        className="form-control"
-                                                        name="address"
-                                                        value={createUser.address}
-                                                        onChange={(e) => handleChange(e)}
-                                                        required
                                                     />
                                                 </div>
                                             </div>

@@ -219,11 +219,11 @@ const SideBar = () => {
                                             <span className="nav-label">Hotel</span>
                                         </Link>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <Link to="/list-timetable"><i className="sidebar-item-icon fa fa-calendar" />
                                             <span className="nav-label">Timetable</span>
                                         </Link>
-                                    </li>
+                                    </li> */}
 
 
                                 </>

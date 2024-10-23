@@ -67,6 +67,14 @@ class UserService {
         });
       }
 
+      getAllReservationByStaff(id) {
+        return axios.get(API_URL + `/users/${id}/staff-reservations`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new UserService;

@@ -1,10 +1,8 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import Home from './components/Home';
 import './App.css';
 import Login from './components/authentication/Login';
 import ListHotelManager from './components/users/ListHotelManager';
-import ListHotelRegistration from './components/hotel-registrations/ListHotelRegistration';
 import ListHotel from './components/hotels/ListHotel';
 import ListCustomer from './components/users/ListCustomer';
 import AdminHome from './components/home/AdminHome';
@@ -20,8 +18,10 @@ import ListService from './components/services/ListService';
 import ListRefundPolicy from './components/policies/ListRefundPolicy';
 import ListLateCheckOutPolicy from './components/policies/ListLateCheckOutPolicy';
 import ListTypePricing from './components/type-pricings/ListTypePricing';
-import ListReservation from './components/reservations/ListReservation';
 import ListManager from './components/users/ListManager';
+import ListStaffReservation from './components/reservations/ListStaffReservation';
+import ListOwnerReservation from './components/reservations/ListOwnerReservation';
+import ListReservation from './components/reservations/ListReservation';
 
 function App() {
   return (
@@ -52,6 +52,8 @@ function App() {
           {/* type-pricing */}
         <Route path="/list-type-pricing/:typeId" element={<ListTypePricing />} />
         {/* reservation */}
+        <Route path="/list-staff-reservation" element={<ListStaffReservation />} />
+        <Route path="/list-owner-reservation" element={<ListOwnerReservation />} />
         <Route path="/list-reservation" element={<ListReservation />} />
       </Routes>
     </div>

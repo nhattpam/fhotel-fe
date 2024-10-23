@@ -258,7 +258,7 @@ const SideBar = () => {
                                 <>
                                     {/* Reservation Section */}
                                     <li>
-                                        <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
+                                        <Link to="/list-staff-reservation"><i className="sidebar-item-icon fa fa-ship" />
                                             <span className="nav-label">Reservation</span>
                                         </Link>
                                     </li>

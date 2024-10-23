@@ -105,6 +105,21 @@ const ListOwnerHotel = () => {
     };
 
 
+    //click display larger image: 
+    const [showImageLargerModal, setShowLargerImageModal] = useState(false);
+    const [selectedImageLarger, setSelectedImageLarger] = useState(null);
+
+    // Function to handle opening the modal with the clicked image
+    const handleImageLargerClick = (image) => {
+        setSelectedImageLarger(image); // Set the clicked image
+        setShowLargerImageModal(true);      // Show the modal
+    };
+
+    // Function to handle closing the modal
+    const handleCloseImageLargeModal = () => {
+        setShowLargerImageModal(false);
+        setSelectedImageLarger(null); // Reset the selected image
+    };
 
 
     return (
@@ -246,7 +261,9 @@ const ListOwnerHotel = () => {
                                                             {
                                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
                                                                     <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }} />
+                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }}
+                                                                            onClick={() => handleImageLargerClick(item.image)}
+                                                                        />
 
                                                                     </div>
                                                                 ))
@@ -264,7 +281,9 @@ const ListOwnerHotel = () => {
                                                             {
                                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
                                                                     <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }} />
+                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }}
+                                                                            onClick={() => handleImageLargerClick(item.image)}
+                                                                        />
 
                                                                     </div>
                                                                 ))
@@ -339,6 +358,34 @@ const ListOwnerHotel = () => {
                     </div>
                 </div>
             )}
+
+            {showImageLargerModal && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Image</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        {selectedImageLarger && <img src={selectedImageLarger} alt="Large preview" style={{ width: '100%' }} />}
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Close</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )
+            }
 
 
             <style>

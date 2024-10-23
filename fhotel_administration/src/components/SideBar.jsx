@@ -219,12 +219,13 @@ const SideBar = () => {
                                             <span className="nav-label">Hotel</span>
                                         </Link>
                                     </li>
-                                    {/* <li>
-                                        <Link to="/list-timetable"><i className="sidebar-item-icon fa fa-calendar" />
-                                            <span className="nav-label">Timetable</span>
-                                        </Link>
-                                    </li> */}
 
+                                    {/* Billing Section */}
+                                    <li>
+                                        <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
+                                            <span className="nav-label">Billing</span>
+                                        </Link>
+                                    </li>
 
                                 </>
                             )
@@ -242,7 +243,80 @@ const SideBar = () => {
                                             <span className="nav-label">Service</span>
                                         </Link>
                                     </li>
+                                    {/* Billing Section */}
+                                    <li>
+                                        <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
+                                            <span className="nav-label">Billing</span>
+                                        </Link>
+                                    </li>
 
+                                </>
+                            )
+                        }
+                        {
+                            user.role?.roleName === "Receptionist" && (
+                                <>
+                                    {/* Reservation Section */}
+                                    <li>
+                                        <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
+                                            <span className="nav-label">Reservation</span>
+                                        </Link>
+                                    </li>
+
+                                    {/* Check-In / Check-Out Section */}
+                                    <li>
+                                        <Link to="/check-in-out"><i className="sidebar-item-icon fa fa-sign-in" />
+                                            <span className="nav-label">Check-In / Check-Out</span>
+                                        </Link>
+                                    </li>
+
+                                    {/* Room Management Section */}
+                                    <li>
+                                        <Link to="/room-management"><i className="sidebar-item-icon fa fa-bed" />
+                                            <span className="nav-label">Room Management</span>
+                                        </Link>
+                                    </li>
+
+                                    {/* Customer Management Section */}
+                                    <li>
+                                        <Link to="/customer-management"><i className="sidebar-item-icon fa fa-user" />
+                                            <span className="nav-label">Customer Management</span>
+                                        </Link>
+                                    </li>
+
+                                    {/* Billing / Payment Management Section */}
+                                    <li>
+                                        <Link to="/billing"><i className="sidebar-item-icon fa fa-credit-card" />
+                                            <span className="nav-label">Billing / Payments</span>
+                                        </Link>
+                                    </li>
+
+                                    {/* Facilities Management Section */}
+                                    <li>
+                                        <Link to="/facilities-management"><i className="sidebar-item-icon fa fa-wrench" />
+                                            <span className="nav-label">Facilities Management</span>
+                                        </Link>
+                                    </li>
+
+                                    {/* Reports / Analytics Section */}
+                                    <li>
+                                        <Link to="/reports"><i className="sidebar-item-icon fa fa-bar-chart" />
+                                            <span className="nav-label">Reports / Analytics</span>
+                                        </Link>
+                                    </li>
+
+
+                                </>
+                            )
+                        }
+                        {
+                            user.role?.roleName === "Room Attendant" && (
+                                <>
+                                    <li>
+                                        <Link to="/room-status"><i className="sidebar-item-icon fa fa-bed" />
+                                            <span className="nav-label">Room Status</span>
+                                        </Link>
+                                    </li>
 
                                 </>
                             )

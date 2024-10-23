@@ -7,6 +7,8 @@ import Dropzone from 'react-dropzone';
 import cityService from '../services/city.service';
 import districtService from '../services/district.service';
 import hotelImageService from '../services/hotel-image.service';
+import documentService from '../services/document.service';
+import hotelDocumentService from '../services/hotel-document.service';
 
 
 const Header = () => {
@@ -23,6 +25,7 @@ const Header = () => {
     const [cityList, setCityList] = useState([]);
     const [districtList, setDistrictList] = useState([]);
     const [selectedCity, setSelectedCity] = useState(''); // Add state for selected city
+    const [documentList, setDocumentList] = useState([]);
 
     useEffect(() => {
         cityService
@@ -33,6 +36,15 @@ const Header = () => {
             .catch((error) => {
                 console.log(error);
             });
+        documentService
+            .getAllDocument()
+            .then((res) => {
+                setDocumentList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
     }, []); // Fetch cities only once when component mounts
 
     // Fetch districts when selectedCity changes
@@ -65,23 +77,19 @@ const Header = () => {
         districtId: ""
     });
 
-    const [createHotelImage, setCreateHotelImage] = useState({
-        hotelId: "",
-        image: "",
-    });
-
-    const [files, setFiles] = useState([]); // Change to array for multiple images
-    const [imagePreviews, setImagePreviews] = useState([]); // Array for previews
+    const [filesHotelImage, setFilesHotelImage] = useState([]); // Change to array for multiple images
+    const [imagePreviewsHotelImage, setImagePreviewsHotelImage] = useState([]); // Array for previews
+    const [selectedImageIndexHotelImage, setSelectedImageIndexHotelImage] = useState(0);
     const [success, setSuccess] = useState({});
     const [error, setError] = useState({});
     const [showError, setShowError] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-    const handleFileDrop = (acceptedFiles) => {
+
+    const handleFileDropHotelImage = (acceptedFiles) => {
         const newImagePreviews = acceptedFiles.map((file) => URL.createObjectURL(file));
-        setImagePreviews((prev) => [...prev, ...newImagePreviews]);
-        setFiles((prev) => [...prev, ...acceptedFiles]); // Add this line
+        setImagePreviewsHotelImage((prev) => [...prev, ...newImagePreviews]);
+        setFilesHotelImage((prev) => [...prev, ...acceptedFiles]); // Add this line
     };
 
 
@@ -95,6 +103,15 @@ const Header = () => {
     };
 
 
+    const [filesHotelDocument, setFilesHotelDocument] = useState([]); // Change to array for multiple images
+    const [imagePreviewsHotelDocument, setImagePreviewsHotelDocument] = useState([]); // Array for previews
+    const [selectedImageIndexHotelDocument, setSelectedImageIndexHotelDocument] = useState(0);
+
+    const handleFileDropHotelDocument = (acceptedFiles) => {
+        const newImagePreviews = acceptedFiles.map((file) => URL.createObjectURL(file));
+        setImagePreviewsHotelDocument((prev) => [...prev, ...newImagePreviews]);
+        setFilesHotelDocument((prev) => [...prev, ...acceptedFiles]); // Add this line
+    };
 
     const submitHotelRegistration = async (e) => {
         e.preventDefault();
@@ -109,17 +126,37 @@ const Header = () => {
                 console.log("Hotel registration response: ", hotelResponse.data);
                 const hotelId = hotelResponse.data.hotelId;
 
-                // Upload each image
-                for (let file of files) {
+                // Upload each hotel image
+                for (let file of filesHotelImage) {
                     const imageData = new FormData();
                     imageData.append('file', file);
 
                     const imageResponse = await hotelImageService.uploadImage(imageData);
                     const imageUrl = imageResponse.data.link; // Assuming this gives you the URL
                     // Create hotel image object
-                    const createHotelImageData = { hotelId, image: imageUrl };
+                    const createHotelImageData = { hotelId, image: imageUrl, };
 
                     await hotelImageService.saveHotelImage(createHotelImageData);
+                }
+
+                // Upload each hotel document
+                for (let file of filesHotelDocument) {
+                    const document = documentList.find(doc => doc.documentName === "Hotel Registration");
+
+                    const imageData = new FormData();
+                    imageData.append('file', file);
+
+                    const documentResponse = await hotelImageService.uploadImage(imageData);
+                    const imageUrl = documentResponse.data.link; // Assuming this gives you the URL
+                    if (document) {
+                        const documentId = document.documentId; // Assuming documentId is the field that stores the ID
+                        // Now you can use documentId
+                        const createHotelDocumentData = { hotelId, image: imageUrl, documentId };
+                        await hotelDocumentService.saveHotelDocument(createHotelDocumentData);
+
+                    }
+                    // Create hotel image object
+
                 }
 
                 setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." });
@@ -276,9 +313,9 @@ const Header = () => {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Image * :</label>
+                                                    <label htmlFor="imageUrl">Upload your hotel images * :</label>
                                                     <Dropzone
-                                                        onDrop={(acceptedFiles) => handleFileDrop(acceptedFiles)}
+                                                        onDrop={(acceptedFiles) => handleFileDropHotelImage(acceptedFiles)}
                                                         accept="image/*"
                                                         multiple={false}
                                                         maxSize={5000000}
@@ -290,9 +327,9 @@ const Header = () => {
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
                                                                     <h3>Drop files here or click to upload.</h3>
                                                                 </div>
-                                                                {imagePreviews.length > 0 && (
+                                                                {imagePreviewsHotelImage.length > 0 && (
                                                                     <div className="image-previews">
-                                                                        {imagePreviews.map((preview, index) => (
+                                                                        {imagePreviewsHotelImage.map((preview, index) => (
                                                                             <img
                                                                                 key={index}
                                                                                 src={preview}
@@ -302,9 +339,48 @@ const Header = () => {
                                                                                     maxHeight: "50px",
                                                                                     marginTop: "10px",
                                                                                     cursor: "pointer",
-                                                                                    border: selectedImageIndex === index ? '2px solid blue' : 'none' // Highlight selected image
+                                                                                    border: selectedImageIndexHotelImage === index ? '2px solid blue' : 'none' // Highlight selected image
                                                                                 }}
-                                                                                onClick={() => setSelectedImageIndex(index)} // Change selected image on click
+                                                                                onClick={() => setSelectedImageIndexHotelImage(index)} // Change selected image on click
+                                                                            />
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+
+                                                            </div>
+                                                        )}
+                                                    </Dropzone>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="imageUrl">Upload your business documents  * :</label>
+                                                    <Dropzone
+                                                        onDrop={(acceptedFiles) => handleFileDropHotelDocument(acceptedFiles)}
+                                                        accept="image/*"
+                                                        multiple={false}
+                                                        maxSize={5000000}
+                                                    >
+                                                        {({ getRootProps, getInputProps }) => (
+                                                            <div {...getRootProps()} className="fallback">
+                                                                <input {...getInputProps()} />
+                                                                <div className="dz-message needsclick">
+                                                                    <i className="h1 text-muted dripicons-cloud-upload" />
+                                                                    <h3>Drop files here or click to upload.</h3>
+                                                                </div>
+                                                                {imagePreviewsHotelDocument.length > 0 && (
+                                                                    <div className="image-previews">
+                                                                        {imagePreviewsHotelDocument.map((preview, index) => (
+                                                                            <img
+                                                                                key={index}
+                                                                                src={preview}
+                                                                                alt={`Preview ${index}`}
+                                                                                style={{
+                                                                                    maxWidth: "60%",
+                                                                                    maxHeight: "50px",
+                                                                                    marginTop: "10px",
+                                                                                    cursor: "pointer",
+                                                                                    border: selectedImageIndexHotelDocument === index ? '2px solid blue' : 'none' // Highlight selected image
+                                                                                }}
+                                                                                onClick={() => setSelectedImageIndexHotelDocument(index)} // Change selected image on click
                                                                             />
                                                                         ))}
                                                                     </div>

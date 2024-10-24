@@ -3,6 +3,7 @@ import './App.css';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import SuccessRegister from './components/authentication/SuccessRegister';
+import PaymentCallBack from './components/payments/PaymentCallBack';
 
 function App() {
   return (
@@ -12,6 +13,8 @@ function App() {
         <Route path="/home" element={<Home />} />
         {/* success register */}
         <Route path="/success-register" element={<SuccessRegister />} />
+
+        <Route path="/payment-callback" element={<PaymentCallBack />} />
       </Routes>
     </div>
   );

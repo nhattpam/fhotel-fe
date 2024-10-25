@@ -1288,7 +1288,7 @@ const EditHotel = () => {
                                     </tbody>
                                 </table>
                                 {
-                                    roomTypeList.length === 0 && (
+                                    hotelStaffList.length === 0 && (
                                         <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
                                             No Staffs available.
                                         </div>

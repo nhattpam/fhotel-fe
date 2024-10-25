@@ -22,6 +22,7 @@ import ListManager from './components/users/ListManager';
 import ListStaffReservation from './components/reservations/ListStaffReservation';
 import ListOwnerReservation from './components/reservations/ListOwnerReservation';
 import ListReservation from './components/reservations/ListReservation';
+import CheckInOut from './components/reservations/CheckInOut';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         <Route path="/list-staff-reservation" element={<ListStaffReservation />} />
         <Route path="/list-owner-reservation" element={<ListOwnerReservation />} />
         <Route path="/list-reservation" element={<ListReservation />} />
+        <Route path="/check-in-out" element={<CheckInOut />} />
       </Routes>
     </div>
   );

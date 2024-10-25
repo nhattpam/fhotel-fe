@@ -2,11 +2,27 @@ import React, { useEffect, useState } from 'react';
 import Header from '../Header';
 import SideBar from '../SideBar';
 import userService from '../../services/user.service';
+import roomTypeService from '../../services/room-type.service';
+import { Link } from 'react-router-dom';
+import roomStayHistoryService from '../../services/room-stay-history.service';
 
 const CheckInOut = () => {
     //get user information
     const loginUserId = sessionStorage.getItem('userId');
+    const [loginUser, setLoginUser] = useState({
 
+    });
+    useEffect(() => {
+        userService
+            .getUserById(loginUserId)
+            .then((res) => {
+
+                setLoginUser(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, loginUserId);
 
     //call list hotel registration
     const [reservationList, setReservationList] = useState([]);
@@ -56,6 +72,159 @@ const CheckInOut = () => {
         // Simulate checking out process
         setIsCheckedOut(true);
     };
+
+
+    //PICK ROOM
+    const [roomImageList, setRoomImageList] = useState([]);
+    const [roomFacilities, setRoomFacilities] = useState([]);
+    const [roomList, setRoomList] = useState([]);
+
+    const [roomType, setRoomType] = useState({
+
+    });
+    const [showModalPickRoom, setShowModalPickRoom] = useState(false);
+    const closeModalPickRoom = () => {
+        setShowModalPickRoom(false);
+    };
+
+    const [selectedRooms, setSelectedRooms] = useState([]);
+    const [selectedReservationId, setSelectedReservationId] = useState(null);
+    const [selectedQuantity, setSelectedQuantity] = useState(null);
+
+    const handleRoomSelect = (roomId) => {
+        setSelectedRooms((prevSelected) => {
+            if (prevSelected.includes(roomId)) {
+                // If the amenity is already selected, remove it
+                return prevSelected.filter(id => id !== roomId);
+            } else {
+                // If the amenity is not selected, add it
+                return [...prevSelected, roomId];
+            }
+        });
+    };
+
+    const openPickRoomModal = (roomTypeId, quantity, reservationId) => {
+        setShowModalPickRoom(true);
+        // Clear the image list first to avoid showing images from the previous room type
+        setRoomImageList([]); // Reset roomImageList to an empty array
+
+        setSelectedReservationId(reservationId);
+        setSelectedQuantity(quantity);
+        if (roomTypeId) {
+            roomTypeService
+                .getRoomTypeById(roomTypeId)
+                .then((res) => {
+                    setRoomType(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+            fetchRoomImages(roomTypeId); // Fetch images
+            roomTypeService
+                .getAllRoombyRoomTypeId(roomTypeId)
+                .then((res) => {
+                    const sortedRooms = res.data.sort((a, b) => a.roomNumber - b.roomNumber);
+                    setRoomList(sortedRooms);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+            fetchRoomFacilities(roomTypeId); // Fetch images
+        }
+    };
+
+
+    // Function to handle form submission
+    // Function to handle form submission
+    const handleCreateRoomStayHistory = (event) => {
+        event.preventDefault(); // Prevent the default form submission
+        setError({}); // Reset any previous errors
+        setShowError(false); // Hide error before validation
+        const reservationId = selectedReservationId;
+
+        // Only proceed if the selected rooms are within the allowed quantity
+        if (selectedRooms.length > selectedQuantity) {
+            setError({ general: `Cannot Choose more than ${selectedQuantity}` });
+            setShowError(true);
+            return;
+        }
+        // Array to hold promises for each save operation
+        const promises = selectedRooms.map(roomId => {
+            // Prepare the room stay history object
+            const roomStayHistory = {
+                reservationId,
+                roomId
+            };
+
+            // Log the room stay history before saving
+            console.log("Preparing to save Room Stay History:", roomStayHistory);
+
+            return roomStayHistoryService.saveRoomStayHistory(roomStayHistory)
+                .then(response => {
+                    console.log(`Room added: Room ID ${roomId}, Response:`, response);
+                    return response; // Return the response for further processing if needed
+                })
+                .catch(error => {
+                    console.error(`Error adding room stay history for Room ID ${roomId}:`, error);
+                    return Promise.reject(error); // Reject the promise for error handling
+                });
+        });
+
+        // Wait for all promises to resolve
+        Promise.all(promises)
+            .then(() => {
+                console.log("All room stay histories have been processed.");
+                closeModalPickRoom(); // Close the modal here
+            })
+            .catch(() => {
+                console.error("Some room stay histories could not be added. Check errors above.");
+                // You can show a notification or error message to the user if needed
+            });
+
+        // After submitting, clear the selected rooms
+        setSelectedRooms([]); // Clear selected amenities after submission
+    };
+
+
+
+
+
+    // Function to fetch room images based on roomTypeId
+    const fetchRoomImages = (roomTypeId) => {
+        roomTypeService
+            .getAllRoomImagebyRoomTypeId(roomTypeId)
+            .then((res) => {
+                setRoomImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    //  Function to fetch room facilities based on roomTypeId
+    const fetchRoomFacilities = (roomTypeId) => {
+        roomTypeService
+            .getAllFacilityByRoomTyeId(roomTypeId)
+            .then((res) => {
+                setRoomFacilities(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
 
     return (
         <>
@@ -156,12 +325,18 @@ const CheckInOut = () => {
                                                         )}
 
                                                         {!reservation.isCheckedOut ? (
-                                                            <button className="btn btn-danger" onClick={() => handleCheckOut(reservation)} disabled={!reservation.isCheckedIn}>
+                                                            <button className="btn btn-danger ml-2" onClick={() => handleCheckOut(reservation)} disabled={!reservation.isCheckedIn}>
                                                                 <i className="la la-sign-out" /> Check-Out
                                                             </button>
                                                         ) : (
                                                             <p className="text-danger"><strong>Checked Out at:</strong> {new Date().toLocaleTimeString()}</p>
                                                         )}
+
+                                                        <button className="btn btn-primary ml-2" onClick={() =>
+                                                            openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
+                                                            <i className="la la-sign-out" /> Pick Room
+                                                        </button>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -177,6 +352,144 @@ const CheckInOut = () => {
                     </div>
                 </div>
             </div>
+
+            {showModalPickRoom && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content">
+                            <form onSubmit={handleCreateRoomStayHistory}> {/* Attach handleSubmit here */}
+
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Pick Room for Customer</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalPickRoom}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className="col-md-5" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            {
+                                                roomImageList.length > 0 ? (
+                                                    roomImageList.map((item, index) => (
+                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
+                                                        No images available.
+                                                    </div>
+                                                )
+                                            }
+
+                                        </div>
+
+
+                                        <div className="col-md-7">
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style={{ width: '30%' }}>Type:</th>
+                                                        <td>{roomType.type?.typeName}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Room Size:</th>
+                                                        <td>{roomType.roomSize} m²</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total Rooms:</th>
+                                                        <td>{roomType.totalRooms}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Available Rooms:</th>
+                                                        <td>{roomType.availableRooms}</td>
+                                                    </tr>
+
+
+                                                </tbody>
+                                            </table>
+                                            <div>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Rooms</h3>
+                                                <div className="room-list">
+                                                    {roomList.map((room) => (
+                                                        <div
+                                                            key={room.roomNumber}
+                                                            className="room-box"
+                                                            style={{
+                                                                backgroundColor: room.status === 'Available' ? 'green' : 'red',
+                                                                position: 'relative',
+                                                                textAlign: 'center',
+                                                                flex: '0 1 auto',
+                                                                margin: '5px'
+                                                            }}
+                                                        >
+                                                            <p>{room.roomNumber}</p>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedRooms.includes(room.roomId)} // Check if this room is selected
+                                                                onChange={() => room.status === 'Available' && handleRoomSelect(room.roomId)} // Only toggle if available
+                                                                disabled={room.status !== 'Available'} // Disable checkbox for unavailable rooms
+                                                                style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                {roomList.length === 0 && (
+                                                    <p>No rooms available.</p>
+                                                )}
+                                            </div>
+
+                                            <hr />
+                                            <div>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Facilities</h3>
+                                                <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                    {
+                                                        roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
+                                                            <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                <h4>{item.facility?.facilityName}</h4>
+
+                                                            </div>
+                                                        ))
+                                                            : (
+                                                                <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                    No facilities available.
+                                                                </div>
+                                                            )
+                                                    }
+
+                                                </td>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <div className="modal-footer">
+                                    {
+                                        loginUser.role?.roleName === "Receptionist" && (
+                                            <>
+                                                <button type="submit" className="btn btn-primary" >Save</button>
+                                            </>
+                                        )
+                                    }
+                                    <button type="button" className="btn btn-dark" onClick={closeModalPickRoom} >Close</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )
+            }
 
 
             <style jsx>{`
@@ -294,6 +607,30 @@ const CheckInOut = () => {
                         width: 100%;
                     }
                 }
+
+                          .custom-modal-xl {
+    max-width: 90%;
+    width: 90%;
+}
+
+.room-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.room-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
             `}</style>
         </>
     );

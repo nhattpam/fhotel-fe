@@ -159,7 +159,7 @@ const Header = () => {
 
                 }
 
-                setSuccess({ general: "Thanks for joining FHotel! Check your mail later..." });
+                setSuccess({ general: "Cảm ơn bạn đã tham gia với FHotel! Kiểm tra mail thường xuyên nhé..." });
                 setShowSuccess(true); // Show success
             } else {
                 handleResponseError(hotelResponse);
@@ -219,13 +219,10 @@ const Header = () => {
                     </button>
                     <div className="collapse navbar-collapse" id="ftco-nav">
                         <ul className="navbar-nav ml-auto">
-                            <li className="nav-item active"><a href="index.html" className="nav-link">Home</a></li>
-                            <li className="nav-item"><a href="about.html" className="nav-link">About</a></li>
-                            <li className="nav-item"><a href="services.html" className="nav-link">Services</a></li>
-                            <li className="nav-item"><a href="agent.html" className="nav-link">Agent</a></li>
-                            <li className="nav-item"><a href="properties.html" className="nav-link">Listing</a></li>
-                            <li className="nav-item"><a href="blog.html" className="nav-link">Blog</a></li>
-                            <li className="nav-item"><a className="nav-link" onClick={() => handleOpenHotelRegistrationModal()}>Join with us!</a></li>
+                            <li className="nav-item active"><a href="index.html" className="nav-link">Trang Chủ</a></li>
+                            <li className="nav-item"><a href="about.html" className="nav-link">Về Chúng Tôi</a></li>
+                            <li className="nav-item"><a href="services.html" className="nav-link">Dịch Vụ</a></li>
+                            <li className="nav-item"><a className="nav-link" onClick={() => handleOpenHotelRegistrationModal()}>Tham Gia Ngay!</a></li>
                         </ul>
                     </div>
                 </div>
@@ -238,7 +235,7 @@ const Header = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Registration</h5>
+                                    <h5 className="modal-title">Đăng Ký Khách Sạn</h5>
                                     <button type="button" className="close" onClick={() => setShowCreateHotelRegistrationModal(false)}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -262,7 +259,7 @@ const Header = () => {
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
                                     <div className="form-row mb-3">
                                         <div className="form-group col-md-6">
-                                            <label>Owner Name</label>
+                                            <label>Chủ Sở Hữu</label>
                                             <input
                                                 name='ownerName'
                                                 type="text"
@@ -273,7 +270,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Owner Email</label>
+                                            <label>Email Chủ Sở Hữu</label>
                                             <input
                                                 name='ownerEmail'
                                                 type="email"
@@ -284,7 +281,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Owner Identification Number</label>
+                                            <label>Số Căn Cước Chủ Sở Hữu</label>
                                             <input
                                                 name='ownerIdentificationNumber'
                                                 type="text"
@@ -295,7 +292,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Owner Phone Number</label>
+                                            <label>Số Điện Thoại Chủ Sở Hữu</label>
                                             <input
                                                 name='ownerPhoneNumber'
                                                 type="text"
@@ -313,7 +310,7 @@ const Header = () => {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload your hotel images * :</label>
+                                                    <label htmlFor="imageUrl">Upload hình ảnh khách sạn * :</label>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelImage(acceptedFiles)}
                                                         accept="image/*"
@@ -325,7 +322,7 @@ const Header = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Drop files here or click to upload.</h3>
+                                                                    <h3>Chọn File.</h3>
                                                                 </div>
                                                                 {imagePreviewsHotelImage.length > 0 && (
                                                                     <div className="image-previews">
@@ -352,7 +349,7 @@ const Header = () => {
                                                     </Dropzone>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload your business documents  * :</label>
+                                                    <label htmlFor="imageUrl">Upload giấy tờ liên quan của khách sạn  * :</label>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelDocument(acceptedFiles)}
                                                         accept="image/*"
@@ -364,7 +361,7 @@ const Header = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Drop files here or click to upload.</h3>
+                                                                    <h3>Chọn File.</h3>
                                                                 </div>
                                                                 {imagePreviewsHotelDocument.length > 0 && (
                                                                     <div className="image-previews">
@@ -394,7 +391,7 @@ const Header = () => {
                                             <div className="col-md-7">
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Hotel Name</label>
+                                                        <label>Tên Khách Sạn</label>
                                                         <input
                                                             type="text"
                                                             name="hotelName"
@@ -405,7 +402,7 @@ const Header = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Phone</label>
+                                                        <label>Số Điện Thoại</label>
                                                         <input
                                                             type="number"
                                                             name="phone"
@@ -429,7 +426,7 @@ const Header = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>City</label>
+                                                        <label>Thành Phố</label>
                                                         <select
                                                             className="form-control"
                                                             onChange={(e) => {
@@ -437,7 +434,7 @@ const Header = () => {
                                                             }}
                                                             required
                                                         >
-                                                            <option value="">Select City</option>
+                                                            <option value="">Chọn Thành Phố</option>
                                                             {cityList.map((city) => (
                                                                 <option key={city.cityId} value={city.cityId}>
                                                                     {city.cityName}
@@ -448,7 +445,7 @@ const Header = () => {
                                                 </div>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>District</label>
+                                                        <label>Quận</label>
                                                         <select
                                                             name="districtId"
                                                             className="form-control"
@@ -456,7 +453,7 @@ const Header = () => {
                                                             onChange={(e) => handleChange(e)}
                                                             required
                                                         >
-                                                            <option value="">Select District</option>
+                                                            <option value="">Chọn Quận</option>
                                                             {districtList.map((district) => (
                                                                 <option key={district.districtId} value={district.districtId}>
                                                                     {district.districtName}
@@ -465,7 +462,7 @@ const Header = () => {
                                                         </select>
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Address</label>
+                                                        <label>Địa Chỉ</label>
                                                         <textarea
                                                             name="address"
                                                             className="form-control"
@@ -479,7 +476,7 @@ const Header = () => {
 
 
                                                 <div className="form-group">
-                                                    <label>Description</label>
+                                                    <label>Mô Tả</label>
                                                     <ReactQuill
                                                         theme="snow"
                                                         value={createHotel.description}
@@ -503,8 +500,8 @@ const Header = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Close</button>
-                                    <button type="submit" className="btn btn-primary">Submit</button>
+                                    <button type="button" className="btn btn-dark" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
+                                    <button type="submit" className="btn btn-primary">Gửi</button>
                                 </div>
                             </div>
 

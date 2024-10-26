@@ -28,16 +28,16 @@ const Home = () => {
                             <div className="search-wrap">
                                 <div className="row">
                                     <div className="col-md-4">
-                                        <input type="text" className="form-control" placeholder="Enter Location" />
+                                        <input type="text" className="form-control" placeholder="Nhập Địa Điểm" />
                                     </div>
                                     <div className="col-md-3">
-                                        <input type="date" className="form-control" placeholder="Check-in Date" />
+                                        <input type="date" className="form-control" placeholder="Ngày Check-in" />
                                     </div>
                                     <div className="col-md-3">
-                                        <input type="date" className="form-control" placeholder="Check-out Date" />
+                                        <input type="date" className="form-control" placeholder="Ngày Check-out" />
                                     </div>
                                     <div className="col-md-2">
-                                        <button className="btn btn-primary w-100">Search</button>
+                                        <button className="btn btn-primary w-100">Tìm Kiếm</button>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +51,7 @@ const Home = () => {
                 <div className="container">
                     <h2 className="heading mb-4 mt-5 text-center"></h2>
                     <div className="row justify-content-center text-center">
-                        <h4 className='mt-3' style={{ fontWeight: 'bold' }}>FHotel Essentials</h4>
+                        <h4 className='mt-3' style={{ fontWeight: 'bold' }}>FHotel Trân Trọng</h4>
                         <div className="col-md-2 d-flex flex-column align-items-center">
                             <div className="essential-item">
                                 <img src="my_img/ac.png" alt="AC Room" className="img-fluid mb-2" style={{ width: '15%' }} />
@@ -92,7 +92,7 @@ const Home = () => {
                 <div className="container">
                     <div className="row mb-4" >
                         <div className="col-12">
-                            <h2 className="heading">Featured Properties of the Month</h2>
+                            <h2 className="heading">Các Địa Điểm Nổi Bật Trong Tháng</h2>
                         </div>
                     </div>
                     <div className="row">

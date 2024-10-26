@@ -100,7 +100,7 @@ const ListReservation = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Reservations</div>
+                            <div className="ibox-title">Danh Sách Đặt Chỗ</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"
                                     autoComplete="on" value={reservationSearchTerm}
@@ -112,12 +112,12 @@ const ListReservation = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Customer</th>
-                                            <th>Room Type</th>
-                                            <th>Number of Rooms</th>
-                                            <th>Created Date</th>
-                                            <th>Status</th>
+                                            <th>STT.</th>
+                                            <th>Khách Hàng</th>
+                                            <th>Loại Phòng</th>
+                                            <th>Số Lượng</th>
+                                            <th>Ngày Đặt</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -132,7 +132,7 @@ const ListReservation = () => {
                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
                                                         <td>
                                                             {item.reservationStatus === "Pending" &&  (
-                                                                 <span className="badge label-table badge-warning">Peding</span>
+                                                                 <span className="badge label-table badge-warning">Đang Chờ</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -223,11 +223,11 @@ const ListReservation = () => {
                                                     </tr>
                                                     <tr>
                                                         <th>Phone Number:</th>
-                                                        <td>{reservation && reservation.phoneNumber ? reservation.phoneNumber : 'Unknown Phone Number'}</td>
+                                                        <td>{reservation && reservation.phoneNumber ? reservation.phoneNumber : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Address:</th>
-                                                        <td>{reservation && reservation.address ? reservation.address : 'Unknown Address'}</td>
+                                                        <td>{reservation && reservation.address ? reservation.address : 'Không tìm thấy'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -239,7 +239,7 @@ const ListReservation = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalReservation} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalReservation} >Đóng</button>
                                 </div>
                             </form>
 

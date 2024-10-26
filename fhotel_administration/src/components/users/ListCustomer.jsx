@@ -100,7 +100,7 @@ const ListCustomer = () => {
             const updateRes = await userService.updateUser(userId, { ...userData, isActive });
 
             if (updateRes.status === 200) {
-                window.alert("Update successful!");
+                // window.alert("Update successful!");
                 // Refresh the list after update
                 const updatedUsers = await userService.getAllUser();
                 const customers = updatedUsers.data.filter(user => user.role?.roleName === "Customer");
@@ -111,7 +111,7 @@ const ListCustomer = () => {
                 });
                 setUserList(sortedUserList);
             } else {
-                window.alert("Update FAILED!");
+                window.alert("Cập Nhật Lỗi!");
             }
         } catch (error) {
             console.log(error);
@@ -138,7 +138,7 @@ const ListCustomer = () => {
                         <div className="ibox-head">
                             <div className="ibox-title">List of Customers</div>
                             <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"
+                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={userSearchTerm}
                                     onChange={handleUserSearch} />
                             </div>
@@ -148,11 +148,11 @@ const ListCustomer = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Full Name</th>
+                                            <th>STT.</th>
+                                            <th>Họ Và Tên</th>
                                             <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
+                                            <th>Chức Vụ</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -166,9 +166,9 @@ const ListCustomer = () => {
                                                         <td>{item.role?.roleName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -196,7 +196,8 @@ const ListCustomer = () => {
                                                                 >
                                                                     <i className="fa fa-times font-14 text-danger" />
                                                                 </button>
-                                                            </form>                                                        </td>
+                                                            </form>
+                                                        </td>
                                                     </tr>
                                                 </>
                                             ))
@@ -253,7 +254,7 @@ const ListCustomer = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">User Information</h5>
+                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -270,7 +271,7 @@ const ListCustomer = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <th style={{ width: '30%' }}>Họ Và Tên:</th>
                                                         <td>{user.name}</td>
                                                     </tr>
                                                     <tr>
@@ -278,12 +279,12 @@ const ListCustomer = () => {
                                                         <td>{user.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Unknown Phone Number'}</td>
+                                                        <th>Số Điện Thoại:</th>
+                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Address:</th>
-                                                        <td>{user && user.address ? user.address : 'Unknown Address'}</td>
+                                                        <th>Địa Chỉ:</th>
+                                                        <td>{user && user.address ? user.address : 'Không tìm thấy'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -295,7 +296,7 @@ const ListCustomer = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Đóng</button>
                                 </div>
                             </form>
 

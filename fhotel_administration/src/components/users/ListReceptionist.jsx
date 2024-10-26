@@ -426,12 +426,12 @@ const ListReceptionist = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Receptionists</div>
+                            <div className="ibox-title">Danh Sách Lễ Tân</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
                                     id="demo-foo-search"
                                     type="text"
-                                    placeholder="Search"
+                                    placeholder="Tìm Kiếm"
                                     className="form-control form-control-sm"
                                     autoComplete="on"
                                     value={userSearchTerm}
@@ -441,7 +441,7 @@ const ListReceptionist = () => {
                                     className="btn btn-primary ml-3"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Create New Receptionist
+                                    Tạo Lễ Tân
                                 </button>
                             </div>
                         </div>
@@ -450,12 +450,11 @@ const ListReceptionist = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
+                                            <th>STT.</th>
+                                            <th>Họ Và Tên</th>
                                             <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
+                                            <th>Chức Vụ</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -469,9 +468,9 @@ const ListReceptionist = () => {
                                                         <td>{item.user?.role?.roleName}</td>
                                                         <td>
                                                             {item.user?.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -571,7 +570,7 @@ const ListReceptionist = () => {
                                     style={{ textAlign: "left" }}
                                 >
                                     <div className="modal-header">
-                                        <h5 className="modal-title">Create a Receptionist</h5>
+                                        <h5 className="modal-title">Tạo Lễ Tân</h5>
 
                                         <button
                                             type="button"
@@ -603,10 +602,10 @@ const ListReceptionist = () => {
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
 
                                         {/* Form Fields */}
-                                        <h4 className="header-title ">Information</h4>
+                                        <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Full Name * :</label>
+                                                <label htmlFor="hotelName">Họ Và Tên * :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -638,7 +637,7 @@ const ListReceptionist = () => {
                                            
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="password">Password * :</label>
+                                                <label htmlFor="password">Mật Khẩu * :</label>
                                                 <input
                                                     type="password"
                                                     className="form-control"
@@ -651,7 +650,7 @@ const ListReceptionist = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="star">Identification Number * :</label>
+                                                <label htmlFor="star">Số Căn Cước * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -667,7 +666,7 @@ const ListReceptionist = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Phone * :</label>
+                                                <label htmlFor="address">Số Điện Thoại * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -681,7 +680,7 @@ const ListReceptionist = () => {
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Hotel * :</label>
+                                                <label htmlFor="address">Khách Sạn * :</label>
                                                 <select
                                                     name="hotelId"
                                                     className="form-control"
@@ -689,7 +688,7 @@ const ListReceptionist = () => {
                                                     onChange={(e) => handleInputChange(e)}
                                                     required
                                                 >
-                                                    <option value="">Select Hotel</option>
+                                                    <option value="">Chọn Khách Sạn</option>
                                                     {hotelList.map((hotel) => (
                                                         <option key={hotel.hotelId} value={hotel.hotelId}>
                                                             {hotel.hotelName}
@@ -706,8 +705,8 @@ const ListReceptionist = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom">Save</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Close</button>
+                                        <button type="submit" className="btn btn-custom">Lưu</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Đóng</button>
                                     </div>
                                 </form>
 

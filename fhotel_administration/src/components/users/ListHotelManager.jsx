@@ -294,7 +294,6 @@ const ListHotelManager = () => {
             const updateRes = await userService.updateUser(userId, { ...userData, isActive });
 
             if (updateRes.status === 200) {
-                window.alert("Update successful!");
                 // Refresh the list after update
                 const updatedUsers = await userService.getAllUser();
                 const hotelManagers = updatedUsers.data.filter(user => user.role?.roleName === "Hotel Manager");
@@ -305,11 +304,11 @@ const ListHotelManager = () => {
                 });
                 setUserList(sortedUserList);
             } else {
-                window.alert("Update FAILED!");
+                window.alert("Cập Nhật Lỗi!");
             }
         } catch (error) {
             console.log(error);
-            window.alert("An error occurred during the update.");
+            window.alert("Có lỗi xảy ra trong quá trình cập nhật.");
         }
     };
 
@@ -331,23 +330,17 @@ const ListHotelManager = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Hotel Managers</div>
+                            <div className="ibox-title">Danh Sách Chủ Khách Sạn</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
                                     id="demo-foo-search"
                                     type="text"
-                                    placeholder="Search"
+                                    placeholder="Tìm Kiếm"
                                     className="form-control form-control-sm"
                                     autoComplete="on"
                                     value={userSearchTerm}
                                     onChange={handleUserSearch}
                                 />
-                                {/* <button
-                                    className="btn btn-primary ml-3"
-                                    onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
-                                >
-                                    Create New Hotel Manager
-                                </button> */}
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -355,11 +348,11 @@ const ListHotelManager = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Full Name</th>
+                                            <th>STT.</th>
+                                            <th>Họ Và Tên</th>
                                             <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
+                                            <th>Chức Vụ</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -373,9 +366,9 @@ const ListHotelManager = () => {
                                                         <td>{item.role?.roleName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đã kích hoạt</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -464,7 +457,7 @@ const ListHotelManager = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">User Information</h5>
+                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -482,7 +475,7 @@ const ListHotelManager = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <th style={{ width: '30%' }}>Tên:</th>
                                                         <td>{user.name} </td>
                                                     </tr>
                                                     <tr>
@@ -490,30 +483,30 @@ const ListHotelManager = () => {
                                                         <td>{user.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Unknown Phone Number'}</td>
+                                                        <th>Số Điện Thoại:</th>
+                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Address:</th>
-                                                        <td>{user && user.address ? user.address : 'Unknown Address'}</td>
+                                                        <th>Địa Chỉ:</th>
+                                                        <td>{user && user.address ? user.address : 'Không tìm thấy Số Địa Chỉ'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
 
                                         </div>
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h3 style={{ fontWeight: 'bold' }}>Hotels</h3>
+                                            <h3 style={{ fontWeight: 'bold' }}>Danh Sách Khách Sạn</h3>
                                             <div className="ibox-body">
                                                 <div className="table-responsive">
                                                     <table className="table">
                                                         <thead>
                                                             <tr>
-                                                                <th>No.</th>
-                                                                <th>Name</th>
-                                                                <th>Owner</th>
-                                                                <th>District</th>
-                                                                <th>City</th>
-                                                                <th>Status</th>
+                                                                <th>STT.</th>
+                                                                <th>Tên Khách Sạn</th>
+                                                                <th>Chủ Sở Hữu</th>
+                                                                <th>Quận</th>
+                                                                <th>Thành Phố</th>
+                                                                <th>Trạng Thái</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -529,13 +522,14 @@ const ListHotelManager = () => {
                                                                             <td>{item.district?.city?.cityName}</td>
                                                                             <td>
                                                                                 {item.isActive ? (
-                                                                                    <span className="badge label-table badge-success">Active</span>
+                                                                                    <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                                                 ) : (
-                                                                                    <span className="badge label-table badge-danger">Inactive</span>
+                                                                                    <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                                                 )}
                                                                             </td>
                                                                             <td>
-                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit" to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14"  /></Link>
+                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit" 
+                                                                                to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14"  /></Link>
                                                                                 {/* <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button> */}
                                                                             </td>
                                                                         </tr>

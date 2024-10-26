@@ -204,6 +204,7 @@ const ListManager = () => {
                 const userResponse = await userService.saveUser(createUser);
 
                 if (userResponse.status === 201) {
+
                     window.location.reload();
                 } else {
                     setError({ general: "Failed to create user." }); // Set error message
@@ -314,12 +315,12 @@ const ListManager = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Managers</div>
+                            <div className="ibox-title">Danh Sách Quản Lý</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
                                     id="demo-foo-search"
                                     type="text"
-                                    placeholder="Search"
+                                    placeholder="Tìm Kiếm"
                                     className="form-control form-control-sm"
                                     autoComplete="on"
                                     value={userSearchTerm}
@@ -329,7 +330,7 @@ const ListManager = () => {
                                     className="btn btn-primary ml-3"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Create New Manager
+                                    Tạo Quản Lý
                                 </button>
                             </div>
                         </div>
@@ -338,11 +339,11 @@ const ListManager = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Full Name</th>
+                                            <th>STT.</th>
+                                            <th>Họ Và Tên</th>
                                             <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
+                                            <th>Chức Vụ</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -356,9 +357,9 @@ const ListManager = () => {
                                                         <td>{item.role?.roleName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -447,7 +448,7 @@ const ListManager = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">User Information</h5>
+                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -465,7 +466,7 @@ const ListManager = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <th style={{ width: '30%' }}>Họ Và Tên:</th>
                                                         <td>{user.name}</td>
                                                     </tr>
                                                     <tr>
@@ -473,22 +474,22 @@ const ListManager = () => {
                                                         <td>{user.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Unknown Phone Number'}</td>
+                                                        <th>Số Điện Thoại:</th>
+                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy'}</td>
                                                     </tr>
-                                                    
+
                                                 </tbody>
                                             </table>
 
                                         </div>
-                                        
+
                                     </div>
 
 
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Đóng</button>
                                 </div>
                             </form>
 
@@ -515,7 +516,7 @@ const ListManager = () => {
                                     style={{ textAlign: "left" }}
                                 >
                                     <div className="modal-header">
-                                        <h5 className="modal-title">Create a Manager</h5>
+                                        <h5 className="modal-title">Tạo Quản Lý</h5>
 
                                         <button
                                             type="button"
@@ -540,10 +541,10 @@ const ListManager = () => {
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
 
                                         {/* Form Fields */}
-                                        <h4 className="header-title ">Information</h4>
+                                        <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Full Name * :</label>
+                                                <label htmlFor="hotelName">Họ Và Tên * :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -570,10 +571,10 @@ const ListManager = () => {
 
 
                                         <div className="form-row">
-                                            
+
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="password">Password * :</label>
+                                                <label htmlFor="password">Mật Khẩu * :</label>
                                                 <input
                                                     type="password"
                                                     className="form-control"
@@ -586,7 +587,7 @@ const ListManager = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="star">Identification Number * :</label>
+                                                <label htmlFor="star">Số Căn Cước * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -602,7 +603,7 @@ const ListManager = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Phone * :</label>
+                                                <label htmlFor="address">Số Điện Thoại * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -624,8 +625,8 @@ const ListManager = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom">Save</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Close</button>
+                                        <button type="submit" className="btn btn-custom">Lưu</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Đóng</button>
                                     </div>
                                 </form>
 
@@ -635,7 +636,7 @@ const ListManager = () => {
 
                 )
             }
-           
+
 
             <style>
                 {`

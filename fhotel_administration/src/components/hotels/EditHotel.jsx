@@ -874,14 +874,14 @@ const EditHotel = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">Hotel: {hotel.hotelName}</div>
+                            <div className="ibox-title">Khách Sạn: {hotel.hotelName}</div>
 
                         </div>
                         <div className="ibox-body">
                             <table className="table table-borderless table-hover table-wrap table-centered m-0">
                                 <tbody>
                                     <tr>
-                                        <th>Image:</th>
+                                        <th>Hình Ảnh:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -919,7 +919,7 @@ const EditHotel = () => {
                                                 ))
                                                     : (
                                                         <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                            No hotel images available.
+                                                            Không tìm thấy.
                                                         </div>
                                                     )
                                             }
@@ -952,11 +952,11 @@ const EditHotel = () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Hotel Name:</th>
+                                        <th>Tên Khách Sạn:</th>
                                         <td>{hotel.hotelName}</td>
                                     </tr>
                                     <tr>
-                                        <th>Phone number:</th>
+                                        <th>Số Điện Thoại:</th>
                                         <td>{hotel.phone}</td>
                                     </tr>
                                     <tr>
@@ -965,18 +965,18 @@ const EditHotel = () => {
                                     </tr>
 
                                     <tr>
-                                        <th>Star:</th>
+                                        <th>Sao:</th>
                                         <td>{hotel.star === null ? 0 : hotel.star} <i className="fa fa-star text-warning" aria-hidden="true"></i></td>
                                     </tr>
 
                                     <tr>
-                                        <th>Business Documents:</th>
+                                        <th>Giấy Tờ:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
                                                     <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                        <img src={item.image} alt="amenity" style={{ width: "100px", margin: '0 5px' }} 
-                                                         onClick={() => handleImageLargerClick(item.image)} />
+                                                        <img src={item.image} alt="amenity" style={{ width: "100px", margin: '0 5px' }}
+                                                            onClick={() => handleImageLargerClick(item.image)} />
 
                                                         {/* Delete Button */}
                                                         {
@@ -1041,36 +1041,36 @@ const EditHotel = () => {
                                     </tr>
 
                                     <tr>
-                                        <th>District:</th>
+                                        <th>Quận/Huyện:</th>
                                         <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                     </tr>
                                     <tr>
-                                        <th>City:</th>
+                                        <th>Thành Phố:</th>
                                         <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                     </tr>
                                     <tr>
-                                        <th>Status:</th>
+                                        <th>Trạng Thái:</th>
                                         <td>
                                             {hotel.isActive ? (
-                                                <span className="badge label-table badge-success">Active</span>
+                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                             ) : (
-                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                             )}</td>
                                     </tr>
                                     <tr>
-                                        <th>Created Date:</th>
+                                        <th>Ngày Tạo:</th>
                                         <td>
                                             {new Date(hotel.createdDate).toLocaleString('en-US')}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Updated Date:</th>
+                                        <th>Ngày Cập Nhật:</th>
                                         <td>
                                             {new Date(hotel.updatedDate).toLocaleString('en-US')}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Amenities:</th>
+                                        <th>Tiện Nghi:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelAmenityList.length > 0 ? hotelAmenityList.map((item, index) => (
@@ -1106,7 +1106,7 @@ const EditHotel = () => {
                                                 ))
                                                     : (
                                                         <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                            No amenities available.
+                                                            Không tìm thấy.
                                                         </div>
                                                     )
                                             }
@@ -1142,7 +1142,7 @@ const EditHotel = () => {
 
                                     </tr>
                                     <tr>
-                                        <th>Description:</th>
+                                        <th>Mô Tả:</th>
                                         <td dangerouslySetInnerHTML={{ __html: hotel.description }}>
                                         </td>
                                     </tr>
@@ -1151,7 +1151,7 @@ const EditHotel = () => {
                             <hr />
 
                             <div className="form-group d-flex align-items-center justify-content-between">
-                                <h2 style={{ fontWeight: 'bold' }}>Room Types of Hotel</h2>
+                                <h2 style={{ fontWeight: 'bold' }}>Các Loại Phòng Của Khách Sạn</h2>
                                 {
                                     loginUser.role?.roleName === "Hotel Manager" && (
                                         <>
@@ -1159,7 +1159,7 @@ const EditHotel = () => {
                                                 className="btn btn-primary ml-auto"
                                                 onClick={openCreateRoomTypeModal}
                                             >
-                                                Create New Room Type
+                                                Tạo Loại Phòng
                                             </button>
                                         </>
                                     )
@@ -1171,12 +1171,12 @@ const EditHotel = () => {
                                 <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
                                     <thead className="thead-light">
                                         <tr>
-                                            <th>No.</th>
-                                            <th data-hide="phone">Name</th>
-                                            <th>Room Size</th>
-                                            <th>Price</th> {/* Add a new column for the price */}
-                                            <th data-toggle="true">Status</th>
-                                            <th>Action</th>
+                                            <th>STT.</th>
+                                            <th data-hide="phone">Tên Loại</th>
+                                            <th>Kích Thước Phòng</th>
+                                            <th>Giá</th> {/* Add a new column for the price */}
+                                            <th data-toggle="true">Trạng Thái</th>
+                                            <th>Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1195,9 +1195,9 @@ const EditHotel = () => {
                                                     </td>
                                                     <td>
                                                         {item.isActive ? (
-                                                            <span className="badge label-table badge-success">Active</span>
+                                                            <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                         ) : (
-                                                            <span className="badge label-table badge-danger">Inactive</span>
+                                                            <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                         )}
                                                     </td>
                                                     <td>
@@ -1239,7 +1239,7 @@ const EditHotel = () => {
                                 {
                                     roomTypeList.length === 0 && (
                                         <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
-                                            No Room Types available.
+                                            Không tìm thấy.
                                         </div>
                                     )
                                 }
@@ -1247,7 +1247,7 @@ const EditHotel = () => {
 
                             <hr />
                             <div className="form-group d-flex align-items-center justify-content-between">
-                                <h2 style={{ fontWeight: 'bold' }}>Staffs of Hotel</h2>
+                                <h2 style={{ fontWeight: 'bold' }}>Nhân Viên Của Khách Sạn</h2>
                             </div>
 
 
@@ -1255,11 +1255,11 @@ const EditHotel = () => {
                                 <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Full Name</th>
+                                            <th>STT.</th>
+                                            <th>Họ Và Tên</th>
                                             <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
+                                            <th>Chức Vụ</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1273,9 +1273,9 @@ const EditHotel = () => {
                                                         <td>{item.user?.role?.roleName}</td>
                                                         <td>
                                                             {item.user?.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
 
@@ -1290,7 +1290,7 @@ const EditHotel = () => {
                                 {
                                     hotelStaffList.length === 0 && (
                                         <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
-                                            No Staffs available.
+                                            Không tìm thấy.
                                         </div>
                                     )
                                 }
@@ -1312,7 +1312,7 @@ const EditHotel = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Room Type Information</h5>
+                                    <h5 className="modal-title">Thông Tin Loại Phòng</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalRoomType}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -1353,7 +1353,7 @@ const EditHotel = () => {
                                                     ))
                                                 ) : (
                                                     <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        No images available.
+                                                        Không tìm thấy.
                                                     </div>
                                                 )
                                             }
@@ -1379,27 +1379,30 @@ const EditHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Type:</th>
+                                                        <th style={{ width: '30%' }}>Loại Phòng:</th>
                                                         <td>{roomType.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Room Size:</th>
+                                                        <th>Diện Tích:</th>
                                                         <td>{roomType.roomSize} m²</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Total Rooms:</th>
+                                                        <th>Số Lượng Phòng:</th>
                                                         <td>{roomType.totalRooms}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Available Rooms:</th>
+                                                        <th>Số Phòng Còn Trống:</th>
                                                         <td>{roomType.availableRooms}</td>
                                                     </tr>
-
+                                                    <tr>
+                                                        <th>Mô Tả:</th>
+                                                        <td dangerouslySetInnerHTML={{ __html: roomType.description }}></td>
+                                                    </tr>
 
                                                 </tbody>
                                             </table>
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Rooms</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh Sách Phòng</h3>
                                                 <div className="room-list">
                                                     {roomList.map((room) => (
                                                         <div
@@ -1413,13 +1416,13 @@ const EditHotel = () => {
                                                 </div>
                                                 {roomList.length === 0 && (
                                                     <>
-                                                        <p>No rooms available.</p>
+                                                        <p>Không tìm thấy.</p>
                                                     </>
                                                 )}
                                             </div>
                                             <hr />
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Facilities</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Cơ Sở Vật Chất</h3>
                                                 <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
@@ -1455,7 +1458,7 @@ const EditHotel = () => {
                                                         ))
                                                             : (
                                                                 <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                    No facilities available.
+                                                                    Không tìm thấy.
                                                                 </div>
                                                             )
                                                     }
@@ -1502,7 +1505,7 @@ const EditHotel = () => {
                                             </>
                                         )
                                     }
-                                    <button type="button" className="btn btn-dark" onClick={closeModalRoomType} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalRoomType} >Đóng</button>
                                 </div>
                             </form>
 
@@ -1530,7 +1533,7 @@ const EditHotel = () => {
                                     style={{ textAlign: "left" }}
                                 >
                                     <div className="modal-header">
-                                        <h5 className="modal-title">Create a Room Type</h5>
+                                        <h5 className="modal-title">Tạo Loại Phòng</h5>
 
                                         <button
                                             type="button"
@@ -1555,10 +1558,10 @@ const EditHotel = () => {
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
 
                                         {/* Form Fields */}
-                                        <h4 className="header-title ">Information</h4>
+                                        <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Type Name * :</label>
+                                                <label htmlFor="hotelName">Loại Phòng * :</label>
                                                 <select
                                                     name="typeId"
                                                     className="form-control"
@@ -1566,7 +1569,7 @@ const EditHotel = () => {
                                                     onChange={(e) => handleChange(e)}
                                                     required
                                                 >
-                                                    <option value="">Select Type</option>
+                                                    <option value="">Chọn Loại</option>
                                                     {typeList.map((type) => (
                                                         <option key={type.typeId} value={type.typeId}>
                                                             {type.typeName}
@@ -1576,7 +1579,7 @@ const EditHotel = () => {
                                             </div>
 
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="size">Size * :</label>
+                                                <label htmlFor="size">Diện Tích * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -1605,7 +1608,7 @@ const EditHotel = () => {
 
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="maxOccupancy">Total Rooms * :</label>
+                                                <label htmlFor="maxOccupancy">Số Lượng Phòng * :</label>
                                                 <select
                                                     className="form-control"
                                                     id="totalRooms"
@@ -1616,7 +1619,7 @@ const EditHotel = () => {
                                                     disabled={formSubmitted} // Disable if form submitted
 
                                                 >
-                                                    <option value="">Select</option>
+                                                    <option value="">Chọn</option>
                                                     {[...Array(10).keys()].map((_, index) => (
                                                         <option key={index + 1} value={index + 1}>
                                                             {index + 1}
@@ -1626,7 +1629,7 @@ const EditHotel = () => {
                                             </div>
 
                                             <div className="form-group col-md-12">
-                                                <label htmlFor="description">Description * :</label>
+                                                <label htmlFor="description">Mô Tả * :</label>
                                                 <ReactQuill
                                                     value={createRoomType.description}
                                                     onChange={handleCreateRoomTypeDescriptionChange}
@@ -1648,7 +1651,7 @@ const EditHotel = () => {
                                             </div>
                                             {formSubmitted && ( // Conditional rendering for "Add Room images" heading
                                                 <div className="form-group col-md-12">
-                                                    <label htmlFor="">Add Room Images * :</label>
+                                                    <label htmlFor="">Thêm Hình Ảnh * :</label>
 
                                                     {/* Container for images */}
                                                     <div className="row mt-3">
@@ -1695,8 +1698,8 @@ const EditHotel = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom" disabled={formSubmitted}>Save</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomType}>Close</button>
+                                        <button type="submit" className="btn btn-custom" disabled={formSubmitted}>Lưu</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomType}>Đóng</button>
                                     </div>
 
                                 </form>
@@ -1716,7 +1719,7 @@ const EditHotel = () => {
                             <div className="modal-content">
                                 <form onSubmit={handleSubmit}> {/* Attach handleSubmit here */}
                                     <div className="modal-header">
-                                        <h5 className="modal-title">Choose Amenity</h5>
+                                        <h5 className="modal-title">Thêm Tiện Nghi</h5>
                                         <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelAmenity}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -1743,10 +1746,10 @@ const EditHotel = () => {
                                     <div className="modal-footer">
                                         {
                                             loginUser.role?.roleName === "Hotel Manager" && (
-                                                <button type="submit" className="btn btn-custom">Submit</button>
+                                                <button type="submit" className="btn btn-custom">Lưu</button>
                                             )
                                         }
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelAmenity}>Close</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelAmenity}>Đóng</button>
                                     </div>
                                 </form>
                             </div>
@@ -1762,7 +1765,7 @@ const EditHotel = () => {
                             <div className="modal-content">
                                 <form onSubmit={handleSubmitRoomFacility}> {/* Attach handleSubmit here */}
                                     <div className="modal-header">
-                                        <h5 className="modal-title">Choose Facility</h5>
+                                        <h5 className="modal-title">Thêm Cơ Sở Vật Chất</h5>
                                         <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -1789,10 +1792,10 @@ const EditHotel = () => {
                                     <div className="modal-footer">
                                         {
                                             loginUser.role?.roleName === "Hotel Manager" && (
-                                                <button type="submit" className="btn btn-custom">Submit</button>
+                                                <button type="submit" className="btn btn-custom">Lưu</button>
                                             )
                                         }
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomFacility}>Close</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomFacility}>Đóng</button>
                                     </div>
                                 </form>
                             </div>
@@ -1808,7 +1811,7 @@ const EditHotel = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Upload Hotel Image</h5>
+                                    <h5 className="modal-title">Upload Hình Ảnh Khách Sạn</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelImage}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -1849,12 +1852,10 @@ const EditHotel = () => {
                                                     ))
                                                 ) : (
                                                     <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        No images available.
+                                                        Không tìm thấy.
                                                     </div>
                                                 )
                                             }
-
-
                                             {
                                                 loginUser.role?.roleName === "Hotel Manager" && (
                                                     <>
@@ -1870,14 +1871,10 @@ const EditHotel = () => {
 
                                         </div>
 
-
-
                                     </div>
-
-
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelImage} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelImage} >Đóng</button>
                                 </div>
                             </form>
 
@@ -1894,7 +1891,7 @@ const EditHotel = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Upload Hotel Document</h5>
+                                    <h5 className="modal-title">Upload Giấy Tờ Khách Sạn</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelDocument}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -1935,7 +1932,7 @@ const EditHotel = () => {
                                                     ))
                                                 ) : (
                                                     <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        No documents available.
+                                                        Không tìm thấy.
                                                     </div>
                                                 )
                                             }
@@ -1955,15 +1952,10 @@ const EditHotel = () => {
                                             }
 
                                         </div>
-
-
-
                                     </div>
-
-
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelDocument} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelDocument} >Đóng</button>
                                 </div>
                             </form>
 
@@ -1980,7 +1972,7 @@ const EditHotel = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Image</h5>
+                                    <h5 className="modal-title">Hình Ảnh</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -1991,7 +1983,7 @@ const EditHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Đóng</button>
                                 </div>
                             </form>
 

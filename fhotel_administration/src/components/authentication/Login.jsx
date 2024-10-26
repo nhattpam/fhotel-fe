@@ -100,13 +100,13 @@ const Login = () => {
                     navigate('/room-attendant-home');
                 }
                 else {
-                    showErrorMessage('You are not authorized to access this page.');
+                    showErrorMessage('Bạn không có quyền truy cập.');
                 }
             } else {
-                showErrorMessage('Login failed. Please try again.');
+                showErrorMessage('Đăng nhập không thành công. Vui lòng thử lại!');
             }
         } catch (error) {
-            showErrorMessage('Login failed. Please try again.');
+            showErrorMessage('Đăng nhập không thành công. Vui lòng thử lại!');
         }
     };
 
@@ -119,7 +119,7 @@ const Login = () => {
                         <img src="/my_img/admin_login.jpg" alt="Welcome" className="welcome-image" />
                         <div className="centered-text">
                             <h2>Welcome Back!</h2>
-                            <p>Sign in to your account to continue.</p>
+                            <p>Đăng nhập để tiếp tục.</p>
                         </div>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ const Login = () => {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label>Password</label>
+                                    <label>Mật Khẩu</label>
                                     <input
                                         type="password"
                                         className="form-control"
@@ -148,7 +148,7 @@ const Login = () => {
                                     />
                                 </div>
                                 {error && <div className="error-text">{error}</div>}
-                                <button type="submit" className="btn btn-black">Login</button>
+                                <button type="submit" className="btn btn-black">Đăng Nhập</button>
                             </form>
                         </div>
                     </div>

@@ -16,7 +16,7 @@ const ListTypePricing = () => {
     const [typePricingSearchTerm, setTypePricingSearchTerm] = useState('');
     const [currentTypePricingPage, setCurrentTypePricingPage] = useState(0);
     const [typePricingsPerPage] = useState(20);
-    const daysOfWeek = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const daysOfWeek = ["", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
 
 
     const { typeId } = useParams();
@@ -305,16 +305,16 @@ const ListTypePricing = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Pricing for {type.typeName}</div>
+                            <div className="ibox-title">Bảng Giá Cho Loại Phòng {type.typeName}</div>
                             <div className="form-group d-flex align-items-center">
-                                <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"
+                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={typePricingSearchTerm}
                                     onChange={handleTypePricingSearch} />
                                 <button
                                     className="btn btn-primary ml-3"
                                     onClick={openCreateTypePricingModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Create New Price
+                                    Tạo Bảng Giá
                                 </button>
                             </div>
                         </div>
@@ -323,13 +323,14 @@ const ListTypePricing = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Type</th>
-                                            <th>Day Of Week</th>
-                                            <th>Price</th>
-                                            <th>District</th>
-                                            <th>Created Date</th>
-                                            <th>Updated Date</th>
+                                            <th>STT.</th>
+                                            <th>Loại Phòng</th>
+                                            <th>Ngày Trong Tuần</th>
+                                            <th>Giá</th>
+                                            <th>Quận</th>
+                                            <th>Thành Phố</th>
+                                            <th>Ngày Tạo</th>
+                                            <th>Ngày Cập Nhật</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -342,6 +343,7 @@ const ListTypePricing = () => {
                                                         <td>{daysOfWeek[item.dayOfWeek]}</td>
                                                         <td>{item.price} Vnd</td>
                                                         <td>{item.district?.districtName}</td>
+                                                        <td>{item.district?.city?.cityName}</td>
                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
                                                         <td> {item.updatedDate === null ? "None" : new Date(item.updatedDate).toLocaleString('en-US')}</td>
 
@@ -464,7 +466,7 @@ const ListTypePricing = () => {
                                     style={{ textAlign: "left" }}
                                 >
                                     <div className="modal-header">
-                                        <h5 className="modal-title">Create Prices for the Week</h5>
+                                        <h5 className="modal-title">Tạo Bảng Giá Cho Tuần</h5>
                                         <button
                                             type="button"
                                             className="close"
@@ -478,11 +480,11 @@ const ListTypePricing = () => {
 
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                         {/* Form Fields */}
-                                        <h4 className="header-title ">Information</h4>
+                                        <h4 className="header-title ">Thông Tin</h4>
 
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label>City</label>
+                                                <label>Thành Phố</label>
                                                 <select
                                                     name="cityId"
                                                     className="form-control"
@@ -492,7 +494,7 @@ const ListTypePricing = () => {
                                                     }}
                                                     required
                                                 >
-                                                    <option value="">Select City</option>
+                                                    <option value="">Chọn Thành Phố</option>
                                                     {cityList.map((city) => (
                                                         <option key={city.cityId} value={city.cityId}>
                                                             {city.cityName}
@@ -502,7 +504,7 @@ const ListTypePricing = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label>District</label>
+                                                <label>Quận</label>
                                                 <select
                                                     name="districtId"
                                                     className="form-control"
@@ -510,7 +512,7 @@ const ListTypePricing = () => {
                                                     onChange={(e) => handleChange(e)}
                                                     required
                                                 >
-                                                    <option value="">Select District</option>
+                                                    <option value="">Chọn Quận</option>
                                                     {districtList.map((district) => (
                                                         <option key={district.districtId} value={district.districtId}>
                                                             {district.districtName}
@@ -521,10 +523,10 @@ const ListTypePricing = () => {
                                         </div>
 
                                         {/* Price inputs for each day */}
-                                        <h4 className="header-title">Prices for Each Day</h4>
-                                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, index) => (
+                                        <h4 className="header-title">Giá Cho Các Ngày</h4>
+                                        {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'].map((day, index) => (
                                             <div className="form-group col-md-12" key={index}>
-                                                <label htmlFor={`price_${index}`}>{day} Price * :</label>
+                                                <label htmlFor={`price_${index}`}>{day}  * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -550,9 +552,9 @@ const ListTypePricing = () => {
                                             className="btn btn-custom"
                                             disabled={isSubmitting}  // Disable button when submitting
                                         >
-                                            Save
+                                            Lưu
                                         </button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateTypePricing}>Close</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateTypePricing}>Đóng</button>
                                     </div>
                                 </form>
 

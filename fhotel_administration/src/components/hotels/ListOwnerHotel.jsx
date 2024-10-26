@@ -291,7 +291,7 @@ const ListOwnerHotel = () => {
 
                 }
 
-                setSuccess({ general: "Wait for acceptance..." });
+                setSuccess({ general: "Đã Gửi Yêu Cầu Thành Công!..." });
                 setShowSuccess(true); // Show success
             } else {
                 handleResponseError(hotelResponse);
@@ -356,12 +356,12 @@ const ListOwnerHotel = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Hotels</div>
+                            <div className="ibox-title">Danh Sách Khách Sạn</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
                                     id="demo-foo-search"
                                     type="text"
-                                    placeholder="Search"
+                                    placeholder="Tìm Kiếm"
                                     className="form-control form-control-sm"
                                     autoComplete="on"
                                     value={hotelSearchTerm}
@@ -371,7 +371,7 @@ const ListOwnerHotel = () => {
                                     className="btn btn-primary ml-3"
                                     onClick={handleOpenHotelRegistrationModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Create New Hotel
+                                    Tạo Khách Sạn
                                 </button>
                             </div>
                         </div>
@@ -380,13 +380,12 @@ const ListOwnerHotel = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Name</th>
-                                            <th>Owner</th>
-                                            <th>District</th>
-                                            <th>City</th>
-                                            <th>Country</th>
-                                            <th>Status</th>
+                                            <th>STT.</th>
+                                            <th>Tên Khách Sạn</th>
+                                            <th>Chủ Sở Hữu</th>
+                                            <th>Quận</th>
+                                            <th>Thành Phố</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -399,12 +398,11 @@ const ListOwnerHotel = () => {
                                                         <td>{item.owner?.name}</td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
-                                                        <td>{item.district?.city?.country?.countryName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -467,7 +465,7 @@ const ListOwnerHotel = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Information</h5>
+                                    <h5 className="modal-title">Thông Tin Khách Sạn</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -478,7 +476,7 @@ const ListOwnerHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th>Image:</th>
+                                                        <th>Hình Ảnh:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -491,14 +489,14 @@ const ListOwnerHotel = () => {
                                                                 ))
                                                                     : (
                                                                         <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                            No hotel images available.
+                                                                            Không Tìm Thấy.
                                                                         </div>
                                                                     )
                                                             }
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Business document:</th>
+                                                        <th>Giấy Tờ:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -511,7 +509,7 @@ const ListOwnerHotel = () => {
                                                                 ))
                                                                     : (
                                                                         <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                            No hotel images available.
+                                                                            Không Tìm Thấy.
                                                                         </div>
                                                                     )
                                                             }
@@ -526,7 +524,7 @@ const ListOwnerHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <th style={{ width: '30%' }}>Tên Khách Sạn:</th>
                                                         <td>{hotel.hotelName}</td>
                                                     </tr>
                                                     <tr>
@@ -534,32 +532,25 @@ const ListOwnerHotel = () => {
                                                         <td>{hotel.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
+                                                        <th>Số Điện Thoại:</th>
+                                                        <td>{hotel && hotel.phone ? hotel.phone : 'Không tìm thấy'}</td>
+                                                    </tr>
+                                                   
+                                                    <tr>
+                                                        <th>Quận:</th>
+                                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Business License Number:</th>
-                                                        <td>{hotel && hotel.businessLicenseNumber ? hotel.businessLicenseNumber : 'Unknown Business License Number'}</td>
+                                                        <th>Thành Phố:</th>
+                                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Tax Identification Number:</th>
-                                                        <td>{hotel && hotel.taxIdentificationNumber ? hotel.taxIdentificationNumber : 'Unknown Tax Identification Number'}</td>
+                                                        <th>Địa Chỉ:</th>
+                                                        <td>{hotel && hotel.address ? hotel.address : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>District:</th>
-                                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>City:</th>
-                                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Address:</th>
-                                                        <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Owner:</th>
-                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
+                                                        <th>Chủ Sở Hữu:</th>
+                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -571,8 +562,8 @@ const ListOwnerHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
+                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>
 
@@ -588,7 +579,7 @@ const ListOwnerHotel = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Image</h5>
+                                    <h5 className="modal-title">Hình Ảnh</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -599,7 +590,7 @@ const ListOwnerHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Đóng</button>
                                 </div>
                             </form>
 
@@ -614,7 +605,7 @@ const ListOwnerHotel = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Registration</h5>
+                                    <h5 className="modal-title">Tạo Khách Sạn</h5>
                                     <button type="button" className="close" onClick={() => setShowCreateHotelRegistrationModal(false)}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -640,7 +631,7 @@ const ListOwnerHotel = () => {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload your hotel images * :</label>
+                                                    <label htmlFor="imageUrl">Upload Hình Ảnh * :</label>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelImage(acceptedFiles)}
                                                         accept="image/*"
@@ -679,7 +670,7 @@ const ListOwnerHotel = () => {
                                                     </Dropzone>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload your business documents  * :</label>
+                                                    <label htmlFor="imageUrl">Upload Giấy Tờ Khách Sạn * :</label>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelDocument(acceptedFiles)}
                                                         accept="image/*"
@@ -721,7 +712,7 @@ const ListOwnerHotel = () => {
                                             <div className="col-md-7">
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Hotel Name</label>
+                                                        <label>Tên Khách Sạn</label>
                                                         <input
                                                             type="text"
                                                             name="hotelName"
@@ -732,7 +723,7 @@ const ListOwnerHotel = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Phone</label>
+                                                        <label>Số Điện Thoại</label>
                                                         <input
                                                             type="number"
                                                             name="phone"
@@ -756,7 +747,7 @@ const ListOwnerHotel = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>City</label>
+                                                        <label>Thành Phố</label>
                                                         <select
                                                             className="form-control"
                                                             onChange={(e) => {
@@ -764,7 +755,7 @@ const ListOwnerHotel = () => {
                                                             }}
                                                             required
                                                         >
-                                                            <option value="">Select City</option>
+                                                            <option value="">Chọn Thành Phố</option>
                                                             {cityList.map((city) => (
                                                                 <option key={city.cityId} value={city.cityId}>
                                                                     {city.cityName}
@@ -775,7 +766,7 @@ const ListOwnerHotel = () => {
                                                 </div>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>District</label>
+                                                        <label>Quận</label>
                                                         <select
                                                             name="districtId"
                                                             className="form-control"
@@ -783,7 +774,7 @@ const ListOwnerHotel = () => {
                                                             onChange={(e) => handleChange(e)}
                                                             required
                                                         >
-                                                            <option value="">Select District</option>
+                                                            <option value="">Chọn Quận/Huyện</option>
                                                             {districtList.map((district) => (
                                                                 <option key={district.districtId} value={district.districtId}>
                                                                     {district.districtName}
@@ -792,7 +783,7 @@ const ListOwnerHotel = () => {
                                                         </select>
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Address</label>
+                                                        <label>Địa Chỉ</label>
                                                         <textarea
                                                             name="address"
                                                             className="form-control"
@@ -806,7 +797,7 @@ const ListOwnerHotel = () => {
 
 
                                                 <div className="form-group">
-                                                    <label>Description</label>
+                                                    <label>Mô Tả</label>
                                                     <ReactQuill
                                                         theme="snow"
                                                         value={createHotel.description}
@@ -830,8 +821,9 @@ const ListOwnerHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Close</button>
-                                    <button type="submit" className="btn btn-primary">Submit</button>
+                                    <button type="button" className="btn btn-dark" 
+                                    onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
+                                    <button type="submit" className="btn btn-primary">Gửi</button>
                                 </div>
                             </div>
 

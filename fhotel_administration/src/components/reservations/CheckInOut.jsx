@@ -247,25 +247,25 @@ const CheckInOut = () => {
                 <div className="page-content">
                     <div className="card shadow-lg border-0 rounded">
                         <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                            <h4 className="mb-0">Reservation Search</h4>
+                            <h4 className="mb-0">Tìm Kiếm Đặt Chỗ</h4>
                         </div>
 
                         <div className="card-body p-4" style={{ textAlign: 'left' }}>
                             <div className="check-in-out-page">
                                 {/* Search Section */}
                                 <div className="search-section mb-4">
-                                    <label htmlFor="reservation-search" className="form-label">Search Reservation</label>
+                                    {/* <label htmlFor="reservation-search" className="form-label">Search Reservation</label> */}
                                     <div className="input-group">
                                         <input
                                             type="text"
                                             id="reservation-search"
                                             className="form-control"
-                                            placeholder="Customer Name or Email or Identification number"
+                                            placeholder="Nhập tên khách hàng hoặc số điện thoại hoặc email hoặc số căn cước"
                                             value={customerSearch}
                                             onChange={(e) => setCustomerSearch(e.target.value)}
                                         />
                                         <button className="btn btn-primary input-group-append" onClick={handleSearch}>
-                                            <i className="la la-search" /> Search
+                                            <i className="la la-search" /> Tìm
                                         </button>
                                     </div>
                                 </div>
@@ -273,41 +273,43 @@ const CheckInOut = () => {
                                 {/* Reservation Details */}
                                 {reservationDetails && reservationDetails.length > 0 ? (
                                     <div className="reservation-details mt-4">
-                                        <h5 className="mb-4">Reservation Details</h5>
+                                        <h5 className="mb-4">Chi Tiết Đặt Chỗ</h5>
                                         {reservationDetails.map((reservation, index) => (
                                             <div key={index} className="card mb-3 border-light shadow-sm">
                                                 <div className="card-body">
                                                     <div className="row">
                                                         <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Customer Name:</strong> {reservation.customer?.name}</p>
-                                                            <p><strong className='mr-2'>Identification Number:</strong> {reservation.customer?.identificationNumber}</p>
+                                                            <p><strong className='mr-2'>Tên Khách Hàng:</strong> {reservation.customer?.name}</p>
+                                                            <p><strong className='mr-2'>Số Căn Cước:</strong> {reservation.customer?.identificationNumber}</p>
                                                             <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
-                                                            <p><strong className='mr-2'>Phone Number:</strong> {reservation.customer?.phoneNumber}</p>
-                                                            <p><strong className='mr-2'>Check-In Date:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
-                                                            <p><strong className='mr-2'>Check-Out Date:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
+                                                            <p><strong className='mr-2'>Số Điện Thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                                            <p><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                                            <p><strong className='mr-2'>Ngày Dự Kiến Check-Out:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                                         </div>
                                                         <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Room Type:</strong> {reservation.roomType?.type?.typeName}</p>
-                                                            <p><strong className='mr-2'>Quantity:</strong> {reservation.numberOfRooms}</p>
-                                                            <p><strong className='mr-2'>Total Amount:</strong> {reservation.totalAmount} VND</p>
+                                                            <p><strong className='mr-2'>Loại Phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                                            <p><strong className='mr-2'>Số Lượng Đặt:</strong> {reservation.numberOfRooms}</p>
+                                                            <p><strong className='mr-2'>Tổng Số Tiền:</strong> {reservation.totalAmount} VND</p>
                                                             <p>
-                                                                <strong className='mr-2'>Payment Status:</strong>
+                                                                <strong className='mr-2'>Trạng Thái Thanh Toán:</strong>
                                                                 {reservation.paymentStatus === "Paid" ? (
-                                                                    <span className="badge label-table badge-success">Paid</span>
+                                                                    <span className="badge label-table badge-success">Đã Thanh Toán</span>
                                                                 ) : reservation.paymentStatus === "Not Paid" ? (
-                                                                    <span className="badge label-table badge-danger">Not Paid</span>
+                                                                    <span className="badge label-table badge-danger">Chưa Thanh Toán</span>
                                                                 ) : (
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
                                                             </p>
                                                             <p>
-                                                                <strong className='mr-2'>Reservation Status:</strong>
+                                                                <strong className='mr-2'>Trạng Thái Đặt Chỗ:</strong>
                                                                 {reservation.reservationStatus === "Confirmed" ? (
-                                                                    <span className="badge label-table badge-success">Confirmed</span>
+                                                                    <span className="badge label-table badge-success">Đã CheckIn</span>
                                                                 ) : reservation.reservationStatus === "Cancelled" ? (
-                                                                    <span className="badge label-table badge-danger">Cancelled</span>
+                                                                    <span className="badge label-table badge-danger">Đã Hủy</span>
                                                                 ) : reservation.reservationStatus === "Pending" ? (
-                                                                    <span className="badge label-table badge-warning">Pending</span>
+                                                                    <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                ) : reservation.reservationStatus === "Checkout" ? (
+                                                                    <span className="badge label-table badge-warning">Đã CheckOut</span>
                                                                 ) : (
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
@@ -334,7 +336,7 @@ const CheckInOut = () => {
 
                                                         <button className="btn btn-primary ml-2" onClick={() =>
                                                             openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                            <i className="la la-sign-out" /> Pick Room
+                                                            <i className="la la-sign-out" /> Chọn Phòng
                                                         </button>
 
                                                     </div>
@@ -344,7 +346,7 @@ const CheckInOut = () => {
                                     </div>
                                 ) : (
                                     <div className="alert alert-warning mt-4">
-                                        <i className="la la-exclamation-triangle" /> No reservation found. Please search again.
+                                        <i className="la la-exclamation-triangle" /> Không tìm thấy đặt chỗ. Tìm kiếm lại!
                                     </div>
                                 )}
                             </div>
@@ -360,7 +362,7 @@ const CheckInOut = () => {
                             <form onSubmit={handleCreateRoomStayHistory}> {/* Attach handleSubmit here */}
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Pick Room for Customer</h5>
+                                    <h5 className="modal-title">Chọn Phòng Cho Khách Hàng</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalPickRoom}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -384,7 +386,7 @@ const CheckInOut = () => {
                                                     ))
                                                 ) : (
                                                     <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        No images available.
+                                                        Không tìm thấy.
                                                     </div>
                                                 )
                                             }
@@ -396,19 +398,19 @@ const CheckInOut = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Type:</th>
+                                                        <th style={{ width: '30%' }}>Loại Phòng:</th>
                                                         <td>{roomType.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Room Size:</th>
+                                                        <th>Diện Tích:</th>
                                                         <td>{roomType.roomSize} m²</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Total Rooms:</th>
+                                                        <th>Tổng Số Phòng:</th>
                                                         <td>{roomType.totalRooms}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Available Rooms:</th>
+                                                        <th>Số Phòng Còn Trống:</th>
                                                         <td>{roomType.availableRooms}</td>
                                                     </tr>
 
@@ -416,7 +418,7 @@ const CheckInOut = () => {
                                                 </tbody>
                                             </table>
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Rooms</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh Sách Phòng</h3>
                                                 <div className="room-list">
                                                     {roomList.map((room) => (
                                                         <div
@@ -442,13 +444,13 @@ const CheckInOut = () => {
                                                     ))}
                                                 </div>
                                                 {roomList.length === 0 && (
-                                                    <p>No rooms available.</p>
+                                                    <p>Không tìm thấy.</p>
                                                 )}
                                             </div>
 
                                             <hr />
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Facilities</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Cơ Sở Vật Chất</h3>
                                                 <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
@@ -459,7 +461,7 @@ const CheckInOut = () => {
                                                         ))
                                                             : (
                                                                 <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                    No facilities available.
+                                                                    Không tìm thấy.
                                                                 </div>
                                                             )
                                                     }
@@ -477,11 +479,11 @@ const CheckInOut = () => {
                                     {
                                         loginUser.role?.roleName === "Receptionist" && (
                                             <>
-                                                <button type="submit" className="btn btn-primary" >Save</button>
+                                                <button type="submit" className="btn btn-primary" >Lưu</button>
                                             </>
                                         )
                                     }
-                                    <button type="button" className="btn btn-dark" onClick={closeModalPickRoom} >Close</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalPickRoom} >Đóng</button>
                                 </div>
                             </form>
 

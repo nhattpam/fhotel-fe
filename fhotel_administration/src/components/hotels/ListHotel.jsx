@@ -361,7 +361,7 @@ const ListHotel = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Hotels</div>
+                            <div className="ibox-title">Danh Sách Khách Sạn</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
                                     id="demo-foo-search"
@@ -380,14 +380,12 @@ const ListHotel = () => {
                                 <table className="table">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            {/* <th>Image</th> */}
-                                            <th>Name</th>
-                                            <th>Owner</th>
-                                            <th>Disctrict</th>
-                                            <th>City</th>
-                                            <th>Country</th>
-                                            <th>Status</th>
+                                            <th>STT.</th>
+                                            <th>Tên Khách Sạn</th>
+                                            <th>Chủ Sở Hữu</th>
+                                            <th>Quận</th>
+                                            <th>Thành Phố</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -404,12 +402,11 @@ const ListHotel = () => {
                                                         <td>{item.ownerName}</td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
-                                                        <td>{item.district?.city?.country?.countryName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -495,7 +492,7 @@ const ListHotel = () => {
                             <form onSubmit={(e) => submitUpdateHotelOwner(e, hotel.hotelId, updateHotelOwner.ownerId)}>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Information</h5>
+                                    <h5 className="modal-title">Thông Tin Khách Sạn</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -520,7 +517,7 @@ const ListHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th>Image:</th>
+                                                        <th>Hình Ảnh:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -540,7 +537,7 @@ const ListHotel = () => {
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Business document:</th>
+                                                        <th>Tài Liệu:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -553,7 +550,7 @@ const ListHotel = () => {
                                                                 ))
                                                                     : (
                                                                         <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                            No hotel documents available.
+                                                                            Không có tài liệu khách sạn.
                                                                         </div>
                                                                     )
                                                             }
@@ -568,7 +565,7 @@ const ListHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <th style={{ width: '30%' }}>Tên:</th>
                                                         <td>{hotel.hotelName}</td>
                                                     </tr>
                                                     <tr>
@@ -576,28 +573,28 @@ const ListHotel = () => {
                                                         <td>{hotel.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Phone Number:</th>
+                                                        <th>Số Điện Thoại:</th>
                                                         <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>District:</th>
+                                                        <th>Quận:</th>
                                                         <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>City:</th>
+                                                        <th>Thành Phố:</th>
                                                         <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Address:</th>
+                                                        <th>Địa Chỉ:</th>
                                                         <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                     </tr>
 
                                                     <tr>
-                                                        <th>Owner:</th>
+                                                        <th>Chủ Sở Hữu:</th>
                                                         <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Owner Email:</th>
+                                                        <th>Email Chủ Sở Hữu:</th>
                                                         <td>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
                                                     </tr>
 
@@ -611,9 +608,9 @@ const ListHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-success" onClick={handleCreateHotelManager}>Create owner account</button>
-                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>View Detail</Link>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Close</button>
+                                    <button type="button" className="btn btn-success" onClick={handleCreateHotelManager}>Tạo tài khoản</button>
+                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>
 

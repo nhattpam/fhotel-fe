@@ -23,6 +23,7 @@ import ListStaffReservation from './components/reservations/ListStaffReservation
 import ListOwnerReservation from './components/reservations/ListOwnerReservation';
 import ListReservation from './components/reservations/ListReservation';
 import CheckInOut from './components/reservations/CheckInOut';
+import ListHotelVerification from './components/hotels/ListHotelVerification';
 
 function App() {
   return (
@@ -57,6 +58,9 @@ function App() {
         <Route path="/list-owner-reservation" element={<ListOwnerReservation />} />
         <Route path="/list-reservation" element={<ListReservation />} />
         <Route path="/check-in-out" element={<CheckInOut />} />
+        {/* hotel verification */}
+        <Route path="/list-hotel-verification" element={<ListHotelVerification />} />
+
       </Routes>
     </div>
   );

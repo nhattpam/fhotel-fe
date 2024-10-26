@@ -96,9 +96,9 @@ const SideBar = () => {
                                     )
                                 }
 
-                               
-                                
-                                </small></div>
+
+
+                            </small></div>
                     </div>
                     <ul className="side-menu metismenu">
                         {
@@ -263,6 +263,11 @@ const SideBar = () => {
                             user.role?.roleName === "Manager" && (
                                 <>
                                     <li>
+                                        <Link to="/list-hotel-verification"><i className="sidebar-item-icon fa fa-map" />
+                                            <span className="nav-label">Nhiệm Vụ</span>
+                                        </Link>
+                                    </li>
+                                    <li>
                                         <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
                                             <span className="nav-label">Đặt Chỗ</span>
                                         </Link>
@@ -319,7 +324,7 @@ const SideBar = () => {
                                             <span className="nav-label">Hóa Đơn / Thanh Toán</span>
                                         </Link>
                                     </li>
-{/* 
+                                    {/* 
                                     <li>
                                         <Link to="/facilities-management"><i className="sidebar-item-icon fa fa-wrench" />
                                             <span className="nav-label">Facilities Management</span>

@@ -136,7 +136,7 @@ const ListCustomer = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Customers</div>
+                            <div className="ibox-title">Danh Sách Khách Hàng</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={userSearchTerm}

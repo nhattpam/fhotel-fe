@@ -218,7 +218,7 @@ const ListRefundPolicy = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalRefundPolicy} >Close</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRefundPolicy} >Đóng</button>
                                 </div>
                             </form>
 

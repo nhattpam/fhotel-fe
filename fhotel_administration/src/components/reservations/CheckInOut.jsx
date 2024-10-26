@@ -264,7 +264,7 @@ const CheckInOut = () => {
                                             value={customerSearch}
                                             onChange={(e) => setCustomerSearch(e.target.value)}
                                         />
-                                        <button className="btn btn-primary input-group-append" onClick={handleSearch}>
+                                        <button className="btn btn-primary input-group-append ml-2" onClick={handleSearch}>
                                             <i className="la la-search" /> Tìm
                                         </button>
                                     </div>
@@ -302,13 +302,13 @@ const CheckInOut = () => {
                                                             </p>
                                                             <p>
                                                                 <strong className='mr-2'>Trạng Thái Đặt Chỗ:</strong>
-                                                                {reservation.reservationStatus === "Confirmed" ? (
+                                                                {reservation.reservationStatus === "CheckIn" ? (
                                                                     <span className="badge label-table badge-success">Đã CheckIn</span>
                                                                 ) : reservation.reservationStatus === "Cancelled" ? (
                                                                     <span className="badge label-table badge-danger">Đã Hủy</span>
                                                                 ) : reservation.reservationStatus === "Pending" ? (
                                                                     <span className="badge label-table badge-warning">Đang Chờ</span>
-                                                                ) : reservation.reservationStatus === "Checkout" ? (
+                                                                ) : reservation.reservationStatus === "CheckOut" ? (
                                                                     <span className="badge label-table badge-warning">Đã CheckOut</span>
                                                                 ) : (
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>

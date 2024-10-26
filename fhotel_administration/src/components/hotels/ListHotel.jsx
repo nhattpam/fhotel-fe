@@ -787,15 +787,15 @@ const ListHotel = () => {
                                     {
                                         hotel.verifyStatus !== "Done" && (
                                             <>
-                                                <button type="button" className="btn btn-danger"
+                                                <button type="button" className="btn btn-danger btn-sm"
                                                     onClick={() => openCreateHotelVerificationModal(hotel.hotelId)}>Xác Minh Ngay</button>
                                             </>
                                         )
                                     }
 
-                                    <button type="button" className="btn btn-success" onClick={handleCreateHotelManager}>Tạo tài khoản</button>
-                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Đóng</button>
+                                    <button type="button" className="btn btn-success btn-sm" onClick={handleCreateHotelManager}>Tạo tài khoản</button>
+                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>
 
@@ -822,7 +822,7 @@ const ListHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={handleCloseImageLargeModal} >Đóng</button>
                                 </div>
                             </form>
 
@@ -940,8 +940,8 @@ const ListHotel = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom">Lưu</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelVerification}>Đóng</button>
+                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelVerification}>Đóng</button>
                                     </div>
                                 </form>
 

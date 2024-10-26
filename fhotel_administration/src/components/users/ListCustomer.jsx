@@ -296,7 +296,7 @@ const ListCustomer = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
                                 </div>
                             </form>
 

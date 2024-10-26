@@ -327,7 +327,7 @@ const ListManager = () => {
                                     onChange={handleUserSearch}
                                 />
                                 <button
-                                    className="btn btn-primary ml-3"
+                                    className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
                                     Tạo Quản Lý
@@ -489,7 +489,7 @@ const ListManager = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalUser} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
                                 </div>
                             </form>
 
@@ -625,8 +625,8 @@ const ListManager = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom">Lưu</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Đóng</button>
+                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateUser}>Đóng</button>
                                     </div>
                                 </form>
 

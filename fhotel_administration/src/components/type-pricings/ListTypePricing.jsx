@@ -311,7 +311,7 @@ const ListTypePricing = () => {
                                     autoComplete="on" value={typePricingSearchTerm}
                                     onChange={handleTypePricingSearch} />
                                 <button
-                                    className="btn btn-primary ml-3"
+                                    className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateTypePricingModal} // This will trigger the modal for creating a new hotel
                                 >
                                     Tạo Bảng Giá
@@ -549,12 +549,12 @@ const ListTypePricing = () => {
                                     <div className="modal-footer">
                                         <button
                                             type="submit"
-                                            className="btn btn-custom"
+                                            className="btn btn-custom btn-sm"
                                             disabled={isSubmitting}  // Disable button when submitting
                                         >
                                             Lưu
                                         </button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateTypePricing}>Đóng</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
                                     </div>
                                 </form>
 

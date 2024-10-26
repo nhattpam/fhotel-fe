@@ -140,8 +140,14 @@ const ListStaffReservation = () => {
                                                             {item.reservationStatus === "Pending" &&  (
                                                                  <span className="badge label-table badge-warning">Đang Chờ</span>
                                                             )}
-                                                            {item.reservationStatus === "Confirmed" &&  (
-                                                                 <span className="badge label-table badge-success">Đã Check-In</span>
+                                                             {item.reservationStatus === "CheckIn" &&  (
+                                                                 <span className="badge label-table badge-success">Xác Nhận</span>
+                                                            )}
+                                                             {item.reservationStatus === "CheckOut" &&  (
+                                                                 <span className="badge label-table badge-danger">Đã Check Out</span>
+                                                            )}
+                                                             {item.reservationStatus === "Cancelled" &&  (
+                                                                 <span className="badge label-table badge-danger">Đã Hủy</span>
                                                             )}
                                                         </td>
                                                         <td>

@@ -965,11 +965,6 @@ const EditHotel = () => {
                                     </tr>
 
                                     <tr>
-                                        <th>Sao:</th>
-                                        <td>{hotel.star === null ? 0 : hotel.star} <i className="fa fa-star text-warning" aria-hidden="true"></i></td>
-                                    </tr>
-
-                                    <tr>
                                         <th>Giấy Tờ:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
@@ -1143,8 +1138,16 @@ const EditHotel = () => {
                                     </tr>
                                     <tr>
                                         <th>Mô Tả:</th>
-                                        <td dangerouslySetInnerHTML={{ __html: hotel.description }}>
-                                        </td>
+                                        <td
+                                            dangerouslySetInnerHTML={{ __html: hotel.description }}
+                                            style={{
+                                                wordWrap: 'break-word',
+                                                whiteSpace: 'pre-wrap',
+                                                maxWidth: '300px' // Adjust width as needed
+                                            }}
+                                            className="wordwrap"
+                                        ></td>
+
                                     </tr>
                                 </tbody>
                             </table>
@@ -1396,7 +1399,15 @@ const EditHotel = () => {
                                                     </tr>
                                                     <tr>
                                                         <th>Mô Tả:</th>
-                                                        <td dangerouslySetInnerHTML={{ __html: roomType.description }}></td>
+                                                        <td
+                                                            dangerouslySetInnerHTML={{ __html: hotel.description }}
+                                                            style={{
+                                                                wordWrap: 'break-word',
+                                                                whiteSpace: 'pre-wrap',
+                                                                maxWidth: '300px' // Adjust width as needed
+                                                            }}
+                                                            className="wordwrap"
+                                                        ></td>
                                                     </tr>
 
                                                 </tbody>
@@ -1501,11 +1512,11 @@ const EditHotel = () => {
                                     {
                                         loginUser.role?.roleName === "Hotel Manager" && (
                                             <>
-                                                <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link>
+                                                <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link>
                                             </>
                                         )
                                     }
-                                    <button type="button" className="btn btn-dark" onClick={closeModalRoomType} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoomType} >Đóng</button>
                                 </div>
                             </form>
 
@@ -1698,8 +1709,8 @@ const EditHotel = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom" disabled={formSubmitted}>Lưu</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomType}>Đóng</button>
+                                        <button type="submit" className="btn btn-custom btn-sm" disabled={formSubmitted}>Lưu</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateRoomType}>Đóng</button>
                                     </div>
 
                                 </form>
@@ -1746,10 +1757,10 @@ const EditHotel = () => {
                                     <div className="modal-footer">
                                         {
                                             loginUser.role?.roleName === "Hotel Manager" && (
-                                                <button type="submit" className="btn btn-custom">Lưu</button>
+                                                <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
                                             )
                                         }
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelAmenity}>Đóng</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelAmenity}>Đóng</button>
                                     </div>
                                 </form>
                             </div>
@@ -1792,10 +1803,10 @@ const EditHotel = () => {
                                     <div className="modal-footer">
                                         {
                                             loginUser.role?.roleName === "Hotel Manager" && (
-                                                <button type="submit" className="btn btn-custom">Lưu</button>
+                                                <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
                                             )
                                         }
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateRoomFacility}>Đóng</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateRoomFacility}>Đóng</button>
                                     </div>
                                 </form>
                             </div>
@@ -1874,7 +1885,7 @@ const EditHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelImage} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelImage} >Đóng</button>
                                 </div>
                             </form>
 
@@ -1955,7 +1966,7 @@ const EditHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateHotelDocument} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelDocument} >Đóng</button>
                                 </div>
                             </form>
 
@@ -1983,7 +1994,7 @@ const EditHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={handleCloseImageLargeModal} >Đóng</button>
                                 </div>
                             </form>
 
@@ -2041,6 +2052,12 @@ const EditHotel = () => {
   font-weight: bold;
   border-radius: 8px;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.wordwrap {
+    white-space: pre-wrap; /* Preserves whitespace and wraps text as needed */
+    word-break: break-word; /* Ensures long words break within the boundaries */
+    overflow-wrap: break-word; /* For additional browser support */
 }
 
 

@@ -211,7 +211,7 @@ const ListLateCheckOutPolicy = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalLateCheckOutPolicy} >Close</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalLateCheckOutPolicy} >Đóng</button>
                                 </div>
                             </form>
 

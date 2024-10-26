@@ -134,6 +134,15 @@ const ListReservation = () => {
                                                             {item.reservationStatus === "Pending" &&  (
                                                                  <span className="badge label-table badge-warning">Đang Chờ</span>
                                                             )}
+                                                             {item.reservationStatus === "CheckIn" &&  (
+                                                                 <span className="badge label-table badge-success">Xác Nhận</span>
+                                                            )}
+                                                             {item.reservationStatus === "CheckOut" &&  (
+                                                                 <span className="badge label-table badge-danger">Đã Check Out</span>
+                                                            )}
+                                                             {item.reservationStatus === "Cancelled" &&  (
+                                                                 <span className="badge label-table badge-danger">Đã Hủy</span>
+                                                            )}
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5"
@@ -239,7 +248,7 @@ const ListReservation = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalReservation} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalReservation} >Đóng</button>
                                 </div>
                             </form>
 

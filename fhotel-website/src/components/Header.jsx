@@ -235,7 +235,7 @@ const Header = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Đăng Ký Khách Sạn</h5>
+                                    <h5 className="modal-title" style={{fontWeight: 'bold'}}>Đăng Ký Khách Sạn</h5>
                                     <button type="button" className="close" onClick={() => setShowCreateHotelRegistrationModal(false)}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -500,8 +500,8 @@ const Header = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
-                                    <button type="submit" className="btn btn-primary">Gửi</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
+                                    <button type="submit" className="btn btn-primary btn-sm">Gửi</button>
                                 </div>
                             </div>
 

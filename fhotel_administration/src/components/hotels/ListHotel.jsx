@@ -744,7 +744,7 @@ const ListHotel = () => {
 
                                                                             <td>{item.assignedManager?.name}</td>
                                                                             <td>{new Date(item.verificationDate).toLocaleString('en-US')}</td>
-                                                                            <td dangerouslySetInnerHTML={{ __html: item.notes }}></td>
+                                                                            <td className='wordwrap' dangerouslySetInnerHTML={{ __html: item.notes }}></td>
                                                                             <td>
                                                                                 {item.verificationStatus === "Pending" && (
                                                                                     <span className="badge label-table ">
@@ -911,7 +911,11 @@ const ListHotel = () => {
                                                             <td>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Quản Lý:</th>
+                                                            <th>Số Điện Thoại Chủ Sở Hữu:</th>
+                                                            <td>{hotel && hotel.ownerPhoneNumber ? hotel.ownerPhoneNumber : 'Unknown owner Phone'}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Nhân Viên Xác Minh:</th>
                                                             <td>
                                                                 <select
                                                                     name="assignedManagerId"
@@ -920,7 +924,7 @@ const ListHotel = () => {
                                                                     onChange={(e) => handleInputChangeManager(e)}
                                                                     required
                                                                 >
-                                                                    <option value="">Chọn Quản Lý</option>
+                                                                    <option value="">Chọn Nhân Viên</option>
                                                                     {managerList.map((manager) => (
                                                                         <option key={manager.userId} value={manager.userId}>
                                                                             {manager.name}
@@ -965,6 +969,11 @@ const ListHotel = () => {
     background-color: #3498db;
     color: white
     }
+    .wordwrap {
+    white-space: pre-wrap; /* Preserves whitespace and wraps text as needed */
+    word-break: break-word; /* Ensures long words break within the boundaries */
+    overflow-wrap: break-word; /* For additional browser support */
+}
                                             `}
             </style>
 

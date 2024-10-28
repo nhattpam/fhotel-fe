@@ -122,6 +122,9 @@ const ListManager = () => {
 
     const [error, setError] = useState({}); // State to hold error messages
     const [showError, setShowError] = useState(false); // State to manage error visibility
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [success, setSuccess] = useState({});
+
 
     const handleChange = (e) => {
         const value = e.target.value;
@@ -205,17 +208,16 @@ const ListManager = () => {
 
                 if (userResponse.status === 201) {
 
-                    window.location.reload();
+                    setSuccess({ general: "Tạo tài khoản thành công!." });
+                    setShowSuccess(true); // Show error
                 } else {
-                    setError({ general: "Failed to create user." }); // Set error message
-                    setShowError(true); // Show error
+                    handleResponseError(error.response);
                     return;
                 }
 
             } catch (error) {
                 console.log(error);
-                setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
-                setShowError(true); // Show error
+                handleResponseError(error.response);
             }
         }
 
@@ -231,7 +233,25 @@ const ListManager = () => {
         }
     }, [showError]); // Only run effect if showError changes
 
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
 
+    const handleResponseError = (response) => {
+        if (response && response.status === 400) {
+            const validationErrors = response.data.errors || [];
+            setError({ general: response.data.message, validation: validationErrors });
+        } else {
+            setError({ general: "An unexpected error occurred. Please try again." });
+        }
+        setShowError(true); // Show error modal or message
+    };
 
     //open hotel modal
     const [showModalHotel, setShowModalHotel] = useState(false);

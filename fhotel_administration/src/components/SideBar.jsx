@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'
 import userService from '../services/user.service';
 import typeService from '../services/type.service';
+import cityService from '../services/city.service';
+import typePricingService from '../services/type-pricing.service';
 
 const SideBar = () => {
 
@@ -57,6 +59,173 @@ const SideBar = () => {
                 console.log(error);
             });
     }, []);
+
+    //create type pricing modal
+    const [typePricingList, setTypePricingList] = useState([]);
+
+    const [createTypePricing, setCreateTypePricing] = useState({
+        districtId: '',
+        price_1: '',  // Monday
+        price_2: '',  // Tuesday
+        price_3: '',  // Wednesday
+        price_4: '',  // Thursday
+        price_5: '',  // Friday
+        price_6: '',  // Saturday
+        price_7: '',  // Sunday
+    });
+
+    const [showModalCreateTypePricing, setShowModalCreateTypePricing] = useState(false);
+
+    const openCreateTypePricingModal = () => {
+        setShowModalCreateTypePricing(true);
+
+    };
+
+    const closeModalCreateTypePricing = () => {
+        setShowModalCreateTypePricing(false);
+    };
+
+
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+
+        setCreateTypePricing({ ...createTypePricing, [e.target.name]: value });
+    };
+
+
+
+
+    const [cityList, setCityList] = useState([]);
+    const [districtList, setDistrictList] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(''); // Add state for selected city
+
+    useEffect(() => {
+        cityService
+            .getAllCity()
+            .then((res) => {
+                setCityList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+    // Fetch districts when selectedCity changes
+    useEffect(() => {
+        if (selectedCity) {
+            cityService
+                .getAllDistrictByCityId(selectedCity)
+                .then((res) => {
+                    setDistrictList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            setDistrictList([]); // Clear district list if no city is selected
+        }
+    }, [selectedCity]);
+
+    const handleDayPriceChange = (e, dayOfWeek) => {
+        const value = e.target.value;
+        setCreateTypePricing(prevState => ({
+            ...prevState,
+            [`price_${dayOfWeek}`]: value
+        }));
+    };
+
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const validateForm = () => {
+        let isValid = true;
+        const newError = {};
+
+        // Validate District
+        if (!createTypePricing.districtId || createTypePricing.districtId.trim() === "") {
+            newError.districtId = "District is required";
+            isValid = false;
+        }
+
+        // Validate at least one price is filled out for any day of the week
+        let priceFilled = false;
+        for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+            if (createTypePricing[`price_${dayOfWeek}`] && createTypePricing[`price_${dayOfWeek}`].trim() !== "") {
+                priceFilled = true;
+            }
+        }
+        if (!priceFilled) {
+            newError.price = "At least one price for a day of the week is required";
+            isValid = false;
+        }
+
+        setError(newError); // Set the validation errors
+        setShowError(Object.keys(newError).length > 0); // Toggle error visibility based on errors
+        return isValid;
+    };
+
+    const submitCreateTypePricing = async (e) => {
+        e.preventDefault();
+
+        // Run validation before submitting
+        if (!validateForm()) {
+            return; // Stop the function if validation fails
+        }
+
+        setIsSubmitting(true); // Disable the button to prevent multiple submissions
+
+        try {
+            for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+                if (createTypePricing[`price_${dayOfWeek}`]) {
+                    const pricingData = {
+                        districtId: createTypePricing.districtId,
+                        price: Number(createTypePricing[`price_${dayOfWeek}`]), // Convert to number
+                        dayOfWeek: dayOfWeek,
+                        typeId: createTypePricing.typeId // Ensure typeId is defined earlier
+                    };
+
+                    // Call API to save the pricing
+                    const typePricingResponse = await typePricingService.saveTypePricing(pricingData);
+
+                    if (typePricingResponse.status !== 201) {
+                        throw new Error("Failed to create price for day: " + dayOfWeek);
+                    }
+
+                    typeService
+                        .getAllTypePricingByTypeId(createTypePricing.typeId)
+                        .then((res) => {
+                            // Sorting by districtId and then dayOfWeek
+                            const sortedData = res.data.sort((a, b) => {
+                                // First, sort by districtId
+                                const districtComparison = a.districtId.localeCompare(b.districtId);
+                                if (districtComparison !== 0) {
+                                    return districtComparison;
+                                }
+                                // If districtId is the same, sort by dayOfWeek
+                                return a.dayOfWeek - b.dayOfWeek;
+                            });
+                            setTypePricingList(sortedData);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    // Clear the state for the submitted day to prevent duplicate submission
+                    setCreateTypePricing(prevState => ({
+                        ...prevState,
+                        [`price_${dayOfWeek}`]: "" // Clear the price after submission
+                    }));
+                }
+            }
+        } catch (error) {
+            console.error("Error submitting pricing data:", error.message);
+            // You can show a user-friendly message here
+        } finally {
+            setIsSubmitting(false); // Re-enable the button after the process is done
+        }
+    };
+
 
 
     return (
@@ -212,6 +381,17 @@ const SideBar = () => {
                                                     </li>
                                                 ))
                                             }
+                                            {
+                                                typeList.length === 0 && (
+                                                    <li>
+                                                        <a className='text-white'
+                                                            onClick={openCreateTypePricingModal} // This will trigger the modal for creating a new hotel
+                                                        >
+                                                            Tạo Bảng Giá
+                                                        </a>
+                                                    </li>
+                                                )
+                                            }
                                         </ul>
                                     </li>
 
@@ -364,6 +544,168 @@ const SideBar = () => {
                 </div>
             </nav>
             {/* END SIDEBAR*/}
+            {
+                showModalCreateTypePricing && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+
+                            <div className="modal-content">
+                                <form
+                                    method="post"
+                                    id="myAwesomeDropzone"
+                                    data-plugin="dropzone"
+                                    data-previews-container="#file-previews"
+                                    data-upload-preview-template="#uploadPreviewTemplate"
+                                    data-parsley-validate
+                                    onSubmit={(e) => submitCreateTypePricing(e)}
+                                    style={{ textAlign: "left" }}
+                                >
+                                    <div className="modal-header bg-dark text-light">
+                                        <h5 className="modal-title">Tạo Bảng Giá Cho Tuần</h5>
+                                        <button
+                                            type="button"
+                                            className="close text-light"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={closeModalCreateTypePricing}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                        {/* Form Fields */}
+                                        <h4 className="header-title ">Thông Tin</h4>
+
+                                        <div className="form-row">
+                                            <div className="form-group  col-md-6">
+                                                <label>Thành Phố</label>
+                                                <select
+                                                    name="cityId"
+                                                    className="form-control"
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setSelectedCity(e.target.value); // Update selected city
+                                                    }}
+                                                    required
+                                                >
+                                                    <option value="">Chọn Thành Phố</option>
+                                                    {cityList.map((city) => (
+                                                        <option key={city.cityId} value={city.cityId}>
+                                                            {city.cityName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div className="form-group col-md-6">
+                                                <label>Quận</label>
+                                                <select
+                                                    name="districtId"
+                                                    className="form-control"
+                                                    value={createTypePricing.districtId}
+                                                    onChange={(e) => handleChange(e)}
+                                                    required
+                                                >
+                                                    <option value="">Chọn Quận</option>
+                                                    {districtList.map((district) => (
+                                                        <option key={district.districtId} value={district.districtId}>
+                                                            {district.districtName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="form-group col-md-6">
+                                                <label>Loại Phòng</label>
+                                                <select
+                                                    name="typeId"
+                                                    className="form-control"
+                                                    value={createTypePricing.typeId}
+                                                    onChange={(e) => handleChange(e)}
+                                                    required
+                                                >
+                                                    <option value="">Chọn Loại</option>
+                                                    {typeList.map((type) => (
+                                                        <option key={type.typeId} value={type.typeId}>
+                                                            {type.typeName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {/* Price inputs for each day */}
+                                        <h4 className="header-title">Giá Cho Các Ngày</h4>
+                                        {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'].map((day, index) => (
+                                            <div className="form-group col-md-12" key={index}>
+                                                <label htmlFor={`price_${index}`}>{day}  * :</label>
+                                                <div className="input-group">
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        name={`price_${index + 1}`} // DayOfWeek values: 1 for Monday, 7 for Sunday
+                                                        id={`price_${index}`}
+                                                        value={createTypePricing[`price_${index + 1}`] || ""}
+                                                        onChange={(e) => handleDayPriceChange(e, index + 1)}
+                                                        min={0}
+                                                        required
+                                                    />
+                                                    <div className="input-group-append">
+                                                        <span className="input-group-text custom-append">VND</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="modal-footer">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-custom btn-sm"
+                                            disabled={isSubmitting}  // Disable button when submitting
+                                        >
+                                            Lưu
+                                        </button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div >
+
+                )
+            }
+            <style>
+                {`
+                    .page-item.active .page-link{
+                    background-color: #20c997;
+                    border-color: #20c997;
+                }
+
+                .custom-modal-xl {
+    max-width:30%;
+    width: 30%;
+}
+    .btn-custom{
+    background-color: #3498db;
+    color: white
+    }
+
+    .custom-append {
+    display: inline-block;
+    width: 80px; /* Adjust this value based on your design needs */
+    height: 100%; /* Makes it match the height of the input field */
+    text-align: center;
+    vertical-align: middle;
+    background-color: #e9ecef; /* Optional: Matches input's background */
+    border: 1px solid #ced4da; /* Matches the input's border style */
+    border-left: 0; /* Removes the border between the input and append */
+    line-height: calc(2.25rem); /* Matches the default height of Bootstrap input */
+}
+                                            `}
+            </style>
 
         </>
     )

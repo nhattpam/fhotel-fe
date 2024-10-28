@@ -106,7 +106,7 @@ const ListTypePricing = () => {
         setShowModalTypePricing(false);
     };
 
-    //create user manager modal
+    //create type pricing modal
     const [createTypePricing, setCreateTypePricing] = useState({
         districtId: '',
         price_1: '',  // Monday

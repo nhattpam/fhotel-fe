@@ -251,7 +251,7 @@ const ListHotelVerification = () => {
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>STT.</th>
@@ -271,17 +271,17 @@ const ListHotelVerification = () => {
                                                         <td>{item.hotel?.email}</td>
                                                         <td>{new Date(item.createdDate).toLocaleDateString('en-US')}</td>
                                                         <td>
-                                                            {item.verifyStatus === "Pending" && (
+                                                            {item.verificationStatus === "Pending" && (
                                                                 <span className="badge label-table ">
                                                                     <span className="badge label-table badge-warning">Đang Chờ</span>
                                                                 </span>
                                                             )}
-                                                            {item.verifyStatus === "Verified" && (
+                                                            {item.verificationStatus === "Verified" && (
                                                                 <span className="badge label-table">
                                                                     <span className="badge label-table badge-success">Đã Xác Minh</span>
                                                                 </span>
                                                             )}
-                                                            {item.verifyStatus === "Rejected" && (
+                                                            {item.verificationStatus === "Rejected" && (
                                                                 <span className="badge label-table">
                                                                     <span className="badge label-table badge-danger">Từ Chối</span>
                                                                 </span>)}
@@ -349,9 +349,9 @@ const ListHotelVerification = () => {
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
 
-                            <div className="modal-header">
+                            <div className="modal-header bg-dark text-light">
                                 <h5 className="modal-title">Thông Tin Khách Sạn</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotelVerification}>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalHotelVerification}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                                 {showSuccess && Object.entries(success).length > 0 && (
@@ -484,7 +484,7 @@ const ListHotelVerification = () => {
                                         <div>
                                             <h4 className='text-primary' style={{ textAlign: 'left', fontWeight: 'bold' }}>Lịch Sử Xác Minh</h4>
                                             <div className="table-responsive" style={{ textAlign: 'left' }}>
-                                                <table className="table">
+                                                <table className="table table-borderless table-hover table-wrap table-centered">
                                                     <thead>
                                                         <tr>
                                                             <th>STT.</th>
@@ -502,20 +502,22 @@ const ListHotelVerification = () => {
                                                                         <td>{index + 1}</td>
 
                                                                         <td>{item.assignedManager?.name}</td>
-                                                                        <td>{item.verificationDate ?? "Chưa Có"}</td>
+                                                                        <td>
+                                                                            {new Date(item.verificationDate).toLocaleString('en-US') ?? "Chưa Có"}
+                                                                        </td>
                                                                         <td dangerouslySetInnerHTML={{ __html: item.notes ?? "Chưa Có" }}></td>
                                                                         <td>
-                                                                            {item.verifyStatus === "Pending" && (
+                                                                            {item.verificationStatus === "Pending" && (
                                                                                 <span className="badge label-table ">
                                                                                     <span className="badge label-table badge-warning">Đang Chờ</span>
                                                                                 </span>
                                                                             )}
-                                                                            {item.verifyStatus === "Verified" && (
+                                                                            {item.verificationStatus === "Verified" && (
                                                                                 <span className="badge label-table">
                                                                                     <span className="badge label-table badge-success">Đã Xác Minh</span>
                                                                                 </span>
                                                                             )}
-                                                                            {item.verifyStatus === "Rejected" && (
+                                                                            {item.verificationStatus === "Rejected" && (
                                                                                 <span className="badge label-table">
                                                                                     <span className="badge label-table badge-danger">Từ Chối</span>
                                                                                 </span>)}
@@ -560,7 +562,6 @@ const ListHotelVerification = () => {
                             <div className="modal-content">
                                 <form
                                     method="post"
-                                    className="mt-3"
                                     id="myAwesomeDropzone"
                                     data-plugin="dropzone"
                                     data-previews-container="#file-previews"
@@ -569,12 +570,12 @@ const ListHotelVerification = () => {
                                     onSubmit={(e) => submitUpdateHotelVerification(e)}
                                     style={{ textAlign: "left" }}
                                 >
-                                    <div className="modal-header">
+                                    <div className="modal-header bg-dark text-light">
                                         <h5 className="modal-title">Xác Minh Khách Sạn</h5>
 
                                         <button
                                             type="button"
-                                            className="close"
+                                            className="close text-light"
                                             data-dismiss="modal"
                                             aria-label="Close"
                                             onClick={closeModalUpdateHotelVerification}

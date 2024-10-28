@@ -345,7 +345,7 @@ const ListHotelManager = () => {
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>STT.</th>
@@ -456,9 +456,9 @@ const ListHotelManager = () => {
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header">
+                                <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Thông Tin Tài Khoản</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -498,7 +498,7 @@ const ListHotelManager = () => {
                                             <h3 style={{ fontWeight: 'bold' }}>Danh Sách Khách Sạn</h3>
                                             <div className="ibox-body">
                                                 <div className="table-responsive">
-                                                    <table className="table">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>
                                                             <tr>
                                                                 <th>STT.</th>
@@ -750,8 +750,8 @@ const ListHotelManager = () => {
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Information</h5>
+                                <div className="modal-header ">
+                                    <h5 className="modal-title">Thông Tin Khách Sạn</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>

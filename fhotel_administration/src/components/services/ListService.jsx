@@ -104,7 +104,7 @@ const ListService = () => {
             const updateRes = await serviceService.updateService(serviceId, { ...serviceData, isActive });
 
             if (updateRes.status === 200) {
-                window.alert("Update successful!");
+                // window.alert("Update successful!");
                 // Refresh the list after update
                 const updatedServices = await serviceService.getAllService();
                 setServiceList(updatedServices.data);  // Update the roomTypeList state with fresh data
@@ -294,7 +294,7 @@ const ListService = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">List of Services</div>
+                            <div className="ibox-title">Danh Sách Dịch Vụ</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
                                     id="demo-foo-search"
@@ -306,25 +306,25 @@ const ListService = () => {
                                     onChange={handleHotelSearch}
                                 />
                                 <button
-                                    className="btn btn-primary ml-3"
+                                    className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateServiceModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Create New Service
+                                    Thêm Dịch Vụ
                                 </button>
                             </div>
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Image</th>
-                                            <th>Name</th>
-                                            <th>Price</th>
-                                            <th>Description</th>
-                                            <th>Category</th>
-                                            <th>Status</th>
+                                            <th>STT.</th>
+                                            <th>Hình Ảnh</th>
+                                            <th>Tên</th>
+                                            <th>Đơn Giá (VND)</th>
+                                            <th>Mô Tả</th>
+                                            <th>Loại Dịch Vụ</th>
+                                            <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -338,14 +338,14 @@ const ListService = () => {
 
                                                         </td>
                                                         <td>{item.serviceName}</td>
-                                                        <td>{item.price} Vnd</td>
-                                                        <td>{item.description}</td>
+                                                        <td>{item.price}</td>
+                                                        <td className='wordwrap'>{item.description}</td>
                                                         <td>{item.serviceType?.serviceTypeName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Active</span>
+                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Inactive</span>
+                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -430,32 +430,41 @@ const ListService = () => {
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Service Information</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalService}>
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Thông Tin Dịch Vụ</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalService}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
                                         <div className="col-md-5">
-                                            <img src={service.image} alt="avatar" style={{ width: '100%' }} />
+                                            <table className="table table-responsive table-hover mt-3">
+                                                <tbody>
+                                                    <img src={service.image} alt="avatar" style={{ width: '50%' }} />
+
+                                                </tbody>
+                                            </table>
                                         </div>
 
                                         <div className="col-md-7">
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
+                                                        <th style={{ width: '30%' }}>Tên Dịch Vụ:</th>
                                                         <td>{service.serviceName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Price:</th>
+                                                        <th>Đơn Giá:</th>
                                                         <td>{service.price} Vnd</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Description:</th>
+                                                        <th>Mô Tả:</th>
                                                         <td>{service.description} </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Loại Dịch Vụ:</th>
+                                                        <td>{service.serviceType?.serviceTypeName} </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -466,7 +475,7 @@ const ListService = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={closeModalService} >Close</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalService} >Đóng</button>
                                 </div>
                             </form>
 
@@ -483,7 +492,6 @@ const ListService = () => {
                             <div className="modal-content">
                                 <form
                                     method="post"
-                                    className="mt-3"
                                     id="myAwesomeDropzone"
                                     data-plugin="dropzone"
                                     data-previews-container="#file-previews"
@@ -492,12 +500,12 @@ const ListService = () => {
                                     onSubmit={(e) => submitCreateService(e)}
                                     style={{ textAlign: "left" }}
                                 >
-                                    <div className="modal-header">
-                                        <h5 className="modal-title">Create a Service</h5>
+                                    <div className="modal-header bg-dark text-light">
+                                        <h5 className="modal-title">Thêm Dịch Vụ</h5>
 
                                         <button
                                             type="button"
-                                            className="close"
+                                            className="close text-light"
                                             data-dismiss="modal"
                                             aria-label="Close"
                                             onClick={closeModalCreateService}
@@ -519,7 +527,7 @@ const ListService = () => {
 
                                         <div className='row'>
                                             <div className='col-md-4'>
-                                                <label htmlFor="imageUrl">Image * :</label>
+                                                <label htmlFor="imageUrl">Hình Ảnh * :</label>
                                                 <Dropzone
                                                     onDrop={handleFileDrop}
                                                     accept="image/*" multiple={false}
@@ -530,7 +538,7 @@ const ListService = () => {
                                                             <input {...getInputProps()} />
                                                             <div className="dz-message needsclick">
                                                                 <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                <h3>Drop files here or click to upload.</h3>
+                                                                <h3>Tải File.</h3>
                                                             </div>
                                                             {imagePreview && (
                                                                 <img src={imagePreview} alt="Preview" style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "10px" }} />
@@ -544,10 +552,10 @@ const ListService = () => {
                                             </div>
                                             <div className='col-md-8'>
                                                 {/* Form Fields */}
-                                                <h4 className="header-title ">Information</h4>
+                                                <h4 className="header-title ">Thông Tin Dịch Vụ</h4>
                                                 <div className="form-row">
                                                     <div className="form-group  col-md-6">
-                                                        <label htmlFor="serviceName">Service Name * :</label>
+                                                        <label htmlFor="serviceName">Tên Dịch Vụ * :</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -560,7 +568,7 @@ const ListService = () => {
                                                     </div>
 
                                                     <div className="form-group  col-md-6">
-                                                        <label htmlFor="price">Price * :</label>
+                                                        <label htmlFor="price">Đơn Giá * :</label>
                                                         <input
                                                             type="number"
                                                             className="form-control"
@@ -577,7 +585,7 @@ const ListService = () => {
 
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label htmlFor="description">Description * :</label>
+                                                        <label htmlFor="description">Mô Tả * :</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -589,7 +597,7 @@ const ListService = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label htmlFor="serviceTypeId">Service Type * :</label>
+                                                        <label htmlFor="serviceTypeId">Loại Dịch Vụ * :</label>
                                                         <select
                                                             name="serviceTypeId"
                                                             className="form-control"
@@ -597,7 +605,7 @@ const ListService = () => {
                                                             onChange={(e) => handleChange(e)}
                                                             required
                                                         >
-                                                            <option value="">Select Type</option>
+                                                            <option value="">Chọn Loại</option>
                                                             {serviceTypeList.map((type) => (
                                                                 <option key={type.serviceTypeId} value={type.serviceTypeId}>
                                                                     {type.serviceTypeName}
@@ -616,8 +624,8 @@ const ListService = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom">Save</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateService}>Close</button>
+                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateService}>Đóng</button>
                                     </div>
                                 </form>
 
@@ -644,6 +652,11 @@ const ListService = () => {
     background-color: #3498db;
     color: white
     }
+    .wordwrap {
+    white-space: pre-wrap; /* Preserves whitespace and wraps text as needed */
+    word-break: break-word; /* Ensures long words break within the boundaries */
+    overflow-wrap: break-word; /* For additional browser support */
+}
                                             `}
             </style>
 

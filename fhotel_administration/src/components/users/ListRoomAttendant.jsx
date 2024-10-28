@@ -438,7 +438,7 @@ const ListRoomAttendant = () => {
                                     onChange={handleUserSearch}
                                 />
                                 <button
-                                    className="btn btn-primary ml-3"
+                                    className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
                                     Tạo Nhân Viên Dọn Phòng
@@ -447,7 +447,7 @@ const ListRoomAttendant = () => {
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>STT.</th>
@@ -705,8 +705,8 @@ const ListRoomAttendant = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom">Lưu</button>
-                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateUser}>Đóng</button>
+                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateUser}>Đóng</button>
                                     </div>
                                 </form>
 
@@ -723,7 +723,7 @@ const ListRoomAttendant = () => {
                             <form>
 
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Information</h5>
+                                    <h5 className="modal-title">Thông Tin Khách Sạn</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>

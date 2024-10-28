@@ -115,7 +115,7 @@ const ListOwnerReservation = () => {
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>No.</th>

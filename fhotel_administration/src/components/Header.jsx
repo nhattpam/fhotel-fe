@@ -121,9 +121,9 @@ const Header = () => {
                 <img src={user.image} style={{ width: "30px", height: "30px" }} />
                 <span />{user.firstName}<i className="fa fa-angle-down m-l-5" /></a>
               <ul className="dropdown-menu dropdown-menu-right">
-                <a className="dropdown-item" href="profile.html"><i className="fa fa-user" />Profile</a>
-                <a className="dropdown-item" href="profile.html"><i className="fa fa-cog" />Settings</a>
-                <a className="dropdown-item" href="javascript:;"><i className="fa fa-support" />Support</a>
+                <a className="dropdown-item" href="profile.html"><i className="fa fa-user" />Thông Tin</a>
+                {/* <a className="dropdown-item" href="profile.html"><i className="fa fa-cog" />Settings</a>
+                <a className="dropdown-item" href="javascript:;"><i className="fa fa-support" />Support</a> */}
                 <li className="dropdown-divider" />
                 <a className="dropdown-item" onClick={handleLogout}><i className="fa fa-power-off" />Đăng Xuất</a>
               </ul>

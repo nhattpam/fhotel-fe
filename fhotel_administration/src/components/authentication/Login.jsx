@@ -118,7 +118,7 @@ const Login = () => {
                     <div className="login-main-image">
                         <img src="/my_img/admin_login.jpg" alt="Welcome" className="welcome-image" />
                         <div className="centered-text">
-                            <h2>Welcome Back!</h2>
+                            <h2>FHOTEL System</h2>
                             <p>Đăng nhập để tiếp tục.</p>
                         </div>
                     </div>
@@ -132,7 +132,7 @@ const Login = () => {
                                     <input
                                         type="email"
                                         className="form-control"
-                                        placeholder="Email"
+                                        placeholder="Nhập Địa Chỉ Email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
@@ -142,7 +142,7 @@ const Login = () => {
                                     <input
                                         type="password"
                                         className="form-control"
-                                        placeholder="Password"
+                                        placeholder="Nhập Mật Khẩu"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />

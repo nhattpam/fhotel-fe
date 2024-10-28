@@ -320,7 +320,7 @@ const ListTypePricing = () => {
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>STT.</th>
@@ -456,7 +456,6 @@ const ListTypePricing = () => {
                             <div className="modal-content">
                                 <form
                                     method="post"
-                                    className="mt-3"
                                     id="myAwesomeDropzone"
                                     data-plugin="dropzone"
                                     data-previews-container="#file-previews"
@@ -465,11 +464,11 @@ const ListTypePricing = () => {
                                     onSubmit={(e) => submitCreateTypePricing(e)}
                                     style={{ textAlign: "left" }}
                                 >
-                                    <div className="modal-header">
+                                    <div className="modal-header bg-dark text-light">
                                         <h5 className="modal-title">Tạo Bảng Giá Cho Tuần</h5>
                                         <button
                                             type="button"
-                                            className="close"
+                                            className="close text-light"
                                             data-dismiss="modal"
                                             aria-label="Close"
                                             onClick={closeModalCreateTypePricing}

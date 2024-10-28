@@ -24,6 +24,7 @@ import ListOwnerReservation from './components/reservations/ListOwnerReservation
 import ListReservation from './components/reservations/ListReservation';
 import CheckInOut from './components/reservations/CheckInOut';
 import ListHotelVerification from './components/hotels/ListHotelVerification';
+import ListOrder from './components/orders/ListOrder';
 
 function App() {
   return (
@@ -48,10 +49,10 @@ function App() {
         <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
         {/* service */}
         <Route path="/list-service" element={<ListService />} />
-         {/* policy */}
-         <Route path="/list-refund-policy" element={<ListRefundPolicy />} />
-         <Route path="/list-late-check-out-policy" element={<ListLateCheckOutPolicy />} />
-          {/* type-pricing */}
+        {/* policy */}
+        <Route path="/list-refund-policy" element={<ListRefundPolicy />} />
+        <Route path="/list-late-check-out-policy" element={<ListLateCheckOutPolicy />} />
+        {/* type-pricing */}
         <Route path="/list-type-pricing/:typeId" element={<ListTypePricing />} />
         {/* reservation */}
         <Route path="/list-staff-reservation" element={<ListStaffReservation />} />
@@ -60,7 +61,8 @@ function App() {
         <Route path="/check-in-out" element={<CheckInOut />} />
         {/* hotel verification */}
         <Route path="/list-hotel-verification" element={<ListHotelVerification />} />
-
+        {/* order */}
+        <Route path="/list-order" element={<ListOrder />} />
       </Routes>
     </div>
   );

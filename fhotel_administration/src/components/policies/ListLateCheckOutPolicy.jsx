@@ -96,14 +96,14 @@ const ListLateCheckOutPolicy = () => {
                         <div className="ibox-head">
                             <div className="ibox-title">Chính Sách Trả Phòng Muộn</div>
                             <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"
+                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={lateCheckOutPolicySearchTerm}
                                     onChange={handleLateCheckOutPolicySearch} />
                             </div>
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>STT.</th>

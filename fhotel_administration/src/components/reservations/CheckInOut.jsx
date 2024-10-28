@@ -5,6 +5,7 @@ import userService from '../../services/user.service';
 import roomTypeService from '../../services/room-type.service';
 import { Link } from 'react-router-dom';
 import roomStayHistoryService from '../../services/room-stay-history.service';
+import reservationService from '../../services/reservation.service';
 
 const CheckInOut = () => {
     //get user information
@@ -103,6 +104,10 @@ const CheckInOut = () => {
         });
     };
 
+    const [reservation, setReservation] = useState({
+
+    });
+
     const openPickRoomModal = (roomTypeId, quantity, reservationId) => {
         setShowModalPickRoom(true);
         // Clear the image list first to avoid showing images from the previous room type
@@ -132,6 +137,15 @@ const CheckInOut = () => {
                 });
 
             fetchRoomFacilities(roomTypeId); // Fetch images
+
+            reservationService
+                .getReservationById(reservationId)
+                .then((res) => {
+                    setReservation(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     };
 
@@ -361,9 +375,9 @@ const CheckInOut = () => {
                         <div className="modal-content">
                             <form onSubmit={handleCreateRoomStayHistory}> {/* Attach handleSubmit here */}
 
-                                <div className="modal-header">
+                                <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Chọn Phòng Cho Khách Hàng</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalPickRoom}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalPickRoom}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                     {showError && Object.entries(error).length > 0 && (
@@ -433,13 +447,23 @@ const CheckInOut = () => {
                                                             }}
                                                         >
                                                             <p>{room.roomNumber}</p>
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedRooms.includes(room.roomId)} // Check if this room is selected
-                                                                onChange={() => room.status === 'Available' && handleRoomSelect(room.roomId)} // Only toggle if available
-                                                                disabled={room.status !== 'Available'} // Disable checkbox for unavailable rooms
-                                                                style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
-                                                            />
+                                                            {
+                                                                reservation.reservationStatus !== "CheckIn" &&
+                                                                reservation.reservationStatus !== "Cancelled" &&
+                                                                reservation.reservationStatus !== "CheckOut" && (
+                                                                    <>
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={selectedRooms.includes(room.roomId)} // Check if this room is selected
+                                                                            onChange={() => room.status === 'Available' && handleRoomSelect(room.roomId)} // Only toggle if available
+                                                                            disabled={room.status !== 'Available'} // Disable checkbox for unavailable rooms
+                                                                            style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
+                                                                        />
+                                                                    </>
+                                                                )
+                                                            }
+
+
                                                         </div>
                                                     ))}
                                                 </div>

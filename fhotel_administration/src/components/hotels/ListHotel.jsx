@@ -463,8 +463,8 @@ const ListHotel = () => {
                         </div>
 
                         <div className="ibox-body">
-                            <div className="table-responsive">
-                                <table className="table">
+                            <div className="table-responsive ">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>STT.</th>
@@ -594,9 +594,9 @@ const ListHotel = () => {
                         <div className="modal-content">
                             <form onSubmit={(e) => submitUpdateHotelOwner(e, hotel.hotelId, updateHotelOwner.ownerId)}>
 
-                                <div className="modal-header">
+                                <div className="modal-header  bg-dark text-light">
                                     <h5 className="modal-title">Thông Tin Khách Sạn</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                     {showSuccess && Object.entries(success).length > 0 && (
@@ -725,7 +725,7 @@ const ListHotel = () => {
                                             <div>
                                                 <h4 className='text-primary' style={{ textAlign: 'left', fontWeight: 'bold' }}>Lịch Sử Xác Minh</h4>
                                                 <div className="table-responsive" style={{textAlign: 'left'}}>
-                                                    <table className="table">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>
                                                             <tr>
                                                                 <th>STT.</th>
@@ -839,7 +839,6 @@ const ListHotel = () => {
                             <div className="modal-content">
                                 <form
                                     method="post"
-                                    className="mt-3"
                                     id="myAwesomeDropzone"
                                     data-plugin="dropzone"
                                     data-previews-container="#file-previews"
@@ -848,12 +847,12 @@ const ListHotel = () => {
                                     onSubmit={(e) => submitCreateHotelVerification(e)}
                                     style={{ textAlign: "left" }}
                                 >
-                                    <div className="modal-header">
+                                    <div className="modal-header  bg-dark text-light">
                                         <h5 className="modal-title">Tạo Yêu Cầu Xác Minh</h5>
 
                                         <button
                                             type="button"
-                                            className="close"
+                                            className="close text-light"
                                             data-dismiss="modal"
                                             aria-label="Close"
                                             onClick={closeModalCreateHotelVerification}

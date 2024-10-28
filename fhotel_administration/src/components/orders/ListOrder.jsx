@@ -4,27 +4,30 @@ import SideBar from '../SideBar'
 import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
+import orderService from '../../services/order.service';
 import userService from '../../services/user.service';
 
-const ListCustomer = () => {
+const ListOrder = () => {
     //call list hotel registration
-    const [userList, setUserList] = useState([]);
-    const [userSearchTerm, setUserSearchTerm] = useState('');
-    const [currentUserPage, setCurrentUserPage] = useState(0);
-    const [usersPerPage] = useState(5);
+
+    const loginOrderId = sessionStorage.getItem('userId');
+
+
+    const [orderList, setOrderList] = useState([]);
+    const [orderSearchTerm, setOrderSearchTerm] = useState('');
+    const [currentOrderPage, setCurrentOrderPage] = useState(0);
+    const [ordersPerPage] = useState(5);
 
 
     useEffect(() => {
         userService
-            .getAllUser()
+            .getAllOrderByStaff(loginOrderId)
             .then((res) => {
-                const hotelManagers = res.data.filter(user => user.role?.roleName === "Customer");
-
-                const sortedUserList = [...hotelManagers].sort((a, b) => {
+                const sortedOrderList = [...res.data].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
                     return new Date(b.createdDate) - new Date(a.createdDate);
                 });
-                setUserList(sortedUserList);
+                setOrderList(sortedOrderList);
             })
             .catch((error) => {
                 console.log(error);
@@ -32,47 +35,44 @@ const ListCustomer = () => {
     }, []);
 
 
-    const handleUserSearch = (event) => {
-        setUserSearchTerm(event.target.value);
+    const handleOrderSearch = (event) => {
+        setOrderSearchTerm(event.target.value);
     };
 
-    const filteredUsers = userList
-        .filter((user) => {
+    const filteredOrders = orderList
+        .filter((order) => {
             return (
-                user.name.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.role?.roleName.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
+                order.orderId.toString().toLowerCase().includes(orderSearchTerm.toLowerCase())
             );
         });
 
-    const pageUserCount = Math.ceil(filteredUsers.length / usersPerPage);
+    const pageOrderCount = Math.ceil(filteredOrders.length / ordersPerPage);
 
-    const handleUserPageClick = (data) => {
-        setCurrentUserPage(data.selected);
+    const handleOrderPageClick = (data) => {
+        setCurrentOrderPage(data.selected);
     };
 
-    const offsetUser = currentUserPage * usersPerPage;
-    const currentUsers = filteredUsers.slice(offsetUser, offsetUser + usersPerPage);
+    const offsetOrder = currentOrderPage * ordersPerPage;
+    const currentOrders = filteredOrders.slice(offsetOrder, offsetOrder + ordersPerPage);
 
 
 
-    //detail user modal 
-    const [showModalUser, setShowModalUser] = useState(false);
+    //detail order modal 
+    const [showModalOrder, setShowModalOrder] = useState(false);
 
-    const [user, setUser] = useState({
+    const [order, setOrder] = useState({
 
     });
+    const [orderDetailList, setOrderDetailList] = useState([]);
 
 
-    const openUserModal = (userId) => {
-        setShowModalUser(true);
-        if (userId) {
-            userService
-                .getUserById(userId)
+    const openOrderModal = (orderId) => {
+        setShowModalOrder(true);
+        if (orderId) {
+            orderService
+                .getAllOrderDetailByOrder(orderId)
                 .then((res) => {
-                    setUser(res.data);
+                    setOrderDetailList(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -80,44 +80,11 @@ const ListCustomer = () => {
         }
     };
 
-    const closeModalUser = () => {
-        setShowModalUser(false);
+    const closeModalOrder = () => {
+        setShowModalOrder(false);
     };
 
-    // Update user status dynamically
-    const updateUser = async (e, userId, isActive) => {
-        e.preventDefault();
 
-        try {
-            // Fetch the user data
-            const res = await userService.getUserById(userId);
-            const userData = res.data;
-
-            // Update the local state with the fetched data and new isActive flag
-            setUser({ ...userData, isActive });
-
-            // Make the update request
-            const updateRes = await userService.updateUser(userId, { ...userData, isActive });
-
-            if (updateRes.status === 200) {
-                // window.alert("Update successful!");
-                // Refresh the list after update
-                const updatedUsers = await userService.getAllUser();
-                const customers = updatedUsers.data.filter(user => user.role?.roleName === "Customer");
-
-                const sortedUserList = [...customers].sort((a, b) => {
-                    // Assuming requestedDate is a string in ISO 8601 format
-                    return new Date(b.createdDate) - new Date(a.createdDate);
-                });
-                setUserList(sortedUserList);
-            } else {
-                window.alert("Cập Nhật Lỗi!");
-            }
-        } catch (error) {
-            console.log(error);
-            window.alert("An error occurred during the update.");
-        }
-    };
     return (
         <>
             <Header />
@@ -136,11 +103,11 @@ const ListCustomer = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head">
-                            <div className="ibox-title">Danh Sách Khách Hàng</div>
+                            <div className="ibox-title">Danh Sách Dịch Vụ Được Yêu Cầu</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={userSearchTerm}
-                                    onChange={handleUserSearch} />
+                                    autoComplete="on" value={orderSearchTerm}
+                                    onChange={handleOrderSearch} />
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -149,33 +116,39 @@ const ListCustomer = () => {
                                     <thead>
                                         <tr>
                                             <th>STT.</th>
-                                            <th>Họ Và Tên</th>
-                                            <th>Email</th>
-                                            <th>Chức Vụ</th>
+                                            <th>Khách Hàng</th>
+                                            <th>Số Điện Thoại</th>
+                                            <th>Thời Gian Yêu Cầu</th>
                                             <th>Trạng Thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            currentUsers.length > 0 && currentUsers.map((item, index) => (
+                                            currentOrders.length > 0 && currentOrders.map((item, index) => (
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.name}</td>
-                                                        <td>{item.email}</td>
-                                                        <td>{item.role?.roleName}</td>
+                                                        <td>{item.reservation?.customer?.name}</td>
+                                                        <td>{item.reservation?.customer?.phoneNumber}</td>
                                                         <td>
-                                                            {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
-                                                            ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                            {new Date(item.orderedDate).toLocaleString('en-US')}
+                                                        </td>
+                                                        <td>
+                                                            {item.orderStatus === "Pending" && (
+                                                                <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                            )}
+                                                            {item.orderStatus === "Confirmed" && (
+                                                                <span className="badge label-table badge-success">Xác Nhận</span>
+                                                            )}
+                                                            {item.reservationStatus === "Cancelled" && (
+                                                                <span className="badge label-table badge-danger">Đã Hủy</span>
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openOrderModal(item.orderId)} /></button>
                                                             <form
                                                                 id="demo-form"
-                                                                onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
+                                                                // onSubmit={(e) => updateOrder(e, item.orderId, order.isActive)} // Use isActive from the local state
                                                                 className="d-inline"
                                                             >
                                                                 <button
@@ -183,7 +156,7 @@ const ListCustomer = () => {
                                                                     className="btn btn-default btn-xs m-r-5"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Activate"
-                                                                    onClick={() => setUser({ ...user, isActive: true })} // Activate
+                                                                    onClick={() => setOrder({ ...order, isActive: true })} // Activate
                                                                 >
                                                                     <i className="fa fa-check font-14 text-success" />
                                                                 </button>
@@ -192,7 +165,7 @@ const ListCustomer = () => {
                                                                     className="btn btn-default btn-xs"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Deactivate"
-                                                                    onClick={() => setUser({ ...user, isActive: false })} // Deactivate
+                                                                    onClick={() => setOrder({ ...order, isActive: false })} // Deactivate
                                                                 >
                                                                     <i className="fa fa-times font-14 text-danger" />
                                                                 </button>
@@ -228,10 +201,10 @@ const ListCustomer = () => {
                                 } breakLabel={'...'}
                                 breakClassName={'page-item'}
                                 breakLinkClassName={'page-link'}
-                                pageCount={pageUserCount}
+                                pageCount={pageOrderCount}
                                 marginPagesDisplayed={2}
                                 pageRangeDisplayed={5}
-                                onPageChange={handleUserPageClick}
+                                onPageChange={handleOrderPageClick}
                                 containerClassName={'pagination'}
                                 activeClassName={'active'}
                                 previousClassName={'page-item'}
@@ -247,56 +220,60 @@ const ListCustomer = () => {
                 </div>
             </div>
 
-            {showModalUser && (
+            {showModalOrder && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header  bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Thông Tin Yêu Cầu</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalOrder}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-5">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px' }} />
-
-                                            </table>
-                                        </div>
-                                        <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3">
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' , textAlign: 'left'}}>
+                                        <div className="table-responsive">
+                                            <table className="table table-borderless table-hover table-wrap table-centered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>STT.</th>
+                                                        <th>Hình Ảnh</th>
+                                                        <th>Tên</th>
+                                                        <th>Đơn Giá</th>
+                                                        <th>Số Lượng</th>
+                                                        <th>Loại Dịch Vụ</th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '30%' }}>Họ Và Tên:</th>
-                                                        <td>{user.name}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Email:</th>
-                                                        <td>{user.email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Số Điện Thoại:</th>
-                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Địa Chỉ:</th>
-                                                        <td>{user && user.address ? user.address : 'Không tìm thấy'}</td>
-                                                    </tr>
+                                                    {
+                                                        orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                                            <>
+                                                                <tr>
+                                                                    <td>{index + 1}</td>
+                                                                    <td>
+                                                                        <img src={item.service?.image} alt="avatar" style={{ width: "70px", height: '100px' }} />
+
+                                                                    </td>
+                                                                    <td>{item.service?.serviceName}</td>
+                                                                    <td>{item.service?.price} Vnd</td>
+                                                                    <td>{item.quantity} </td>
+                                                                    <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                                </tr>
+                                                            </>
+                                                        ))
+                                                    }
+
+
                                                 </tbody>
                                             </table>
-
                                         </div>
                                     </div>
 
 
-                                </div>
                                 <div className="modal-footer">
                                     {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalOrder} >Đóng</button>
                                 </div>
                             </form>
 
@@ -326,4 +303,4 @@ const ListCustomer = () => {
     )
 }
 
-export default ListCustomer
+export default ListOrder

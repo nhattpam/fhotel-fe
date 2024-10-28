@@ -368,7 +368,7 @@ const ListOwnerHotel = () => {
                                     onChange={handleHotelSearch}
                                 />
                                 <button
-                                    className="btn btn-primary ml-3"
+                                    className="btn btn-primary ml-3 btn-sm"
                                     onClick={handleOpenHotelRegistrationModal} // This will trigger the modal for creating a new hotel
                                 >
                                     Tạo Khách Sạn
@@ -377,7 +377,7 @@ const ListOwnerHotel = () => {
                         </div>
                         <div className="ibox-body">
                             <div className="table-responsive">
-                                <table className="table">
+                                <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
                                             <th>STT.</th>
@@ -562,8 +562,8 @@ const ListOwnerHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <Link type="button" className="btn btn-custom" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalHotel} >Đóng</button>
+                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>
 
@@ -590,7 +590,7 @@ const ListOwnerHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" onClick={handleCloseImageLargeModal} >Đóng</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={handleCloseImageLargeModal} >Đóng</button>
                                 </div>
                             </form>
 
@@ -643,7 +643,7 @@ const ListOwnerHotel = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Drop files here or click to upload.</h3>
+                                                                    <h3>Tải File.</h3>
                                                                 </div>
                                                                 {imagePreviewsHotelImage.length > 0 && (
                                                                     <div className="image-previews">
@@ -682,7 +682,7 @@ const ListOwnerHotel = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Drop files here or click to upload.</h3>
+                                                                    <h3>Tải File.</h3>
                                                                 </div>
                                                                 {imagePreviewsHotelDocument.length > 0 && (
                                                                     <div className="image-previews">
@@ -821,9 +821,9 @@ const ListOwnerHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark" 
+                                    <button type="button" className="btn btn-dark btn-sm" 
                                     onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
-                                    <button type="submit" className="btn btn-primary">Gửi</button>
+                                    <button type="submit" className="btn btn-primary btn-sm">Gửi</button>
                                 </div>
                             </div>
 

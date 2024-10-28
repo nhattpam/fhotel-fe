@@ -304,6 +304,12 @@ const SideBar = () => {
                                         </Link>
                                     </li>
 
+                                    <li>
+                                        <Link to="/list-order"><i className="sidebar-item-icon fa fa-shopping-basket" />
+                                            <span className="nav-label">Đặt Dịch Vụ</span>
+                                        </Link>
+                                    </li>
+
                                     {/* Room Management Section */}
                                     <li>
                                         <Link to="/room-management"><i className="sidebar-item-icon fa fa-bed" />

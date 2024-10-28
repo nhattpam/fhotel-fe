@@ -83,6 +83,14 @@ class UserService {
         });
       }
 
+      
+      getAllOrderByStaff(id) {
+        return axios.get(API_URL + `/users/${id}/staff-orders`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
 
 }
 export default new UserService;

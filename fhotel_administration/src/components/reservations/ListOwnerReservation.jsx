@@ -43,7 +43,7 @@ const ListOwnerReservation = () => {
     const filteredReservations = reservationList
         .filter((reservation) => {
             return (
-                reservation.user?.firstName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.user?.name.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.roomType?.type?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.createdDate.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.numberOfRooms?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())

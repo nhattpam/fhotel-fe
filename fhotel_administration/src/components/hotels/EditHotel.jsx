@@ -633,6 +633,7 @@ const EditHotel = () => {
 
     const handleDeleteRoomFacility = async (roomFacilityId) => {
         try {
+            console.log(roomFacilityId)
             // Call the API to delete the image by roomImageId
             await roomFacilityService.deleteRoomFacilityById(roomFacilityId);
             fetchRoomFacilities(selectedRoomTypeId);
@@ -1159,7 +1160,7 @@ const EditHotel = () => {
                                     loginUser.role?.roleName === "Hotel Manager" && (
                                         <>
                                             <button
-                                                className="btn btn-primary ml-auto"
+                                                className="btn btn-primary ml-auto btn-sm"
                                                 onClick={openCreateRoomTypeModal}
                                             >
                                                 Tạo Loại Phòng
@@ -1367,7 +1368,7 @@ const EditHotel = () => {
                                                     <>
                                                         <div className="form-group mt-3">
                                                             <input type="file" onChange={handleFileChange} />
-                                                            <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost}>
+                                                            <button type="button" className="btn btn-success mt-2 btn-sm" onClick={handleUploadAndPost}>
                                                                 + Upload
                                                             </button>
                                                         </div>
@@ -1457,7 +1458,7 @@ const EditHotel = () => {
                                                                                     fontSize: '20px',
                                                                                     cursor: 'pointer',
                                                                                 }}
-                                                                                onClick={() => handleDeleteRoomFacility(item.hotelAmenityId)}
+                                                                                onClick={() => handleDeleteRoomFacility(item.roomFacilityId)}
                                                                             >
                                                                                 &times; {/* This represents the delete icon (X symbol) */}
                                                                             </button>

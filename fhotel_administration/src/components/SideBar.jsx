@@ -479,7 +479,7 @@ const SideBar = () => {
                                 <>
                                     <li>
                                         <Link to="/list-hotel-verification"><i className="sidebar-item-icon fa fa-map" />
-                                            <span className="nav-label">Nhiệm Vụ</span>
+                                            <span className="nav-label">Yêu Cầu Xác Minh</span>
                                         </Link>
                                     </li>
                                     <li>

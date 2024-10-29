@@ -8,7 +8,7 @@ const Header = () => {
   const userId = sessionStorage.getItem('userId');
   const [user, setUser] = useState({
     email: "",
-    firstName: "",
+    name: "",
     image: "",
     role: []
   });
@@ -119,7 +119,7 @@ const Header = () => {
             <li className="dropdown dropdown-user">
               <a className="nav-link dropdown-toggle link" data-toggle="dropdown">
                 <img src={user.image} style={{ width: "30px", height: "30px" }} />
-                <span />{user.firstName}<i className="fa fa-angle-down m-l-5" /></a>
+                <span />{user.name}<i className="fa fa-angle-down m-l-5" /></a>
               <ul className="dropdown-menu dropdown-menu-right">
                 <a className="dropdown-item" href="profile.html"><i className="fa fa-user" />Thông Tin</a>
                 {/* <a className="dropdown-item" href="profile.html"><i className="fa fa-cog" />Settings</a>

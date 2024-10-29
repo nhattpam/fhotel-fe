@@ -69,7 +69,7 @@ const ListHotel = () => {
                 hotel.hotelName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
                 hotel.city?.cityName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
                 hotel.city?.country?.countryName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
-                hotel.owner?.firstName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase())
+                hotel.owner?.name.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase())
             );
         });
 

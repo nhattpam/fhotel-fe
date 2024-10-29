@@ -453,7 +453,7 @@ const ListHotel = () => {
                                 <input
                                     id="demo-foo-search"
                                     type="text"
-                                    placeholder="Search"
+                                    placeholder="Tìm Kiếm"
                                     className="form-control form-control-sm"
                                     autoComplete="on"
                                     value={hotelSearchTerm}

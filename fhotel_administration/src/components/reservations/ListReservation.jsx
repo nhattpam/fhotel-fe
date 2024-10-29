@@ -102,7 +102,7 @@ const ListReservation = () => {
                         <div className="ibox-head">
                             <div className="ibox-title">Danh Sách Đặt Chỗ</div>
                             <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"
+                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={reservationSearchTerm}
                                     onChange={handleReservationSearch} />
                             </div>

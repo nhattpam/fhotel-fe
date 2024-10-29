@@ -468,7 +468,7 @@ const ListHotel = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>TT.</span>S</th>
+                                            <th><span>STT.</span></th>
                                             <th><span>Tên Khách Sạn</span></th>
                                             <th><span>Chủ Sở Hữu</span></th>
                                             <th><span>Quận</span></th>

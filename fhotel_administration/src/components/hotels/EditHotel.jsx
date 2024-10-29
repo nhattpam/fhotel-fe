@@ -987,7 +987,7 @@ const EditHotel = () => {
                             <table className="table table-borderless table-hover table-wrap table-centered m-0">
                                 <tbody>
                                     <tr>
-                                        <th>Hình Ảnh:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Hình Ảnh:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -1058,20 +1058,20 @@ const EditHotel = () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Tên Khách Sạn:</th>
-                                        <td>{hotel.hotelName}</td>
+                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên Khách Sạn:</th>
+                                    <td>{hotel.hotelName}</td>
                                     </tr>
                                     <tr>
-                                        <th>Số Điện Thoại:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
                                         <td>{hotel.phone}</td>
                                     </tr>
                                     <tr>
-                                        <th>Email:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
                                         <td>{hotel.email}</td>
                                     </tr>
 
-                                    <tr>
-                                        <th>Giấy Tờ:</th>
+                                    <tr >
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Giấy Tờ:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -1108,7 +1108,7 @@ const EditHotel = () => {
                                                 ))
                                                     : (
                                                         <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                            No hotel documents available.
+                                                            Không tìm thấy.
                                                         </div>
                                                     )
                                             }
@@ -1142,15 +1142,15 @@ const EditHotel = () => {
                                     </tr>
 
                                     <tr>
-                                        <th>Quận/Huyện:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Quận/Huyện:</th>
                                         <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                     </tr>
                                     <tr>
-                                        <th>Thành Phố:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành Phố:</th>
                                         <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                     </tr>
                                     <tr>
-                                        <th>Trạng Thái:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Trạng Thái:</th>
                                         <td>
                                             {hotel.isActive ? (
                                                 <span className="badge label-table badge-success">Đang Hoạt Động</span>
@@ -1159,19 +1159,19 @@ const EditHotel = () => {
                                             )}</td>
                                     </tr>
                                     <tr>
-                                        <th>Ngày Tạo:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Ngày Tạo:</th>
                                         <td>
                                             {new Date(hotel.createdDate).toLocaleString('en-US')}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Ngày Cập Nhật:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Ngày Cập Nhật:</th>
                                         <td>
                                             {new Date(hotel.updatedDate).toLocaleString('en-US')}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Tiện Nghi:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tiện Nghi:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelAmenityList.length > 0 ? hotelAmenityList.map((item, index) => (
@@ -1243,7 +1243,7 @@ const EditHotel = () => {
 
                                     </tr>
                                     <tr>
-                                        <th>Mô Tả:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô Tả:</th>
                                         <td
                                             dangerouslySetInnerHTML={{ __html: hotel.description }}
                                             style={{
@@ -1260,7 +1260,7 @@ const EditHotel = () => {
                             <hr />
 
                             <div className="form-group d-flex align-items-center justify-content-between">
-                                <h2 style={{ fontWeight: 'bold' }}>Các Loại Phòng Của Khách Sạn</h2>
+                                <h4 style={{ fontWeight: 'bold' }}>Các Loại Phòng Của Khách Sạn</h4>
                                 {
                                     loginUser.role?.roleName === "Hotel Manager" && (
                                         <>
@@ -1280,12 +1280,12 @@ const EditHotel = () => {
                                 <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
                                     <thead className="thead-light">
                                         <tr>
-                                            <th>STT.</th>
-                                            <th data-hide="phone">Tên Loại</th>
-                                            <th>Kích Thước Phòng</th>
-                                            <th>Giá</th> {/* Add a new column for the price */}
-                                            <th data-toggle="true">Trạng Thái</th>
-                                            <th>Hành Động</th>
+                                            <th><span>STT.</span></th>
+                                            <th data-hide="phone"><span>Tên Loại</span></th>
+                                            <th><span>DIện Tích Phòng</span></th>
+                                            <th><span>Giá</span></th> {/* Add a new column for the price */}
+                                            <th data-toggle="true"><span>Trạng Thái</span></th>
+                                            <th><span>Hành Động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1356,7 +1356,7 @@ const EditHotel = () => {
 
                             <hr />
                             <div className="form-group d-flex align-items-center justify-content-between">
-                                <h2 style={{ fontWeight: 'bold' }}>Nhân Viên Của Khách Sạn</h2>
+                                <h4 style={{ fontWeight: 'bold' }}>Nhân Viên Của Khách Sạn</h4>
                             </div>
 
 
@@ -1364,11 +1364,11 @@ const EditHotel = () => {
                                 <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
                                     <thead>
                                         <tr>
-                                            <th>STT.</th>
-                                            <th>Họ Và Tên</th>
-                                            <th>Email</th>
-                                            <th>Chức Vụ</th>
-                                            <th>Trạng Thái</th>
+                                            <th><span>STT.</span></th>
+                                            <th><span>Họ Và Tên</span></th>
+                                            <th><span>Email</span></th>
+                                            <th><span>Chức Vụ</span></th>
+                                            <th><span>Trạng Thái</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1522,23 +1522,23 @@ const EditHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Loại Phòng:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại Phòng:</th>
                                                         <td>{roomType.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Diện Tích:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện Tích:</th>
                                                         <td>{roomType.roomSize} m²</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Số Lượng Phòng:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Lượng Phòng:</th>
                                                         <td>{roomType.totalRooms}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Số Phòng Còn Trống:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Phòng Còn Trống:</th>
                                                         <td>{roomType.availableRooms}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Mô Tả:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô Tả:</th>
                                                         <td
                                                             dangerouslySetInnerHTML={{ __html: hotel.description }}
                                                             style={{
@@ -2247,6 +2247,181 @@ const EditHotel = () => {
     white-space: pre-wrap; /* Preserves whitespace and wraps text as needed */
     word-break: break-word; /* Ensures long words break within the boundaries */
     overflow-wrap: break-word; /* For additional browser support */
+}
+
+ /* TABLES */
+.table {
+    border-collapse: separate;
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+	background-color: #eee;
+}
+.table thead > tr > th {
+	border-bottom: 1px solid #C2C2C2;
+	padding-bottom: 0;
+}
+
+
+.table tbody > tr > td {
+	font-size: 0.875em;
+	background: #f5f5f5;
+	border-top: 10px solid #fff;
+	vertical-align: middle;
+	padding: 12px 8px;
+}
+.table tbody > tr > td:first-child,
+.table thead > tr > th:first-child {
+	padding-left: 20px;
+}
+.table thead > tr > th span {
+	border-bottom: 2px solid #C2C2C2;
+	display: inline-block;
+	padding: 0 5px;
+	padding-bottom: 5px;
+	font-weight: normal;
+}
+.table thead > tr > th > a span {
+	color: #344644;
+}
+.table thead > tr > th > a span:after {
+	content: "\f0dc";
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: inherit;
+	margin-left: 5px;
+	font-size: 0.75em;
+}
+.table thead > tr > th > a.asc span:after {
+	content: "\f0dd";
+}
+.table thead > tr > th > a.desc span:after {
+	content: "\f0de";
+}
+.table thead > tr > th > a:hover span {
+	text-decoration: none;
+	color: #2bb6a3;
+	border-color: #2bb6a3;
+}
+.table.table-hover tbody > tr > td {
+	-webkit-transition: background-color 0.15s ease-in-out 0s;
+	transition: background-color 0.15s ease-in-out 0s;
+}
+.table tbody tr td .call-type {
+	display: block;
+	font-size: 0.75em;
+	text-align: center;
+}
+.table tbody tr td .first-line {
+	line-height: 1.5;
+	font-weight: 400;
+	font-size: 1.125em;
+}
+.table tbody tr td .first-line span {
+	font-size: 0.875em;
+	color: #969696;
+	font-weight: 300;
+}
+.table tbody tr td .second-line {
+	font-size: 0.875em;
+	line-height: 1.2;
+}
+.table a.table-link {
+	margin: 0 5px;
+	font-size: 1.125em;
+}
+.table a.table-link:hover {
+	text-decoration: none;
+	color: #2aa493;
+}
+.table a.table-link.danger {
+	color: #fe635f;
+}
+.table a.table-link.danger:hover {
+	color: #dd504c;
+}
+
+.table-products tbody > tr > td {
+	background: none;
+	border: none;
+	border-bottom: 1px solid #ebebeb;
+	-webkit-transition: background-color 0.15s ease-in-out 0s;
+	transition: background-color 0.15s ease-in-out 0s;
+	position: relative;
+}
+.table-products tbody > tr:hover > td {
+	text-decoration: none;
+	background-color: #f6f6f6;
+}
+.table-products .name {
+	display: block;
+	font-weight: 600;
+	padding-bottom: 7px;
+}
+.table-products .price {
+	display: block;
+	text-decoration: none;
+	width: 50%;
+	float: left;
+	font-size: 0.875em;
+}
+.table-products .price > i {
+	color: #8dc859;
+}
+.table-products .warranty {
+	display: block;
+	text-decoration: none;
+	width: 50%;
+	float: left;
+	font-size: 0.875em;
+}
+.table-products .warranty > i {
+	color: #f1c40f;
+}
+.table tbody > tr.table-line-fb > td {
+	background-color: #9daccb;
+	color: #262525;
+}
+.table tbody > tr.table-line-twitter > td {
+	background-color: #9fccff;
+	color: #262525;
+}
+.table tbody > tr.table-line-plus > td {
+	background-color: #eea59c;
+	color: #262525;
+}
+.table-stats .status-social-icon {
+	font-size: 1.9em;
+	vertical-align: bottom;
+}
+.table-stats .table-line-fb .status-social-icon {
+	color: #556484;
+}
+.table-stats .table-line-twitter .status-social-icon {
+	color: #5885b8;
+}
+.table-stats .table-line-plus .status-social-icon {
+	color: #a75d54;
+}
+.table tbody > tr > th,
+.table thead > tr > th {
+    font-weight: bold; /* Removes bold styling */
+}
+.table tbody > tr > th,
+.table thead > tr > th {
+    border-bottom: 1px solid #C2C2C2;
+    padding-bottom: 0;
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    padding: 12px 8px; /* Ensure consistent padding */
+    vertical-align: middle; /* Align content vertically */
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    margin: 0;
+    border: none; /* Or adjust based on your table's styling */
 }
 
 

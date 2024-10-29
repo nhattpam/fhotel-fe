@@ -17,7 +17,7 @@ const ListStaffReservation = () => {
     const [reservationList, setReservationList] = useState([]);
     const [reservationSearchTerm, setReservationSearchTerm] = useState('');
     const [currentReservationPage, setCurrentReservationPage] = useState(0);
-    const [reservationsPerPage] = useState(5);
+    const [reservationsPerPage] = useState(10);
 
 
     useEffect(() => {

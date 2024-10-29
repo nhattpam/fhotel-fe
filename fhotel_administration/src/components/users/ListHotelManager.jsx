@@ -15,7 +15,7 @@ const ListHotelManager = () => {
     const [userList, setUserList] = useState([]);
     const [userSearchTerm, setUserSearchTerm] = useState('');
     const [currentUserPage, setCurrentUserPage] = useState(0);
-    const [usersPerPage] = useState(5);
+    const [usersPerPage] = useState(10);
 
 
     useEffect(() => {
@@ -134,7 +134,7 @@ const ListHotelManager = () => {
         let isValid = true;
         const newError = {}; // Create a new error object
 
-      
+
         // Validate Last Name
         if (createUser.name.trim() === "") {
             newError.name = "Name is required";
@@ -371,28 +371,28 @@ const ListHotelManager = () => {
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.role?.roleName === "Hotel Manager" && (
                                                                 <>
                                                                     <td>Chủ Khách Sạn</td>
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.role?.roleName === "Manager" && (
                                                                 <>
                                                                     <td>Quản Lý</td>
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.role?.roleName === "Receptionist" && (
                                                                 <>
                                                                     <td>Tiếp Tân</td>
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.role?.roleName === "Room Attendant" && (
                                                                 <>
                                                                     <td>Nhân Viên Dọn Phòng</td>
@@ -497,38 +497,35 @@ const ListHotelManager = () => {
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', }}>
                                     <div className="row">
-                                        <div className="col-md-4">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px' }} />
-
-                                            </table>
-
+                                        <div className="col-md-4 d-flex align-items-center flex-column">
+                                            <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
                                         </div>
                                         <div className="col-md-8">
-                                            <table className="table table-responsive table-hover mt-3">
+                                            <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }} className='titleTh'>Tên:</th>
-                                                        <td>{user.name} </td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Email:</th>
-                                                        <td>{user.email}</td>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Số Điện Thoại:</th>
-                                                        <td>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Địa Chỉ:</th>
-                                                        <td>{user && user.address ? user.address : 'Không tìm thấy Số Địa Chỉ'}</td>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa Chỉ:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
-
                                         </div>
+
+
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
                                             <h3 style={{ fontWeight: 'bold' }}>Danh Sách Khách Sạn</h3>
                                             <div className="ibox-body">
@@ -550,7 +547,7 @@ const ListHotelManager = () => {
                                                                     <>
                                                                         <tr>
                                                                             <td>{index + 1}</td>
-                                                                           
+
                                                                             <td>{item.hotelName}</td>
                                                                             <td>{item.owner?.name}</td>
                                                                             <td>{item.district?.districtName}</td>
@@ -563,8 +560,8 @@ const ListHotelManager = () => {
                                                                                 )}
                                                                             </td>
                                                                             <td>
-                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit" 
-                                                                                to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14"  /></Link>
+                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"
+                                                                                    to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14" /></Link>
                                                                                 {/* <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button> */}
                                                                             </td>
                                                                         </tr>
@@ -824,7 +821,7 @@ const ListHotelManager = () => {
                                                         <th>Address:</th>
                                                         <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                     </tr>
-                                                   
+
                                                 </tbody>
                                             </table>
 
@@ -876,6 +873,8 @@ const ListHotelManager = () => {
 	border-bottom: 1px solid #C2C2C2;
 	padding-bottom: 0;
 }
+
+
 .table tbody > tr > td {
 	font-size: 0.875em;
 	background: #f5f5f5;
@@ -1017,6 +1016,27 @@ const ListHotelManager = () => {
 .table-stats .table-line-plus .status-social-icon {
 	color: #a75d54;
 }
+.table tbody > tr > th,
+.table thead > tr > th {
+    font-weight: bold; /* Removes bold styling */
+}
+.table tbody > tr > th,
+.table thead > tr > th {
+    border-bottom: 1px solid #C2C2C2;
+    padding-bottom: 0;
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    padding: 12px 8px; /* Ensure consistent padding */
+    vertical-align: middle; /* Align content vertically */
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    margin: 0;
+    border: none; /* Or adjust based on your table's styling */
+}
+
+
 
                                             `}
             </style>

@@ -22,7 +22,7 @@ const ListHotel = () => {
     const [hotelManagerList, setHotelManagerList] = useState([]);
     const [hotelSearchTerm, setHotelSearchTerm] = useState('');
     const [currentHotelPage, setCurrentHotelPage] = useState(0);
-    const [hotelsPerPage] = useState(5);
+    const [hotelsPerPage] = useState(10);
 
 
     //

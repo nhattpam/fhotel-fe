@@ -35,7 +35,7 @@ const ListRoomAttendant = () => {
     const [userList, setUserList] = useState([]);
     const [userSearchTerm, setUserSearchTerm] = useState('');
     const [currentUserPage, setCurrentUserPage] = useState(0);
-    const [usersPerPage] = useState(5);
+    const [usersPerPage] = useState(10);
 
 
     useEffect(() => {

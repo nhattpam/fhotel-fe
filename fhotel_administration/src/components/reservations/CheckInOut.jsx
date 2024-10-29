@@ -479,7 +479,7 @@ const CheckInOut = () => {
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
                                                             <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                <h4>{item.facility?.facilityName}</h4>
+                                                                <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
 
                                                             </div>
                                                         ))

@@ -105,7 +105,7 @@ const ListOwnerReservation = () => {
                 <div className="page-content fade-in-up">
                     {/* start ibox */}
                     <div className="ibox">
-                        <div className="ibox-head">
+                        <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">List of Reservations</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Search" className="form-control form-control-sm"

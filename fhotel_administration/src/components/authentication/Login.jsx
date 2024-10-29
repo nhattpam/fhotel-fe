@@ -132,7 +132,7 @@ const Login = () => {
                                     <input
                                         type="email"
                                         className="form-control"
-                                        placeholder="Nhập Địa Chỉ Email"
+                                        placeholder="Nhập địa chỉ email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
@@ -142,7 +142,7 @@ const Login = () => {
                                     <input
                                         type="password"
                                         className="form-control"
-                                        placeholder="Nhập Mật Khẩu"
+                                        placeholder="Nhập mật khẩu"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />

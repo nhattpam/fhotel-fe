@@ -10,7 +10,7 @@ import userService from '../../services/user.service';
 const ListOrder = () => {
     //call list hotel registration
 
-    const loginOrderId = sessionStorage.getItem('userId');
+    const loginUserId = sessionStorage.getItem('userId');
 
 
     const [orderList, setOrderList] = useState([]);
@@ -21,7 +21,7 @@ const ListOrder = () => {
 
     useEffect(() => {
         userService
-            .getAllOrderByStaff(loginOrderId)
+            .getAllOrderByStaff(loginUserId)
             .then((res) => {
                 const sortedOrderList = [...res.data].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
@@ -102,7 +102,7 @@ const ListOrder = () => {
                 <div className="page-content fade-in-up">
                     {/* start ibox */}
                     <div className="ibox">
-                        <div className="ibox-head">
+                        <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Dịch Vụ Được Yêu Cầu</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
@@ -115,11 +115,12 @@ const ListOrder = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th>STT.</th>
-                                            <th>Khách Hàng</th>
-                                            <th>Số Điện Thoại</th>
-                                            <th>Thời Gian Yêu Cầu</th>
-                                            <th>Trạng Thái</th>
+                                            <th><span>STT.</span></th>
+                                            <th><span>Khách Hàng</span></th>
+                                            <th><span>Số Điện Thoại</span></th>
+                                            <th><span>Thời Gian Yêu Cầu</span></th>
+                                            <th><span>Trạng Thái</span></th>
+                                            <th><span>Hành Động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -239,8 +240,8 @@ const ListOrder = () => {
                                                     <tr>
                                                         <th>STT.</th>
                                                         <th>Hình Ảnh</th>
-                                                        <th>Tên</th>
-                                                        <th>Đơn Giá</th>
+                                                        <th>Tên Dịch Vụ</th>
+                                                        <th>Đơn Giá (VND)</th>
                                                         <th>Số Lượng</th>
                                                         <th>Loại Dịch Vụ</th>
                                                     </tr>
@@ -252,11 +253,11 @@ const ListOrder = () => {
                                                                 <tr>
                                                                     <td>{index + 1}</td>
                                                                     <td>
-                                                                        <img src={item.service?.image} alt="avatar" style={{ width: "70px", height: '100px' }} />
+                                                                        <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
 
                                                                     </td>
                                                                     <td>{item.service?.serviceName}</td>
-                                                                    <td>{item.service?.price} Vnd</td>
+                                                                    <td>{item.service?.price}</td>
                                                                     <td>{item.quantity} </td>
                                                                     <td>{item.service?.serviceType?.serviceTypeName}</td>
                                                                 </tr>
@@ -296,6 +297,182 @@ const ListOrder = () => {
     background-color: #3498db;
     color: white
     }
+
+     /* TABLES */
+.table {
+    border-collapse: separate;
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+	background-color: #eee;
+}
+.table thead > tr > th {
+	border-bottom: 1px solid #C2C2C2;
+	padding-bottom: 0;
+}
+
+
+.table tbody > tr > td {
+	font-size: 0.875em;
+	background: #f5f5f5;
+	border-top: 10px solid #fff;
+	vertical-align: middle;
+	padding: 12px 8px;
+}
+.table tbody > tr > td:first-child,
+.table thead > tr > th:first-child {
+	padding-left: 20px;
+}
+.table thead > tr > th span {
+	border-bottom: 2px solid #C2C2C2;
+	display: inline-block;
+	padding: 0 5px;
+	padding-bottom: 5px;
+	font-weight: normal;
+}
+.table thead > tr > th > a span {
+	color: #344644;
+}
+.table thead > tr > th > a span:after {
+	content: "\f0dc";
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: inherit;
+	margin-left: 5px;
+	font-size: 0.75em;
+}
+.table thead > tr > th > a.asc span:after {
+	content: "\f0dd";
+}
+.table thead > tr > th > a.desc span:after {
+	content: "\f0de";
+}
+.table thead > tr > th > a:hover span {
+	text-decoration: none;
+	color: #2bb6a3;
+	border-color: #2bb6a3;
+}
+.table.table-hover tbody > tr > td {
+	-webkit-transition: background-color 0.15s ease-in-out 0s;
+	transition: background-color 0.15s ease-in-out 0s;
+}
+.table tbody tr td .call-type {
+	display: block;
+	font-size: 0.75em;
+	text-align: center;
+}
+.table tbody tr td .first-line {
+	line-height: 1.5;
+	font-weight: 400;
+	font-size: 1.125em;
+}
+.table tbody tr td .first-line span {
+	font-size: 0.875em;
+	color: #969696;
+	font-weight: 300;
+}
+.table tbody tr td .second-line {
+	font-size: 0.875em;
+	line-height: 1.2;
+}
+.table a.table-link {
+	margin: 0 5px;
+	font-size: 1.125em;
+}
+.table a.table-link:hover {
+	text-decoration: none;
+	color: #2aa493;
+}
+.table a.table-link.danger {
+	color: #fe635f;
+}
+.table a.table-link.danger:hover {
+	color: #dd504c;
+}
+
+.table-products tbody > tr > td {
+	background: none;
+	border: none;
+	border-bottom: 1px solid #ebebeb;
+	-webkit-transition: background-color 0.15s ease-in-out 0s;
+	transition: background-color 0.15s ease-in-out 0s;
+	position: relative;
+}
+.table-products tbody > tr:hover > td {
+	text-decoration: none;
+	background-color: #f6f6f6;
+}
+.table-products .name {
+	display: block;
+	font-weight: 600;
+	padding-bottom: 7px;
+}
+.table-products .price {
+	display: block;
+	text-decoration: none;
+	width: 50%;
+	float: left;
+	font-size: 0.875em;
+}
+.table-products .price > i {
+	color: #8dc859;
+}
+.table-products .warranty {
+	display: block;
+	text-decoration: none;
+	width: 50%;
+	float: left;
+	font-size: 0.875em;
+}
+.table-products .warranty > i {
+	color: #f1c40f;
+}
+.table tbody > tr.table-line-fb > td {
+	background-color: #9daccb;
+	color: #262525;
+}
+.table tbody > tr.table-line-twitter > td {
+	background-color: #9fccff;
+	color: #262525;
+}
+.table tbody > tr.table-line-plus > td {
+	background-color: #eea59c;
+	color: #262525;
+}
+.table-stats .status-social-icon {
+	font-size: 1.9em;
+	vertical-align: bottom;
+}
+.table-stats .table-line-fb .status-social-icon {
+	color: #556484;
+}
+.table-stats .table-line-twitter .status-social-icon {
+	color: #5885b8;
+}
+.table-stats .table-line-plus .status-social-icon {
+	color: #a75d54;
+}
+.table tbody > tr > th,
+.table thead > tr > th {
+    font-weight: bold; /* Removes bold styling */
+}
+.table tbody > tr > th,
+.table thead > tr > th {
+    border-bottom: 1px solid #C2C2C2;
+    padding-bottom: 0;
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    padding: 12px 8px; /* Ensure consistent padding */
+    vertical-align: middle; /* Align content vertically */
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    margin: 0;
+    border: none; /* Or adjust based on your table's styling */
+}
+
                                             `}
             </style>
 

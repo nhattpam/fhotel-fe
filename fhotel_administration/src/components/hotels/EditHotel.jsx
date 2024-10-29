@@ -979,7 +979,7 @@ const EditHotel = () => {
                 <div className="page-content fade-in-up">
                     {/* start ibox */}
                     <div className="ibox">
-                        <div className="ibox-head">
+                        <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Khách Sạn: {hotel.hotelName}</div>
 
                         </div>
@@ -1667,7 +1667,7 @@ const EditHotel = () => {
             {
                 showModalCreateRoomType && (
                     <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                        <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
 
                             <div className="modal-content">
                                 <form
@@ -1898,10 +1898,10 @@ const EditHotel = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-small" role="document">
                             <div className="modal-content">
                                 <form onSubmit={handleSubmit}> {/* Attach handleSubmit here */}
-                                    <div className="modal-header">
+                                    <div className="modal-header bg-dark text-light">
                                         <h5 className="modal-title">Thêm Tiện Nghi</h5>
 
-                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelAmenity}>
+                                        <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelAmenity}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
@@ -2006,13 +2006,13 @@ const EditHotel = () => {
 
             {showModalCreateHotelImage && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header">
+                                <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Upload Hình Ảnh Khách Sạn</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelImage}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelImage}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>

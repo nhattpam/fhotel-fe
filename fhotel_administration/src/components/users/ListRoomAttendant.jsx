@@ -425,7 +425,7 @@ const ListRoomAttendant = () => {
                 <div className="page-content fade-in-up">
                     {/* start ibox */}
                     <div className="ibox">
-                        <div className="ibox-head">
+                        <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Nhân Viên Dọn Phòng</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
@@ -589,7 +589,7 @@ const ListRoomAttendant = () => {
             {
                 showModalCreateUser && (
                     <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                        <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
 
                             <div className="modal-content">
                                 <form

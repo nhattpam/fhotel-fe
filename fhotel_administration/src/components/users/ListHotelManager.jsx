@@ -328,9 +328,9 @@ const ListHotelManager = () => {
                 </div>
                 <div className="page-content fade-in-up">
                     {/* start ibox */}
-                    <div className="ibox">
-                        <div className="ibox-head">
-                            <div className="ibox-title">Danh Sách Chủ Khách Sạn</div>
+                    <div className="ibox ">
+                        <div className="ibox-head bg-dark text-light">
+                            <div className="ibox-title ">Danh Sách Chủ Khách Sạn</div>
                             <div className="form-group d-flex align-items-center">
                                 <input
                                     id="demo-foo-search"

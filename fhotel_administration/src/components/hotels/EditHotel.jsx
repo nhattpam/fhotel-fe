@@ -534,6 +534,17 @@ const EditHotel = () => {
         });
     };
 
+    // Function to toggle select all amenities
+    const handleSelectAllAmenity = () => {
+        if (selectedAmenities.length === amenityList.length) {
+            // If all are selected, deselect all
+            setSelectedAmenities([]);
+        } else {
+            // If not all are selected, select all
+            setSelectedAmenities(amenityList.map(item => item.amenityId));
+        }
+    };
+
     // Function to handle form submission
     const handleSubmit = (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -602,6 +613,17 @@ const EditHotel = () => {
                 return [...prevSelected, facilityId];
             }
         });
+    };
+
+    // Function to toggle select all amenities
+    const handleSelectAllFacility = () => {
+        if (selectedFacilities.length === facilityList.length) {
+            // If all are selected, deselect all
+            setSelectedFacilities([]);
+        } else {
+            // If not all are selected, select all
+            setSelectedFacilities(facilityList.map(item => item.facilityId));
+        }
     };
 
     // Use the roomTypeId when submitting the form
@@ -1281,28 +1303,28 @@ const EditHotel = () => {
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.user?.role?.roleName === "Hotel Manager" && (
                                                                 <>
                                                                     <td>Chủ Khách Sạn</td>
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.user?.role?.roleName === "Manager" && (
                                                                 <>
                                                                     <td>Quản Lý</td>
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.user?.role?.roleName === "Receptionist" && (
                                                                 <>
                                                                     <td>Tiếp Tân</td>
                                                                 </>
                                                             )
                                                         }
-                                                         {
+                                                        {
                                                             item.user?.role?.roleName === "Room Attendant" && (
                                                                 <>
                                                                     <td>Nhân Viên Dọn Phòng</td>
@@ -1473,8 +1495,7 @@ const EditHotel = () => {
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
                                                             <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                <h4>{item.facility?.facilityName}</h4>
-
+                                                                <span className="badge label-table badge-info">{item.facility?.facilityName}</span>
                                                                 {/* Delete Button */}
                                                                 {
                                                                     loginUser.role?.roleName === "Hotel Manager" && (
@@ -1569,7 +1590,6 @@ const EditHotel = () => {
                             <div className="modal-content">
                                 <form
                                     method="post"
-                                    className="mt-3"
                                     id="myAwesomeDropzone"
                                     data-plugin="dropzone"
                                     data-previews-container="#file-previews"
@@ -1578,12 +1598,12 @@ const EditHotel = () => {
                                     onSubmit={(e) => submitCreateRoomType(e)}
                                     style={{ textAlign: "left" }}
                                 >
-                                    <div className="modal-header">
+                                    <div className="modal-header bg-dark text-light">
                                         <h5 className="modal-title">Tạo Loại Phòng</h5>
 
                                         <button
                                             type="button"
-                                            className="close"
+                                            className="close text-light"
                                             data-dismiss="modal"
                                             aria-label="Close"
                                             onClick={closeModalCreateRoomType}
@@ -1651,8 +1671,6 @@ const EditHotel = () => {
 
 
                                         <div className="form-row">
-
-
                                             <div className="form-group col-md-6">
                                                 <label htmlFor="maxOccupancy">Số Lượng Phòng * :</label>
                                                 <select
@@ -1766,13 +1784,22 @@ const EditHotel = () => {
                                 <form onSubmit={handleSubmit}> {/* Attach handleSubmit here */}
                                     <div className="modal-header">
                                         <h5 className="modal-title">Thêm Tiện Nghi</h5>
+
                                         <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelAmenity}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                         <div className="row">
+
                                             <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                <button type="button" className="btn btn-success btn-sm mr-2" >
+                                                    <i className="fa fa-check-square" aria-hidden="true"
+                                                        onClick={handleSelectAllAmenity}>
+                                                        {selectedAmenities.length === amenityList.length ? '' : ''}
+                                                    </i>
+                                                </button>
+
                                                 {
                                                     amenityList.length > 0 && amenityList.map((item, index) => (
                                                         <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
@@ -1786,6 +1813,7 @@ const EditHotel = () => {
                                                         </div>
                                                     ))
                                                 }
+
                                             </div>
                                         </div>
                                     </div>
@@ -1810,25 +1838,37 @@ const EditHotel = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-small" role="document">
                             <div className="modal-content">
                                 <form onSubmit={handleSubmitRoomFacility}> {/* Attach handleSubmit here */}
-                                    <div className="modal-header">
+                                    <div className="modal-header bg-dark text-light">
                                         <h5 className="modal-title">Thêm Cơ Sở Vật Chất</h5>
-                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
+                                        <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                         <div className="row">
                                             <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                                <button type="button" className="btn btn-success btn-sm mr-2" >
+                                                    <i className="fa fa-check-square" aria-hidden="true"
+                                                        onClick={handleSelectAllFacility}>
+                                                        {selectedFacilities.length === facilityList.length ? ' Bỏ Chọn Tất Cả' : ' Chọn Tất Cả'}
+                                                    </i>
+                                                </button>
                                                 {facilityList.length > 0 && facilityList.map((item, index) => (
-                                                    <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
-                                                            onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
-                                                            style={{ marginRight: '10px' }} // Add space between checkbox and text
-                                                        />
-                                                        <h3 style={{ margin: 0 }}>{item.facilityName}</h3>
-                                                    </div>
+                                                    <>
+
+                                                        <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
+                                                                onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
+                                                                style={{ marginRight: '10px' }} // Add space between checkbox and text
+                                                            />
+                                                            <span className="badge label-table badge-info">{item.facilityName}</span>
+                                                            {/* <h3 style={{ margin: 0 }}>{item.facilityName}</h3> */}
+                                                        </div>
+                                                    </>
+
+
                                                 ))}
                                             </div>
 

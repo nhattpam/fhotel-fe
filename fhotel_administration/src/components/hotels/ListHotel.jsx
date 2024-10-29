@@ -176,11 +176,10 @@ const ListHotel = () => {
                 });
                 setHotelRegistrationList(sortedHotelList);
             } else {
-                window.alert("Update FAILED!");
+                handleResponseError(error.response);
             }
         } catch (error) {
-            console.log(error);
-            window.alert("An error occurred during the update.");
+            handleResponseError(error.response);
         }
     };
 
@@ -224,13 +223,11 @@ const ListHotel = () => {
                 });
                 setHotelRegistrationList(sortedHotelList);
             } else {
-                setError({ general: "An error occurred during the update." }); // Set generic error message
-                setShowError(true); // Show error
+                handleResponseError(error.response);
             }
         } catch (error) {
             console.log(error);
-            setError({ general: "An error occurred during the update." }); // Set generic error message
-            setShowError(true); // Show error
+            handleResponseError(error.response);
         }
     };
 
@@ -311,15 +308,12 @@ const ListHotel = () => {
                 const updateRes = await hotelService.updateHotel(hotel.hotelId, hotel);
                 window.location.reload();
             } else {
-                setError({ general: "Failed to create user." }); // Set error message
-                setShowError(true); // Show error
+                handleResponseError(error.response);
                 return;
             }
 
         } catch (error) {
-            console.log(error);
-            setError({ general: "An unexpected error occurred. Please try again." }); // Set generic error message
-            setShowError(true); // Show error
+            handleResponseError(error.response);
         }
 
 
@@ -388,15 +382,12 @@ const ListHotel = () => {
                 setShowSuccess(true); // Show error
                 return;
             } else {
-                setError({ general: "Có lỗi xảy ra." }); // Set error message
-                setShowError(true); // Show error
+                handleResponseError(error.response);
                 return;
             }
 
         } catch (error) {
-            console.log(error);
-            setError({ general: "Có lỗi xảy ra." }); // Set generic error message
-            setShowError(true); // Show error
+            handleResponseError(error.response);
         }
 
 
@@ -427,6 +418,16 @@ const ListHotel = () => {
         setCreateHotelVerification({ ...createHotelVerification, [e.target.name]: value });
     };
 
+
+    const handleResponseError = (response) => {
+        if (response && response.status === 400) {
+            const validationErrors = response.data.errors || [];
+            setError({ general: response.data.message, validation: validationErrors });
+        } else {
+            setError({ general: "An unexpected error occurred. Please try again." });
+        }
+        setShowError(true); // Show error modal or message
+    };
 
 
     return (

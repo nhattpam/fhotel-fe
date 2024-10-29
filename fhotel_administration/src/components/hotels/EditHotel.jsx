@@ -1274,7 +1274,41 @@ const EditHotel = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{item.user?.name}</td>
                                                         <td>{item.user?.email}</td>
-                                                        <td>{item.user?.role?.roleName}</td>
+                                                        {
+                                                            item.user?.role?.roleName === "Admin" && (
+                                                                <>
+                                                                    <td>Admin</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.user?.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <td>Chủ Khách Sạn</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.user?.role?.roleName === "Manager" && (
+                                                                <>
+                                                                    <td>Quản Lý</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.user?.role?.roleName === "Receptionist" && (
+                                                                <>
+                                                                    <td>Tiếp Tân</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.user?.role?.roleName === "Room Attendant" && (
+                                                                <>
+                                                                    <td>Nhân Viên Dọn Phòng</td>
+                                                                </>
+                                                            )
+                                                        }
                                                         <td>
                                                             {item.user?.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang Hoạt Động</span>

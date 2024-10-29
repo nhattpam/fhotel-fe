@@ -166,7 +166,7 @@ const ListRoomAttendant = () => {
             isValid = false;
         }
 
-     
+
         // Validate Phone
         if (createUser.phoneNumber.trim() === "") {
             newError.phoneNumber = "Phone number is required";
@@ -248,7 +248,7 @@ const ListRoomAttendant = () => {
                     const staffResponse = await hotelStaffService.saveHotelStaff(createHotelStaff); // Replace with your actual service call
 
                     if (staffResponse.status === 201) {
-                        setSuccess({ general: "User created successfully!" });
+                        setSuccess({ general: "Tạo Tài Khoản Thành Công!" });
                         setShowSuccess(true); // Show success
                         userService
                             .getAllStaffByOwnerId(loginUserId)
@@ -265,7 +265,7 @@ const ListRoomAttendant = () => {
                                 console.log(error);
                             });
                     } else {
-                        setError({ general: "Failed to create hotel staff." }); // Set error message
+                        setError({ general: "Có lỗi xảy ra." }); // Set error message
                         setShowError(true); // Show error
                     }
                 } else {
@@ -275,7 +275,7 @@ const ListRoomAttendant = () => {
                         setError({ validation: validationErrors });
                     } else {
                         // For other types of errors (e.g., network issues, unexpected status codes)
-                        setError({ general: "An unexpected error occurred. Please try again." });
+                        setError({ general: "Có lỗi xảy ra." });
                     }
 
                     setShowError(true); // Show error modal or message
@@ -288,7 +288,7 @@ const ListRoomAttendant = () => {
                     setError({ validation: validationErrors });
                 } else {
                     // For other types of errors (e.g., network issues, unexpected status codes)
-                    setError({ general: "An unexpected error occurred. Please try again." });
+                    setError({ general: "Có lỗi xảy ra." });
                 }
 
                 setShowError(true); // Show error modal or message
@@ -465,7 +465,41 @@ const ListRoomAttendant = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{item.user?.name}</td>
                                                         <td>{item.user?.email}</td>
-                                                        <td>{item.user?.role?.roleName}</td>
+                                                        {
+                                                            item.user?.role?.roleName === "Admin" && (
+                                                                <>
+                                                                    <td>Admin</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.user?.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <td>Chủ Khách Sạn</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.user?.role?.roleName === "Manager" && (
+                                                                <>
+                                                                    <td>Quản Lý</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.user?.role?.roleName === "Receptionist" && (
+                                                                <>
+                                                                    <td>Tiếp Tân</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.user?.role?.roleName === "Room Attendant" && (
+                                                                <>
+                                                                    <td>Nhân Viên Dọn Phòng</td>
+                                                                </>
+                                                            )
+                                                        }
                                                         <td>
                                                             {item.user?.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang Hoạt Động</span>
@@ -615,7 +649,7 @@ const ListRoomAttendant = () => {
                                                     onChange={(e) => handleChange(e)}
                                                     required
                                                 />
-                                                
+
                                             </div>
 
                                             <div className="form-group col-md-6">
@@ -634,7 +668,7 @@ const ListRoomAttendant = () => {
 
 
                                         <div className="form-row">
-                                           
+
 
                                             <div className="form-group col-md-6">
                                                 <label htmlFor="password">Mật Khẩu * :</label>

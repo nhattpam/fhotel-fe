@@ -353,6 +353,7 @@ const ListHotelManager = () => {
                                             <th>Email</th>
                                             <th>Chức Vụ</th>
                                             <th>Trạng Thái</th>
+                                            <th>Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -363,7 +364,41 @@ const ListHotelManager = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{item.name}</td>
                                                         <td>{item.email}</td>
-                                                        <td>{item.role?.roleName}</td>
+                                                        {
+                                                            item.role?.roleName === "Admin" && (
+                                                                <>
+                                                                    <td>Admin</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <td>Chủ Khách Sạn</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.role?.roleName === "Manager" && (
+                                                                <>
+                                                                    <td>Quản Lý</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.role?.roleName === "Receptionist" && (
+                                                                <>
+                                                                    <td>Tiếp Tân</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                         {
+                                                            item.role?.roleName === "Room Attendant" && (
+                                                                <>
+                                                                    <td>Nhân Viên Dọn Phòng</td>
+                                                                </>
+                                                            )
+                                                        }
                                                         <td>
                                                             {item.isActive ? (
                                                                 <span className="badge label-table badge-success">Đã kích hoạt</span>

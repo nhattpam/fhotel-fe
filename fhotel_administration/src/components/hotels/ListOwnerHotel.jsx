@@ -535,7 +535,7 @@ const ListOwnerHotel = () => {
                                                         <th>Số Điện Thoại:</th>
                                                         <td>{hotel && hotel.phone ? hotel.phone : 'Không tìm thấy'}</td>
                                                     </tr>
-                                                   
+
                                                     <tr>
                                                         <th>Quận:</th>
                                                         <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Không tìm thấy'}</td>
@@ -821,9 +821,9 @@ const ListOwnerHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" 
-                                    onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
                                     <button type="submit" className="btn btn-primary btn-sm">Gửi</button>
+                                    <button type="button" className="btn btn-dark btn-sm"
+                                        onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
                                 </div>
                             </div>
 

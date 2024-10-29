@@ -386,6 +386,7 @@ const ListOwnerHotel = () => {
                                             <th>Quận</th>
                                             <th>Thành Phố</th>
                                             <th>Trạng Thái</th>
+                                            <th>Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -604,9 +605,9 @@ const ListOwnerHotel = () => {
                     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                             <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Tạo Khách Sạn</h5>
-                                    <button type="button" className="close" onClick={() => setShowCreateHotelRegistrationModal(false)}>
+                                    <button type="button" className="close text-light" onClick={() => setShowCreateHotelRegistrationModal(false)}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                     {showSuccess && Object.entries(success).length > 0 && (

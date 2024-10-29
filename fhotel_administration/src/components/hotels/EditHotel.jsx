@@ -298,8 +298,10 @@ const EditHotel = () => {
         image: ""
     });
 
-    const [error, setError] = useState({}); // State to hold error messages
-    const [showError, setShowError] = useState(false); // State to manage error visibility
+    const [success, setSuccess] = useState({});
+    const [error, setError] = useState({});
+    const [showError, setShowError] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const [formSubmitted, setFormSubmitted] = useState(false); // State to track submission status
 
     const handleChange = (e) => {
@@ -342,6 +344,16 @@ const EditHotel = () => {
         return Object.keys(errors).length === 0;
     };
 
+    const [filesRoomImage, setFilesRoomImage] = useState([]); // Change to array for multiple images
+    const [imagePreviewsRoomImage, setImagePreviewsRoomImage] = useState([]); // Array for previews
+    const [selectedImageIndexRoomImage, setSelectedImageIndexRoomImage] = useState(0);
+
+    const handleFileDropRoomImage = (acceptedFiles) => {
+        const newImagePreviews = acceptedFiles.map((file) => URL.createObjectURL(file));
+        setImagePreviewsRoomImage((prev) => [...prev, ...newImagePreviews]);
+        setFilesRoomImage((prev) => [...prev, ...acceptedFiles]); // Add this line
+    };
+
     const submitCreateRoomType = async (e) => {
         e.preventDefault();
 
@@ -354,13 +366,45 @@ const EditHotel = () => {
         // If validation passes, proceed with the form submission
         console.log(JSON.stringify(createRoomType));
 
-        roomTypeService
-            .saveRoomType(createRoomType)
-            .then((res) => {
-                console.log(JSON.stringify(createRoomType));
-                //o day la dong thong bao tao thanh cong mau success
-                setRoomType(res.data);
-                setFormSubmitted(true); // Mark form as submitted
+        try {
+            // Post the hotel first
+            const roomTypeResponse = await roomTypeService.saveRoomType(createRoomType);
+
+            // Handle 201 success
+            if (roomTypeResponse.status === 201) {
+                const roomTypeId = roomTypeResponse.data.roomTypeId;
+
+                // Upload each hotel image
+                for (let file of filesRoomImage) {
+                    const imageData = new FormData();
+                    imageData.append('file', file);
+
+                    const imageResponse = await hotelImageService.uploadImage(imageData);
+                    const imageUrl = imageResponse.data.link; // Assuming this gives you the URL
+                    // Create hotel image object
+                    const createRoomImageData = { roomTypeId, image: imageUrl, };
+
+                    await roomImageService.saveRoomImage(createRoomImageData);
+                }
+
+                selectedFacilities.forEach(facilityId => {
+                    roomFacilityService.saveRoomFacility({ roomTypeId: roomTypeId, facilityId })
+                        .then(response => {
+                            console.log("Facility added:", response);
+                            // Optionally refresh the facilities list or perform other actions
+                            fetchRoomFacilities(selectedRoomTypeId)
+                        })
+                        .catch(error => {
+                            console.error("Error adding facility:", error);
+                        });
+                });
+
+                // Optionally clear selections and close modal
+                setSelectedFacilities([]);
+
+
+                setSuccess({ general: "Tạo Thành Công!" });
+                setShowSuccess(true); // Show success
                 hotelService
                     .getAllRoomTypeByHotelId(hotelId)
                     .then((res) => {
@@ -369,10 +413,13 @@ const EditHotel = () => {
                     .catch((error) => {
                         console.log(error);
                     });
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+
+            } else {
+                handleResponseError(roomTypeResponse);
+            }
+        } catch (error) {
+            handleResponseError(error.response);
+        }
     };
 
     // Function to fetch room images based on roomTypeId
@@ -879,6 +926,42 @@ const EditHotel = () => {
         setShowLargerImageModal(false);
         setSelectedImageLarger(null); // Reset the selected image
     };
+
+    const handleResponseError = (response) => {
+        if (response && response.status === 400) {
+            const validationErrors = response.data.errors || [];
+            setError({ general: response.data.message, validation: validationErrors });
+        } else {
+            setError({ general: "An unexpected error occurred. Please try again." });
+        }
+        setShowError(true); // Show error modal or message
+    };
+
+    //notification after creating
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+                // setShowCreateHotelRegistrationModal(false); // Close the modal
+                // window.location.reload();
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
+
+
+    //notification after creating
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
+
+
     return (
         <>
             <Header />
@@ -1495,7 +1578,7 @@ const EditHotel = () => {
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
                                                             <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                <span className="badge label-table badge-info">{item.facility?.facilityName}</span>
+                                                                <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
                                                                 {/* Delete Button */}
                                                                 {
                                                                     loginUser.role?.roleName === "Hotel Manager" && (
@@ -1540,7 +1623,6 @@ const EditHotel = () => {
                                                                         alignItems: 'center',
                                                                         justifyContent: 'center',
                                                                         width: '40px', // Adjust the size as needed
-                                                                        height: '40px', // Same as width for a square
                                                                         backgroundColor: '#258cd1', // Button color
                                                                         color: '#fff', // Text color
                                                                         borderRadius: '4px', // Optional rounded corners
@@ -1612,6 +1694,13 @@ const EditHotel = () => {
                                         </button>
                                     </div>
                                     {/* Display error message */}
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                     {showError && Object.entries(error).length > 0 && (
                                         <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
                                             {Object.entries(error).map(([key, message]) => (
@@ -1713,48 +1802,75 @@ const EditHotel = () => {
                                                     readOnly={formSubmitted} // Disable editor if form submitted
                                                 />
                                             </div>
-                                            {formSubmitted && ( // Conditional rendering for "Add Room images" heading
-                                                <div className="form-group col-md-12">
-                                                    <label htmlFor="">Thêm Hình Ảnh * :</label>
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="">Thêm Hình Ảnh * :</label>
 
-                                                    {/* Container for images */}
-                                                    <div className="row mt-3">
-                                                        {roomImageList2.length > 0 && roomImageList2.map((item, index) => (
-                                                            <div key={index} className="col-md-3" style={{ textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                                <img src={item.image} alt="Room" style={{ width: "100%", height: "auto", maxHeight: "200px" }} />
-
-                                                                {/* Delete Icon/Button */}
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-danger"
-                                                                    style={{
-                                                                        position: 'absolute',
-                                                                        top: '10px',
-                                                                        right: '10px',
-                                                                        background: 'transparent',
-                                                                        border: 'none',
-                                                                        color: 'red',
-                                                                        fontSize: '20px',
-                                                                        cursor: 'pointer',
-                                                                    }}
-                                                                    onClick={() => handleDeleteImage2(item.roomImageId)}
-                                                                >
-                                                                    &times; {/* This represents the delete icon (X symbol) */}
-                                                                </button>
+                                                {/* Container for images */}
+                                                <Dropzone
+                                                    onDrop={(acceptedFiles) => handleFileDropRoomImage(acceptedFiles)}
+                                                    accept="image/*"
+                                                    multiple={false}
+                                                    maxSize={5000000}
+                                                >
+                                                    {({ getRootProps, getInputProps }) => (
+                                                        <div {...getRootProps()} className="fallback">
+                                                            <input {...getInputProps()} />
+                                                            <div className="dz-message needsclick">
+                                                                <i className="h1 text-muted dripicons-cloud-upload" />
+                                                                <h3>Chọn File.</h3>
                                                             </div>
-                                                        ))}
-                                                    </div>
+                                                            {imagePreviewsRoomImage.length > 0 && (
+                                                                <div className="image-previews">
+                                                                    {imagePreviewsRoomImage.map((preview, index) => (
+                                                                        <img
+                                                                            key={index}
+                                                                            src={preview}
+                                                                            alt={`Preview ${index}`}
+                                                                            style={{
+                                                                                maxWidth: "70%",
+                                                                                maxHeight: "60px",
+                                                                                marginTop: "10px",
+                                                                                cursor: "pointer",
+                                                                                border: selectedImageIndexRoomImage === index ? '2px solid blue' : 'none' // Highlight selected image
+                                                                            }}
+                                                                            onClick={() => setSelectedImageIndexRoomImage(index)} // Change selected image on click
+                                                                        />
+                                                                    ))}
+                                                                </div>
+                                                            )}
 
-                                                    <div className="form-group mt-3">
-                                                        <input type="file" onChange={handleFileChange2} />
-                                                        <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost2}>
-                                                            + Upload
-                                                        </button>
-                                                    </div>
+                                                        </div>
+                                                    )}
+                                                </Dropzone>
+
+                                            </div>
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="">Thêm Cơ Sở Vật Chất * :</label>
+                                                <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                                    <i className="fa fa-check-square" aria-hidden="true"
+                                                        onClick={handleSelectAllFacility}>
+                                                        {selectedFacilities.length === facilityList.length ? ' Bỏ Chọn Tất Cả' : ' Chọn Tất Cả'}
+                                                    </i>
+                                                    {facilityList.length > 0 && facilityList.map((item, index) => (
+                                                        <>
+
+                                                            <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
+                                                                    onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
+                                                                    style={{ marginRight: '10px' }} // Add space between checkbox and text
+                                                                />
+                                                                <span className="badge label-table badge-danger">{item.facilityName}</span>
+                                                                {/* <h3 style={{ margin: 0 }}>{item.facilityName}</h3> */}
+                                                            </div>
+                                                        </>
+
+
+                                                    ))}
                                                 </div>
-                                            )}
 
-
+                                            </div>
 
                                         </div>
 
@@ -1847,12 +1963,10 @@ const EditHotel = () => {
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                         <div className="row">
                                             <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                                <button type="button" className="btn btn-success btn-sm mr-2" >
-                                                    <i className="fa fa-check-square" aria-hidden="true"
-                                                        onClick={handleSelectAllFacility}>
-                                                        {selectedFacilities.length === facilityList.length ? ' Bỏ Chọn Tất Cả' : ' Chọn Tất Cả'}
-                                                    </i>
-                                                </button>
+                                                <i className="fa fa-check-square" aria-hidden="true"
+                                                    onClick={handleSelectAllFacility}>
+                                                    {selectedFacilities.length === facilityList.length ? ' Bỏ Chọn Tất Cả' : ' Chọn Tất Cả'}
+                                                </i>
                                                 {facilityList.length > 0 && facilityList.map((item, index) => (
                                                     <>
 
@@ -1863,7 +1977,7 @@ const EditHotel = () => {
                                                                 onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
                                                                 style={{ marginRight: '10px' }} // Add space between checkbox and text
                                                             />
-                                                            <span className="badge label-table badge-info">{item.facilityName}</span>
+                                                            <span className="badge label-table badge-danger">{item.facilityName}</span>
                                                             {/* <h3 style={{ margin: 0 }}>{item.facilityName}</h3> */}
                                                         </div>
                                                     </>

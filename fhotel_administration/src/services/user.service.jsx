@@ -92,5 +92,13 @@ class UserService {
         });
       }
 
+      getAllReservationByCustomer(id) {
+        return axios.get(API_URL + `/users/${id}/reservations`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 }
 export default new UserService;

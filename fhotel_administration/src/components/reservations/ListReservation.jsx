@@ -114,10 +114,12 @@ const ListReservation = () => {
                                         <tr>
                                             <th><span>STT.</span></th>
                                             <th><span>Khách Hàng</span></th>
+                                            <th><span>Khách Sạn</span></th>
                                             <th><span>Loại Phòng</span></th>
                                             <th><span>Số Lượng</span></th>
                                             <th><span>Ngày Đặt</span></th>
                                             <th><span>Trạng Thái</span></th>
+                                            <th><span>Hành Động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -127,6 +129,7 @@ const ListReservation = () => {
                                                     <tr>
                                                         <td>{index + 1}</td>
                                                         <td>{item.customer?.name}</td>
+                                                        <td>{item.roomType?.hotel?.hotelName}</td>
                                                         <td>{item.roomType?.type?.typeName}</td>
                                                         <td>{item.numberOfRooms}</td>
                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>

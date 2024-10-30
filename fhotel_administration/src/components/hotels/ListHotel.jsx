@@ -669,41 +669,41 @@ const ListHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Tên Khách Sạn:</th>
-                                                        <td>{hotel.hotelName}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên Khách Sạn:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.hotelName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Email:</th>
-                                                        <td>{hotel.email}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Số Điện Thoại:</th>
-                                                        <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}> {hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Quận:</th>
-                                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Quận:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Thành Phố:</th>
-                                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành Phố:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Địa Chỉ:</th>
-                                                        <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa Chỉ:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                     </tr>
 
                                                     <tr>
-                                                        <th>Chủ Sở Hữu:</th>
-                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ Sở Hữu:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Email Chủ Sở Hữu:</th>
-                                                        <td>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email Chủ Sở Hữu:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Xác Minh:</th>
-                                                        <td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Xác Minh:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>
                                                             {hotel.verifyStatus === "Pending" && (
                                                                 <span className="badge label-table ">
                                                                     <span className="badge label-table badge-warning">Đang Chờ</span>
@@ -729,11 +729,11 @@ const ListHotel = () => {
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>
                                                             <tr>
-                                                                <th>STT.</th>
-                                                                <th>Nhân Viên Xác Minh</th>
-                                                                <th>Ngày Xác Minh</th>
-                                                                <th>Ghi Chú</th>
-                                                                <th>Trạng Thái</th>
+                                                                <th><span>STT.</span></th>
+                                                                <th><span>Nhân Viên Xác Minh</span></th>
+                                                                <th><span>Ngày Xác Minh</span></th>
+                                                                <th><span>Ghi Chú</span></th>
+                                                                <th><span>Trạng Thái</span></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -811,9 +811,9 @@ const ListHotel = () => {
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header">
+                                <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Hình Ảnh</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>

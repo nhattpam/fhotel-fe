@@ -487,7 +487,7 @@ const ListHotelManager = () => {
 
             {showModalUser && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div className="modal-content">
                             <form>
 
@@ -527,7 +527,7 @@ const ListHotelManager = () => {
 
 
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h3 style={{ fontWeight: 'bold' }}>Danh Sách Khách Sạn</h3>
+                                            <h4 style={{ fontWeight: 'bold' }}>Danh Sách Khách Sạn</h4>
                                             <div className="ibox-body">
                                                 <div className="table-responsive">
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
@@ -539,6 +539,7 @@ const ListHotelManager = () => {
                                                                 <th><span>Quận</span></th>
                                                                 <th><span>Thành Phố</span></th>
                                                                 <th><span>Trạng Thái</span></th>
+                                                                <th><span>Hành Động</span></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

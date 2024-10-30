@@ -90,6 +90,7 @@ const ListTypePricing = () => {
 
     const openTypePricingModal = (typePricingId) => {
         setShowModalTypePricing(true);
+        console.log(typePricingId)
         if (typePricingId) {
             typePricingService
                 .getTypePricingById(typePricingId)
@@ -272,7 +273,56 @@ const ListTypePricing = () => {
     };
 
 
+    ///UPDATE TYPE PRICING
+    const [updateTypePricing, setUpdateTypePricing] = useState({
+        price: '' // Initialize the price field
+    });
 
+    const handleChangeUpdateTypePricing = (e) => {
+        const { name, value } = e.target;
+        setUpdateTypePricing(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const submitUpdateTypePricing = async (e, typePricingId) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the current type pricing data
+            const res = await typePricingService.getTypePricingById(typePricingId);
+            const typePricingData = res.data;
+
+            // Make the update request
+            const updateRes = await typePricingService.updateTypePricing(typePricingId, { ...typePricingData, price: updateTypePricing.price });
+
+            if (updateRes.status === 200) {
+                // Use a notification library for better user feedback
+                setSuccess({ general: "Cập nhật thành công!" });
+                setShowSuccess(true); // Show error
+                typeService
+                    .getAllTypePricingByTypeId(typeId)
+                    .then((res) => {
+                        // Sorting by districtId and then dayOfWeek
+                        const sortedData = res.data.sort((a, b) => {
+                            // First, sort by districtId
+                            const districtComparison = a.districtId.localeCompare(b.districtId);
+                            if (districtComparison !== 0) {
+                                return districtComparison;
+                            }
+                            // If districtId is the same, sort by dayOfWeek
+                            return a.dayOfWeek - b.dayOfWeek;
+                        });
+                        setTypePricingList(sortedData);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                handleResponseError(updateRes);
+            }
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
 
 
     // Effect to handle error message visibility
@@ -351,6 +401,7 @@ const ListTypePricing = () => {
                                             <th><span>Thành Phố</span></th>
                                             <th><span>Ngày Tạo</span></th>
                                             <th><span>Ngày Cập Nhật</span></th>
+                                            <th><span>Hành Động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -424,13 +475,27 @@ const ListTypePricing = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
+                            <form onSubmit={(e) => submitUpdateTypePricing(e, typePricing.typePricingId, updateTypePricing.price)}>
 
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Refund Policy Information</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalTypePricing}>
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Thông Tin Giá</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalTypePricing}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
@@ -438,35 +503,48 @@ const ListTypePricing = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Cancellation Time:</th>
-                                                        <td>{typePricing.cancellationTime}</td>
+                                                        <th>Loại Phòng:</th>
+                                                        <td>{typePricing.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Refund Percentage:</th>
-                                                        <td>{typePricing.refundPercentage} %</td>
+                                                        <th>Quận</th>
+                                                        <td>{typePricing.district?.districtName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Description:</th>
-                                                        <td>{typePricing.description}</td>
+                                                        <th>Ngày Trong Tuần:</th>
+                                                        <td>{daysOfWeek[typePricing.dayOfWeek]}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Giá Hiện Tại:</th>
+                                                        <td>{typePricing.price} VND</td> {/* Display current price */}
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Giá Mới:</th>
+                                                        <td>
+                                                            <input
+                                                                name='price'
+                                                                type="number"
+                                                                value={updateTypePricing.price || ''}
+                                                                onChange={(e) => handleChangeUpdateTypePricing(e)}
+                                                                required
+                                                            />
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
-
                                         </div>
                                     </div>
-
-
                                 </div>
                                 <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark" onClick={closeModalTypePricing} >Close</button>
+                                    <button type="submit" className="btn btn-primary btn-sm">Lưu</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalTypePricing}>Đóng</button>
                                 </div>
                             </form>
-
                         </div>
                     </div>
                 </div>
             )}
+
 
             {
                 showModalCreateTypePricing && (

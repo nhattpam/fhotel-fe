@@ -44,7 +44,21 @@ class ReservationService {
         });
       }
 
-      
+      getAllOrderDetailByReservationId(id) {
+        return axios.get(API_URL + `/reservations/${id}/order-details`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+      getAllRoomStayHistoryByReservationId(id) {
+        return axios.get(API_URL + `/reservations/${id}/room-stay-histories`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
 
 
 }

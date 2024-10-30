@@ -223,7 +223,7 @@ const ListOrder = () => {
 
             {showModalOrder && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
                             <form>
 
@@ -238,12 +238,12 @@ const ListOrder = () => {
                                             <table className="table table-borderless table-hover table-wrap table-centered">
                                                 <thead>
                                                     <tr>
-                                                        <th>STT</th>
-                                                        <th>Hình Ảnh</th>
-                                                        <th>Tên Dịch Vụ</th>
-                                                        <th>Đơn Giá (VND)</th>
-                                                        <th>Số Lượng</th>
-                                                        <th>Loại Dịch Vụ</th>
+                                                        <th><span>STT</span></th>
+                                                        <th><span>Hình Ảnh</span></th>
+                                                        <th><span>Tên Dịch Vụ</span></th>
+                                                        <th><span>Đơn Giá (VND)</span></th>
+                                                        <th><span>Số Lượng</span></th>
+                                                        <th><span>Loại Dịch Vụ</span></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

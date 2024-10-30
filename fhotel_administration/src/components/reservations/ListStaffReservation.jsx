@@ -341,7 +341,15 @@ const ListStaffReservation = () => {
                                                             }
                                                         </tbody>
                                                     </table>
+                                                    
                                                 </div>
+                                                {
+                                                    orderDetailList.length === 0 && (
+                                                        <>
+                                                            <p style={{color: 'grey'}} className='text-center'>Không có</p>
+                                                        </>
+                                                    )
+                                                }
                                                 {/* Calculate and display total amount */}
                                                 <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                     <h5>

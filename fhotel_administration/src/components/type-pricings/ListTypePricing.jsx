@@ -412,7 +412,7 @@ const ListTypePricing = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{item.type?.typeName}</td>
                                                         <td>{daysOfWeek[item.dayOfWeek]}</td>
-                                                        <td>{item.price} Vnd</td>
+                                                        <td>{item.price} (VND)</td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
@@ -516,7 +516,7 @@ const ListTypePricing = () => {
                                                     </tr>
                                                     <tr>
                                                         <th>Giá Hiện Tại:</th>
-                                                        <td>{typePricing.price} VND</td> {/* Display current price */}
+                                                        <td>{typePricing.price} (VND)</td> {/* Display current price */}
                                                     </tr>
                                                     <tr>
                                                         <th>Giá Mới:</th>

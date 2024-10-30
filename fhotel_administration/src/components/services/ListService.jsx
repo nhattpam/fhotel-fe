@@ -141,6 +141,8 @@ const ListService = () => {
 
     const [error, setError] = useState({}); // State to hold error messages
     const [showError, setShowError] = useState(false); // State to manage error visibility
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [success, setSuccess] = useState({});
 
     const handleChange = (e) => {
         const value = e.target.value;
@@ -221,32 +223,23 @@ const ListService = () => {
                 });
 
                 if (serviceResponse.status === 201) {
-                    window.alert("Service created successfully!");
+                    setSuccess({ general: "Tạo thành công!" });
+                    setShowSuccess(true); // Show error
                     // Refresh the roomTypeList after update
                     const updatedServices = await serviceService.getAllService();
                     setServiceList(updatedServices.data);  // Update the roomTypeList state with fresh data
                 } else {
-                    setError({ general: "Failed to create service." });
+                    setError({ general: "Có lỗi xảy ra." });
                     setShowError(true);
                 }
             } catch (error) {
-                console.log(error.response?.data || error.message);  // Log full error
-                setError({ general: "An unexpected error occurred. Please try again." });
-                setShowError(true);
+                handleResponseError(error.response);
             }
         }
     };
 
 
-    // Effect to handle error message visibility
-    useEffect(() => {
-        if (showError) {
-            const timer = setTimeout(() => {
-                setShowError(false); // Hide the error after 2 seconds
-            }, 2000); // Change this value to adjust the duration
-            return () => clearTimeout(timer); // Cleanup timer on unmount
-        }
-    }, [showError]); // Only run effect if showError changes
+
 
     //list service types
     const [serviceTypeList, setServiceTypeList] = useState([]);
@@ -263,6 +256,37 @@ const ListService = () => {
     }, []);
 
 
+
+    // Effect to handle error message visibility
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 2000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
+
+    //notification after creating
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
+
+    const handleResponseError = (response) => {
+        if (response && response.status === 400) {
+            const validationErrors = response.data.errors || [];
+            setError({ general: response.data.message, validation: validationErrors });
+        } else {
+            setError({ general: "An unexpected error occurred. Please try again." });
+        }
+        setShowError(true); // Show error modal or message
+    };
 
     return (
         <>
@@ -287,7 +311,7 @@ const ListService = () => {
                                 <input
                                     id="demo-foo-search"
                                     type="text"
-                                    placeholder="Search"
+                                    placeholder="Tìm Kiếm"
                                     className="form-control form-control-sm"
                                     autoComplete="on"
                                     value={serviceSearchTerm}
@@ -309,7 +333,7 @@ const ListService = () => {
                                             <th><span>STT</span></th>
                                             <th><span>Hình Ảnh</span></th>
                                             <th><span>Tên</span></th>
-                                            <th><span>Đơn Giá (VND)</span></th>
+                                            <th><span>Đơn Giá</span></th>
                                             <th><span>Mô Tả</span></th>
                                             <th><span>Loại Dịch Vụ</span></th>
                                             <th><span>Trạng Thái</span></th>
@@ -327,7 +351,7 @@ const ListService = () => {
 
                                                         </td>
                                                         <td>{item.serviceName}</td>
-                                                        <td>{item.price}</td>
+                                                        <td>{item.price} (VND)</td>
                                                         <td className='wordwrap'>{item.description}</td>
                                                         <td>{item.serviceType?.serviceTypeName}</td>
                                                         <td>
@@ -415,7 +439,7 @@ const ListService = () => {
             </div>
             {showModalService && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div className="modal-content">
                             <form>
 
@@ -441,11 +465,11 @@ const ListService = () => {
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên Dịch Vụ:</th>
-                                                        <td>{service.serviceName}</td>
+                                                        <td >{service.serviceName}</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn Giá:</th>
-                                                        <td>{service.price} Vnd</td>
+                                                        <td>{service.price} (VND)</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô Tả:</th>
@@ -503,6 +527,13 @@ const ListService = () => {
                                         </button>
                                     </div>
                                     {/* Display error message */}
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                     {showError && Object.entries(error).length > 0 && (
                                         <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
                                             {Object.entries(error).map(([key, message]) => (
@@ -558,16 +589,22 @@ const ListService = () => {
 
                                                     <div className="form-group  col-md-6">
                                                         <label htmlFor="price">Đơn Giá * :</label>
-                                                        <input
-                                                            type="number"
-                                                            className="form-control"
-                                                            name="price"
-                                                            id="price"
-                                                            value={createService.price}
-                                                            onChange={(e) => handleChange(e)}
-                                                            min={0}
-                                                            required
-                                                        />
+                                                        <div className="input-group">
+                                                            <input
+                                                                type="number"
+                                                                className="form-control"
+                                                                name="price"
+                                                                id="price"
+                                                                value={createService.price}
+                                                                onChange={(e) => handleChange(e)}
+                                                                min={0}
+                                                                required
+                                                            />
+                                                            <div className="input-group-append">
+                                                                <span className="input-group-text custom-append">VND</span>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                 </div>
 
@@ -625,7 +662,7 @@ const ListService = () => {
                 )
             }
 
-           
+
 
 
             <style>

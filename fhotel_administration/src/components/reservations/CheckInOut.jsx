@@ -65,15 +65,7 @@ const CheckInOut = () => {
     };
 
 
-    const handleCheckIn = () => {
-        // Simulate checking in process
-        setIsCheckedIn(true);
-    };
 
-    const handleCheckOut = () => {
-        // Simulate checking out process
-        setIsCheckedOut(true);
-    };
 
 
     //PICK ROOM
@@ -151,375 +143,483 @@ const CheckInOut = () => {
     };
 
 
+    const [updateReservation, setUpdateReservation] = useState({
+
+    });
     // Function to handle form submission
-    // Function to handle form submission
-    const handleCreateRoomStayHistory = (event) => {
+    const handleCreateRoomStayHistory = async (event) => {
         event.preventDefault(); // Prevent the default form submission
         setError({}); // Reset any previous errors
         setShowError(false); // Hide error before validation
         const reservationId = selectedReservationId;
 
-        // Only proceed if the selected rooms are within the allowed quantity
-        if (selectedRooms.length > selectedQuantity) {
-            setError({ general: `Cannot Choose more than ${selectedQuantity}` });
-            setShowError(true);
-            return;
-        }
-        // Array to hold promises for each save operation
-        const promises = selectedRooms.map(roomId => {
-            // Prepare the room stay history object
-            const roomStayHistory = {
-                reservationId,
-                roomId
-            };
+        try {
+            // Only proceed if the selected rooms are within the allowed quantity
+            if (selectedRooms.length > selectedQuantity) {
+                setError({ general: `Khách yêu cầu ${selectedQuantity} phòng!` });
+                setShowError(true);
+                return;
+            }
+            // Array to hold promises for each save operation
+            const promises = selectedRooms.map(roomId => {
+                // Prepare the room stay history object
+                const roomStayHistory = {
+                    reservationId,
+                    roomId
+                };
 
-            // Log the room stay history before saving
-            console.log("Preparing to save Room Stay History:", roomStayHistory);
+                // Log the room stay history before saving
+                console.log("Preparing to save Room Stay History:", roomStayHistory);
 
-            return roomStayHistoryService.saveRoomStayHistory(roomStayHistory)
-                .then(response => {
-                    console.log(`Room added: Room ID ${roomId}, Response:`, response);
-                    return response; // Return the response for further processing if needed
+                return roomStayHistoryService.saveRoomStayHistory(roomStayHistory)
+                    .then(response => {
+                        console.log(`Room added: Room ID ${roomId}, Response:`, response);
+                        return response; // Return the response for further processing if needed
+                    })
+                    .catch(error => {
+                        console.error(`Error adding room stay history for Room ID ${roomId}:`, error);
+                        return Promise.reject(error); // Reject the promise for error handling
+                    });
+            });
+
+            // Wait for all promises to resolve
+            Promise.all(promises)
+                .then(() => {
+                    console.log("All room stay histories have been processed.");
+                    closeModalPickRoom(); // Close the modal here
                 })
-                .catch(error => {
-                    console.error(`Error adding room stay history for Room ID ${roomId}:`, error);
-                    return Promise.reject(error); // Reject the promise for error handling
+                .catch(() => {
+                    console.error("Some room stay histories could not be added. Check errors above.");
+                    // You can show a notification or error message to the user if needed
                 });
-        });
 
-        // Wait for all promises to resolve
-        Promise.all(promises)
-            .then(() => {
-                console.log("All room stay histories have been processed.");
-                closeModalPickRoom(); // Close the modal here
-            })
-            .catch(() => {
-                console.error("Some room stay histories could not be added. Check errors above.");
-                // You can show a notification or error message to the user if needed
-            });
+            //update reservation status -> checkin
+            // Fetch the user data
+            const reservationStatus = "CheckIn";
+            const actualCheckInTime = new Date();
+            const res = await reservationService.getReservationById(selectedReservationId);
+            const reservationData = res.data;
 
-        // After submitting, clear the selected rooms
-        setSelectedRooms([]); // Clear selected amenities after submission
-    };
+            // Update the local state with the fetched data and new isActive flag
+            setUpdateReservation({ ...reservationData, reservationStatus, actualCheckInTime });
 
+            // Make the update request
+            const updateRes = await reservationService.updateReservation(selectedReservationId, { ...reservationData, reservationStatus });
 
+            if (updateRes.status === 200) {
+                setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
+                setShowSuccess(true);
 
+                /// refresh search list with search term
+                window.location.reload();
+            } else {
+                handleResponseError(error.response);
+            }
 
-
-    // Function to fetch room images based on roomTypeId
-    const fetchRoomImages = (roomTypeId) => {
-        roomTypeService
-            .getAllRoomImagebyRoomTypeId(roomTypeId)
-            .then((res) => {
-                setRoomImageList(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-    //  Function to fetch room facilities based on roomTypeId
-    const fetchRoomFacilities = (roomTypeId) => {
-        roomTypeService
-            .getAllFacilityByRoomTyeId(roomTypeId)
-            .then((res) => {
-                setRoomFacilities(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-
-    const [error, setError] = useState({}); // State to hold error messages
-    const [showError, setShowError] = useState(false); // State to manage error visibility
-    //notification after creating
-    useEffect(() => {
-        if (showError) {
-            const timer = setTimeout(() => {
-                setShowError(false); // Hide the error after 2 seconds
-            }, 3000); // Change this value to adjust the duration
-            return () => clearTimeout(timer); // Cleanup timer on unmount
+            // After submitting, clear the selected rooms
+            setSelectedRooms([]); // Clear selected amenities after submission
+        } catch (error) {
+            handleResponseError(error.response);
         }
-    }, [showError]); // Only run effect if showError changes
 
-    return (
-        <>
-            <Header />
-            <SideBar />
-            <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
-                {/* Page Heading */}
-                <div className="page-heading d-flex align-items-center justify-content-between">
-                    <h2 className="page-title">Check-In / Check-Out</h2>
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item">
-                            <a href="index.html">
-                                <i className="la la-home font-20" />
-                            </a>
-                        </li>
-                        <li className="breadcrumb-item active">Check-In / Check-Out</li>
-                    </ol>
-                </div>
 
-                <div className="page-content">
-                    <div className="card shadow-lg border-0 rounded">
-                        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                            <h4 className="mb-0">Tìm Kiếm Đặt Chỗ</h4>
-                        </div>
+    };
 
-                        <div className="card-body p-4" style={{ textAlign: 'left' }}>
-                            <div className="check-in-out-page">
-                                {/* Search Section */}
-                                <div className="search-section mb-4">
-                                    {/* <label htmlFor="reservation-search" className="form-label">Search Reservation</label> */}
-                                    <div className="input-group">
-                                        <input
-                                            type="text"
-                                            id="reservation-search"
-                                            className="form-control"
-                                            placeholder="Nhập mã đặt chỗ ,tên khách hàng, số điện thoại, email hoặc số căn cước"
-                                            value={customerSearch}
-                                            onChange={(e) => setCustomerSearch(e.target.value)}
-                                        />
-                                        <button className="btn btn-primary input-group-append ml-2" onClick={handleSearch}>
-                                            <i className="la la-search" /> Tìm
-                                        </button>
-                                    </div>
+
+    const [showCheckOutModal, setShowCheckOutModal] = useState(false);
+
+    const closeCheckOutModal = () => {
+        setShowCheckOutModal(false);
+    };
+
+    const openCheckOutModal = (reservationId) => {
+        setShowCheckOutModal(true);
+
+        reservationService
+            .getReservationById(reservationId)
+            .then((res) => {
+                setReservation(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+
+// Function to fetch room images based on roomTypeId
+const fetchRoomImages = (roomTypeId) => {
+    roomTypeService
+        .getAllRoomImagebyRoomTypeId(roomTypeId)
+        .then((res) => {
+            setRoomImageList(res.data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+//  Function to fetch room facilities based on roomTypeId
+const fetchRoomFacilities = (roomTypeId) => {
+    roomTypeService
+        .getAllFacilityByRoomTyeId(roomTypeId)
+        .then((res) => {
+            setRoomFacilities(res.data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+
+
+//CHECK IN/ CHECK OUT
+const handleCheckIn = (reservationId) => {
+    // Simulate checking in process
+    setIsCheckedIn(true);
+};
+
+const handleCheckOut = () => {
+    // Simulate checking out process
+    setIsCheckedOut(true);
+};
+
+/// notification
+const [success, setSuccess] = useState({}); // State to hold error messages
+const [showSuccess, setShowSuccess] = useState(false); // State to manage error visibility
+//notification after creating
+useEffect(() => {
+    if (showSuccess) {
+        const timer = setTimeout(() => {
+            setShowSuccess(false); // Hide the error after 2 seconds
+            // window.location.reload();
+        }, 3000); // Change this value to adjust the duration
+        // window.location.reload();
+        return () => clearTimeout(timer); // Cleanup timer on unmount
+    }
+}, [showSuccess]); // Only run effect if showError changes
+
+
+const [error, setError] = useState({}); // State to hold error messages
+const [showError, setShowError] = useState(false); // State to manage error visibility
+//notification after creating
+useEffect(() => {
+    if (showError) {
+        const timer = setTimeout(() => {
+            setShowError(false); // Hide the error after 2 seconds
+        }, 3000); // Change this value to adjust the duration
+        return () => clearTimeout(timer); // Cleanup timer on unmount
+    }
+}, [showError]); // Only run effect if showError changes
+
+const handleResponseError = (response) => {
+    if (response && response.status === 400) {
+        const validationErrors = response.data.errors || [];
+        setError({ general: response.data.message, validation: validationErrors });
+    } else {
+        setError({ general: "An unexpected error occurred. Please try again." });
+    }
+    setShowError(true); // Show error modal or message
+};
+
+return (
+    <>
+        <Header />
+        <SideBar />
+        <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
+            {/* Page Heading */}
+            <div className="page-heading d-flex align-items-center justify-content-between">
+                <h2 className="page-title">Check-In / Check-Out</h2>
+                <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                        <a href="index.html">
+                            <i className="la la-home font-20" />
+                        </a>
+                    </li>
+                    <li className="breadcrumb-item active">Check-In / Check-Out</li>
+                </ol>
+            </div>
+
+            <div className="page-content">
+                <div className="card shadow-lg border-0 rounded">
+                    <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <h4 className="mb-0">Tìm Kiếm Đặt Chỗ</h4>
+                    </div>
+
+                    <div className="card-body p-4" style={{ textAlign: 'left' }}>
+                        <div className="check-in-out-page">
+                            {/* Search Section */}
+                            <div className="search-section mb-4">
+                                {/* <label htmlFor="reservation-search" className="form-label">Search Reservation</label> */}
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="reservation-search"
+                                        className="form-control"
+                                        placeholder="Nhập mã đặt chỗ, tên khách hàng, số điện thoại, email hoặc số căn cước"
+                                        value={customerSearch}
+                                        onChange={(e) => setCustomerSearch(e.target.value)}
+                                    />
+                                    <button className="btn btn-primary input-group-append ml-2" onClick={handleSearch}>
+                                        <i className="la la-search" /> Tìm
+                                    </button>
                                 </div>
+                            </div>
 
-                                {/* Reservation Details */}
-                                {reservationDetails && reservationDetails.length > 0 ? (
-                                    <div className="reservation-details mt-4">
-                                        <h5 className="mb-4">Chi Tiết Đặt Chỗ</h5>
-                                        {reservationDetails.map((reservation, index) => (
-                                            <div key={index} className="card mb-3 border-light shadow-sm">
-                                                <div className="card-body">
-                                                    <div className="row">
-                                                        <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Tên Khách Hàng:</strong> {reservation.customer?.name}</p>
-                                                            <p><strong className='mr-2'>Số Căn Cước:</strong> {reservation.customer?.identificationNumber}</p>
-                                                            <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
-                                                            <p><strong className='mr-2'>Số Điện Thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                                            <p><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
-                                                            <p><strong className='mr-2'>Ngày Dự Kiến Check-Out:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
-                                                        </div>
-                                                        <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Loại Phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                                            <p><strong className='mr-2'>Số Lượng Đặt:</strong> {reservation.numberOfRooms}</p>
-                                                            <p><strong className='mr-2'>Tổng Số Tiền:</strong> {reservation.totalAmount} VND</p>
-                                                            <p>
-                                                                <strong className='mr-2'>Trạng Thái Thanh Toán:</strong>
-                                                                {reservation.paymentStatus === "Paid" ? (
-                                                                    <span className="badge label-table badge-success">Đã Thanh Toán</span>
-                                                                ) : reservation.paymentStatus === "Not Paid" ? (
-                                                                    <span className="badge label-table badge-danger">Chưa Thanh Toán</span>
-                                                                ) : (
-                                                                    <span className="badge label-table badge-warning">Unknown Status</span>
-                                                                )}
-                                                            </p>
-                                                            <p>
-                                                                <strong className='mr-2'>Trạng Thái Đặt Chỗ:</strong>
-                                                                {reservation.reservationStatus === "CheckIn" ? (
-                                                                    <span className="badge label-table badge-success">Đã CheckIn</span>
-                                                                ) : reservation.reservationStatus === "Cancelled" ? (
-                                                                    <span className="badge label-table badge-danger">Đã Hủy</span>
-                                                                ) : reservation.reservationStatus === "Pending" ? (
-                                                                    <span className="badge label-table badge-warning">Đang Chờ</span>
-                                                                ) : reservation.reservationStatus === "CheckOut" ? (
-                                                                    <span className="badge label-table badge-warning">Đã CheckOut</span>
-                                                                ) : (
-                                                                    <span className="badge label-table badge-warning">Unknown Status</span>
-                                                                )}
-                                                            </p>
-                                                        </div>
+                            {/* Reservation Details */}
+                            {reservationDetails && reservationDetails.length > 0 ? (
+                                <div className="reservation-details mt-4">
+                                    <h5 className="mb-4">Chi Tiết Đặt Chỗ</h5>
+                                    {reservationDetails.map((reservation, index) => (
+                                        <div key={index} className="card mb-3 border-light shadow-sm">
+                                            <div className="card-body">
+                                                <div className="row">
+                                                    <div className="col-md-6">
+                                                        <p><strong className='mr-2'>Mã Đặt Chỗ:</strong> {reservation.code}</p>
+                                                        <p><strong className='mr-2'>Tên Khách Hàng:</strong> {reservation.customer?.name}</p>
+                                                        <p><strong className='mr-2'>Số Căn Cước:</strong> {reservation.customer?.identificationNumber}</p>
+                                                        <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
+                                                        <p><strong className='mr-2'>Số Điện Thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                                        <p><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                                        <p><strong className='mr-2'>Ngày Dự Kiến Check-Out:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                                     </div>
-                                                    {/* Action Buttons for Each Reservation */}
-                                                    <div className="mt-4 d-flex gap-3">
-                                                        {!reservation.isCheckedIn ? (
-                                                            <button className="btn btn-success" onClick={() => handleCheckIn(reservation)}>
-                                                                <i className="la la-sign-in" /> Check-In
-                                                            </button>
-                                                        ) : (
-                                                            <p className="text-success"><strong>Checked In at:</strong> {new Date().toLocaleTimeString()}</p>
-                                                        )}
-
-                                                        {!reservation.isCheckedOut ? (
-                                                            <button className="btn btn-danger ml-2" onClick={() => handleCheckOut(reservation)} disabled={!reservation.isCheckedIn}>
-                                                                <i className="la la-sign-out" /> Check-Out
-                                                            </button>
-                                                        ) : (
-                                                            <p className="text-danger"><strong>Checked Out at:</strong> {new Date().toLocaleTimeString()}</p>
-                                                        )}
-
-                                                        <button className="btn btn-primary ml-2" onClick={() =>
-                                                            openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                            <i className="la la-sign-out" /> Chọn Phòng
-                                                        </button>
+                                                    <div className="col-md-6">
+                                                        <p><strong className='mr-2'>Loại Phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                                        <p><strong className='mr-2'>Số Lượng Đặt:</strong> {reservation.numberOfRooms} phòng</p>
+                                                        <p><strong className='mr-2'>Tổng Số Tiền:</strong> {reservation.totalAmount} (VND)</p>
+                                                        <p>
+                                                            <strong className='mr-2'>Trạng Thái Thanh Toán:</strong>
+                                                            {reservation.paymentStatus === "Paid" ? (
+                                                                <span className="badge label-table badge-success">Đã Thanh Toán</span>
+                                                            ) : reservation.paymentStatus === "Not Paid" ? (
+                                                                <span className="badge label-table badge-danger">Chưa Thanh Toán</span>
+                                                            ) : (
+                                                                <span className="badge label-table badge-warning">Unknown Status</span>
+                                                            )}
+                                                        </p>
+                                                        <p>
+                                                            <strong className='mr-2'>Trạng Thái Đặt Chỗ:</strong>
+                                                            {reservation.reservationStatus === "CheckIn" ? (
+                                                                <span className="badge label-table badge-success">Đã CheckIn</span>
+                                                            ) : reservation.reservationStatus === "Cancelled" ? (
+                                                                <span className="badge label-table badge-danger">Đã Hủy</span>
+                                                            ) : reservation.reservationStatus === "Pending" ? (
+                                                                <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                            ) : reservation.reservationStatus === "CheckOut" ? (
+                                                                <span className="badge label-table badge-warning">Đã CheckOut</span>
+                                                            ) : (
+                                                                <span className="badge label-table badge-warning">Unknown Status</span>
+                                                            )}
+                                                        </p>
+                                                        <p><strong className='mr-2'>Ngày Thực Tế Check-In:</strong> {reservation.actualCheckInTime
+                                                            ? new Date(reservation.actualCheckInTime).toLocaleString('en-US')
+                                                            : "Chưa có"}</p>
+                                                        <p>
+                                                            <strong className='mr-2'>Ngày Thực Tế Check-Out:</strong>
+                                                            {reservation.actualCheckOutDate
+                                                                ? new Date(reservation.actualCheckOutDate).toLocaleString('en-US')
+                                                                : "Chưa có"}
+                                                        </p>
 
                                                     </div>
                                                 </div>
+                                                {/* Action Buttons for Each Reservation */}
+                                                <div className="mt-4 d-flex gap-3">
+                                                    {reservation.reservationStatus === "Pending" && (
+                                                        <button className="btn btn-success " onClick={() =>
+                                                            openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
+                                                            <i className="la la-sign-out" /> Check-In
+                                                        </button>
+                                                    )}
+                                                    {reservation.reservationStatus === "CheckIn" && (
+                                                        <button disabled className="btn btn-success " onClick={() =>
+                                                            openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
+                                                            <i className="la la-sign-out" /> Check-In
+                                                        </button>
+                                                    )}
+
+                                                    {reservation.reservationStatus === "CheckIn" && (
+                                                        <button className="btn btn-danger ml-2" onClick={() =>
+                                                            openCheckOutModal(reservation.reservationId)}>
+                                                            <i className="la la-sign-out" /> Check-Out
+                                                        </button>
+                                                    )}
+
+
+
+                                                </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="alert alert-warning mt-4">
-                                        <i className="la la-exclamation-triangle" /> Không tìm thấy đặt chỗ. Tìm kiếm lại!
-                                    </div>
-                                )}
-                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="alert alert-warning mt-4">
+                                    <i className="la la-exclamation-triangle" /> Không tìm thấy đặt chỗ. Tìm kiếm lại!
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            {showModalPickRoom && (
-                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
-                        <div className="modal-content">
-                            <form onSubmit={handleCreateRoomStayHistory}> {/* Attach handleSubmit here */}
+        {showModalPickRoom && (
+            <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                    <div className="modal-content">
+                        <form onSubmit={handleCreateRoomStayHistory}> {/* Attach handleSubmit here */}
 
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Chọn Phòng Cho Khách Hàng</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalPickRoom}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    {showError && Object.entries(error).length > 0 && (
-                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
-                                            {Object.entries(error).map(([key, message]) => (
-                                                <p key={key} style={{ margin: '0' }}>{message}</p>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-5" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                            {
-                                                roomImageList.length > 0 ? (
-                                                    roomImageList.map((item, index) => (
-                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        Không tìm thấy.
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Chọn Phòng Cho Khách Hàng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalPickRoom}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                {showSuccess && Object.entries(success).length > 0 && (
+                                    <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                        {Object.entries(success).map(([key, message]) => (
+                                            <p key={key} style={{ margin: '0' }}>{message}</p>
+                                        ))}
+                                    </div>
+                                )}
+                                {showError && Object.entries(error).length > 0 && (
+                                    <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                        {Object.entries(error).map(([key, message]) => (
+                                            <p key={key} style={{ margin: '0' }}>{message}</p>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-5" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {
+                                            roomImageList.length > 0 ? (
+                                                roomImageList.map((item, index) => (
+                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                        <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
                                                     </div>
-                                                )
-                                            }
-
-                                        </div>
-
-
-                                        <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '30%' }}>Loại Phòng:</th>
-                                                        <td>{roomType.type?.typeName}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Diện Tích:</th>
-                                                        <td>{roomType.roomSize} m²</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Tổng Số Phòng:</th>
-                                                        <td>{roomType.totalRooms}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Số Phòng Còn Trống:</th>
-                                                        <td>{roomType.availableRooms}</td>
-                                                    </tr>
-
-
-                                                </tbody>
-                                            </table>
-                                            <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh Sách Phòng</h3>
-                                                <div className="room-list">
-                                                    {roomList.map((room) => (
-                                                        <div
-                                                            key={room.roomNumber}
-                                                            className="room-box"
-                                                            style={{
-                                                                backgroundColor: room.status === 'Available' ? 'green' : 'red',
-                                                                position: 'relative',
-                                                                textAlign: 'center',
-                                                                flex: '0 1 auto',
-                                                                margin: '5px'
-                                                            }}
-                                                        >
-                                                            <p>{room.roomNumber}</p>
-                                                            {
-                                                                reservation.reservationStatus !== "CheckIn" &&
-                                                                reservation.reservationStatus !== "Cancelled" &&
-                                                                reservation.reservationStatus !== "CheckOut" && (
-                                                                    <>
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={selectedRooms.includes(room.roomId)} // Check if this room is selected
-                                                                            onChange={() => room.status === 'Available' && handleRoomSelect(room.roomId)} // Only toggle if available
-                                                                            disabled={room.status !== 'Available'} // Disable checkbox for unavailable rooms
-                                                                            style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
-                                                                        />
-                                                                    </>
-                                                                )
-                                                            }
-
-
-                                                        </div>
-                                                    ))}
+                                                ))
+                                            ) : (
+                                                <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
+                                                    Không tìm thấy.
                                                 </div>
-                                                {roomList.length === 0 && (
-                                                    <p>Không tìm thấy.</p>
-                                                )}
-                                            </div>
-
-                                            <hr />
-                                            <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Cơ Sở Vật Chất</h3>
-                                                <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
-                                                    {
-                                                        roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
-                                                            <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
-
-                                                            </div>
-                                                        ))
-                                                            : (
-                                                                <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                    Không tìm thấy.
-                                                                </div>
-                                                            )
-                                                    }
-
-                                                </td>
-
-                                            </div>
-                                        </div>
+                                            )
+                                        }
 
                                     </div>
 
 
-                                </div>
-                                <div className="modal-footer">
-                                    {
-                                        loginUser.role?.roleName === "Receptionist" && (
-                                            <>
-                                                <button type="submit" className="btn btn-primary" >Lưu</button>
-                                            </>
-                                        )
-                                    }
-                                    <button type="button" className="btn btn-dark" onClick={closeModalPickRoom} >Đóng</button>
-                                </div>
-                            </form>
+                                    <div className="col-md-7">
+                                        <table className="table table-responsive table-hover mt-3">
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại Phòng:</th>
+                                                    <td>{roomType.type?.typeName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện Tích:</th>
+                                                    <td>{roomType.roomSize} m²</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tổng Số Phòng:</th>
+                                                    <td>{roomType.totalRooms} phòng</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Phòng Còn Trống:</th>
+                                                    <td>{roomType.availableRooms} phòng</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Phòng Cần Đặt:</th>
+                                                    <td>{reservation.numberOfRooms} phòng</td>
+                                                </tr>
 
-                        </div>
+                                            </tbody>
+                                        </table>
+                                        <div>
+                                            <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh Sách Phòng</h3>
+                                            <div className="room-list">
+                                                {roomList.map((room) => (
+                                                    <div
+                                                        key={room.roomNumber}
+                                                        className="room-box"
+                                                        style={{
+                                                            backgroundColor: room.status === 'Available' ? 'green' : 'red',
+                                                            position: 'relative',
+                                                            textAlign: 'center',
+                                                            flex: '0 1 auto',
+                                                            margin: '5px'
+                                                        }}
+                                                    >
+                                                        <p>{room.roomNumber}</p>
+                                                        {
+                                                            reservation.reservationStatus !== "CheckIn" &&
+                                                            reservation.reservationStatus !== "Cancelled" &&
+                                                            reservation.reservationStatus !== "CheckOut" && (
+                                                                <>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={selectedRooms.includes(room.roomId)} // Check if this room is selected
+                                                                        onChange={() => room.status === 'Available' && handleRoomSelect(room.roomId)} // Only toggle if available
+                                                                        disabled={room.status !== 'Available'} // Disable checkbox for unavailable rooms
+                                                                        style={{ position: 'absolute', top: '10px', left: '10px' }} // Positioning the checkbox
+                                                                    />
+                                                                </>
+                                                            )
+                                                        }
+
+
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {roomList.length === 0 && (
+                                                <p>Không tìm thấy.</p>
+                                            )}
+                                        </div>
+
+                                        <hr />
+                                        <div>
+                                            <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Cơ Sở Vật Chất</h3>
+                                            <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                {
+                                                    roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
+                                                        <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                            <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
+
+                                                        </div>
+                                                    ))
+                                                        : (
+                                                            <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                Không tìm thấy.
+                                                            </div>
+                                                        )
+                                                }
+
+                                            </td>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <div className="modal-footer">
+                                {
+                                    loginUser.role?.roleName === "Receptionist" && (
+                                        <>
+                                            <button type="submit" className="btn btn-primary" >Check-In</button>
+                                        </>
+                                    )
+                                }
+                                <button type="button" className="btn btn-dark" onClick={closeModalPickRoom} >Đóng</button>
+                            </div>
+                        </form>
+
                     </div>
                 </div>
-            )
-            }
+            </div>
+        )
+        }
 
 
-            <style jsx>{`
+        <style jsx>{`
                 .content-wrapper {
                     background-color: #f0f4f8;
                     min-height: 100vh;
@@ -658,9 +758,185 @@ const CheckInOut = () => {
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+ /* TABLES */
+.table {
+    border-collapse: separate;
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+	background-color: #eee;
+}
+.table thead > tr > th {
+	border-bottom: 1px solid #C2C2C2;
+	padding-bottom: 0;
+}
+
+
+.table tbody > tr > td {
+	font-size: 0.875em;
+	background: #f5f5f5;
+	border-top: 10px solid #fff;
+	vertical-align: middle;
+	padding: 12px 8px;
+}
+.table tbody > tr > td:first-child,
+.table thead > tr > th:first-child {
+	padding-left: 20px;
+}
+.table thead > tr > th span {
+	border-bottom: 2px solid #C2C2C2;
+	display: inline-block;
+	padding: 0 5px;
+	padding-bottom: 5px;
+	font-weight: normal;
+}
+.table thead > tr > th > a span {
+	color: #344644;
+}
+.table thead > tr > th > a span:after {
+	content: "\f0dc";
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: inherit;
+	margin-left: 5px;
+	font-size: 0.75em;
+}
+.table thead > tr > th > a.asc span:after {
+	content: "\f0dd";
+}
+.table thead > tr > th > a.desc span:after {
+	content: "\f0de";
+}
+.table thead > tr > th > a:hover span {
+	text-decoration: none;
+	color: #2bb6a3;
+	border-color: #2bb6a3;
+}
+.table.table-hover tbody > tr > td {
+	-webkit-transition: background-color 0.15s ease-in-out 0s;
+	transition: background-color 0.15s ease-in-out 0s;
+}
+.table tbody tr td .call-type {
+	display: block;
+	font-size: 0.75em;
+	text-align: center;
+}
+.table tbody tr td .first-line {
+	line-height: 1.5;
+	font-weight: 400;
+	font-size: 1.125em;
+}
+.table tbody tr td .first-line span {
+	font-size: 0.875em;
+	color: #969696;
+	font-weight: 300;
+}
+.table tbody tr td .second-line {
+	font-size: 0.875em;
+	line-height: 1.2;
+}
+.table a.table-link {
+	margin: 0 5px;
+	font-size: 1.125em;
+}
+.table a.table-link:hover {
+	text-decoration: none;
+	color: #2aa493;
+}
+.table a.table-link.danger {
+	color: #fe635f;
+}
+.table a.table-link.danger:hover {
+	color: #dd504c;
+}
+
+.table-products tbody > tr > td {
+	background: none;
+	border: none;
+	border-bottom: 1px solid #ebebeb;
+	-webkit-transition: background-color 0.15s ease-in-out 0s;
+	transition: background-color 0.15s ease-in-out 0s;
+	position: relative;
+}
+.table-products tbody > tr:hover > td {
+	text-decoration: none;
+	background-color: #f6f6f6;
+}
+.table-products .name {
+	display: block;
+	font-weight: 600;
+	padding-bottom: 7px;
+}
+.table-products .price {
+	display: block;
+	text-decoration: none;
+	width: 50%;
+	float: left;
+	font-size: 0.875em;
+}
+.table-products .price > i {
+	color: #8dc859;
+}
+.table-products .warranty {
+	display: block;
+	text-decoration: none;
+	width: 50%;
+	float: left;
+	font-size: 0.875em;
+}
+.table-products .warranty > i {
+	color: #f1c40f;
+}
+.table tbody > tr.table-line-fb > td {
+	background-color: #9daccb;
+	color: #262525;
+}
+.table tbody > tr.table-line-twitter > td {
+	background-color: #9fccff;
+	color: #262525;
+}
+.table tbody > tr.table-line-plus > td {
+	background-color: #eea59c;
+	color: #262525;
+}
+.table-stats .status-social-icon {
+	font-size: 1.9em;
+	vertical-align: bottom;
+}
+.table-stats .table-line-fb .status-social-icon {
+	color: #556484;
+}
+.table-stats .table-line-twitter .status-social-icon {
+	color: #5885b8;
+}
+.table-stats .table-line-plus .status-social-icon {
+	color: #a75d54;
+}
+.table tbody > tr > th,
+.table thead > tr > th {
+    font-weight: bold; /* Removes bold styling */
+}
+.table tbody > tr > th,
+.table thead > tr > th {
+    border-bottom: 1px solid #C2C2C2;
+    padding-bottom: 0;
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    padding: 12px 8px; /* Ensure consistent padding */
+    vertical-align: middle; /* Align content vertically */
+}
+.table tbody > tr > th,
+.table tbody > tr > td {
+    margin: 0;
+    border: none; /* Or adjust based on your table's styling */
+}
+
+
             `}</style>
-        </>
-    );
+    </>
+);
 
 };
 

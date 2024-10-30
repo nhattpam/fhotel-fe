@@ -1298,7 +1298,7 @@ const EditHotel = () => {
                                                     <td>
                                                         {
                                                             roomPrices[item.roomTypeId] !== undefined
-                                                                ? `${roomPrices[item.roomTypeId]} VND` // Show price if available
+                                                                ? `${roomPrices[item.roomTypeId]} (VND)` // Show price if available
                                                                 : "Loading..." // Show loading message while fetching price
                                                         }
                                                     </td>

@@ -475,6 +475,7 @@ const ListHotel = () => {
                                             <th><span>Thành Phố</span></th>
                                             <th><span>Trạng Thái</span></th>
                                             <th><span>Xác Minh</span></th>
+                                            <th><span>Hành Động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -734,6 +735,7 @@ const ListHotel = () => {
                                                                 <th><span>Ngày Xác Minh</span></th>
                                                                 <th><span>Ghi Chú</span></th>
                                                                 <th><span>Trạng Thái</span></th>
+                                                                
                                                             </tr>
                                                         </thead>
                                                         <tbody>

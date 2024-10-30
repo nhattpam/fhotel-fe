@@ -6,6 +6,7 @@ import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import reservationService from '../../services/reservation.service';
 import userService from '../../services/user.service';
+import { Link } from 'react-router-dom';
 
 const ListStaffReservation = () => {
 
@@ -121,6 +122,7 @@ const ListStaffReservation = () => {
                                             <th><span>STT</span></th>
                                             <th><span>Mã Đặt Chỗ</span></th>
                                             <th><span>Khách Hàng</span></th>
+                                            <th><span>Khách Sạn</span></th>
                                             <th><span>Loại Phòng</span></th>
                                             <th><span>Số Lượng Đặt</span></th>
                                             <th><span>Ngày Đặt</span></th>
@@ -136,6 +138,11 @@ const ListStaffReservation = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{item.code}</td>
                                                         <td>{item.customer?.name}</td>
+                                                        <td>
+                                                            <Link to={`/edit-hotel/${item.roomType?.hotelId}`}>
+                                                                {item.roomType?.hotel?.hotelName}
+                                                            </Link>
+                                                        </td>
                                                         <td>{item.roomType?.type?.typeName}</td>
                                                         <td>{item.numberOfRooms}</td>
                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>

@@ -1280,7 +1280,7 @@ const EditHotel = () => {
                                 <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
                                     <thead className="thead-light">
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th data-hide="phone"><span>Tên Loại</span></th>
                                             <th><span>DIện Tích Phòng</span></th>
                                             <th><span>Giá</span></th> {/* Add a new column for the price */}
@@ -1364,7 +1364,7 @@ const EditHotel = () => {
                                 <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Họ Và Tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Chức Vụ</span></th>
@@ -2086,13 +2086,13 @@ const EditHotel = () => {
 
             {showModalCreateHotelDocument && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header">
+                                <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Upload Giấy Tờ Khách Sạn</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelDocument}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelDocument}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>

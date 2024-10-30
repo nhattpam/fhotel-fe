@@ -53,6 +53,7 @@ const CheckInOut = () => {
         const filteredReservations = reservationList.filter(res =>
             res.customer?.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
             res.customer?.email.toLowerCase().includes(customerSearch.toLowerCase()) ||
+            res.code.toLowerCase().includes(customerSearch.toLowerCase()) ||
             res.customer?.identificationNumber.includes(customerSearch)
         );
 
@@ -274,7 +275,7 @@ const CheckInOut = () => {
                                             type="text"
                                             id="reservation-search"
                                             className="form-control"
-                                            placeholder="Nhập tên khách hàng hoặc số điện thoại hoặc email hoặc số căn cước"
+                                            placeholder="Nhập mã đặt chỗ ,tên khách hàng, số điện thoại, email hoặc số căn cước"
                                             value={customerSearch}
                                             onChange={(e) => setCustomerSearch(e.target.value)}
                                         />

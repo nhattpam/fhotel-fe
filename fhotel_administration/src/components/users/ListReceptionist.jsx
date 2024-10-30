@@ -450,7 +450,7 @@ const ListReceptionist = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Họ Và Tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Chức Vụ</span></th>

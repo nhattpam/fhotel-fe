@@ -107,7 +107,7 @@ const ListRefundPolicy = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th>STT.</th>
+                                            <th>STT</th>
                                             <th>Ngày Hủy</th>
                                             <th>Tỷ Lệ Hoàn Tiền</th>
                                             <th>Mô Tả</th>

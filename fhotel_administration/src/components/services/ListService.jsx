@@ -158,18 +158,6 @@ const ListService = () => {
             isValid = false;
         }
 
-        // Validate Last Name
-        if (createService.price.trim() === "") {
-            newError.price = "Price is required";
-            isValid = false;
-        }
-
-        // Validate Address
-        // if (createService.image.trim() === "") {
-        //     newError.image = "Image is required";
-        //     isValid = false;
-        // }
-
         if (createService.description.trim() === "") {
             newError.description = "Description is required";
             isValid = false;
@@ -318,7 +306,7 @@ const ListService = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Hình Ảnh</span></th>
                                             <th><span>Tên</span></th>
                                             <th><span>Đơn Giá (VND)</span></th>
@@ -488,7 +476,7 @@ const ListService = () => {
             {
                 showModalCreateService && (
                     <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                        <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
 
                             <div className="modal-content">
                                 <form

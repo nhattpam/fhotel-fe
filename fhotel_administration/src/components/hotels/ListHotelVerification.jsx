@@ -254,7 +254,7 @@ const ListHotelVerification = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Khách Sạn</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Ngày Tạo</span></th>
@@ -487,7 +487,7 @@ const ListHotelVerification = () => {
                                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                                     <thead>
                                                         <tr>
-                                                            <th><span>STT.</span></th>
+                                                            <th><span>STT</span></th>
                                                             <th><span>Nhân Viên Xác Minh</span></th>
                                                             <th><span>Ngày Xác Minh</span></th>
                                                             <th><span>Ghi Chú</span></th>

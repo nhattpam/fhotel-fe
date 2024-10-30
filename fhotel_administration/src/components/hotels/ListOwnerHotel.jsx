@@ -244,10 +244,7 @@ const ListOwnerHotel = () => {
         e.preventDefault();
 
         try {
-            // createHotel.ownerEmail = loginUser.email;
-            // createHotel.ownerName = loginUser.name;
-            // createHotel.ownerPhoneNumber = loginUser.phoneNumber;
-            // createHotel.ownerIdentificationNumber = loginUser.identificationNumber;
+            
             createHotel.ownerId = loginUser.userId;
             console.log(JSON.stringify(createHotel))
             // Post the hotel first
@@ -380,7 +377,7 @@ const ListOwnerHotel = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Khách Sạn</span>Tên </th>
                                             <th><span>Chủ Sở Hữu</span></th>
                                             <th><span>Quận</span></th>

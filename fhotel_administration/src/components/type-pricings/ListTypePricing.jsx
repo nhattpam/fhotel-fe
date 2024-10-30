@@ -343,7 +343,7 @@ const ListTypePricing = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Loại Phòng</span></th>
                                             <th><span>Ngày Trong Tuần</span></th>
                                             <th><span>Giá</span></th>

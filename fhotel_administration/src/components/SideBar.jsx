@@ -4,6 +4,7 @@ import userService from '../services/user.service';
 import typeService from '../services/type.service';
 import cityService from '../services/city.service';
 import typePricingService from '../services/type-pricing.service';
+import serviceTypeService from '../services/service-type.service';
 
 const SideBar = () => {
 
@@ -96,8 +97,6 @@ const SideBar = () => {
 
         setCreateTypePricing({ ...createTypePricing, [e.target.name]: value });
     };
-
-
 
 
     const [cityList, setCityList] = useState([]);
@@ -228,6 +227,76 @@ const SideBar = () => {
         }
     };
 
+    //CREATE SERVICE TYPE
+    const [showModalCreateServiceType, setShowModalCreateServiceType] = useState(false);
+    const [serviceTypeList, setServiceTypeList] = useState([]);
+
+    const openCreateServiceTypeModal = () => {
+        setShowModalCreateServiceType(true);
+        serviceTypeService
+            .getAllServiceType()
+            .then((res) => {
+                setServiceTypeList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    };
+
+    const closeModalCreateServiceType = () => {
+        setShowModalCreateServiceType(false);
+    };
+
+    const [createServiceType, setCreateServiceType] = useState({
+        serviceTypeName: ""
+    });
+
+    const handleChangeServiceType = (e) => {
+        const { name, value } = e.target;
+        setCreateServiceType(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const submitCreateServiceType = async (e) => {
+        e.preventDefault();
+
+        console.log(JSON.stringify(createServiceType))
+
+        try {
+            const serviceTypeResponse = await serviceTypeService.saveServiceType(createServiceType);
+            if (serviceTypeResponse.status === 201) {
+                serviceTypeService
+                    .getAllServiceType()
+                    .then((res) => {
+                        setServiceTypeList(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                handleResponseError(error.response);
+            }
+
+        }
+        catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+    const handleDeleteServiceType = async (serviceTypeId) => {
+        try {
+            // Call the API to delete the image by roomImageId
+            const serviceTypeResponse = await serviceTypeService.deleteServiceTypeById(serviceTypeId);
+            if (serviceTypeResponse.status === 201) {
+                setServiceTypeList(prevList => prevList.filter(item => item.serviceTypeId !== serviceTypeId));
+            }
+            // After successful deletion, remove the image from the imageList
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+
 
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
@@ -239,7 +308,7 @@ const SideBar = () => {
         setShowError(true); // Show error modal or message
     };
 
-    
+
 
     // Effect to handle error message visibility
     useEffect(() => {
@@ -387,20 +456,21 @@ const SideBar = () => {
                                     </li>
                                     <li>
                                         <a href="javascript:;" onClick={togglePolicyMenu}>
-                                            <i className="sidebar-item-icon fa fa-balance-scale" />
-                                            <span className="nav-label">Chính Sách</span>
+                                            <i className="sidebar-item-icon fa fa-coffee" />
+                                            <span className="nav-label">Dịch vụ</span>
                                             <i className={`fa fa-angle-left arrow ${isPolicyMenuOpen ? '' : 'collapsed'}`} />
                                         </a>
                                         {/* Conditionally apply collapse class based on the state */}
                                         <ul className={`nav-2-level collapse ${isPolicyMenuOpen ? 'show' : ''}`}>
                                             <li>
-                                                <Link to="/list-refund-policy">Hoàn Tiền</Link>
+                                                <Link to="/list-service">Dịch Vụ</Link>
                                             </li>
                                             <li>
-                                                <Link to="/list-late-check-out-policy">Trả Phòng Muộn</Link>
+                                                <Link onClick={openCreateServiceTypeModal}>Thêm Loại Dịch Vụ</Link>
                                             </li>
                                         </ul>
                                     </li>
+
                                     <li>
                                         <a href="javascript:;" onClick={togglePricingMenu}>
                                             <i className="sidebar-item-icon fa fa-usd" />
@@ -709,6 +779,114 @@ const SideBar = () => {
                                             Lưu
                                         </button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div >
+
+                )
+            }
+
+            {
+                showModalCreateServiceType && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+
+                            <div className="modal-content">
+                                <form
+                                    method="post"
+                                    id="myAwesomeDropzone"
+                                    data-plugin="dropzone"
+                                    data-previews-container="#file-previews"
+                                    data-upload-preview-template="#uploadPreviewTemplate"
+                                    data-parsley-validate
+                                    onSubmit={(e) => submitCreateServiceType(e)}
+                                    style={{ textAlign: "left" }}
+                                >
+                                    <div className="modal-header bg-dark text-light">
+                                        <h5 className="modal-title">Tạo Loại Dịch Vụ</h5>
+                                        <button
+                                            type="button"
+                                            className="close text-light"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={closeModalCreateServiceType}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        {showError && Object.entries(error).length > 0 && (
+                                            <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                                {Object.entries(error).map(([key, message]) => (
+                                                    <p key={key} style={{ margin: '0' }}>{message}</p>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                        {/* Form Fields */}
+                                        <h4 className="header-title ">Thông Tin</h4>
+
+                                        <div className="form-row">
+                                            <div className="form-group col-md-12">
+                                                <label>Tên Loại</label>
+                                                <input
+                                                    type="text"
+                                                    name="serviceTypeName"
+                                                    className="form-control"
+                                                    value={createServiceType.serviceTypeName}
+                                                    onChange={(e) => handleChangeServiceType(e)}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className='form-group col-md-12'>
+                                                <label htmlFor="serviceTypes" className="form-label">Danh Sách Loại Dịch Vụ</label>
+                                                {serviceTypeList.length > 0 ? (
+                                                    serviceTypeList.map((item, index) => (
+                                                        <div key={item.serviceTypeId} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                            <span className="badge label-table badge-danger">{item.serviceTypeName}</span>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-danger"
+                                                                style={{
+                                                                    position: 'absolute',
+                                                                    top: '0', // Adjust to position the button as needed
+                                                                    right: '0', // Adjust to position the button as needed
+                                                                    background: 'transparent',
+                                                                    border: 'none',
+                                                                    color: 'red',
+                                                                    fontSize: '20px',
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                                onClick={() => handleDeleteServiceType(item.serviceTypeId)}
+                                                                aria-label={`Delete service type ${item.serviceTypeName}`} // Accessibility improvement
+                                                            >
+                                                                &times; {/* This represents the delete icon (X symbol) */}
+                                                            </button>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <p className="text-muted">Chưa có loại dịch vụ nào.</p> // Message when the list is empty
+                                                )}
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+
+                                    <div className="modal-footer">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-custom btn-sm"
+                                            disabled={isSubmitting}  // Disable button when submitting
+                                        >
+                                            Lưu
+                                        </button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateServiceType}>Đóng</button>
                                     </div>
                                 </form>
 

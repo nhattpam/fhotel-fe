@@ -118,7 +118,8 @@ const ListStaffReservation = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
+                                            <th><span>Mã Đặt Chỗ</span></th>
                                             <th><span>Khách Hàng</span></th>
                                             <th><span>Loại Phòng</span></th>
                                             <th><span>Số Lượng Đặt</span></th>
@@ -133,6 +134,7 @@ const ListStaffReservation = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.code}</td>
                                                         <td>{item.customer?.name}</td>
                                                         <td>{item.roomType?.type?.typeName}</td>
                                                         <td>{item.numberOfRooms}</td>
@@ -236,6 +238,9 @@ const ListStaffReservation = () => {
                                     {/* Section: Reservation Information */}
                                     <div className="border-bottom pb-3 mb-2">
                                         <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Đặt Chỗ</h6>
+                                        <p className="mb-1"><strong className='mr-2'>Mã Đặt Chỗ:</strong>
+                                            {reservation.code}
+                                        </p>
                                         <p className="mb-1"><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong>
                                             {new Date(reservation.checkInDate).toLocaleDateString('en-US')}
                                         </p>

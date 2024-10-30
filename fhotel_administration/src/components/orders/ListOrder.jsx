@@ -115,7 +115,7 @@ const ListOrder = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Khách Hàng</span></th>
                                             <th><span>Số Điện Thoại</span></th>
                                             <th><span>Thời Gian Yêu Cầu</span></th>
@@ -238,7 +238,7 @@ const ListOrder = () => {
                                             <table className="table table-borderless table-hover table-wrap table-centered">
                                                 <thead>
                                                     <tr>
-                                                        <th>STT.</th>
+                                                        <th>STT</th>
                                                         <th>Hình Ảnh</th>
                                                         <th>Tên Dịch Vụ</th>
                                                         <th>Đơn Giá (VND)</th>

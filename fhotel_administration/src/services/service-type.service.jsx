@@ -44,6 +44,15 @@ class ServiceTypeService {
         });
       }
 
+      deleteServiceTypeById(id) {
+        return axios.delete(API_URL + "/service-types/" + id, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+
 
 }
 export default new ServiceTypeService;

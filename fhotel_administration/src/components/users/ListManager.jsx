@@ -359,11 +359,12 @@ const ListManager = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th><span>STT.</span></th>
+                                            <th><span>STT</span></th>
                                             <th><span>Họ Và Tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Chức Vụ</span></th>
                                             <th><span>Trạng Thái</span></th>
+                                            <th><span>Hành Động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -496,7 +497,7 @@ const ListManager = () => {
 
             {showModalUser && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
                             <form>
 
@@ -515,7 +516,7 @@ const ListManager = () => {
                                             <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ Và Tên:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
                                                     </tr>
                                                     <tr>

@@ -450,7 +450,7 @@ const ListRoomAttendant = () => {
                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                     <thead>
                                         <tr>
-                                            <th>STT.</th>
+                                            <th>STT</th>
                                             <th>Họ Và Tên</th>
                                             <th>Email</th>
                                             <th>Chức Vụ</th>

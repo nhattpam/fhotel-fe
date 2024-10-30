@@ -101,7 +101,7 @@ const ListReservation = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title">Danh Sách Đặt Chỗ</div>
+                            <div className="ibox-title">Danh Sách Đặt Phòng</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={reservationSearchTerm}
@@ -114,7 +114,7 @@ const ListReservation = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Mã Đặt Chỗ</span></th>
+                                            <th><span>Mã Đặt Phòng</span></th>
                                             <th><span>Khách Hàng</span></th>
                                             <th><span>Khách Sạn</span></th>
                                             <th><span>Loại Phòng</span></th>
@@ -222,7 +222,7 @@ const ListReservation = () => {
                         <div className="modal-content shadow-lg rounded">
                             <form>
                                 <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Chi Tiết Đặt Chỗ</h5>
+                                    <h5 className="modal-title">Chi Tiết Đặt Phòng</h5>
                                     <button type="button" className="close text-white" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -240,8 +240,8 @@ const ListReservation = () => {
 
                                     {/* Section: Reservation Information */}
                                     <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Đặt Chỗ</h6>
-                                        <p className="mb-1"><strong className='mr-2'>Mã Đặt Chỗ:</strong>
+                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Đặt Phòng</h6>
+                                        <p className="mb-1"><strong className='mr-2'>Mã Đặt Phòng:</strong>
                                             {reservation.code}
                                         </p>
                                         <p className="mb-1"><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong>

@@ -360,7 +360,7 @@ const ListCustomer = () => {
                                             </table>
                                         </div>
                                         <div className='col-md-12' style={{ textAlign: 'left' }}>
-                                            <h4>Đặt Chỗ Gần Đây</h4>
+                                            <h4>Đặt Phòng Gần Đây</h4>
                                             <div className="table-responsive">
                                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                                     <thead>
@@ -447,7 +447,7 @@ const ListCustomer = () => {
                         <div className="modal-content shadow-lg rounded">
                             <form>
                                 <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Chi Tiết Đặt Chỗ</h5>
+                                    <h5 className="modal-title">Chi Tiết Đặt Phòng</h5>
                                     <button type="button" className="close text-white" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -465,7 +465,7 @@ const ListCustomer = () => {
 
                                     {/* Section: Reservation Information */}
                                     <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Đặt Chỗ</h6>
+                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Đặt Phòng</h6>
                                         <p className="mb-1"><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong>
                                             {new Date(reservation.checkInDate).toLocaleDateString('en-US')}
                                         </p>

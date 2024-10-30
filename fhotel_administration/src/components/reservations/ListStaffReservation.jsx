@@ -64,7 +64,8 @@ const ListStaffReservation = () => {
 
     //detail reservation modal 
     const [showModalReservation, setShowModalReservation] = useState(false);
-
+    const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
+    const [orderDetailList, setOrderDetailList] = useState([]);
     const [reservation, setReservation] = useState({
 
     });
@@ -77,6 +78,22 @@ const ListStaffReservation = () => {
                 .getReservationById(reservationId)
                 .then((res) => {
                     setReservation(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getAllRoomStayHistoryByReservationId(reservationId)
+                .then((res) => {
+                    setRoomStayHistoryList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getAllOrderDetailByReservationId(reservationId)
+                .then((res) => {
+                    setOrderDetailList(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -107,7 +124,7 @@ const ListStaffReservation = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title">Danh Sách Đặt Chỗ</div>
+                            <div className="ibox-title">Danh Sách Đặt Phòng</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={reservationSearchTerm}
@@ -120,7 +137,7 @@ const ListStaffReservation = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Mã Đặt Chỗ</span></th>
+                                            <th><span>Mã Đặt Phòng</span></th>
                                             <th><span>Khách Hàng</span></th>
                                             <th><span>Khách Sạn</span></th>
                                             <th><span>Loại Phòng</span></th>
@@ -151,7 +168,7 @@ const ListStaffReservation = () => {
                                                                 <span className="badge label-table badge-warning">Đang Chờ</span>
                                                             )}
                                                             {item.reservationStatus === "CheckIn" && (
-                                                                <span className="badge label-table badge-success">Xác Nhận</span>
+                                                                <span className="badge label-table badge-success">Đã Check In</span>
                                                             )}
                                                             {item.reservationStatus === "CheckOut" && (
                                                                 <span className="badge label-table badge-danger">Đã Check Out</span>
@@ -222,11 +239,11 @@ const ListStaffReservation = () => {
                     role="dialog"
                     style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
                 >
-                    <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-centered custom-modal-xl" role="document">
                         <div className="modal-content shadow-lg rounded">
                             <form>
                                 <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Chi Tiết Đặt Chỗ</h5>
+                                    <h5 className="modal-title">Chi Tiết Đặt Phòng</h5>
                                     <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -234,52 +251,108 @@ const ListStaffReservation = () => {
 
                                 <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
                                     {/* Section: Customer Information */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Khách Hàng</h6>
-                                        <p className="mb-1" ><strong className='mr-2'>Họ Và Tên:</strong> {reservation.customer?.name}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Số Điện Thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                        <p><strong className='mr-2'>Số Căn Cước:</strong> {reservation.customer?.identificationNumber}</p>
-                                    </div>
+                                    <div className="container-fluid">
+                                        {/* Reservation Information */}
+                                        <div className='row'>
+                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                                <h5>Thông Tin Khách Hàng</h5>
+                                                <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                                <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
+                                            </div>
+                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                                <h5>Thông Tin Phòng</h5>
+                                                <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Phòng đã ở:</strong> </p>
+                                                <div className="room-list">
+                                                    {roomStayHistoryList.map((roomStayHistory) => (
+                                                        <div
+                                                            key={roomStayHistory.room?.roomNumber}
+                                                            className="room-box"
+                                                            style={{
+                                                                backgroundColor: 'green',
+                                                                position: 'relative',
+                                                                textAlign: 'center',
+                                                                flex: '0 1 auto',
+                                                                margin: '5px'
+                                                            }}
+                                                        >
+                                                            <p>{roomStayHistory.room?.roomNumber}</p>
 
-                                    {/* Section: Reservation Information */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Đặt Chỗ</h6>
-                                        <p className="mb-1"><strong className='mr-2'>Mã Đặt Chỗ:</strong>
-                                            {reservation.code}
-                                        </p>
-                                        <p className="mb-1"><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong>
-                                            {new Date(reservation.checkInDate).toLocaleDateString('en-US')}
-                                        </p>
-                                        <p className="mb-1"><strong className='mr-2'>Ngày Dự Kiến Check-Out:</strong>
-                                            {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}
-                                        </p>
-                                        <p className="mb-1"><strong className='mr-2'>Số Lượng Phòng Muốn Đặt:</strong> {reservation.numberOfRooms}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Trạng Thái:</strong> {reservation.reservationStatus}</p>
-                                        <p><strong className='mr-2'>Tổng Số Tiền:</strong > {reservation.totalAmount} VND</p>
-                                    </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                {roomStayHistoryList.length === 0 && (
+                                                    <p>Không tìm thấy.</p>
+                                                )}
+                                            </div>
+                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                                <h5>Thanh Toán</h5>
+                                                <p className="mb-1"><strong className='mr-2'>Mã đặt chỗ:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
+                                                    {reservation.paymentStatus === "Paid" && (
+                                                        <span className="badge label-table badge-success">Đã thanh toán</span>
+                                                    )}
+                                                    {reservation.paymentStatus === "Not Paid" && (
+                                                        <span className="badge label-table badge-danger">Chưa thanh toán</span>
+                                                    )}
+                                                </p>
+                                                {reservation.paymentStatus === "Paid" && (
+                                                    <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                                                )}
+                                                {reservation.paymentStatus === "Not Paid" && (
+                                                    <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                                                )}
 
-                                    {/* Section: Room Information */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Phòng</h6>
-                                        <p className="mb-1"><strong className='mr-2'>Loại Phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                        <p className="mb-1"><strong className='mr-2 '>Tổng Số Phòng:</strong> {reservation.roomType?.totalRooms}</p>
-                                        <p><strong className='mr-2'>Số Phòng Hiện Có:</strong> {reservation.roomType?.availableRooms}</p>
-                                    </div>
+                                            </div>
+                                            {/* Divider */}
+                                            <div className="col-md-12">
+                                                <hr />
+                                            </div>
+                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                                <h5>Dịch Vụ</h5>
+                                                <div className="table-responsive">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><span>STT</span></th>
+                                                                <th><span>Hình Ảnh</span></th>
+                                                                <th><span>Tên Dịch Vụ</span></th>
+                                                                <th><span>Số Lượng</span></th>
+                                                                <th><span>Loại Dịch Vụ</span></th>
+                                                                <th><span>Đơn Giá (VND)</span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>
+                                                                            <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                        </td>
+                                                                        <td>{item.service?.serviceName}</td>
+                                                                        <td>{item.quantity}</td>
+                                                                        <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                                        <td>{item.service?.price}</td>
+                                                                    </tr>
+                                                                ))
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                {/* Calculate and display total amount */}
+                                                <div style={{ textAlign: 'right', marginTop: '10px' }}>
+                                                    <h5>
+                                                        Tổng cộng: &nbsp;
+                                                        {(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))
+                                                            + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
+                                                    </h5>
+                                                </div>
+                                            </div>
 
-                                    {/* Section: Payment Details */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Thanh Toán</h6>
-                                        <p className="mb-1"><strong className='mr-2'>Phương Thức Thanh Toán:</strong> {reservation.paymentMethod?.paymentMethodName ?? "Chưa Có"}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Trạng Thái:</strong> {reservation.paymentStatus}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Số Tiền Đã Trả:</strong> {reservation.totalAmount ?? 0} VND</p>
-                                        <p><strong className='mr-2'>Số Tiền Cần Trả:</strong> {reservation.remainingBalance ?? 0} VND</p>
-                                    </div>
-
-                                    {/* Section: Feedback */}
-                                    <div className="pb-3">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Đánh Giá Của Khách Hàng</h6>
-                                        {/* Feedback information can be displayed here */}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -300,6 +373,23 @@ const ListStaffReservation = () => {
                     background-color: #20c997;
                     border-color: #20c997;
                 }
+                    .room-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.room-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
 
                 .custom-modal-xl {
     max-width: 90%;

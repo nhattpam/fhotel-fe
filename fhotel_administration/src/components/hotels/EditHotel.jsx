@@ -1573,7 +1573,7 @@ const EditHotel = () => {
                                             </div>
                                             <hr />
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Cơ Sở Vật Chất</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện Nghi</h3>
                                                 <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
@@ -1845,7 +1845,7 @@ const EditHotel = () => {
 
                                             </div>
                                             <div className="form-group col-md-12">
-                                                <label htmlFor="">Thêm Cơ Sở Vật Chất * :</label>
+                                                <label htmlFor="">Thêm Tiện Nghi * :</label>
                                                 <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                                                     <i className="fa fa-check-square" aria-hidden="true"
                                                         onClick={handleSelectAllFacility}>
@@ -1955,7 +1955,7 @@ const EditHotel = () => {
                             <div className="modal-content">
                                 <form onSubmit={handleSubmitRoomFacility}> {/* Attach handleSubmit here */}
                                     <div className="modal-header bg-dark text-light">
-                                        <h5 className="modal-title">Thêm Cơ Sở Vật Chất</h5>
+                                        <h5 className="modal-title">Thêm Tiện Nghi</h5>
                                         <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>

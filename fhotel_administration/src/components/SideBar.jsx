@@ -451,7 +451,7 @@ const SideBar = () => {
                                     </li>
                                     <li>
                                         <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Chỗ</span>
+                                            <span className="nav-label">Đặt Phòng</span>
                                         </Link>
                                     </li>
                                     <li>
@@ -525,7 +525,7 @@ const SideBar = () => {
                                     </li>
                                     <li>
                                         <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Chỗ</span>
+                                            <span className="nav-label">Đặt Phòng</span>
                                         </Link>
                                     </li>
                                     <li>
@@ -554,7 +554,7 @@ const SideBar = () => {
                                     </li>
                                     <li>
                                         <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Chỗ</span>
+                                            <span className="nav-label">Đặt Phòng</span>
                                         </Link>
                                     </li>
                                     <li>
@@ -578,7 +578,7 @@ const SideBar = () => {
                                     {/* Reservation Section */}
                                     <li>
                                         <Link to="/list-staff-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Chỗ</span>
+                                            <span className="nav-label">Đặt Phòng</span>
                                         </Link>
                                     </li>
 

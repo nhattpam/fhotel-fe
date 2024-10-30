@@ -6,6 +6,9 @@ import roomTypeService from '../../services/room-type.service';
 import { Link } from 'react-router-dom';
 import roomStayHistoryService from '../../services/room-stay-history.service';
 import reservationService from '../../services/reservation.service';
+import documentService from '../../services/document.service';
+import roomImageService from '../../services/room-image.service';
+import userDocumentService from '../../services/user-document.service';
 
 const CheckInOut = () => {
     //get user information
@@ -137,13 +140,115 @@ const CheckInOut = () => {
                 .catch((error) => {
                     console.log(error);
                 });
+            reservationService
+                .getAllUserDocumentByReservation(reservationId)
+                .then((res) => {
+                    setUserDocumentList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            documentService
+                .getAllDocument()
+                .then((res) => {
+                    setDocumentList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     };
 
+    //CREATE USER DOCUMENT
+    const [createUserDocument, setCreateUserDocument] = useState({
+        reservationId: "",
+        image: "",
+        documentId: ""
+    });
+
+    const [userDocumentList, setUserDocumentList] = useState([]);
+    const [documentList, setDocumentList] = useState([]);
+    const [selectedFileUserDocument, setSelectedFileUserDocument] = useState(null);
+    const [userImageList, setUserImageList] = useState(userDocumentList);
+    // Handle file selection
+    const handleFileChange = (event) => {
+        setSelectedFileUserDocument(event.target.files[0]);
+    };
+
+    // Upload image and refresh the room image list without closing the modal
+    const handleUploadAndPostUserDocument = async (reservationId) => {
+        if (!selectedFileUserDocument) {
+            alert("Chọn hình!");
+            return;
+        }
+
+        try {
+            // Prepare the FormData with the correct key expected by the API
+            const formData = new FormData();
+            formData.append("file", selectedFileUserDocument); // Adjust key if needed
+            console.log([...formData.entries()]); // Logs the form data before submission
+
+            // Upload the image to the API
+            const uploadResponse = await roomImageService.uploadImage(formData);
+
+            if (uploadResponse && uploadResponse.data) {
+                const imageUrl = uploadResponse.data.link; // Extract the returned image URL from the response
+                const document = documentList.find(doc => doc.documentName === "Identification Image");
+                if (document) {
+                    const documentId = document.documentId;
+                    // Update roomImage object
+                    const updatedUserDocument = {
+                        reservationId: reservationId,
+                        image: imageUrl,
+                        documentId: documentId
+                    };
+                    setCreateUserDocument(updatedUserDocument);
+
+                    // Save the room image to your database
+                    await userDocumentService.saveUserDocument(updatedUserDocument);
+
+                    // Refresh the room image list by calling the fetchRoomImages function
+                    fetchUserDocuments(reservationId);
+
+                    // Optionally, update the local image list without refetching (in case you want instant visual feedback)
+                    setUserImageList((prevList) => [...prevList, { image: imageUrl }]);
+                }
+
+            }
+        } catch (error) {
+            console.error("Error uploading and posting image:", error);
+        }
+    };
+
+    const fetchUserDocuments = (reservationId) => {
+        reservationService
+            .getAllUserDocumentByReservation(reservationId)
+            .then((res) => {
+                setUserDocumentList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const handleDeleteImage = async (userDocumentId) => {
+        try {
+            // Call the API to delete the image by roomImageId
+            await userDocumentService.deleteUserDocumentById(userDocumentId);
+
+            // After successful deletion, remove the image from the imageList
+            setUserDocumentList(prevList => prevList.filter(item => item.userDocumentId !== userDocumentId));
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
+    };
+
+    //CREATE USER DOCUMENT
 
     const [updateReservation, setUpdateReservation] = useState({
 
     });
+
     // Function to handle form submission
     const handleCreateRoomStayHistory = async (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -351,7 +456,7 @@ const CheckInOut = () => {
                 <div className="page-content">
                     <div className="card shadow-lg border-0 rounded">
                         <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                            <h4 className="mb-0">Tìm Kiếm Đặt Chỗ</h4>
+                            <h4 className="mb-0">Tìm Kiếm Đặt Phòng</h4>
                         </div>
 
                         <div className="card-body p-4" style={{ textAlign: 'left' }}>
@@ -377,26 +482,26 @@ const CheckInOut = () => {
                                 {/* Reservation Details */}
                                 {reservationDetails && reservationDetails.length > 0 ? (
                                     <div className="reservation-details mt-4">
-                                        <h5 className="mb-4">Chi Tiết Đặt Chỗ</h5>
+                                        <h5 className="mb-4">Chi Tiết Đặt Phòng</h5>
                                         {reservationDetails.map((reservation, index) => (
                                             <div key={index} className="card mb-3 border-light shadow-sm">
                                                 <div className="card-body">
                                                     <div className="row">
                                                         <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Mã Đặt Chỗ:</strong> {reservation.code}</p>
-                                                            <p><strong className='mr-2'>Tên Khách Hàng:</strong> {reservation.customer?.name}</p>
-                                                            <p><strong className='mr-2'>Số Căn Cước:</strong> {reservation.customer?.identificationNumber}</p>
+                                                            <p><strong className='mr-2'>Mã đặt chỗ:</strong> {reservation.code}</p>
+                                                            <p><strong className='mr-2'>Tên khách hàng:</strong> {reservation.customer?.name}</p>
+                                                            <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
                                                             <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
-                                                            <p><strong className='mr-2'>Số Điện Thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                                            <p><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
-                                                            <p><strong className='mr-2'>Ngày Dự Kiến Check-Out:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
+                                                            <p><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                                            <p><strong className='mr-2'>Ngày dự kiến check-In:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                                            <p><strong className='mr-2'>Ngày dự kiến check-Out:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                                         </div>
                                                         <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Loại Phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                                            <p><strong className='mr-2'>Số Lượng Đặt:</strong> {reservation.numberOfRooms} phòng</p>
-                                                            <p><strong className='mr-2'>Tổng Số Tiền:</strong> {reservation.totalAmount} (VND)</p>
+                                                            <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                                            <p><strong className='mr-2'>Số lượng đặt:</strong> {reservation.numberOfRooms} phòng</p>
+                                                            <p><strong className='mr-2'>Tổng số tiền:</strong> {reservation.totalAmount} (VND)</p>
                                                             <p>
-                                                                <strong className='mr-2'>Trạng Thái Thanh Toán:</strong>
+                                                                <strong className='mr-2'>Trạng thái thanh toán:</strong>
                                                                 {reservation.paymentStatus === "Paid" ? (
                                                                     <span className="badge label-table badge-success">Đã Thanh Toán</span>
                                                                 ) : reservation.paymentStatus === "Not Paid" ? (
@@ -406,7 +511,7 @@ const CheckInOut = () => {
                                                                 )}
                                                             </p>
                                                             <p>
-                                                                <strong className='mr-2'>Trạng Thái Đặt Chỗ:</strong>
+                                                                <strong className='mr-2'>Trạng thái đặt phòng:</strong>
                                                                 {reservation.reservationStatus === "CheckIn" ? (
                                                                     <span className="badge label-table badge-success">Đã CheckIn</span>
                                                                 ) : reservation.reservationStatus === "Cancelled" ? (
@@ -419,15 +524,17 @@ const CheckInOut = () => {
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
                                                             </p>
-                                                            <p><strong className='mr-2'>Ngày Thực Tế Check-In:</strong> {reservation.actualCheckInTime
+                                                            <p><strong className='mr-2'>Ngày thực tế check-in:</strong> {reservation.actualCheckInTime
                                                                 ? new Date(reservation.actualCheckInTime).toLocaleString('en-US')
                                                                 : "Chưa có"}</p>
                                                             <p>
-                                                                <strong className='mr-2'>Ngày Thực Tế Check-Out:</strong>
+                                                                <strong className='mr-2'>Ngày thực tế check-out:</strong>
                                                                 {reservation.actualCheckOutDate
                                                                     ? new Date(reservation.actualCheckOutDate).toLocaleString('en-US')
                                                                     : "Chưa có"}
                                                             </p>
+                                                            <p><strong className='mr-2'>Khách sạn:</strong> {reservation.roomType?.hotel?.hotelName}</p>
+
 
                                                         </div>
                                                     </div>
@@ -468,7 +575,7 @@ const CheckInOut = () => {
                                     </div>
                                 ) : (
                                     <div className="alert alert-warning mt-4">
-                                        <i className="la la-exclamation-triangle" /> Không tìm thấy đặt chỗ. Tìm kiếm lại!
+                                        <i className="la la-exclamation-triangle" /> Không tìm thấy đặt phòng. Tìm kiếm lại!
                                     </div>
                                 )}
                             </div>
@@ -527,23 +634,23 @@ const CheckInOut = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại Phòng:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại phòng:</th>
                                                         <td>{roomType.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện Tích:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện tích:</th>
                                                         <td>{roomType.roomSize} m²</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tổng Số Phòng:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tổng số phòng:</th>
                                                         <td>{roomType.totalRooms} phòng</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Phòng Còn Trống:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng còn trống:</th>
                                                         <td>{roomType.availableRooms} phòng</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Phòng Cần Đặt:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng cần đặt:</th>
                                                         <td>{reservation.numberOfRooms} phòng</td>
                                                     </tr>
 
@@ -586,13 +693,13 @@ const CheckInOut = () => {
                                                     ))}
                                                 </div>
                                                 {roomList.length === 0 && (
-                                                    <p>Không tìm thấy.</p>
+                                                    <p style={{ fontSize: '16px', color: 'gray' }}>Không tìm thấy.</p>
                                                 )}
                                             </div>
 
                                             <hr />
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Cơ Sở Vật Chất</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện Nghi</h3>
                                                 <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
@@ -612,6 +719,61 @@ const CheckInOut = () => {
 
                                             </div>
                                         </div>
+                                        <div className="col-md-12">
+                                            <hr />
+                                        </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h4 style={{ fontWeight: 'bold' }}>Lưu thông tin khách hàng</h4>
+                                            <div style={{ display: 'flex', flexWrap: 'nowrap', overflowX: 'auto', gap: '10px' }}>
+                                                {userDocumentList.length > 0 ? (
+                                                    userDocumentList.map((item, index) => (
+                                                        <div
+                                                            key={index}
+                                                            style={{
+                                                                flex: '0 0 auto',
+                                                                textAlign: 'center',
+                                                                position: 'relative',
+                                                                marginBottom: '10px'
+                                                            }}
+                                                        >
+                                                            <img src={item.image} alt="Room" style={{ width: '250px', height: '200px' }} />
+                                                            {loginUser.role?.roleName === "Receptionist" && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-danger"
+                                                                    style={{
+                                                                        position: 'absolute',
+                                                                        top: '10px',
+                                                                        right: '10px',
+                                                                        background: 'transparent',
+                                                                        border: 'none',
+                                                                        color: 'red',
+                                                                        fontSize: '20px',
+                                                                        cursor: 'pointer',
+                                                                    }}
+                                                                    onClick={() => handleDeleteImage(item.userDocumentId)}
+                                                                >
+                                                                    &times;
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
+                                                        Không tìm thấy.
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {loginUser.role?.roleName === "Receptionist" && (
+                                                <div className="form-group mt-3">
+                                                    <input type="file" onChange={handleFileChange} />
+                                                    <button type="button" className="btn btn-success mt-2" onClick={() => handleUploadAndPostUserDocument(reservation.reservationId)}>
+                                                        + Tải lên
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+
 
                                     </div>
 
@@ -661,7 +823,7 @@ const CheckInOut = () => {
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thông Tin Phòng</h5>
                                                 <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                                <p>Lịch sử phòng</p>
+                                                <p className="mb-1"><strong className='mr-2'>Phòng đã ở:</strong> </p>
                                                 <div className="room-list">
                                                     {roomStayHistoryList.map((roomStayHistory) => (
                                                         <div

@@ -105,7 +105,7 @@ const ListRoom = () => {
                                 </button>
                                 <button
                                     onClick={() => setFilter('Maintenance')}
-                                    style={{ backgroundColor: 'yellow', color: 'black' }}
+                                    style={{ backgroundColor: '#E4A11B', color: 'black' }}
                                     className="btn"
                                 >
                                     Bảo trì ({maintenanceCount})
@@ -135,7 +135,7 @@ const ListRoom = () => {
                                                     backgroundColor:
                                                         room.status === 'Available' ? 'green' :
                                                             room.status === 'Occupied' ? 'red' :
-                                                                'yellow',
+                                                                '#E4A11B',
                                                     color: 'white',
                                                     borderRadius: '5px',
                                                     overflow: 'hidden'

@@ -502,7 +502,7 @@ const ListReceptionist = () => {
                                                         {
                                                             item.user?.role?.roleName === "Receptionist" && (
                                                                 <>
-                                                                    <td>Tiếp Tân</td>
+                                                                    <td>Lễ Tân</td>
                                                                 </>
                                                             )
                                                         }

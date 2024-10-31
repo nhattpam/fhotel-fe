@@ -403,7 +403,7 @@ const ListHotelManager = () => {
                                                         {
                                                             item.role?.roleName === "Receptionist" && (
                                                                 <>
-                                                                    <td>Tiếp Tân</td>
+                                                                    <td>Lễ Tân</td>
                                                                 </>
                                                             )
                                                         }

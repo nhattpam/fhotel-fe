@@ -535,11 +535,11 @@ const SideBar = () => {
                                         </Link>
                                     </li>
                                      {/* Room Management Section */}
-                                     <li>
+                                     {/* <li>
                                         <Link to="/room-management"><i className="sidebar-item-icon fa fa-bed" />
                                             <span className="nav-label">Quản Lý Phòng</span>
                                         </Link>
-                                    </li>
+                                    </li> */}
 
                                     {/* Billing Section */}
                                     <li>

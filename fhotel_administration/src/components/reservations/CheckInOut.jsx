@@ -691,7 +691,9 @@ const CheckInOut = () => {
                                                             className="room-box"
                                                             onClick={() => openRoomModal(room.roomId)}
                                                             style={{
-                                                                backgroundColor: room.status === 'Available' ? 'green' : 'red',
+                                                                backgroundColor: room.status === 'Available' ? 'green' :
+                                                                room.status === 'Occupied' ? 'red' :
+                                                                    'yellow',
                                                                 position: 'relative',
                                                                 textAlign: 'center',
                                                                 flex: '0 1 auto',

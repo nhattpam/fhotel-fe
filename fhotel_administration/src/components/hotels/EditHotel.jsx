@@ -1423,7 +1423,7 @@ const EditHotel = () => {
                                                         {
                                                             item.user?.role?.roleName === "Receptionist" && (
                                                                 <>
-                                                                    <td>Tiếp Tân</td>
+                                                                    <td>Lễ Tân</td>
                                                                 </>
                                                             )
                                                         }
@@ -1573,13 +1573,17 @@ const EditHotel = () => {
                                                 </tbody>
                                             </table>
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh Sách Phòng</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh sách phòng</h3>
                                                 <div className="room-list">
                                                     {roomList.map((room) => (
                                                         <div
                                                             key={room.roomNumber}
                                                             className="room-box"
-                                                            style={{ backgroundColor: room.status === 'Available' ? 'green' : 'red' }}
+                                                            style={{
+                                                                backgroundColor: room.status === 'Available' ? 'green' :
+                                                                    room.status === 'Occupied' ? 'red' :
+                                                                        '#E4A11B'
+                                                            }}
                                                         >
                                                             <p>{room.roomNumber}</p>
                                                         </div>
@@ -1593,7 +1597,7 @@ const EditHotel = () => {
                                             </div>
                                             <hr />
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện Ích Phòng</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện ích phòng</h3>
                                                 <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (

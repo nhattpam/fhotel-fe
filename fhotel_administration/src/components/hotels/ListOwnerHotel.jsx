@@ -378,12 +378,12 @@ const ListOwnerHotel = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Khách Sạn</span>Tên </th>
-                                            <th><span>Chủ Sở Hữu</span></th>
+                                            <th><span>Tên khách sạn</span> </th>
+                                            <th><span>Chủ sở hữu</span></th>
                                             <th><span>Quận</span></th>
-                                            <th><span>Thành Phố</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Thành phố</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -400,7 +400,7 @@ const ListOwnerHotel = () => {
                                                             {item.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -474,7 +474,7 @@ const ListOwnerHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th>Hình Ảnh:</th>
+                                                        <th>Hình ảnh:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -494,7 +494,7 @@ const ListOwnerHotel = () => {
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Giấy Tờ:</th>
+                                                        <th>Giấy tờ doanh nghiệp:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -522,7 +522,7 @@ const ListOwnerHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên Khách Sạn:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
                                                         <td>{hotel.hotelName}</td>
                                                     </tr>
                                                     <tr>
@@ -530,7 +530,7 @@ const ListOwnerHotel = () => {
                                                         <td>{hotel.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
                                                         <td>{hotel && hotel.phone ? hotel.phone : 'Không tìm thấy'}</td>
                                                     </tr>
 
@@ -539,15 +539,15 @@ const ListOwnerHotel = () => {
                                                         <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành Phố:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
                                                         <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa Chỉ:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
                                                         <td>{hotel && hotel.address ? hotel.address : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ Sở Hữu:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
                                                         <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                 </tbody>

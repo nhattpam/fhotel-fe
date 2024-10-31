@@ -528,9 +528,16 @@ const SideBar = () => {
                                             <span className="nav-label">Đặt Phòng</span>
                                         </Link>
                                     </li>
+                                    
                                     <li>
                                         <Link to="/list-owner-hotel"><i className="sidebar-item-icon fa fa-building" />
                                             <span className="nav-label">Khách Sạn</span>
+                                        </Link>
+                                    </li>
+                                     {/* Room Management Section */}
+                                     <li>
+                                        <Link to="/room-management"><i className="sidebar-item-icon fa fa-bed" />
+                                            <span className="nav-label">Quản Lý Phòng</span>
                                         </Link>
                                     </li>
 
@@ -557,6 +564,7 @@ const SideBar = () => {
                                             <span className="nav-label">Đặt Phòng</span>
                                         </Link>
                                     </li>
+                                    
                                     <li>
                                         <Link to="/list-service"><i className="sidebar-item-icon fa fa-coffee" />
                                             <span className="nav-label">Dịch vụ</span>
@@ -615,18 +623,7 @@ const SideBar = () => {
                                             <span className="nav-label">Hóa Đơn / Thanh Toán</span>
                                         </Link>
                                     </li>
-                                    {/* 
-                                    <li>
-                                        <Link to="/facilities-management"><i className="sidebar-item-icon fa fa-wrench" />
-                                            <span className="nav-label">Facilities Management</span>
-                                        </Link>
-                                    </li>
-
-                                    <li>
-                                        <Link to="/reports"><i className="sidebar-item-icon fa fa-bar-chart" />
-                                            <span className="nav-label">Reports / Analytics</span>
-                                        </Link>
-                                    </li> */}
+                                   
 
 
                                 </>

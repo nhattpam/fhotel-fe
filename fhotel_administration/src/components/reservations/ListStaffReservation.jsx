@@ -7,6 +7,7 @@ import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import reservationService from '../../services/reservation.service';
 import userService from '../../services/user.service';
 import { Link } from 'react-router-dom';
+import roomService from '../../services/room.service';
 
 const ListStaffReservation = () => {
 
@@ -105,6 +106,32 @@ const ListStaffReservation = () => {
         setShowModalReservation(false);
     };
 
+
+    //detail room modal 
+    const [showModalRoom, setShowModalRoom] = useState(false);
+    const [room, setRoom] = useState({
+
+    });
+
+
+    const openRoomModal = (roomId) => {
+        setShowModalRoom(true);
+        if (roomId) {
+            roomService
+                .getRoomById(roomId)
+                .then((res) => {
+                    setRoom(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+        }
+    };
+
+    const closeModalRoom = () => {
+        setShowModalRoom(false);
+    };
 
     return (
         <>
@@ -269,6 +296,7 @@ const ListStaffReservation = () => {
                                                     {roomStayHistoryList.map((roomStayHistory) => (
                                                         <div
                                                             key={roomStayHistory.room?.roomNumber}
+                                                            onClick={() => openRoomModal(roomStayHistory.roomId)}
                                                             className="room-box"
                                                             style={{
                                                                 backgroundColor: 'green',
@@ -364,7 +392,7 @@ const ListStaffReservation = () => {
                                                 {/* Calculate and display total amount */}
                                                 <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                     <h5>
-                                                        Tổng cộng: &nbsp;
+                                                        <span style={{fontWeight: 'bold'}}>Tổng cộng:</span> &nbsp;
                                                         {(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))
                                                             + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
                                                     </h5>
@@ -380,6 +408,70 @@ const ListStaffReservation = () => {
                                     <button type="button" className="btn btn-dark btn-sm" onClick={closeModalReservation} >Đóng</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showModalRoom && (
+                <div
+                    className="modal fade show"
+                    tabIndex="-1"
+                    role="dialog"
+                    style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
+                >
+                    <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div className="modal-content shadow-lg rounded">
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Chi Tiết Phòng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoom}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
+                                <div className="container-fluid">
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Phòng số:</span>
+                                                <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomNumber}</span>
+                                            </h5>
+
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Loại phòng:</span>
+                                                <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomType?.type?.typeName}</span>
+                                            </h5>
+
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Trạng thái:</span>
+                                                <span style={{ marginLeft: '10px' }}>
+                                                    {room.status === "Available" && (
+                                                        <span style={{ backgroundColor: '#4caf50', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Có sẵn</span>
+                                                    )}
+                                                    {room.status === "Occupied" && (
+                                                        <span style={{ backgroundColor: '#f44336', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Không có sẵn</span>
+                                                    )}
+                                                    {room.status === "Maintenance" && (
+                                                        <span style={{ backgroundColor: '#ff9800', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Bảo trì</span>
+                                                    )}
+                                                </span>
+                                            </h5>
+
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Ghi chú:</span>
+                                                <div style={{ marginTop: '8px', paddingLeft: '20px', fontStyle: 'italic', color: '#616161' }}
+                                                    dangerouslySetInnerHTML={{ __html: room.note ?? 'Không có' }}
+                                                ></div>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoom} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

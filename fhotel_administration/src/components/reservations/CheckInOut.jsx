@@ -9,6 +9,7 @@ import reservationService from '../../services/reservation.service';
 import documentService from '../../services/document.service';
 import roomImageService from '../../services/room-image.service';
 import userDocumentService from '../../services/user-document.service';
+import roomService from '../../services/room.service';
 
 const CheckInOut = () => {
     //get user information
@@ -395,6 +396,29 @@ const CheckInOut = () => {
 
 
 
+    //Chi tiet phong
+
+    const [showRoomModal, setShowRoomModal] = useState(false);
+    const [room, setRoom] = useState({
+
+    });
+
+    const closeRoomModal = () => {
+        setShowRoomModal(false);
+    };
+
+    const openRoomModal = (roomId) => {
+        setShowRoomModal(true);
+
+        roomService
+            .getRoomById(roomId)
+            .then((res) => {
+                setRoom(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
 
     /// notification

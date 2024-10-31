@@ -359,7 +359,7 @@ const ListReservation = () => {
                                                 {/* Calculate and display total amount */}
                                                 <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                     <h5>
-                                                        Tổng cộng: &nbsp;
+                                                        <span style={{ fontWeight: 'bold' }}>Tổng cộng:</span> &nbsp;
                                                         {(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))
                                                             + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
                                                     </h5>

@@ -6,30 +6,32 @@ import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import userService from '../../services/user.service';
 import { Link } from 'react-router-dom';
-import roomTypeService from '../../services/room-type.service';
+import roomService from '../../services/room.service';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
-const RoomManagement = () => {
+const RoomStatus = () => {
 
     //get user information
     const loginUserId = sessionStorage.getItem('userId');
 
 
     //call list hotel registration
-    const [roomTypeList, setRoomTypeList] = useState([]);
-    const [roomTypeSearchTerm, setRoomTypeSearchTerm] = useState('');
-    const [currentRoomTypePage, setCurrentRoomTypePage] = useState(0);
-    const [roomTypesPerPage] = useState(10);
+    const [roomList, setRoomList] = useState([]);
+    const [roomSearchTerm, setRoomSearchTerm] = useState('');
+    const [currentRoomPage, setCurrentRoomPage] = useState(0);
+    const [roomsPerPage] = useState(10);
 
 
     useEffect(() => {
         userService
-            .getAllRoomTypeByStaff(loginUserId)
+            .getAllRoomByStaff(loginUserId)
             .then((res) => {
-                const sortedRoomTypeList = [...res.data].sort((a, b) => {
+                const sortedRoomList = [...res.data].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
                     return new Date(b.createdDate) - new Date(a.createdDate);
                 });
-                setRoomTypeList(sortedRoomTypeList);
+                setRoomList(sortedRoomList);
 
             })
             .catch((error) => {
@@ -38,55 +40,45 @@ const RoomManagement = () => {
     }, []);
 
 
-    const handleRoomTypeSearch = (event) => {
-        setRoomTypeSearchTerm(event.target.value);
+    const handleRoomSearch = (event) => {
+        setRoomSearchTerm(event.target.value);
     };
 
-    const filteredRoomTypes = roomTypeList
-        .filter((roomType) => {
+    const filteredRooms = roomList
+        .filter((room) => {
             return (
-                roomType.roomType?.type?.typeName.toString().toLowerCase().includes(roomTypeSearchTerm.toLowerCase()) ||
-                roomType.createdDate.toString().toLowerCase().includes(roomTypeSearchTerm.toLowerCase())
+                room.room?.type?.typeName.toString().toLowerCase().includes(roomSearchTerm.toLowerCase()) ||
+                room.createdDate.toString().toLowerCase().includes(roomSearchTerm.toLowerCase())
             );
         });
 
-    const pageRoomTypeCount = Math.ceil(filteredRoomTypes.length / roomTypesPerPage);
+    const pageRoomCount = Math.ceil(filteredRooms.length / roomsPerPage);
 
-    const handleRoomTypePageClick = (data) => {
-        setCurrentRoomTypePage(data.selected);
+    const handleRoomPageClick = (data) => {
+        setCurrentRoomPage(data.selected);
     };
 
-    const offsetRoomType = currentRoomTypePage * roomTypesPerPage;
-    const currentRoomTypes = filteredRoomTypes.slice(offsetRoomType, offsetRoomType + roomTypesPerPage);
+    const offsetRoom = currentRoomPage * roomsPerPage;
+    const currentRooms = filteredRooms.slice(offsetRoom, offsetRoom + roomsPerPage);
 
 
 
-    //detail roomType modal 
-    const [showModalRoomType, setShowModalRoomType] = useState(false);
+    //detail room modal 
+    const [showModalRoom, setShowModalRoom] = useState(false);
     const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
-    const [roomList, setRoomList] = useState([]);
     const [orderDetailList, setOrderDetailList] = useState([]);
-    const [roomType, setRoomType] = useState({
+    const [room, setRoom] = useState({
 
     });
 
 
-    const openRoomTypeModal = (roomTypeId) => {
-        setShowModalRoomType(true);
-        if (roomTypeId) {
-            roomTypeService
-                .getRoomTypeById(roomTypeId)
+    const openRoomModal = (roomId) => {
+        setShowModalRoom(true);
+        if (roomId) {
+            roomService
+                .getRoomById(roomId)
                 .then((res) => {
-                    setRoomType(res.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            roomTypeService
-                .getAllRoombyRoomTypeId(roomTypeId)
-                .then((res) => {
-                    const sortedRooms = res.data.sort((a, b) => a.roomNumber - b.roomNumber);
-                    setRoomList(sortedRooms);
+                    setRoom(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -95,16 +87,106 @@ const RoomManagement = () => {
         }
     };
 
-    const closeModalRoomType = () => {
-        setShowModalRoomType(false);
+    const closeModalRoom = () => {
+        setShowModalRoom(false);
     };
 
 
     //update room status
-    const handleStatusChange = (roomNumber, status) => {
-        // Update room status in your state or send it to your backend
-        console.log(`Room ${roomNumber} status changed to ${status}`);
-        // Additional logic to update the room's status in the app state or backend
+    const [updateRoom, setUpdateRoom] = useState({
+
+    });
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+
+        setUpdateRoom({ ...updateRoom, [e.target.name]: value });
+    };
+
+    const handleUpdateRoomNoteChange = (value) => {
+        setUpdateRoom({ ...updateRoom, note: value });
+    };
+
+
+    const submitUpdateRoom = async (e, roomId) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the current type pricing data
+            const res = await roomService.getRoomById(roomId);
+            const roomData = res.data;
+
+            // Make the update request
+            console.log(JSON.stringify(updateRoom))
+            const updateRes = await roomService.updateRoom(roomId, { ...roomData, status: updateRoom.status, note: updateRoom.note });
+
+            if (updateRes.status === 200) {
+                // Use a notification library for better user feedback
+                setSuccess({ general: "Cập nhật thành công!" });
+                setShowSuccess(true); // Show error
+                roomService
+                    .getRoomById(roomId)
+                    .then((res) => {
+                        setRoom(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                userService
+                    .getAllRoomByStaff(loginUserId)
+                    .then((res) => {
+                        const sortedRoomList = [...res.data].sort((a, b) => {
+                            // Assuming requestedDate is a string in ISO 8601 format
+                            return new Date(b.createdDate) - new Date(a.createdDate);
+                        });
+                        setRoomList(sortedRoomList);
+
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+            } else {
+                handleResponseError(updateRes);
+            }
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [success, setSuccess] = useState({});
+    // Effect to handle error message visibility
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 2000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
+
+    //notification after creating
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
+
+    const handleResponseError = (response) => {
+        if (response && response.status === 400) {
+            const validationErrors = response.data.errors || [];
+            setError({ general: response.data.message, validation: validationErrors });
+        } else {
+            setError({ general: "An unexpected error occurred. Please try again." });
+        }
+        setShowError(true); // Show error modal or message
     };
 
 
@@ -126,11 +208,11 @@ const RoomManagement = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title">Danh Sách Loại Phòng</div>
+                            <div className="ibox-title">Danh Sách Phòng</div>
                             <div className="form-group">
                                 <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={roomTypeSearchTerm}
-                                    onChange={handleRoomTypeSearch} />
+                                    autoComplete="on" value={roomSearchTerm}
+                                    onChange={handleRoomSearch} />
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -139,6 +221,7 @@ const RoomManagement = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Số phòng</span></th>
                                             <th><span>Loại phòng</span></th>
                                             <th><span>Khách sạn</span></th>
                                             <th><span>Trạng thái</span></th>
@@ -147,28 +230,33 @@ const RoomManagement = () => {
                                     </thead>
                                     <tbody>
                                         {
-                                            currentRoomTypes.length > 0 && currentRoomTypes.map((item, index) => (
+                                            currentRooms.length > 0 && currentRooms.map((item, index) => (
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>{item.type?.typeName}</td>
+                                                        <td>Phòng số {item.roomNumber}</td>
+                                                        <td>{item.roomType?.type?.typeName}</td>
                                                         <td>
-                                                            <Link to={`/edit-hotel/${item.hotel?.hotelId}`}>
-                                                                {item.hotel?.hotelName}
+                                                            <Link to={`/edit-hotel/${item.roomType?.hotel?.hotelId}`}>
+                                                                {item.roomType?.hotel?.hotelName}
                                                             </Link>
                                                         </td>
                                                         <td>
-                                                            {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
-                                                            ) : (
-                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
+                                                            {item.status === "Available" && (
+                                                                <span className="badge label-table badge-success">Có sẵn</span>
+                                                            )}
+                                                            {item.status === "Occupied" && (
+                                                                <span className="badge label-table badge-danger">Không có sẵn</span>
+                                                            )}
+                                                            {item.status === "Maintenance" && (
+                                                                <span className="badge label-table badge-warning">Bảo trì</span>
                                                             )}
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5"
                                                                 data-toggle="tooltip" data-original-title="Edit">
                                                                 <i className="fa fa-pencil font-14"
-                                                                    onClick={() => openRoomTypeModal(item.roomTypeId)} /></button>
+                                                                    onClick={() => openRoomModal(item.roomId)} /></button>
                                                         </td>
                                                     </tr>
                                                 </>
@@ -200,10 +288,10 @@ const RoomManagement = () => {
                                 } breakLabel={'...'}
                                 breakClassName={'page-item'}
                                 breakLinkClassName={'page-link'}
-                                pageCount={pageRoomTypeCount}
+                                pageCount={pageRoomCount}
                                 marginPagesDisplayed={2}
                                 pageRangeDisplayed={5}
-                                onPageChange={handleRoomTypePageClick}
+                                onPageChange={handleRoomPageClick}
                                 containerClassName={'pagination'}
                                 activeClassName={'active'}
                                 previousClassName={'page-item'}
@@ -219,7 +307,7 @@ const RoomManagement = () => {
                 </div>
             </div>
 
-            {showModalRoomType && (
+            {showModalRoom && (
                 <div
                     className="modal fade show"
                     tabIndex="-1"
@@ -228,44 +316,82 @@ const RoomManagement = () => {
                 >
                     <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
                         <div className="modal-content shadow-lg rounded">
-                            <form>
+                            <form onSubmit={(e) => submitUpdateRoom(e, room.roomId)}>
                                 <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Chi Tiết Phòng</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoomType}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoom}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
                                     <div className="container-fluid">
                                         <div className="row">
                                             <div className="col-md-12">
-                                                <div className="room-list">
-                                                    {roomList.map((room) => (
-                                                        <div
-                                                            key={room.roomNumber}
-                                                            className="room-box"
-                                                            style={{ backgroundColor: room.status === 'Available' ? 'green' : 'red' }}
-                                                        >
-                                                            <p>{room.roomNumber}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                {roomList.length === 0 && (
-                                                    <>
-                                                        <p>Không tìm thấy.</p>
-                                                    </>
-                                                )}
+                                                <h5>Phòng số: <span style={{ fontWeight: 'bold', color: 'green' }}>{room.roomNumber}</span> </h5>
+                                                <h5>Loại phòng: <span style={{ fontWeight: 'bold', color: 'green' }}>{room.roomType?.type?.typeName}</span> </h5>
+                                                <h5>Trạng thái: &nbsp;
+                                                    {room.status === "Available" && (
+                                                        <span className="badge label-table badge-success">Có sẵn</span>
+                                                    )}
+                                                    {room.status === "Occupied" && (
+                                                        <span className="badge label-table badge-danger">Không có sẵn</span>
+                                                    )}
+                                                    {room.status === "Maintenance" && (
+                                                        <span className="badge label-table badge-warning">Bảo trì</span>
+                                                    )}
+                                                </h5>
+                                                <select
+                                                    name="status"
+                                                    className='form-control'
+                                                    onChange={(e) => handleChange(e)}
+                                                    required
+                                                >
+                                                    <option value="Available">Có sẵn</option>
+                                                    <option value="Occupied">Không có sẵn</option>
+                                                    <option value="Maintenance">Bảo trì</option>
+                                                </select>
+                                                <label htmlFor="note">Ghi chú * :</label>
+                                                <ReactQuill
+                                                    value={updateRoom.note}
+                                                    onChange={handleUpdateRoomNoteChange}
+                                                    modules={{
+                                                        toolbar: [
+                                                            [{ header: [1, 2, false] }],
+                                                            [{ 'direction': 'rtl' }],
+                                                            [{ 'align': [] }],
+                                                            ['code-block'],
+                                                            [{ 'color': [] }, { 'background': [] }],
+                                                            ['clean']
+                                                        ]
+                                                    }}
+                                                    theme="snow"
+                                                    preserveWhitespace={true}
+                                                    style={{ height: '300px', marginBottom: '50px' }}
+                                                />
+
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
-
-
-
                                 <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-primary btn-sm">Lưu</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoomType} >Đóng</button>
+                                    <button type="submit" className="btn btn-primary btn-sm">Lưu</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoom} >Đóng</button>
                                 </div>
                             </form>
                         </div>
@@ -489,4 +615,4 @@ const RoomManagement = () => {
     )
 }
 
-export default RoomManagement
+export default RoomStatus

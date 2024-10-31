@@ -331,13 +331,13 @@ const ListService = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Hình Ảnh</span></th>
+                                            <th><span>Hình ảnh</span></th>
                                             <th><span>Tên</span></th>
-                                            <th><span>Đơn Giá</span></th>
-                                            <th><span>Mô Tả</span></th>
-                                            <th><span>Loại Dịch Vụ</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Đơn giá</span></th>
+                                            <th><span>Mô tả</span></th>
+                                            <th><span>Loại dịch vụ</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -356,9 +356,9 @@ const ListService = () => {
                                                         <td>{item.serviceType?.serviceTypeName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -464,19 +464,19 @@ const ListService = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên Dịch Vụ:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên dịch vụ:</th>
                                                         <td >{service.serviceName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn Giá:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn giá:</th>
                                                         <td>{service.price} (VND)</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô Tả:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
                                                         <td>{service.description} </td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại Dịch Vụ:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại dịch vụ:</th>
                                                         <td>{service.serviceType?.serviceTypeName} </td>
                                                     </tr>
                                                 </tbody>
@@ -547,7 +547,7 @@ const ListService = () => {
 
                                         <div className='row'>
                                             <div className='col-md-4'>
-                                                <label htmlFor="imageUrl">Hình Ảnh * :</label>
+                                                <label htmlFor="imageUrl">Hình ảnh * :</label>
                                                 <Dropzone
                                                     onDrop={handleFileDrop}
                                                     accept="image/*" multiple={false}
@@ -575,7 +575,7 @@ const ListService = () => {
                                                 <h4 className="header-title ">Thông Tin Dịch Vụ</h4>
                                                 <div className="form-row">
                                                     <div className="form-group  col-md-6">
-                                                        <label htmlFor="serviceName">Tên Dịch Vụ * :</label>
+                                                        <label htmlFor="serviceName">Tên dịch vụ * :</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -588,7 +588,7 @@ const ListService = () => {
                                                     </div>
 
                                                     <div className="form-group  col-md-6">
-                                                        <label htmlFor="price">Đơn Giá * :</label>
+                                                        <label htmlFor="price">Đơn giá * :</label>
                                                         <div className="input-group">
                                                             <input
                                                                 type="number"
@@ -611,7 +611,7 @@ const ListService = () => {
 
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label htmlFor="description">Mô Tả * :</label>
+                                                        <label htmlFor="description">Mô tả * :</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"

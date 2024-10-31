@@ -162,7 +162,8 @@ const ListCustomer = () => {
 
     //detail reservation modal 
     const [showModalReservation, setShowModalReservation] = useState(false);
-
+    const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
+    const [orderDetailList, setOrderDetailList] = useState([]);
     const [reservation, setReservation] = useState({
 
     });
@@ -176,6 +177,22 @@ const ListCustomer = () => {
                 .getReservationById(reservationId)
                 .then((res) => {
                     setReservation(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getAllRoomStayHistoryByReservationId(reservationId)
+                .then((res) => {
+                    setRoomStayHistoryList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getAllOrderDetailByReservationId(reservationId)
+                .then((res) => {
+                    setOrderDetailList(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -219,11 +236,11 @@ const ListCustomer = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Họ Và Tên</span></th>
+                                            <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
-                                            <th><span>Chức Vụ</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Chức vụ</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -237,7 +254,7 @@ const ListCustomer = () => {
                                                         <td>{item.role?.roleName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
                                                                 <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
@@ -341,7 +358,7 @@ const ListCustomer = () => {
                                             <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
                                                     </tr>
                                                     <tr>
@@ -349,11 +366,11 @@ const ListCustomer = () => {
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa Chỉ:</th>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
                                                     </tr>
                                                 </tbody>
@@ -366,13 +383,13 @@ const ListCustomer = () => {
                                                     <thead>
                                                         <tr>
                                                             <th><span>STT</span></th>
-                                                            <th><span>Khách Hàng</span></th>
-                                                            <th><span>Khách Sạn</span></th>
-                                                            <th><span>Loại Phòng</span></th>
-                                                            <th><span>Số Lượng</span></th>
-                                                            <th><span>Ngày Đặt</span></th>
-                                                            <th><span>Trạng Thái</span></th>
-                                                            <th><span>Hành Động</span></th>
+                                                            <th><span>Khách hàng</span></th>
+                                                            <th><span>Khách sạn</span></th>
+                                                            <th><span>Loại phòng</span></th>
+                                                            <th><span>Số lượng</span></th>
+                                                            <th><span>Ngày đặt</span></th>
+                                                            <th><span>Trạng thái</span></th>
+                                                            <th><span>Hành động</span></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -388,16 +405,16 @@ const ListCustomer = () => {
                                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
                                                                         <td>
                                                                             {item.reservationStatus === "Pending" && (
-                                                                                <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                                <span className="badge label-table badge-warning">Đang chờ</span>
                                                                             )}
                                                                             {item.reservationStatus === "CheckIn" && (
-                                                                                <span className="badge label-table badge-success">Xác Nhận</span>
+                                                                                <span className="badge label-table badge-success">Đã check-in</span>
                                                                             )}
                                                                             {item.reservationStatus === "CheckOut" && (
-                                                                                <span className="badge label-table badge-danger">Đã Check Out</span>
+                                                                                <span className="badge label-table badge-danger">Đã check-out</span>
                                                                             )}
                                                                             {item.reservationStatus === "Cancelled" && (
-                                                                                <span className="badge label-table badge-danger">Đã Hủy</span>
+                                                                                <span className="badge label-table badge-danger">Đã hủy</span>
                                                                             )}
                                                                         </td>
                                                                         <td>
@@ -414,13 +431,13 @@ const ListCustomer = () => {
 
                                                     </tbody>
                                                 </table>
-                                                
+
                                             </div>
                                             {
-                                                    currentReservations.length === 0 && (
-                                                        <p className='text-center' style={{ color: 'gray' }}>Không tìm thấy</p>
-                                                    )
-                                                }
+                                                currentReservations.length === 0 && (
+                                                    <p className='text-center' style={{ color: 'gray' }}>Không tìm thấy</p>
+                                                )
+                                            }
                                         </div>
                                     </div>
 
@@ -443,61 +460,128 @@ const ListCustomer = () => {
                     role="dialog"
                     style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
                 >
-                    <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-centered custom-modal-xl" role="document">
                         <div className="modal-content shadow-lg rounded">
                             <form>
                                 <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Chi Tiết Đặt Phòng</h5>
-                                    <button type="button" className="close text-white" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
 
                                 <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
                                     {/* Section: Customer Information */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Khách Hàng</h6>
-                                        <p className="mb-1" ><strong className='mr-2'>Họ Và Tên:</strong> {reservation.customer?.name}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Số Điện Thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                        <p><strong className='mr-2'>Số Căn Cước:</strong> {reservation.customer?.identificationNumber}</p>
-                                    </div>
+                                    <div className="container-fluid">
+                                        {/* Reservation Information */}
+                                        <div className='row'>
+                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                                <h5>Thông Tin Khách Hàng</h5>
+                                                <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                                <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
+                                            </div>
+                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                                <h5>Thông Tin Phòng</h5>
+                                                <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Phòng đã ở:</strong> </p>
+                                                <div className="room-list">
+                                                    {roomStayHistoryList.map((roomStayHistory) => (
+                                                        <div
+                                                            key={roomStayHistory.room?.roomNumber}
+                                                            className="room-box"
+                                                            style={{
+                                                                backgroundColor: 'green',
+                                                                position: 'relative',
+                                                                textAlign: 'center',
+                                                                flex: '0 1 auto',
+                                                                margin: '5px'
+                                                            }}
+                                                        >
+                                                            <p>{roomStayHistory.room?.roomNumber}</p>
 
-                                    {/* Section: Reservation Information */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Đặt Phòng</h6>
-                                        <p className="mb-1"><strong className='mr-2'>Ngày Dự Kiến Check-In:</strong>
-                                            {new Date(reservation.checkInDate).toLocaleDateString('en-US')}
-                                        </p>
-                                        <p className="mb-1"><strong className='mr-2'>Ngày Dự Kiến Check-Out:</strong>
-                                            {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}
-                                        </p>
-                                        <p className="mb-1"><strong className='mr-2'>Số Lượng Phòng Muốn Đặt:</strong> {reservation.numberOfRooms}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Trạng Thái:</strong> {reservation.reservationStatus}</p>
-                                        <p><strong className='mr-2'>Tổng Số Tiền:</strong > {reservation.totalAmount} VND</p>
-                                    </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                {roomStayHistoryList.length === 0 && (
+                                                    <p>Không tìm thấy.</p>
+                                                )}
+                                            </div>
+                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                                <h5>Thanh Toán</h5>
+                                                <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
+                                                    {reservation.paymentStatus === "Paid" && (
+                                                        <span className="badge label-table badge-success">Đã thanh toán</span>
+                                                    )}
+                                                    {reservation.paymentStatus === "Not Paid" && (
+                                                        <span className="badge label-table badge-danger">Chưa thanh toán</span>
+                                                    )}
+                                                </p>
+                                                {reservation.paymentStatus === "Paid" && (
+                                                    <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                                                )}
+                                                {reservation.paymentStatus === "Not Paid" && (
+                                                    <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                                                )}
 
-                                    {/* Section: Room Information */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Phòng</h6>
-                                        <p className="mb-1"><strong className='mr-2'>Loại Phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                        <p className="mb-1"><strong className='mr-2 '>Tổng Số Phòng:</strong> {reservation.roomType?.totalRooms}</p>
-                                        <p><strong className='mr-2'>Số Phòng Hiện Có:</strong> {reservation.roomType?.availableRooms}</p>
-                                    </div>
+                                            </div>
+                                            {/* Divider */}
+                                            <div className="col-md-12">
+                                                <hr />
+                                            </div>
+                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                                <h5>Dịch Vụ</h5>
+                                                <div className="table-responsive">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><span>STT</span></th>
+                                                                <th><span>Hình ảnh</span></th>
+                                                                <th><span>Tên dịch vụ</span></th>
+                                                                <th><span>Số lượng</span></th>
+                                                                <th><span>Loại dịch vụ</span></th>
+                                                                <th><span>Đơn giá (VND)</span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>
+                                                                            <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                        </td>
+                                                                        <td>{item.service?.serviceName}</td>
+                                                                        <td>{item.quantity}</td>
+                                                                        <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                                        <td>{item.service?.price}</td>
+                                                                    </tr>
+                                                                ))
+                                                            }
+                                                        </tbody>
+                                                    </table>
 
-                                    {/* Section: Payment Details */}
-                                    <div className="border-bottom pb-3 mb-2">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Thông Tin Thanh Toán</h6>
-                                        <p className="mb-1"><strong className='mr-2'>Phương Thức Thanh Toán:</strong> {reservation.paymentMethod?.paymentMethodName ?? "Chưa Có"}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Trạng Thái:</strong> {reservation.paymentStatus}</p>
-                                        <p className="mb-1"><strong className='mr-2'>Số Tiền Đã Trả:</strong> {reservation.totalAmount ?? 0} VND</p>
-                                        <p><strong className='mr-2'>Số Tiền Cần Trả:</strong> {reservation.remainingBalance ?? 0} VND</p>
-                                    </div>
+                                                </div>
+                                                {
+                                                    orderDetailList.length === 0 && (
+                                                        <>
+                                                            <p style={{ color: 'grey' }} className='text-center'>Không có</p>
+                                                        </>
+                                                    )
+                                                }
+                                                {/* Calculate and display total amount */}
+                                                <div style={{ textAlign: 'right', marginTop: '10px' }}>
+                                                    <h5>
+                                                        Tổng cộng: &nbsp;
+                                                        {(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))
+                                                            + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
+                                                    </h5>
+                                                </div>
+                                            </div>
 
-                                    {/* Section: Feedback */}
-                                    <div className="pb-3">
-                                        <h6 className="text-uppercase text-secondary font-weight-bold">Đánh Giá Của Khách Hàng</h6>
-                                        {/* Feedback information can be displayed here */}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -517,6 +601,24 @@ const ListCustomer = () => {
                     border-color: #20c997;
                 }
 
+                   .room-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.room-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+  
                 .custom-modal-xl {
     max-width: 90%;
     width: 90%;

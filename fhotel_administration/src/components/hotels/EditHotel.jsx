@@ -987,7 +987,7 @@ const EditHotel = () => {
                             <table className="table table-borderless table-hover table-wrap table-centered m-0">
                                 <tbody>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Hình Ảnh:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Hình ảnh:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -1058,11 +1058,11 @@ const EditHotel = () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên Khách Sạn:</th>
+                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
                                     <td>{hotel.hotelName}</td>
                                     </tr>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
                                         <td>{hotel.phone}</td>
                                     </tr>
                                     <tr>
@@ -1071,7 +1071,7 @@ const EditHotel = () => {
                                     </tr>
 
                                     <tr >
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Giấy Tờ:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Giấy tờ doanh nghiệp:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -1146,32 +1146,32 @@ const EditHotel = () => {
                                         <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                     </tr>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành Phố:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
                                         <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                     </tr>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Trạng Thái:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Trạng thái:</th>
                                         <td>
                                             {hotel.isActive ? (
-                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                             ) : (
                                                 <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                             )}</td>
                                     </tr>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Ngày Tạo:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Ngày tạo:</th>
                                         <td>
                                             {new Date(hotel.createdDate).toLocaleString('en-US')}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Ngày Cập Nhật:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Ngày cập nhật:</th>
                                         <td>
                                             {new Date(hotel.updatedDate).toLocaleString('en-US')}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tiện Nghi:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tiện nghi:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelAmenityList.length > 0 ? hotelAmenityList.map((item, index) => (
@@ -1281,11 +1281,11 @@ const EditHotel = () => {
                                     <thead className="thead-light">
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th data-hide="phone"><span>Tên Loại</span></th>
-                                            <th><span>DIện Tích Phòng</span></th>
-                                            <th><span>Giá</span></th> {/* Add a new column for the price */}
-                                            <th data-toggle="true"><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th data-hide="phone"><span>Loại phòng</span></th>
+                                            <th><span>DIện tích phòng</span></th>
+                                            <th><span>Giá hôm nay</span></th> {/* Add a new column for the price */}
+                                            <th data-toggle="true"><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1304,9 +1304,9 @@ const EditHotel = () => {
                                                     </td>
                                                     <td>
                                                         {item.isActive ? (
-                                                            <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                            <span className="badge label-table badge-success">Đang hoạt động</span>
                                                         ) : (
-                                                            <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                            <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                         )}
                                                     </td>
                                                     <td>
@@ -1365,10 +1365,10 @@ const EditHotel = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Họ Và Tên</span></th>
+                                            <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
-                                            <th><span>Chức Vụ</span></th>
-                                            <th><span>Trạng Thái</span></th>
+                                            <th><span>Chức vụ</span></th>
+                                            <th><span>Trạng thái</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1416,7 +1416,7 @@ const EditHotel = () => {
                                                         }
                                                         <td>
                                                             {item.user?.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
                                                                 <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
@@ -1522,23 +1522,23 @@ const EditHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại Phòng:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại phòng:</th>
                                                         <td>{roomType.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện Tích:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện tích:</th>
                                                         <td>{roomType.roomSize} m²</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Lượng Phòng:</th>
-                                                        <td>{roomType.totalRooms}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số lượng phòng:</th>
+                                                        <td>{roomType.totalRooms} phòng</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Phòng Còn Trống:</th>
-                                                        <td>{roomType.availableRooms}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng còn trống:</th>
+                                                        <td>{roomType.availableRooms} phòng</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô Tả:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
                                                         <td
                                                             dangerouslySetInnerHTML={{ __html: hotel.description }}
                                                             style={{
@@ -1573,7 +1573,7 @@ const EditHotel = () => {
                                             </div>
                                             <hr />
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện Nghi</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện Ích Phòng</h3>
                                                 <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (

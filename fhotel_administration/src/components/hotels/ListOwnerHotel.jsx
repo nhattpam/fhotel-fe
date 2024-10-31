@@ -398,7 +398,7 @@ const ListOwnerHotel = () => {
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
                                                                 <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}

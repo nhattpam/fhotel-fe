@@ -131,14 +131,14 @@ const ListReservation = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Mã Đặt Phòng</span></th>
-                                            <th><span>Khách Hàng</span></th>
-                                            <th><span>Khách Sạn</span></th>
-                                            <th><span>Loại Phòng</span></th>
-                                            <th><span>Số Lượng</span></th>
-                                            <th><span>Ngày Đặt</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Mã đặt Phòng</span></th>
+                                            <th><span>Khách hàng</span></th>
+                                            <th><span>Khách sạn</span></th>
+                                            <th><span>Loại phòng</span></th>
+                                            <th><span>Số lượng</span></th>
+                                            <th><span>Ngày đặt</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -285,7 +285,18 @@ const ListReservation = () => {
                                             </div>
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thanh Toán</h5>
-                                                <p className="mb-1"><strong className='mr-2'>Mã đặt chỗ:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
+                                                    {reservation.reservationStatus === "CheckIn" && (
+                                                        <span className="badge label-table badge-success">Đã check-in</span>
+                                                    )}
+                                                    {reservation.reservationStatus === "CheckOut" && (
+                                                        <span className="badge label-table badge-danger">Chưa check-out</span>
+                                                    )}
+                                                    {reservation.reservationStatus === "Cancelled" && (
+                                                        <span className="badge label-table badge-danger">Đã hủy</span>
+                                                    )}
+                                                </p>
                                                 <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
                                                     {reservation.paymentStatus === "Paid" && (
                                                         <span className="badge label-table badge-success">Đã thanh toán</span>
@@ -313,11 +324,11 @@ const ListReservation = () => {
                                                         <thead>
                                                             <tr>
                                                                 <th><span>STT</span></th>
-                                                                <th><span>Hình Ảnh</span></th>
-                                                                <th><span>Tên Dịch Vụ</span></th>
-                                                                <th><span>Số Lượng</span></th>
-                                                                <th><span>Loại Dịch Vụ</span></th>
-                                                                <th><span>Đơn Giá (VND)</span></th>
+                                                                <th><span>Hình ảnh</span></th>
+                                                                <th><span>Tên dịch vụ</span></th>
+                                                                <th><span>Số lượng</span></th>
+                                                                <th><span>Loại dịch vụ</span></th>
+                                                                <th><span>Đơn giá (VND)</span></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -374,6 +385,23 @@ const ListReservation = () => {
                     background-color: #20c997;
                     border-color: #20c997;
                 }
+                       .room-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.room-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
 
                 .custom-modal-xl {
     max-width: 90%;

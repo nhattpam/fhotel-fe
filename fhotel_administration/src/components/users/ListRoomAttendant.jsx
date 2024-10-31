@@ -502,7 +502,7 @@ const ListRoomAttendant = () => {
                                                         }
                                                         <td>
                                                             {item.user?.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
                                                                 <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}

@@ -349,11 +349,11 @@ const ListHotelManager = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Họ Và Tên</span></th>
+                                            <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
-                                            <th><span>Chức Vụ</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Chức vụ</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -401,9 +401,9 @@ const ListHotelManager = () => {
                                                         }
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đã kích hoạt</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -506,7 +506,7 @@ const ListHotelManager = () => {
                                             <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
                                                     </tr>
                                                     <tr>
@@ -514,11 +514,11 @@ const ListHotelManager = () => {
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa Chỉ:</th>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
                                                     </tr>
                                                 </tbody>
@@ -534,12 +534,12 @@ const ListHotelManager = () => {
                                                         <thead>
                                                             <tr>
                                                                 <th><span>STT</span></th>
-                                                                <th><span>Tên Khách Sạn</span></th>
-                                                                <th><span>Chủ Sở Hữu</span></th>
+                                                                <th><span>Tên khách sạn</span></th>
+                                                                <th><span>Chủ sở hữu</span></th>
                                                                 <th><span>Quận</span></th>
-                                                                <th><span>Thành Phố</span></th>
-                                                                <th><span>Trạng Thái</span></th>
-                                                                <th><span>Hành Động</span></th>
+                                                                <th><span>Thành phố</span></th>
+                                                                <th><span>Trạng thái</span></th>
+                                                                <th><span>Hành động</span></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -555,9 +555,9 @@ const ListHotelManager = () => {
                                                                             <td>{item.district?.city?.cityName}</td>
                                                                             <td>
                                                                                 {item.isActive ? (
-                                                                                    <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                                    <span className="badge label-table badge-success">Đang hoạt động</span>
                                                                                 ) : (
-                                                                                    <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                                    <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                                                 )}
                                                                             </td>
                                                                             <td>

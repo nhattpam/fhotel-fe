@@ -411,7 +411,7 @@ const ListManager = () => {
                                                             )
                                                         }                                                        <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
                                                                 <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
                                                             )}
@@ -516,7 +516,7 @@ const ListManager = () => {
                                             <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ Và Tên:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
                                                     </tr>
                                                     <tr>
@@ -524,11 +524,11 @@ const ListManager = () => {
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa Chỉ:</th>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
                                                     </tr>
                                                 </tbody>
@@ -595,7 +595,7 @@ const ListManager = () => {
                                         <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Họ Và Tên * :</label>
+                                                <label htmlFor="hotelName">Họ và tên * :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -625,7 +625,7 @@ const ListManager = () => {
 
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="password">Mật Khẩu * :</label>
+                                                <label htmlFor="password">Mật khẩu * :</label>
                                                 <input
                                                     type="password"
                                                     className="form-control"
@@ -638,7 +638,7 @@ const ListManager = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="star">Số Căn Cước * :</label>
+                                                <label htmlFor="star">Số căn cước * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -654,7 +654,7 @@ const ListManager = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Số Điện Thoại * :</label>
+                                                <label htmlFor="address">Số điện thoại * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"

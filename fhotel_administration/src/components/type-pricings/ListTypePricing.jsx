@@ -394,14 +394,14 @@ const ListTypePricing = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Loại Phòng</span></th>
-                                            <th><span>Ngày Trong Tuần</span></th>
+                                            <th><span>Loại phòng</span></th>
+                                            <th><span>Ngày trong tuần</span></th>
                                             <th><span>Giá</span></th>
                                             <th><span>Quận</span></th>
-                                            <th><span>Thành Phố</span></th>
-                                            <th><span>Ngày Tạo</span></th>
-                                            <th><span>Ngày Cập Nhật</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Thành phố</span></th>
+                                            <th><span>Ngày tạo</span></th>
+                                            <th><span>Ngày cập nhật</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -503,7 +503,7 @@ const ListTypePricing = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th>Loại Phòng:</th>
+                                                        <th>Loại phòng:</th>
                                                         <td>{typePricing.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
@@ -511,15 +511,15 @@ const ListTypePricing = () => {
                                                         <td>{typePricing.district?.districtName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Ngày Trong Tuần:</th>
+                                                        <th>Ngày trong tuần:</th>
                                                         <td>{daysOfWeek[typePricing.dayOfWeek]}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Giá Hiện Tại:</th>
+                                                        <th>Giá hiện tại:</th>
                                                         <td>{typePricing.price} (VND)</td> {/* Display current price */}
                                                     </tr>
                                                     <tr>
-                                                        <th>Giá Mới:</th>
+                                                        <th>Giá mới:</th>
                                                         <td>
                                                             <input
                                                                 name='price'

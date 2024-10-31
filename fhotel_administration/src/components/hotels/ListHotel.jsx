@@ -469,13 +469,13 @@ const ListHotel = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Tên Khách Sạn</span></th>
-                                            <th><span>Chủ Sở Hữu</span></th>
+                                            <th><span>Tên khách sạn</span></th>
+                                            <th><span>Chủ sở hữu</span></th>
                                             <th><span>Quận</span></th>
-                                            <th><span>Thành Phố</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Xác Minh</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Thành phố</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Xác minh</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -491,25 +491,25 @@ const ListHotel = () => {
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td>
                                                             {item.isActive ? (
-                                                                <span className="badge label-table badge-success">Đang Hoạt Động</span>
+                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
                                                             {item.verifyStatus === "Pending" && (
                                                                 <span className="badge label-table ">
-                                                                    <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
                                                                 </span>
                                                             )}
                                                             {item.verifyStatus === "Verified" && (
                                                                 <span className="badge label-table">
-                                                                    <span className="badge label-table badge-success">Đã Xác Minh</span>
+                                                                    <span className="badge label-table badge-success">Đã xác minh</span>
                                                                 </span>
                                                             )}
                                                             {item.verifyStatus === "Rejected" && (
                                                                 <span className="badge label-table">
-                                                                    <span className="badge label-table badge-danger">Từ Chối</span>
+                                                                    <span className="badge label-table badge-danger">Từ chối</span>
                                                                 </span>)}
                                                         </td>
                                                         <td>
@@ -622,7 +622,7 @@ const ListHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th>Hình Ảnh:</th>
+                                                        <th>Hình ảnh:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -642,7 +642,7 @@ const ListHotel = () => {
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Giấy Tờ Doanh Nghiệp:</th>
+                                                        <th>Giấy tờ doanh nghiệp:</th>
                                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                             {
                                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -670,7 +670,7 @@ const ListHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên Khách Sạn:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.hotelName}</td>
                                                     </tr>
                                                     <tr>
@@ -678,7 +678,7 @@ const ListHotel = () => {
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số Điện Thoại:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}> {hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
                                                     </tr>
                                                     <tr>
@@ -686,38 +686,38 @@ const ListHotel = () => {
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành Phố:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa Chỉ:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                     </tr>
 
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ Sở Hữu:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên chủ sở hữu:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email Chủ Sở Hữu:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email chủ sở hữu:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Xác Minh:</th>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Xác minh:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>
                                                             {hotel.verifyStatus === "Pending" && (
                                                                 <span className="badge label-table ">
-                                                                    <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
                                                                 </span>
                                                             )}
                                                             {hotel.verifyStatus === "Verified" && (
                                                                 <span className="badge label-table">
-                                                                    <span className="badge label-table badge-success">Đã Xác Minh</span>
+                                                                    <span className="badge label-table badge-success">Đã xác minh</span>
                                                                 </span>
                                                             )}
                                                             {hotel.verifyStatus === "Rejected" && (
                                                                 <span className="badge label-table">
-                                                                    <span className="badge label-table badge-danger">Từ Chối</span>
+                                                                    <span className="badge label-table badge-danger">Từ chối</span>
                                                                 </span>)}
                                                         </td>
                                                     </tr>
@@ -731,10 +731,10 @@ const ListHotel = () => {
                                                         <thead>
                                                             <tr>
                                                                 <th><span>STT</span></th>
-                                                                <th><span>Nhân Viên Xác Minh</span></th>
-                                                                <th><span>Ngày Xác Minh</span></th>
-                                                                <th><span>Ghi Chú</span></th>
-                                                                <th><span>Trạng Thái</span></th>
+                                                                <th><span>Nhân viên xác minh</span></th>
+                                                                <th><span>Ngày xác minh</span></th>
+                                                                <th><span>Ghi chú</span></th>
+                                                                <th><span>Trạng thái</span></th>
                                                                 
                                                             </tr>
                                                         </thead>
@@ -751,17 +751,17 @@ const ListHotel = () => {
                                                                             <td>
                                                                                 {item.verificationStatus === "Pending" && (
                                                                                     <span className="badge label-table ">
-                                                                                        <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                                        <span className="badge label-table badge-warning">Đang chờ</span>
                                                                                     </span>
                                                                                 )}
                                                                                 {item.verificationStatus === "Verified" && (
                                                                                     <span className="badge label-table">
-                                                                                        <span className="badge label-table badge-success">Đã Xác Minh</span>
+                                                                                        <span className="badge label-table badge-success">Đã xác minh</span>
                                                                                     </span>
                                                                                 )}
                                                                                 {item.verificationStatus === "Rejected" && (
                                                                                     <span className="badge label-table">
-                                                                                        <span className="badge label-table badge-danger">Từ Chối</span>
+                                                                                        <span className="badge label-table badge-danger">Từ chối</span>
                                                                                     </span>)}
                                                                             </td>
 

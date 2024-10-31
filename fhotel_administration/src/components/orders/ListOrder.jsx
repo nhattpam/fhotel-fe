@@ -84,7 +84,85 @@ const ListOrder = () => {
         setShowModalOrder(false);
     };
 
+    //update order
+    const [updateOrder, setUpdateOrder] = useState({
 
+    });
+
+    //update hotel status
+    const submitUpdateOrder = async (e, orderId, orderStatus) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the user data
+            const res = await orderService.getOrderById(orderId);
+            const orderData = res.data;
+
+            // Update the local state with the fetched data and new isActive flag
+            setUpdateOrder({ ...orderData, orderStatus });
+
+            // Make the update request
+            const updateRes = await orderService.updateOrder(orderId, { ...orderData, orderStatus });
+            console.log(updateRes)
+            if (updateRes.status === 200) {
+                userService
+                    .getAllOrderByStaff(loginUserId)
+                    .then((res) => {
+                        const sortedOrderList = [...res.data].sort((a, b) => {
+                            // Assuming requestedDate is a string in ISO 8601 format
+                            return new Date(b.createdDate) - new Date(a.createdDate);
+                        });
+                        setOrderList(sortedOrderList);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                handleResponseError(error.response);
+            }
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+    /// notification
+    const [success, setSuccess] = useState({}); // State to hold error messages
+    const [showSuccess, setShowSuccess] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showSuccess) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false); // Hide the error after 2 seconds
+                // window.location.reload();
+            }, 3000); // Change this value to adjust the duration
+            // window.location.reload();
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showSuccess]); // Only run effect if showError changes
+
+
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+    //notification after creating
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false); // Hide the error after 2 seconds
+            }, 3000); // Change this value to adjust the duration
+            return () => clearTimeout(timer); // Cleanup timer on unmount
+        }
+    }, [showError]); // Only run effect if showError changes
+
+
+    const handleResponseError = (response) => {
+        if (response && response.status === 400) {
+            const validationErrors = response.data.errors || [];
+            setError({ general: response.data.message, validation: validationErrors });
+        } else {
+            setError({ general: "An unexpected error occurred. Please try again." });
+        }
+        setShowError(true); // Show error modal or message
+    };
     return (
         <>
             <Header />
@@ -116,11 +194,12 @@ const ListOrder = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Khách Hàng</span></th>
-                                            <th><span>Số Điện Thoại</span></th>
-                                            <th><span>Thời Gian Yêu Cầu</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Mã đặt phòng</span></th>
+                                            <th><span>Khách hàng</span></th>
+                                            <th><span>Số điện thoại</span></th>
+                                            <th><span>Thời gian yêu cầu</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -129,6 +208,7 @@ const ListOrder = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.reservation.code}</td>
                                                         <td>{item.reservation?.customer?.name}</td>
                                                         <td>{item.reservation?.customer?.phoneNumber}</td>
                                                         <td>
@@ -136,20 +216,20 @@ const ListOrder = () => {
                                                         </td>
                                                         <td>
                                                             {item.orderStatus === "Pending" && (
-                                                                <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                <span className="badge label-table badge-warning">Đang chờ</span>
                                                             )}
                                                             {item.orderStatus === "Confirmed" && (
-                                                                <span className="badge label-table badge-success">Xác Nhận</span>
+                                                                <span className="badge label-table badge-success">Xác nhận</span>
                                                             )}
-                                                            {item.reservationStatus === "Cancelled" && (
-                                                                <span className="badge label-table badge-danger">Đã Hủy</span>
+                                                            {item.orderStatus === "Cancelled" && (
+                                                                <span className="badge label-table badge-danger">Đã hủy</span>
                                                             )}
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openOrderModal(item.orderId)} /></button>
                                                             <form
                                                                 id="demo-form"
-                                                                // onSubmit={(e) => updateOrder(e, item.orderId, order.isActive)} // Use isActive from the local state
+                                                                onSubmit={(e) => submitUpdateOrder(e, item.orderId, updateOrder.orderStatus)} // Use isActive from the local state
                                                                 className="d-inline"
                                                             >
                                                                 <button
@@ -157,7 +237,7 @@ const ListOrder = () => {
                                                                     className="btn btn-default btn-xs m-r-5"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Activate"
-                                                                    onClick={() => setOrder({ ...order, isActive: true })} // Activate
+                                                                    onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Confirmed" })} // Activate
                                                                 >
                                                                     <i className="fa fa-check font-14 text-success" />
                                                                 </button>
@@ -166,7 +246,7 @@ const ListOrder = () => {
                                                                     className="btn btn-default btn-xs"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Deactivate"
-                                                                    onClick={() => setOrder({ ...order, isActive: false })} // Deactivate
+                                                                    onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Cancelled" })} // Deactivate
                                                                 >
                                                                     <i className="fa fa-times font-14 text-danger" />
                                                                 </button>
@@ -233,43 +313,43 @@ const ListOrder = () => {
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' , textAlign: 'left'}}>
-                                        <div className="table-responsive">
-                                            <table className="table table-borderless table-hover table-wrap table-centered">
-                                                <thead>
-                                                    <tr>
-                                                        <th><span>STT</span></th>
-                                                        <th><span>Hình Ảnh</span></th>
-                                                        <th><span>Tên Dịch Vụ</span></th>
-                                                        <th><span>Đơn Giá (VND)</span></th>
-                                                        <th><span>Số Lượng</span></th>
-                                                        <th><span>Loại Dịch Vụ</span></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {
-                                                        orderDetailList.length > 0 && orderDetailList.map((item, index) => (
-                                                            <>
-                                                                <tr>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>
-                                                                        <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: 'left' }}>
+                                    <div className="table-responsive">
+                                        <table className="table table-borderless table-hover table-wrap table-centered">
+                                            <thead>
+                                                <tr>
+                                                    <th><span>STT</span></th>
+                                                    <th><span>Hình ảnh</span></th>
+                                                    <th><span>Tên dịch vụ</span></th>
+                                                    <th><span>Đơn giá (VND)</span></th>
+                                                    <th><span>Số lượng</span></th>
+                                                    <th><span>Loại dịch vụ</span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                                        <>
+                                                            <tr>
+                                                                <td>{index + 1}</td>
+                                                                <td>
+                                                                    <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
 
-                                                                    </td>
-                                                                    <td>{item.service?.serviceName}</td>
-                                                                    <td>{item.service?.price}</td>
-                                                                    <td>{item.quantity} </td>
-                                                                    <td>{item.service?.serviceType?.serviceTypeName}</td>
-                                                                </tr>
-                                                            </>
-                                                        ))
-                                                    }
+                                                                </td>
+                                                                <td>{item.service?.serviceName}</td>
+                                                                <td>{item.service?.price}</td>
+                                                                <td>{item.quantity} </td>
+                                                                <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                            </tr>
+                                                        </>
+                                                    ))
+                                                }
 
 
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                            </tbody>
+                                        </table>
                                     </div>
+                                </div>
 
 
                                 <div className="modal-footer">

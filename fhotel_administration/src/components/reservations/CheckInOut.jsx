@@ -396,29 +396,31 @@ const CheckInOut = () => {
 
 
 
-    //Chi tiet phong
-
-    const [showRoomModal, setShowRoomModal] = useState(false);
+    //detail room modal 
+    const [showModalRoom, setShowModalRoom] = useState(false);
     const [room, setRoom] = useState({
 
     });
 
-    const closeRoomModal = () => {
-        setShowRoomModal(false);
-    };
 
     const openRoomModal = (roomId) => {
-        setShowRoomModal(true);
+        setShowModalRoom(true);
+        if (roomId) {
+            roomService
+                .getRoomById(roomId)
+                .then((res) => {
+                    setRoom(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
 
-        roomService
-            .getRoomById(roomId)
-            .then((res) => {
-                setRoom(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
+        }
+    };
+
+    const closeModalRoom = () => {
+        setShowModalRoom(false);
+    };
 
 
     /// notification
@@ -645,9 +647,9 @@ const CheckInOut = () => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        Không tìm thấy.
-                                                    </div>
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
                                                 )
                                             }
 
@@ -687,6 +689,7 @@ const CheckInOut = () => {
                                                         <div
                                                             key={room.roomNumber}
                                                             className="room-box"
+                                                            onClick={() => openRoomModal(room.roomId)}
                                                             style={{
                                                                 backgroundColor: room.status === 'Available' ? 'green' : 'red',
                                                                 position: 'relative',
@@ -717,7 +720,9 @@ const CheckInOut = () => {
                                                     ))}
                                                 </div>
                                                 {roomList.length === 0 && (
-                                                    <p style={{ fontSize: '16px', color: 'gray' }}>Không tìm thấy.</p>
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
                                                 )}
                                             </div>
 
@@ -733,9 +738,9 @@ const CheckInOut = () => {
                                                             </div>
                                                         ))
                                                             : (
-                                                                <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                    Không tìm thấy.
-                                                                </div>
+                                                                <>
+                                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                </>
                                                             )
                                                     }
 
@@ -783,9 +788,9 @@ const CheckInOut = () => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        Không tìm thấy.
-                                                    </div>
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
                                                 )}
                                             </div>
                                             {loginUser.role?.roleName === "Receptionist" && (
@@ -847,14 +852,15 @@ const CheckInOut = () => {
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thông Tin Phòng</h5>
                                                 <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                                <p className="mb-1"><strong className='mr-2'>Phòng đã ở:</strong> </p>
+                                                <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
                                                 <div className="room-list">
                                                     {roomStayHistoryList.map((roomStayHistory) => (
                                                         <div
                                                             key={roomStayHistory.room?.roomNumber}
                                                             className="room-box"
+                                                            onClick={() => openRoomModal(roomStayHistory?.room.roomId)}
                                                             style={{
-                                                                backgroundColor: 'green',
+                                                                backgroundColor: 'grey',
                                                                 position: 'relative',
                                                                 textAlign: 'center',
                                                                 flex: '0 1 auto',
@@ -867,8 +873,9 @@ const CheckInOut = () => {
                                                     ))}
                                                 </div>
                                                 {roomStayHistoryList.length === 0 && (
-                                                    <p>Không tìm thấy.</p>
-                                                )}
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>)}
                                             </div>
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thanh Toán</h5>
@@ -924,11 +931,18 @@ const CheckInOut = () => {
                                                             }
                                                         </tbody>
                                                     </table>
+                                                    {
+                                                        orderDetailList.length === 0 && (
+                                                            <>
+                                                                <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                            </>
+                                                        )
+                                                    }
                                                 </div>
                                                 {/* Calculate and display total amount */}
                                                 <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                     <h5>
-                                                        Tổng cộng: &nbsp;
+                                                        <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
                                                         {(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))
                                                             + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
                                                     </h5>
@@ -946,6 +960,70 @@ const CheckInOut = () => {
                                     <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showModalRoom && (
+                <div
+                    className="modal fade show"
+                    tabIndex="-1"
+                    role="dialog"
+                    style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
+                >
+                    <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div className="modal-content shadow-lg rounded">
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Chi Tiết Phòng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoom}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
+                                <div className="container-fluid">
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Phòng số:</span>
+                                                <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomNumber}</span>
+                                            </h5>
+
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Loại phòng:</span>
+                                                <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomType?.type?.typeName}</span>
+                                            </h5>
+
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Trạng thái:</span>
+                                                <span style={{ marginLeft: '10px' }}>
+                                                    {room.status === "Available" && (
+                                                        <span style={{ backgroundColor: '#4caf50', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Có sẵn</span>
+                                                    )}
+                                                    {room.status === "Occupied" && (
+                                                        <span style={{ backgroundColor: '#f44336', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Không có sẵn</span>
+                                                    )}
+                                                    {room.status === "Maintenance" && (
+                                                        <span style={{ backgroundColor: '#ff9800', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Bảo trì</span>
+                                                    )}
+                                                </span>
+                                            </h5>
+
+                                            <h5 className="mb-3">
+                                                <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Ghi chú:</span>
+                                                <div style={{ marginTop: '8px', paddingLeft: '20px', fontStyle: 'italic', color: '#616161' }}
+                                                    dangerouslySetInnerHTML={{ __html: room.note ?? 'Không có' }}
+                                                ></div>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoom} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

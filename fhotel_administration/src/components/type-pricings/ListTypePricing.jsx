@@ -12,6 +12,11 @@ import districtService from '../../services/district.service';
 
 const ListTypePricing = () => {
 
+    //LOADING
+    const [loading, setLoading] = useState(true); // State to track loading
+
+    //LOADING
+
     const [typePricingList, setTypePricingList] = useState([]);
     const [typePricingSearchTerm, setTypePricingSearchTerm] = useState('');
     const [currentTypePricingPage, setCurrentTypePricingPage] = useState(0);
@@ -40,9 +45,11 @@ const ListTypePricing = () => {
                     return a.dayOfWeek - b.dayOfWeek;
                 });
                 setTypePricingList(sortedData);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
+                setLoading(false);
             });
         typeService
             .getTypeById(typeId)
@@ -361,6 +368,11 @@ const ListTypePricing = () => {
         <>
             <Header />
             <SideBar />
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="loading-spinner" />
+                </div>
+            )}
             <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
                 {/* START PAGE CONTENT*/}
                 <div className="page-heading">
@@ -877,6 +889,39 @@ const ListTypePricing = () => {
     margin: 0;
     border: none; /* Or adjust based on your table's styling */
 }
+
+.loading-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(10px); /* Apply blur effect */
+                    -webkit-backdrop-filter: blur(10px); /* For Safari */
+                    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999; /* Ensure it's on top of other content */
+                }
+                
+                .loading-spinner {
+                    border: 8px solid rgba(245, 141, 4, 0.1); /* Transparent border to create the circle */
+                    border-top: 8px solid #3498db; /* Blue color */
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    animation: spin 1s linear infinite; /* Rotate animation */
+                }
+                
+                @keyframes spin {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
 
                                             `}
             </style>

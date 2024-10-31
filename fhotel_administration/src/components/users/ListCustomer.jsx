@@ -8,6 +8,10 @@ import userService from '../../services/user.service';
 import reservationService from '../../services/reservation.service';
 
 const ListCustomer = () => {
+    //LOADING
+    const [loading, setLoading] = useState(true); // State to track loading
+
+    //LOADING
     //call list hotel registration
     const [userList, setUserList] = useState([]);
     const [userSearchTerm, setUserSearchTerm] = useState('');
@@ -26,9 +30,11 @@ const ListCustomer = () => {
                     return new Date(b.createdDate) - new Date(a.createdDate);
                 });
                 setUserList(sortedUserList);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
+                setLoading(false);
             });
     }, []);
 
@@ -209,6 +215,11 @@ const ListCustomer = () => {
         <>
             <Header />
             <SideBar />
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="loading-spinner" />
+                </div>
+            )}
             <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
                 {/* START PAGE CONTENT*/}
                 <div className="page-heading">
@@ -485,7 +496,7 @@ const ListCustomer = () => {
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thông Tin Phòng</h5>
                                                 <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                                <p className="mb-1"><strong className='mr-2'>Phòng đã ở:</strong> </p>
+                                                <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
                                                 <div className="room-list">
                                                     {roomStayHistoryList.map((roomStayHistory) => (
                                                         <div
@@ -505,7 +516,9 @@ const ListCustomer = () => {
                                                     ))}
                                                 </div>
                                                 {roomStayHistoryList.length === 0 && (
-                                                    <p>Không tìm thấy.</p>
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
                                                 )}
                                             </div>
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
@@ -567,7 +580,7 @@ const ListCustomer = () => {
                                                 {
                                                     orderDetailList.length === 0 && (
                                                         <>
-                                                            <p style={{ color: 'grey' }} className='text-center'>Không có</p>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                                         </>
                                                     )
                                                 }
@@ -802,6 +815,39 @@ const ListCustomer = () => {
     margin: 0;
     border: none; /* Or adjust based on your table's styling */
 }
+
+.loading-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(10px); /* Apply blur effect */
+                    -webkit-backdrop-filter: blur(10px); /* For Safari */
+                    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999; /* Ensure it's on top of other content */
+                }
+                
+                .loading-spinner {
+                    border: 8px solid rgba(245, 141, 4, 0.1); /* Transparent border to create the circle */
+                    border-top: 8px solid #3498db; /* Blue color */
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    animation: spin 1s linear infinite; /* Rotate animation */
+                }
+                
+                @keyframes spin {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
 
                                             `}
             </style>

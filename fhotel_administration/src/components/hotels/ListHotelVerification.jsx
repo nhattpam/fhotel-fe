@@ -300,7 +300,9 @@ const ListHotelVerification = () => {
                                 </table>
                                 {
                                     hotelVerificationList.length === 0 && (
-                                        <p style={{ color: 'grey' }}>Không có lịch sử.</p>
+                                        <>
+                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                        </>
                                     )
                                 }
                             </div>
@@ -391,9 +393,9 @@ const ListHotelVerification = () => {
                                                                 </div>
                                                             ))
                                                                 : (
-                                                                    <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                        Không tìm thấy.
-                                                                    </div>
+                                                                    <>
+                                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                    </>
                                                                 )
                                                         }
                                                     </td>
@@ -411,9 +413,9 @@ const ListHotelVerification = () => {
                                                                 </div>
                                                             ))
                                                                 : (
-                                                                    <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                        Không tìm thấy.
-                                                                    </div>
+                                                                    <>
+                                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                    </>
                                                                 )
                                                         }
                                                     </td>
@@ -533,7 +535,9 @@ const ListHotelVerification = () => {
                                                 </table>
                                                 {
                                                     hotelVerificationList.length === 0 && (
-                                                        <p style={{ color: 'grey' }}>Không có lịch sử.</p>
+                                                        <>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                        </>
                                                     )
                                                 }
                                             </div>

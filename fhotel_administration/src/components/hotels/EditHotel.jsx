@@ -23,7 +23,10 @@ import hotelDocumentService from '../../services/hotel-document.service';
 import documentService from '../../services/document.service';
 
 const EditHotel = () => {
+    //LOADING
+    const [loading, setLoading] = useState(true); // State to track loading
 
+    //LOADING
     //login user
     const loginUserId = sessionStorage.getItem('userId');
 
@@ -62,9 +65,11 @@ const EditHotel = () => {
             .getHotelById(hotelId)
             .then((res) => {
                 setHotel(res.data);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
+                setLoading(false);
             });
         hotelService
             .getAllAmenityHotelById(hotelId)
@@ -162,9 +167,11 @@ const EditHotel = () => {
                 .getRoomTypeById(roomTypeId)
                 .then((res) => {
                     setRoomType(res.data);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setLoading(false);
                 });
 
             fetchRoomImages(roomTypeId); // Fetch images
@@ -966,6 +973,11 @@ const EditHotel = () => {
         <>
             <Header />
             <SideBar />
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="loading-spinner" />
+                </div>
+            )}
             <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
                 {/* START PAGE CONTENT*/}
                 <div className="page-heading">
@@ -1024,9 +1036,9 @@ const EditHotel = () => {
                                                     </div>
                                                 ))
                                                     : (
-                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                            Không tìm thấy.
-                                                        </div>
+                                                        <>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                        </>
                                                     )
                                             }
 
@@ -1107,9 +1119,9 @@ const EditHotel = () => {
                                                     </div>
                                                 ))
                                                     : (
-                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                            Không tìm thấy.
-                                                        </div>
+                                                        <>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                        </>
                                                     )
                                             }
 
@@ -1206,9 +1218,9 @@ const EditHotel = () => {
                                                     </div>
                                                 ))
                                                     : (
-                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                            Không tìm thấy.
-                                                        </div>
+                                                        <>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                        </>
                                                     )
                                             }
 
@@ -1355,9 +1367,9 @@ const EditHotel = () => {
                                 </table>
                                 {
                                     roomTypeList.length === 0 && (
-                                        <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
-                                            Không tìm thấy.
-                                        </div>
+                                        <>
+                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                        </>
                                     )
                                 }
                             </div> {/* end .table-responsive */}
@@ -1440,9 +1452,9 @@ const EditHotel = () => {
                                 </table>
                                 {
                                     hotelStaffList.length === 0 && (
-                                        <div className='text-center mt-3' style={{ fontSize: '16px', color: 'gray' }}>
-                                            Không tìm thấy.
-                                        </div>
+                                        <>
+                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                        </>
                                     )
                                 }
                             </div> {/* end .table-responsive */}
@@ -1503,9 +1515,9 @@ const EditHotel = () => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        Không tìm thấy.
-                                                    </div>
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
                                                 )
                                             }
 
@@ -1548,7 +1560,7 @@ const EditHotel = () => {
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
                                                         <td
-                                                            dangerouslySetInnerHTML={{ __html: hotel.description }}
+                                                            dangerouslySetInnerHTML={{ __html: roomType.description }}
                                                             style={{
                                                                 wordWrap: 'break-word',
                                                                 whiteSpace: 'pre-wrap',
@@ -1575,7 +1587,7 @@ const EditHotel = () => {
                                                 </div>
                                                 {roomList.length === 0 && (
                                                     <>
-                                                        <p>Không tìm thấy.</p>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                                     </>
                                                 )}
                                             </div>
@@ -1615,9 +1627,9 @@ const EditHotel = () => {
                                                             </div>
                                                         ))
                                                             : (
-                                                                <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                    Không tìm thấy.
-                                                                </div>
+                                                                <>
+                                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                </>
                                                             )
                                                     }
 
@@ -2059,9 +2071,9 @@ const EditHotel = () => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        Không tìm thấy.
-                                                    </div>
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
                                                 )
                                             }
                                             {
@@ -2139,9 +2151,9 @@ const EditHotel = () => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '16px', color: 'gray' }}>
-                                                        Không tìm thấy.
-                                                    </div>
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
                                                 )
                                             }
 
@@ -2432,6 +2444,38 @@ const EditHotel = () => {
     border: none; /* Or adjust based on your table's styling */
 }
 
+.loading-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(10px); /* Apply blur effect */
+                    -webkit-backdrop-filter: blur(10px); /* For Safari */
+                    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999; /* Ensure it's on top of other content */
+                }
+                
+                .loading-spinner {
+                    border: 8px solid rgba(245, 141, 4, 0.1); /* Transparent border to create the circle */
+                    border-top: 8px solid #3498db; /* Blue color */
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    animation: spin 1s linear infinite; /* Rotate animation */
+                }
+                
+                @keyframes spin {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
 
                                             `}
             </style>

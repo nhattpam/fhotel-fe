@@ -14,7 +14,10 @@ import roleService from '../../services/role.service';
 import hotelVerificationService from '../../services/hotel-verification.service';
 
 const ListHotel = () => {
+    //LOADING
+    const [loading, setLoading] = useState(true); // State to track loading
 
+    //LOADING
 
     //call list hotel registration
     const [hotelList, setHotelRegistrationList] = useState([]);
@@ -38,9 +41,11 @@ const ListHotel = () => {
                     return new Date(b.createdDate) - new Date(a.createdDate);
                 });
                 setHotelRegistrationList(sortedHotelList);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
+                setLoading(false);
             });
         userService
             .getAllUser()
@@ -102,48 +107,61 @@ const ListHotel = () => {
                 .getHotelById(hotelId)
                 .then((res) => {
                     setHotel(res.data);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setLoading(false);
                 });
 
             hotelService
                 .getAllHotelDocumentByHotelId(hotelId)
                 .then((res) => {
                     setHotelDocumentList(res.data);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setLoading(false);
                 });
             hotelService
                 .getAllHotelImageByHotelId(hotelId)
                 .then((res) => {
                     setHotelImageList(res.data);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setLoading(false);
                 });
             roleService
                 .getAllRole()
                 .then((res) => {
                     setRoleList(res.data);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setLoading(false);
                 });
             hotelService
                 .getAllHotelVerificationByHotelId(hotelId)
                 .then((res) => {
                     setHotelVerificationList(res.data);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setLoading(false);
                 });
         }
     };
 
     const closeModalHotel = () => {
         setShowModalHotel(false);
+        setHotelVerificationList([]);
+        setHotelImageList([]);
+        setHotelDocumentList([]);
     };
 
 
@@ -434,6 +452,11 @@ const ListHotel = () => {
         <>
             <Header />
             <SideBar />
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="loading-spinner" />
+                </div>
+            )}
             <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
                 {/* START PAGE CONTENT*/}
                 <div className="page-heading">
@@ -634,9 +657,9 @@ const ListHotel = () => {
                                                                     </div>
                                                                 ))
                                                                     : (
-                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                            Không tìm thấy.
-                                                                        </div>
+                                                                        <>
+                                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                        </>
                                                                     )
                                                             }
                                                         </td>
@@ -654,9 +677,9 @@ const ListHotel = () => {
                                                                     </div>
                                                                 ))
                                                                     : (
-                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                            Không tìm thấy.
-                                                                        </div>
+                                                                        <>
+                                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                        </>
                                                                     )
                                                             }
                                                         </td>
@@ -726,7 +749,7 @@ const ListHotel = () => {
                                             </table>
                                             <div>
                                                 <h4 className='text-primary' style={{ textAlign: 'left', fontWeight: 'bold' }}>Lịch Sử Xác Minh</h4>
-                                                <div className="table-responsive" style={{textAlign: 'left'}}>
+                                                <div className="table-responsive" style={{ textAlign: 'left' }}>
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>
                                                             <tr>
@@ -735,7 +758,7 @@ const ListHotel = () => {
                                                                 <th><span>Ngày xác minh</span></th>
                                                                 <th><span>Ghi chú</span></th>
                                                                 <th><span>Trạng thái</span></th>
-                                                                
+
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -775,7 +798,9 @@ const ListHotel = () => {
                                                     </table>
                                                     {
                                                         hotelVerificationList.length === 0 && (
-                                                            <p style={{ color: 'grey' }}>Không có lịch sử.</p>
+                                                            <>
+                                                                <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                            </>
                                                         )
                                                     }
                                                 </div>
@@ -881,7 +906,7 @@ const ListHotel = () => {
                                                 <table className="table table-responsive table-hover mt-3">
                                                     <tbody>
                                                         <tr>
-                                                            <th style={{ width: '30%' }}>Tên Khách Sạn:</th>
+                                                            <th style={{ width: '30%' }}>Tên khách sạn:</th>
                                                             <td>{hotel.hotelName}</td>
                                                         </tr>
                                                         <tr>
@@ -889,7 +914,7 @@ const ListHotel = () => {
                                                             <td>{hotel.email}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Số Điện Thoại:</th>
+                                                            <th>Số điện thoại:</th>
                                                             <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
                                                         </tr>
                                                         <tr>
@@ -897,28 +922,28 @@ const ListHotel = () => {
                                                             <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Thành Phố:</th>
+                                                            <th>Thành phố:</th>
                                                             <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Địa Chỉ:</th>
+                                                            <th>Địa chỉ:</th>
                                                             <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                         </tr>
 
                                                         <tr>
-                                                            <th>Chủ Sở Hữu:</th>
+                                                            <th>Chủ sở hữu:</th>
                                                             <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Email Chủ Sở Hữu:</th>
+                                                            <th>Email chủ sở hữu:</th>
                                                             <td>{hotel && hotel.ownerEmail ? hotel.ownerEmail : 'Unknown owner Email'}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Số Điện Thoại Chủ Sở Hữu:</th>
+                                                            <th>Số điện thoại chủ sở hữu:</th>
                                                             <td>{hotel && hotel.ownerPhoneNumber ? hotel.ownerPhoneNumber : 'Unknown owner Phone'}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Nhân Viên Xác Minh:</th>
+                                                            <th>Nhân viên xác minh:</th>
                                                             <td>
                                                                 <select
                                                                     name="assignedManagerId"
@@ -927,7 +952,7 @@ const ListHotel = () => {
                                                                     onChange={(e) => handleInputChangeManager(e)}
                                                                     required
                                                                 >
-                                                                    <option value="">Chọn Nhân Viên</option>
+                                                                    <option value="">Chọn nhân viên</option>
                                                                     {managerList.map((manager) => (
                                                                         <option key={manager.userId} value={manager.userId}>
                                                                             {manager.name}
@@ -1153,6 +1178,38 @@ const ListHotel = () => {
     border: none; /* Or adjust based on your table's styling */
 }
 
+.loading-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(10px); /* Apply blur effect */
+                    -webkit-backdrop-filter: blur(10px); /* For Safari */
+                    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999; /* Ensure it's on top of other content */
+                }
+                
+                .loading-spinner {
+                    border: 8px solid rgba(245, 141, 4, 0.1); /* Transparent border to create the circle */
+                    border-top: 8px solid #3498db; /* Blue color */
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    animation: spin 1s linear infinite; /* Rotate animation */
+                }
+                
+                @keyframes spin {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
                                             `}
             </style>
 

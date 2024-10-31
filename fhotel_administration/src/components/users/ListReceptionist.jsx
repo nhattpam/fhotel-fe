@@ -9,6 +9,7 @@ import roleService from '../../services/role.service';
 import hotelService from '../../services/hotel.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
 import hotelStaffService from '../../services/hotel-staff.service';
+import { Link } from 'react-router-dom';
 
 const ListReceptionist = () => {
 
@@ -451,10 +452,12 @@ const ListReceptionist = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Họ Và Tên</span></th>
+                                            <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
-                                            <th><span>Chức Vụ</span></th>
-                                            <th><span>Trạng Thái</span></th>
+                                            <th><span>Chức vụ</span></th>
+                                            <th><span>Khách sạn</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -500,6 +503,9 @@ const ListReceptionist = () => {
                                                                 </>
                                                             )
                                                         }
+                                                        <td>
+                                                            <Link to={`/edit-hotel/${item.hotelId}`}>{item.hotel?.hotelName}</Link>
+                                                        </td>
                                                         <td>
                                                             {item.user?.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang hoạt động</span>
@@ -638,7 +644,7 @@ const ListReceptionist = () => {
                                         <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Họ Và Tên * :</label>
+                                                <label htmlFor="hotelName">Họ và tên * :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -670,7 +676,7 @@ const ListReceptionist = () => {
 
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="password">Mật Khẩu * :</label>
+                                                <label htmlFor="password">Mật khẩu * :</label>
                                                 <input
                                                     type="password"
                                                     className="form-control"
@@ -683,7 +689,7 @@ const ListReceptionist = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="star">Số Căn Cước * :</label>
+                                                <label htmlFor="star">Số căn cước * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -699,7 +705,7 @@ const ListReceptionist = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Số Điện Thoại * :</label>
+                                                <label htmlFor="address">Số điện thoại * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -713,7 +719,7 @@ const ListReceptionist = () => {
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Khách Sạn * :</label>
+                                                <label htmlFor="address">Khách sạn * :</label>
                                                 <select
                                                     name="hotelId"
                                                     className="form-control"

@@ -100,5 +100,21 @@ class UserService {
         });
       }
 
+      getAllRoomStayHistoryByStaff(id) {
+        return axios.get(API_URL + `/users/${id}/staff-room-stay-histories`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+      getAllRoomTypeByStaff(id) {
+        return axios.get(API_URL + `/users/${id}/room-types`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 }
 export default new UserService;

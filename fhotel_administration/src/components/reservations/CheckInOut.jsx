@@ -273,7 +273,7 @@ const CheckInOut = () => {
 
                 // Log the room stay history before saving
                 console.log("Preparing to save Room Stay History:", roomStayHistory);
-
+                console.log(JSON.stringify(roomStayHistory))
                 return roomStayHistoryService.saveRoomStayHistory(roomStayHistory)
                     .then(response => {
                         console.log(`Room added: Room ID ${roomId}, Response:`, response);
@@ -314,7 +314,7 @@ const CheckInOut = () => {
                 setShowSuccess(true);
 
                 /// refresh search list with search term
-                window.location.reload();
+                // window.location.reload();
             } else {
                 handleResponseError(error.response);
             }

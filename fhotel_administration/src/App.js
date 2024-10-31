@@ -25,6 +25,7 @@ import ListReservation from './components/reservations/ListReservation';
 import CheckInOut from './components/reservations/CheckInOut';
 import ListHotelVerification from './components/hotels/ListHotelVerification';
 import ListOrder from './components/orders/ListOrder';
+import RoomManagement from './components/rooms/RoomManagement';
 
 function App() {
   return (
@@ -63,6 +64,8 @@ function App() {
         <Route path="/list-hotel-verification" element={<ListHotelVerification />} />
         {/* order */}
         <Route path="/list-order" element={<ListOrder />} />
+        {/* room management */}
+        <Route path="/room-management" element={<RoomManagement />} />
       </Routes>
     </div>
   );

@@ -1058,8 +1058,8 @@ const EditHotel = () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
-                                    <td>{hotel.hotelName}</td>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
+                                        <td>{hotel.hotelName}</td>
                                     </tr>
                                     <tr>
                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
@@ -1315,30 +1315,38 @@ const EditHotel = () => {
                                                             <i className="fa fa-pencil font-14"
                                                                 onClick={() => openRoomTypeModal(item.roomTypeId)} />
                                                         </button>
-                                                        <form
-                                                            id="demo-form"
-                                                            onSubmit={(e) => submitUpdateRoomTypeStatus(e, item.roomTypeId, updateRoomTypeStatus.isActive)}
-                                                            className="d-inline"
-                                                        >
-                                                            <button
-                                                                type="submit"
-                                                                className="btn btn-default btn-xs m-r-5"
-                                                                data-toggle="tooltip"
-                                                                data-original-title="Activate"
-                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: true })}
-                                                            >
-                                                                <i className="fa fa-check font-14 text-success" />
-                                                            </button>
-                                                            <button
-                                                                type="submit"
-                                                                className="btn btn-default btn-xs"
-                                                                data-toggle="tooltip"
-                                                                data-original-title="Deactivate"
-                                                                onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: false })}
-                                                            >
-                                                                <i className="fa fa-times font-14 text-danger" />
-                                                            </button>
-                                                        </form>
+                                                        {
+
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <form
+                                                                        id="demo-form"
+                                                                        onSubmit={(e) => submitUpdateRoomTypeStatus(e, item.roomTypeId, updateRoomTypeStatus.isActive)}
+                                                                        className="d-inline"
+                                                                    >
+                                                                        <button
+                                                                            type="submit"
+                                                                            className="btn btn-default btn-xs m-r-5"
+                                                                            data-toggle="tooltip"
+                                                                            data-original-title="Activate"
+                                                                            onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: true })}
+                                                                        >
+                                                                            <i className="fa fa-check font-14 text-success" />
+                                                                        </button>
+                                                                        <button
+                                                                            type="submit"
+                                                                            className="btn btn-default btn-xs"
+                                                                            data-toggle="tooltip"
+                                                                            data-original-title="Deactivate"
+                                                                            onClick={() => setUpdateRoomTypeStatus({ ...updateRoomTypeStatus, isActive: false })}
+                                                                        >
+                                                                            <i className="fa fa-times font-14 text-danger" />
+                                                                        </button>
+                                                                    </form>
+                                                                </>
+                                                            )
+                                                        }
+
                                                     </td>
                                                 </tr>
                                             ))

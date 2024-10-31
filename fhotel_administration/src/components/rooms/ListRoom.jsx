@@ -49,6 +49,16 @@ const ListRoom = () => {
     }, []);
 
 
+    const [filter, setFilter] = useState('All'); // Filter state for room status
+
+    // Filtered room list based on the selected filter
+    const filteredRooms = roomList.filter(room => {
+        if (filter === 'All') return true;
+        return room.status === filter;
+    });
+
+
+
 
 
     return (
@@ -60,123 +70,127 @@ const ListRoom = () => {
                     <div className="loading-spinner" />
                 </div>
             )}
-            <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
-                {/* START PAGE CONTENT*/}
-                <div className="page-heading">
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item">
-                            <a href="index.html"><i className="la la-home font-20" /></a>
-                        </li>
-                        {/* <li className="breadcrumb-item">Basic Tables</li> */}
-                    </ol>
-                </div>
-                <div className="page-content fade-in-up">
-                    {/* start ibox */}
-                    <div className="ibox">
-                        <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title"></div>
-                            <div className="form-group">
-                                {/* <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={roomTypeSearchTerm}
-                                    onChange={handleRoomTypeSearch} /> */}
-                            </div>
+           <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
+            <div className="page-content fade-in-up">
+                <div className="ibox">
+                    <div className="ibox-head bg-dark text-light">
+                        <div className="ibox-title">Danh sách phòng</div>
+                    </div>
+                    <div className="ibox-body">
+                        {/* Filter Buttons */}
+                        <div className="mb-3">
+                            <button
+                                onClick={() => setFilter('All')}
+                                style={{ backgroundColor: 'white', color: 'black', marginRight: '10px' }}
+                                className="btn"
+                            >
+                                Tất cả
+                            </button>
+                            <button
+                                onClick={() => setFilter('Available')}
+                                style={{ backgroundColor: 'green', color: 'white', marginRight: '10px' }}
+                                className="btn"
+                            >
+                                Trống
+                            </button>
+                            <button
+                                onClick={() => setFilter('Occupied')}
+                                style={{ backgroundColor: 'red', color: 'white', marginRight: '10px' }}
+                                className="btn"
+                            >
+                                Nhận phòng
+                            </button>
+                            <button
+                                onClick={() => setFilter('Maintenance')}
+                                style={{ backgroundColor: 'yellow', color: 'black' }}
+                                className="btn"
+                            >
+                                Bảo trì
+                            </button>
                         </div>
-                        <div className="ibox-body">
-                            <div className="row">
-                                {roomList.map((room) => {
-                                    // Find the roomStayHistory entry for this room if it is occupied
-                                    const occupiedRoom = roomStayHistoryList.find(
-                                        (history) =>
-                                            history.roomId === room.roomId &&
-                                            history.checkInDate &&
-                                            !history.checkOutDate &&
-                                            history.reservation.reservationStatus === 'CheckIn'
-                                    );
 
-                                    return (
+                        {/* Room Cards */}
+                        <div className="row">
+                            {filteredRooms.map(room => {
+                                const occupiedRoom = roomStayHistoryList.find(
+                                    history =>
+                                        history.roomId === room.roomId &&
+                                        history.checkInDate &&
+                                        !history.checkOutDate &&
+                                        history.reservation.reservationStatus === 'CheckIn'
+                                );
+
+                                return (
+                                    <div
+                                        key={room.roomNumber}
+                                        className="col-md-4 mb-3"
+                                        style={{ padding: '10px' }}
+                                    >
                                         <div
-                                            key={room.roomNumber}
-                                            className="col-md-4 mb-3"
-                                            style={{ padding: "10px" }}
+                                            style={{
+                                                display: 'flex',
+                                                backgroundColor:
+                                                    room.status === 'Available' ? 'green' :
+                                                    room.status === 'Occupied' ? 'red' :
+                                                    'yellow',
+                                                color: 'white',
+                                                borderRadius: '5px',
+                                                overflow: 'hidden'
+                                            }}
                                         >
+                                            {/* Left section (1/4 of the card) with a darker color and icon */}
                                             <div
                                                 style={{
-                                                    display: 'flex',
+                                                    flex: '1',
                                                     backgroundColor:
-                                                        room.status === 'Available' ? 'green' :
-                                                            room.status === 'Occupied' ? 'red' :
-                                                                'yellow',
-                                                    color: 'white',
-                                                    borderRadius: '5px',
-                                                    overflow: 'hidden'
+                                                        room.status === 'Available' ? 'darkgreen' :
+                                                        room.status === 'Occupied' ? 'darkred' :
+                                                        'goldenrod',
+                                                    textAlign: 'center',
+                                                    fontWeight: 'bold',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    padding: '10px'
                                                 }}
                                             >
-                                                {/* Left section (1/4 of the card) with a darker color and icon */}
-                                                <div
-                                                    style={{
-                                                        flex: '1',
-                                                        backgroundColor:
-                                                            room.status === 'Available' ? 'darkgreen' :
-                                                                room.status === 'Occupied' ? 'darkred' :
-                                                                    'goldenrod',
-                                                        textAlign: 'center',
-                                                        fontWeight: 'bold',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        padding: '10px'
-                                                    }}
-                                                >
-                                                    <p>{room.roomType?.type?.typeName}</p>
-                                                    <p>{room.roomNumber}</p>
-                                                    {/* Font Awesome icon based on room status */}
-                                                    <i
-                                                        className={
-                                                            room.status === 'Available' ? 'fa fa-check-circle' :
-                                                                room.status === 'Occupied' ? 'fa fa-bed' :
-                                                                    'fa fa-wrench'
-                                                        }
-                                                        style={{ fontSize: '1.5em', marginTop: '5px' }}
-                                                    ></i>
-                                                </div>
-                                                {/* Right section (3/4 of the card) for additional information */}
-                                                <div style={{ flex: '3', padding: '20px' }}>
-                                                    {
-                                                        room.status === 'Available' && (
-                                                            <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
-                                                        )
+                                                <p>{room.roomType?.type?.typeName}</p>
+                                                <p>{room.roomNumber}</p>
+                                                {/* Font Awesome icon based on room status */}
+                                                <i
+                                                    className={
+                                                        room.status === 'Available' ? 'fa fa-check-circle' :
+                                                        room.status === 'Occupied' ? 'fa fa-bed' :
+                                                        'fa fa-wrench'
                                                     }
-                                                    {
-                                                        room.status === 'Occupied' && occupiedRoom && (
-                                                            <div>
-                                                                <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
-                                                                <p>Khách: {occupiedRoom.reservation.customer.name}</p>
-                                                            </div>
-                                                        )
-                                                    }
-                                                    {
-                                                        room.status === 'Maintenance' && (
-                                                            <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
-                                                        )
-                                                    }
-                                                </div>
+                                                    style={{ fontSize: '1.5em', marginTop: '5px' }}
+                                                ></i>
+                                            </div>
+                                            {/* Right section (3/4 of the card) for additional information */}
+                                            <div style={{ flex: '3', padding: '20px' }}>
+                                                {room.status === 'Available' && (
+                                                    <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
+                                                )}
+                                                {room.status === 'Occupied' && occupiedRoom && (
+                                                    <div>
+                                                        <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
+                                                        <p>Khách: {occupiedRoom.reservation.customer.name}</p>
+                                                    </div>
+                                                )}
+                                                {room.status === 'Maintenance' && (
+                                                    <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
+                                                )}
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-
-
-
-
-
                     </div>
-                    {/* end ibox */}
-
                 </div>
             </div>
+        </div>
 
 
 

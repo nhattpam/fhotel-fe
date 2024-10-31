@@ -468,14 +468,14 @@ const CheckInOut = () => {
             <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
                 {/* Page Heading */}
                 <div className="page-heading d-flex align-items-center justify-content-between">
-                    <h2 className="page-title">Check-In / Check-Out</h2>
+                    <h2 className="page-title">Nhận phòng / Trả phòng</h2>
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item">
                             <a href="index.html">
                                 <i className="la la-home font-20" />
                             </a>
                         </li>
-                        <li className="breadcrumb-item active">Check-In / Check-Out</li>
+                        <li className="breadcrumb-item active">Nhận phòng / Trả phòng</li>
                     </ol>
                 </div>
 
@@ -519,8 +519,8 @@ const CheckInOut = () => {
                                                             <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
                                                             <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
                                                             <p><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                                            <p><strong className='mr-2'>Ngày dự kiến check-In:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
-                                                            <p><strong className='mr-2'>Ngày dự kiến check-Out:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
+                                                            <p><strong className='mr-2'>Ngày dự kiến nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                                            <p><strong className='mr-2'>Ngày dự kiến trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
@@ -529,9 +529,9 @@ const CheckInOut = () => {
                                                             <p>
                                                                 <strong className='mr-2'>Trạng thái thanh toán:</strong>
                                                                 {reservation.paymentStatus === "Paid" ? (
-                                                                    <span className="badge label-table badge-success">Đã Thanh Toán</span>
+                                                                    <span className="badge label-table badge-success">Đã thanh toán</span>
                                                                 ) : reservation.paymentStatus === "Not Paid" ? (
-                                                                    <span className="badge label-table badge-danger">Chưa Thanh Toán</span>
+                                                                    <span className="badge label-table badge-danger">Chưa thanh toán</span>
                                                                 ) : (
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
@@ -539,22 +539,22 @@ const CheckInOut = () => {
                                                             <p>
                                                                 <strong className='mr-2'>Trạng thái đặt phòng:</strong>
                                                                 {reservation.reservationStatus === "CheckIn" ? (
-                                                                    <span className="badge label-table badge-success">Đã CheckIn</span>
+                                                                    <span className="badge label-table badge-success">Đã nhận phòng</span>
                                                                 ) : reservation.reservationStatus === "Cancelled" ? (
-                                                                    <span className="badge label-table badge-danger">Đã Hủy</span>
+                                                                    <span className="badge label-table badge-danger">Đã hủy</span>
                                                                 ) : reservation.reservationStatus === "Pending" ? (
-                                                                    <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
                                                                 ) : reservation.reservationStatus === "CheckOut" ? (
-                                                                    <span className="badge label-table badge-warning">Đã CheckOut</span>
+                                                                    <span className="badge label-table badge-warning">Đã trả phòng</span>
                                                                 ) : (
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
                                                             </p>
-                                                            <p><strong className='mr-2'>Ngày thực tế check-in:</strong> {reservation.actualCheckInTime
+                                                            <p><strong className='mr-2'>Ngày thực tế nhận phòng:</strong> {reservation.actualCheckInTime
                                                                 ? new Date(reservation.actualCheckInTime).toLocaleString('en-US')
                                                                 : "Chưa có"}</p>
                                                             <p>
-                                                                <strong className='mr-2'>Ngày thực tế check-out:</strong>
+                                                                <strong className='mr-2'>Ngày thực tế trả phòng:</strong>
                                                                 {reservation.actualCheckOutDate
                                                                     ? new Date(reservation.actualCheckOutDate).toLocaleString('en-US')
                                                                     : "Chưa có"}
@@ -569,26 +569,26 @@ const CheckInOut = () => {
                                                         {reservation.reservationStatus === "Pending" && (
                                                             <button className="btn btn-success " onClick={() =>
                                                                 openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                                <i className="la la-sign-out" /> Check-In
+                                                                <i className="la la-sign-out" /> Nhận phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckIn" && (
                                                             <button disabled className="btn btn-success " onClick={() =>
                                                                 openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                                <i className="la la-sign-out" /> Check-In
+                                                                <i className="la la-sign-out" /> Nhận phòng
                                                             </button>
                                                         )}
 
                                                         {reservation.reservationStatus === "CheckIn" && (
                                                             <button className="btn btn-danger ml-2" onClick={() =>
                                                                 openCheckOutModal(reservation.reservationId)}>
-                                                                <i className="la la-sign-out" /> Check-Out
+                                                                <i className="la la-sign-out" /> Trả phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "Pending" && (
                                                             <button disabled className="btn btn-danger ml-2" onClick={() =>
                                                                 openCheckOutModal(reservation.reservationId)}>
-                                                                <i className="la la-sign-out" /> Check-Out
+                                                                <i className="la la-sign-out" /> Trả phòng
                                                             </button>
                                                         )}
 
@@ -812,7 +812,7 @@ const CheckInOut = () => {
                                     {
                                         loginUser.role?.roleName === "Receptionist" && (
                                             <>
-                                                <button type="submit" className="btn btn-primary" >Check-In</button>
+                                                <button type="submit" className="btn btn-primary" >Nhận phòng</button>
                                             </>
                                         )
                                     }

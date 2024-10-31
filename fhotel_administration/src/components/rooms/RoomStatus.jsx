@@ -366,6 +366,7 @@ const RoomStatus = () => {
                                                     name="status"
                                                     className='form-control'
                                                     onChange={(e) => handleChange(e)}
+                                                    value={updateRoom.status}
                                                     required
                                                 >
                                                     <option value="Available">Có sẵn</option>

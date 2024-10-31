@@ -585,7 +585,7 @@ const SideBar = () => {
                                     {/* Check-In / Check-Out Section */}
                                     <li>
                                         <Link to="/check-in-out"><i className="sidebar-item-icon fa fa-sign-in" />
-                                            <span className="nav-label">Check-In / Check-Out</span>
+                                            <span className="nav-label">Nhận Phòng / Trả Phòng</span>
                                         </Link>
                                     </li>
 
@@ -637,7 +637,7 @@ const SideBar = () => {
                                 <>
                                     <li>
                                         <Link to="/room-status"><i className="sidebar-item-icon fa fa-bed" />
-                                            <span className="nav-label">Room Status</span>
+                                            <span className="nav-label">Quản Lý Phòng</span>
                                         </Link>
                                     </li>
 

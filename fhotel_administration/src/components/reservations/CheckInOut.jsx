@@ -10,6 +10,7 @@ import documentService from '../../services/document.service';
 import roomImageService from '../../services/room-image.service';
 import userDocumentService from '../../services/user-document.service';
 import roomService from '../../services/room.service';
+import serviceTypeService from '../../services/service-type.service';
 
 const CheckInOut = () => {
     //get user information
@@ -422,6 +423,36 @@ const CheckInOut = () => {
         setShowModalRoom(false);
     };
 
+    //CREATE ORDER
+    const [showModalCreateOrder, setShowModalCreateOrder] = useState(false);
+    const [createOrder, setCreateOrder] = useState({
+
+    });
+    const [serviceTypeList, setServiceTypeList] = useState([]);
+    const [selectedServiceType, setSelectedServiceType] = useState(''); // Add state for selected city
+
+
+
+    const openModalCreateOrder = (reservationId) => {
+        setShowModalCreateOrder(true);
+        if (reservationId) {
+            serviceTypeService
+                .getAllServiceType()
+                .then((res) => {
+                    setServiceTypeList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    const closeModalCreateOrder = () => {
+        setShowModalCreateOrder(false);
+    };
+
+    //END CREATE ORDER
+
 
     /// notification
     const [success, setSuccess] = useState({}); // State to hold error messages
@@ -692,8 +723,8 @@ const CheckInOut = () => {
                                                             onClick={() => openRoomModal(room.roomId)}
                                                             style={{
                                                                 backgroundColor: room.status === 'Available' ? 'green' :
-                                                                room.status === 'Occupied' ? 'red' :
-                                                                    'yellow',
+                                                                    room.status === 'Occupied' ? 'red' :
+                                                                        '#E4A11B',
                                                                 position: 'relative',
                                                                 textAlign: 'center',
                                                                 flex: '0 1 auto',
@@ -834,7 +865,7 @@ const CheckInOut = () => {
                         <div className="modal-content">
                             <form onSubmit={handleCreateRoomStayHistory}>
                                 <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Check-Out</h5>
+                                    <h5 className="modal-title">Thanh Toán Phòng {reservation.roomType?.type?.typeName}</h5>
                                     <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeCheckOutModal}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -903,7 +934,14 @@ const CheckInOut = () => {
                                                 <hr />
                                             </div>
                                             <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                                <h5>Dịch Vụ</h5>
+                                                <h5><i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng: <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}</span></h5>
+                                            </div>
+                                            {/* Divider */}
+                                            <div className="col-md-12">
+                                                <hr />
+                                            </div>
+                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                                <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))}</span></h5>
                                                 <div className="table-responsive">
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>
@@ -941,6 +979,9 @@ const CheckInOut = () => {
                                                         )
                                                     }
                                                 </div>
+                                                <button className='btn btn-success' onClick={() => openModalCreateOrder(reservation.reservationId)}>Thêm <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </button>
+
                                                 {/* Calculate and display total amount */}
                                                 <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                     <h5>
@@ -957,7 +998,7 @@ const CheckInOut = () => {
 
                                 <div className="modal-footer">
                                     {loginUser.role?.roleName === "Receptionist" && (
-                                        <button type="submit" className="btn btn-primary">Check-Out</button>
+                                        <button type="submit" className="btn btn-primary">Trả Phòng</button>
                                     )}
                                     <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button>
                                 </div>
@@ -1026,6 +1067,50 @@ const CheckInOut = () => {
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoom} >Đóng</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showModalCreateOrder && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header  bg-dark text-light">
+                                    <h5 className="modal-title">Thêm dịch vụ</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateOrder}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <label>Loại dịch vụ</label>
+                                        <select
+                                            className="form-control"
+                                            onChange={(e) => {
+                                                setSelectedServiceType(e.target.value); // Update selected city
+                                            }}
+                                            required
+                                            style={{height: '50px'}}
+                                        >
+                                            <option value="">Chọn dịch vụ</option>
+                                            {serviceTypeList.map((type) => (
+                                                <option key={type.serviceTypeId} value={type.serviceTypeId}>
+                                                    {type.serviceTypeName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-success">Lưu</button>
+                                    <button type="button" className="btn btn-dark" onClick={closeModalCreateOrder} >Đóng</button>
+                                </div>
+                            </form>
+
                         </div>
                     </div>
                 </div>

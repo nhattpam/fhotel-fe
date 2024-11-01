@@ -17,18 +17,17 @@ const ListRoom = () => {
     //get user information
     const loginUserId = sessionStorage.getItem('userId');
 
-    const { roomTypeId } = useParams();
-
     const [roomList, setRoomList] = useState([]);
     const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
+    const [filter, setFilter] = useState('All');
 
     useEffect(() => {
-        roomTypeService
-            .getAllRoombyRoomTypeId(roomTypeId)
+        userService
+            .getAllRoomByStaff(loginUserId)
             .then((res) => {
                 const sortedRoomList = [...res.data].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
-                    return new Date(b.createdDate) - new Date(a.createdDate);
+                    return a.roomNumber - b.roomNumber; // Sort by roomNumber in ascending order
                 });
                 setRoomList(sortedRoomList);
                 setLoading(false);
@@ -49,19 +48,18 @@ const ListRoom = () => {
     }, []);
 
 
-    const [filter, setFilter] = useState('All'); // Filter state for room status
-
-    // Filtered room list based on the selected filter
-    const filteredRooms = roomList.filter(room => {
+    const filteredRoomList = roomList.filter((room) => {
         if (filter === 'All') return true;
-        return room.status === filter;
+        if (filter === 'Available') return room.status === 'Available';
+        if (filter === 'Occupied') return room.status === 'Occupied';
+        if (filter === 'Maintenance') return room.status === 'Maintenance';
+        return true;
     });
 
-    // Calculate counts for each status
-    const availableCount = roomList.filter(room => room.status === 'Available').length;
-    const occupiedCount = roomList.filter(room => room.status === 'Occupied').length;
-    const maintenanceCount = roomList.filter(room => room.status === 'Maintenance').length;
-
+      // Calculate counts for each status
+      const availableCount = roomList.filter(room => room.status === 'Available').length;
+      const occupiedCount = roomList.filter(room => room.status === 'Occupied').length;
+      const maintenanceCount = roomList.filter(room => room.status === 'Maintenance').length;
 
 
     return (
@@ -74,15 +72,15 @@ const ListRoom = () => {
                 </div>
             )}
             <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
-                <div className="page-content fade-in-up">
-                    <div className="ibox">
-                        <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title">Danh sách phòng</div>
-                        </div>
-                        <div className="ibox-body">
-                            {/* Filter Buttons */}
-                            <div className="mb-3">
-                                <button
+            <div className="page-content fade-in-up">
+                <div className="ibox">
+                    <div className="ibox-head bg-dark text-light">
+                        <div className="ibox-title">Danh sách phòng</div>
+                    </div>
+                    <div className="ibox-body">
+                        {/* Filter Buttons */}
+                        <div className="mb-3 d-flex gap-2">
+                        <button
                                     onClick={() => setFilter('All')}
                                     style={{ backgroundColor: 'white', color: 'black', marginRight: '10px' }}
                                     className="btn"
@@ -110,90 +108,87 @@ const ListRoom = () => {
                                 >
                                     Bảo trì ({maintenanceCount})
                                 </button>
-                            </div>
+                        </div>
 
-                            {/* Room Cards */}
-                            <div className="row">
-                                {filteredRooms.map(room => {
-                                    const occupiedRoom = roomStayHistoryList.find(
-                                        history =>
-                                            history.roomId === room.roomId &&
-                                            history.checkInDate &&
-                                            !history.checkOutDate &&
-                                            history.reservation.reservationStatus === 'CheckIn'
-                                    );
+                        {/* Room Cards */}
+                        <div className="row">
+                            {filteredRoomList.map((room) => {
+                                const occupiedRoom = roomStayHistoryList.find(
+                                    (history) =>
+                                        history.roomId === room.roomId &&
+                                        history.checkInDate &&
+                                        !history.checkOutDate &&
+                                        history.reservation?.reservationStatus === 'CheckIn'
+                                );
 
-                                    return (
+                                return (
+                                    <div
+                                        key={room.roomNumber}
+                                        className="col-md-4 mb-3"
+                                        style={{ padding: '10px' }}
+                                    >
                                         <div
-                                            key={room.roomNumber}
-                                            className="col-md-4 mb-3"
-                                            style={{ padding: '10px' }}
+                                            style={{
+                                                display: 'flex',
+                                                backgroundColor:
+                                                    room.status === 'Available' ? 'green' :
+                                                    room.status === 'Occupied' ? 'red' :
+                                                    '#E4A11B',
+                                                color: 'white',
+                                                borderRadius: '5px',
+                                                overflow: 'hidden'
+                                            }}
                                         >
                                             <div
                                                 style={{
-                                                    display: 'flex',
+                                                    flex: '1',
                                                     backgroundColor:
-                                                        room.status === 'Available' ? 'green' :
-                                                            room.status === 'Occupied' ? 'red' :
-                                                                '#E4A11B',
-                                                    color: 'white',
-                                                    borderRadius: '5px',
-                                                    overflow: 'hidden'
+                                                        room.status === 'Available' ? 'darkgreen' :
+                                                        room.status === 'Occupied' ? 'darkred' :
+                                                        'goldenrod',
+                                                    textAlign: 'center',
+                                                    fontWeight: 'bold',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    padding: '10px'
                                                 }}
                                             >
-                                                {/* Left section (1/4 of the card) with a darker color and icon */}
-                                                <div
-                                                    style={{
-                                                        flex: '1',
-                                                        backgroundColor:
-                                                            room.status === 'Available' ? 'darkgreen' :
-                                                                room.status === 'Occupied' ? 'darkred' :
-                                                                    'goldenrod',
-                                                        textAlign: 'center',
-                                                        fontWeight: 'bold',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        padding: '10px'
-                                                    }}
-                                                >
-                                                    <p>{room.roomType?.type?.typeName}</p>
-                                                    <p>{room.roomNumber}</p>
-                                                    {/* Font Awesome icon based on room status */}
-                                                    <i
-                                                        className={
-                                                            room.status === 'Available' ? 'fa fa-check-circle' :
-                                                                room.status === 'Occupied' ? 'fa fa-bed' :
-                                                                    'fa fa-wrench'
-                                                        }
-                                                        style={{ fontSize: '1.5em', marginTop: '5px' }}
-                                                    ></i>
-                                                </div>
-                                                {/* Right section (3/4 of the card) for additional information */}
-                                                <div style={{ flex: '3', padding: '20px' }}>
-                                                    {room.status === 'Available' && (
-                                                        <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
-                                                    )}
-                                                    {room.status === 'Occupied' && occupiedRoom && (
-                                                        <div>
-                                                            <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
-                                                            <p>Khách: {occupiedRoom.reservation.customer.name}</p>
-                                                        </div>
-                                                    )}
-                                                    {room.status === 'Maintenance' && (
-                                                        <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
-                                                    )}
-                                                </div>
+                                                <p>{room.roomType?.type?.typeName}</p>
+                                                <p>{room.roomNumber}</p>
+                                                <i
+                                                    className={
+                                                        room.status === 'Available' ? 'fa fa-check-circle' :
+                                                        room.status === 'Occupied' ? 'fa fa-bed' :
+                                                        'fa fa-wrench'
+                                                    }
+                                                    style={{ fontSize: '1.5em', marginTop: '5px' }}
+                                                ></i>
+                                            </div>
+                                            <div style={{ flex: '3', padding: '20px' }}>
+                                                {room.status === 'Available' && (
+                                                    <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
+                                                )}
+                                                {room.status === 'Occupied' && occupiedRoom && (
+                                                    <div>
+                                                        <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
+                                                        <p>Khách: {occupiedRoom.reservation.customer.name}</p>
+                                                    </div>
+                                                )}
+                                                {room.status === 'Maintenance' && (
+                                                    <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
+                                                )}
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
 
 

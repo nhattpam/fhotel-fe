@@ -97,7 +97,7 @@ const Login = () => {
                     sessionStorage.setItem('token', response.data.data);
                     sessionStorage.setItem('userId', decodedToken.Id);
                     // Navigate to the home page
-                    navigate('/room-attendant-home');
+                    navigate('/room-status');
                 }
                 else {
                     showErrorMessage('Bạn không có quyền truy cập.');

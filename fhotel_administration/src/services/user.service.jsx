@@ -124,5 +124,21 @@ class UserService {
         });
       }
 
+      getAllCustomerByStaff(id) {
+        return axios.get(API_URL + `/users/${id}/staff-customers`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+      getAllCustomerByOwner(id) {
+        return axios.get(API_URL + `/users/${id}/owner-customers`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 }
 export default new UserService;

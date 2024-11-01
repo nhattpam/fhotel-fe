@@ -410,7 +410,7 @@ const SideBar = () => {
                                 </li>
                             )
                         }
-                        {
+                        {/* {
                             user.role?.roleName === "Room Attendant" && (
                                 <li>
                                     <Link className="active" to={`/room-attendant-home`}><i className="sidebar-item-icon fa fa-th-large" />
@@ -418,7 +418,7 @@ const SideBar = () => {
                                     </Link>
                                 </li>
                             )
-                        }
+                        } */}
 
                         <li className="heading">Quản Lý</li>
                         {
@@ -540,6 +540,11 @@ const SideBar = () => {
                                             <span className="nav-label">Quản Lý Phòng</span>
                                         </Link>
                                     </li> */}
+                                     <li>
+                                        <Link to="/list-owner-customer"><i className="sidebar-item-icon fa fa-user" />
+                                            <span className="nav-label">Quản Lý Khách Hàng</span>
+                                        </Link>
+                                    </li>
 
                                     {/* Billing Section */}
                                     <li>
@@ -604,15 +609,20 @@ const SideBar = () => {
                                     </li>
 
                                     {/* Room Management Section */}
-                                    <li>
+                                    {/* <li>
                                         <Link to="/room-management"><i className="sidebar-item-icon fa fa-bed" />
+                                            <span className="nav-label">Quản Lý Phòng</span>
+                                        </Link>
+                                    </li> */}
+                                    <li>
+                                        <Link to="/list-room"><i className="sidebar-item-icon fa fa-bed" />
                                             <span className="nav-label">Quản Lý Phòng</span>
                                         </Link>
                                     </li>
 
                                     {/* Customer Management Section */}
                                     <li>
-                                        <Link to="/customer-management"><i className="sidebar-item-icon fa fa-user" />
+                                        <Link to="/list-staff-customer"><i className="sidebar-item-icon fa fa-user" />
                                             <span className="nav-label">Quản Lý Khách Hàng</span>
                                         </Link>
                                     </li>

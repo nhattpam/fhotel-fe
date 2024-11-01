@@ -17,6 +17,7 @@ const ListHotelVerification = () => {
 
     //call list hotel registration
     const [hotelVerificationList, setHotelVerificationList] = useState([]);
+    const [hotelVerificationList2, setHotelVerificationList2] = useState([]);
     const [hotelVerificationSearchTerm, setHotelVerificationSearchTerm] = useState('');
     const [currentHotelVerificationPage, setCurrentHotelVerificationPage] = useState(0);
     const [hotelVerificationsPerPage] = useState(10);
@@ -89,6 +90,14 @@ const ListHotelVerification = () => {
                             console.log(error);
                         });
                     hotelService
+                        .getAllHotelVerificationByHotelId(res.data.hotelId)
+                        .then((res) => {
+                            setHotelVerificationList2(res.data);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    hotelService
                         .getAllHotelImageByHotelId(res.data.hotelId)
                         .then((res) => {
                             setHotelImageList(res.data);
@@ -106,6 +115,7 @@ const ListHotelVerification = () => {
 
     const closeModalHotelVerification = () => {
         setShowModalHotelVerification(false);
+        setHotelVerificationList2([]);
     };
 
 
@@ -244,7 +254,7 @@ const ListHotelVerification = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Yêu Cầu Xác Minh</div>
                             <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
+                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={hotelVerificationSearchTerm}
                                     onChange={handleHotelVerificationSearch} />
                             </div>
@@ -255,10 +265,11 @@ const ListHotelVerification = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Khách Sạn</span></th>
+                                            <th><span>Khách sạn</span></th>
                                             <th><span>Email</span></th>
-                                            <th><span>Ngày Tạo</span></th>
-                                            <th><span>Trạng Thái</span></th>
+                                            <th><span>Ngày tạo</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -273,17 +284,17 @@ const ListHotelVerification = () => {
                                                         <td>
                                                             {item.verificationStatus === "Pending" && (
                                                                 <span className="badge label-table ">
-                                                                    <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
                                                                 </span>
                                                             )}
                                                             {item.verificationStatus === "Verified" && (
                                                                 <span className="badge label-table">
-                                                                    <span className="badge label-table badge-success">Đã Xác Minh</span>
+                                                                    <span className="badge label-table badge-success">Đã xác minh</span>
                                                                 </span>
                                                             )}
                                                             {item.verificationStatus === "Rejected" && (
                                                                 <span className="badge label-table">
-                                                                    <span className="badge label-table badge-danger">Từ Chối</span>
+                                                                    <span className="badge label-table badge-danger">Từ chối</span>
                                                                 </span>)}
                                                         </td>
                                                         <td>
@@ -352,7 +363,7 @@ const ListHotelVerification = () => {
                         <div className="modal-content">
 
                             <div className="modal-header bg-dark text-light">
-                                <h5 className="modal-title">Thông Tin Khách Sạn</h5>
+                                <h5 className="modal-title">Thông tin khách sạn</h5>
                                 <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalHotelVerification}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -381,7 +392,7 @@ const ListHotelVerification = () => {
                                         <table className="table table-responsive table-hover mt-3">
                                             <tbody>
                                                 <tr>
-                                                    <th>Hình Ảnh:</th>
+                                                    <th>Hình ảnh:</th>
                                                     <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                         {
                                                             hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
@@ -401,7 +412,7 @@ const ListHotelVerification = () => {
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Giấy Tờ Doanh Nghiệp:</th>
+                                                    <th>Giấy tờ doanh nghiệp:</th>
                                                     <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                         {
                                                             hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -429,40 +440,40 @@ const ListHotelVerification = () => {
                                         <table className="table table-responsive table-hover mt-3">
                                             <tbody>
                                                 <tr>
-                                                    <th style={{ width: '30%' }}>Tên Khách Sạn:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>tên khách sạn:</th>
                                                     <td>{hotelVerification.hotel?.hotelName}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Email:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
                                                     <td>{hotelVerification.hotel?.email}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Số Điện Thoại:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
                                                     <td>{hotelVerification.hotel?.phone}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Quận:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Quận:</th>
                                                     <td>{hotelVerification.hotel?.district?.districtName}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Thành Phố:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
                                                     <td>{hotelVerification.hotel?.district?.city?.cityName}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Địa Chỉ:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
                                                     <td>{hotelVerification.hotel?.address}</td>
                                                 </tr>
 
                                                 <tr>
-                                                    <th>Chủ Sở Hữu:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
                                                     <td>{hotelVerification.hotel?.ownerName}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Email Chủ Sở Hữu:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email chủ sở hữu:</th>
                                                     <td>{hotelVerification.hotel?.ownerEmail}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Xác Minh:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Xác minh:</th>
                                                     <td>
                                                         {hotelVerification.verificationStatus === "Pending" && (
                                                             <span className="badge label-table ">
@@ -471,12 +482,12 @@ const ListHotelVerification = () => {
                                                         )}
                                                         {hotelVerification.verificationStatus === "Verified" && (
                                                             <span className="badge label-table">
-                                                                <span className="badge label-table badge-success">Đã Xác Minh</span>
+                                                                <span className="badge label-table badge-success">Đã xác minh</span>
                                                             </span>
                                                         )}
                                                         {hotelVerification.verificationStatus === "Rejected" && (
                                                             <span className="badge label-table">
-                                                                <span className="badge label-table badge-danger">Từ Chối</span>
+                                                                <span className="badge label-table badge-danger">Từ chối</span>
                                                             </span>)}
                                                     </td>
                                                 </tr>
@@ -484,21 +495,21 @@ const ListHotelVerification = () => {
                                             </tbody>
                                         </table>
                                         <div>
-                                            <h4 className='text-primary' style={{ textAlign: 'left', fontWeight: 'bold' }}>Lịch Sử Xác Minh</h4>
+                                            <h4 className='text-primary' style={{ textAlign: 'left', fontWeight: 'bold' }}>Lịch sử xác minh</h4>
                                             <div className="table-responsive" style={{ textAlign: 'left' }}>
                                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                                     <thead>
                                                         <tr>
                                                             <th><span>STT</span></th>
-                                                            <th><span>Nhân Viên Xác Minh</span></th>
-                                                            <th><span>Ngày Xác Minh</span></th>
-                                                            <th><span>Ghi Chú</span></th>
-                                                            <th><span>Trạng Thái</span></th>
+                                                            <th><span>Nhân viên xác minh</span></th>
+                                                            <th><span>Ngày xác minh</span></th>
+                                                            <th><span>Ghi chú</span></th>
+                                                            <th><span>Trạng thái</span></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {
-                                                            hotelVerificationList.length > 0 && hotelVerificationList.map((item, index) => (
+                                                            hotelVerificationList2.length > 0 && hotelVerificationList2.map((item, index) => (
                                                                 <>
                                                                     <tr>
                                                                         <td>{index + 1}</td>

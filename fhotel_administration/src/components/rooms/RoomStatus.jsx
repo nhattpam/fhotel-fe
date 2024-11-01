@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import roomService from '../../services/room.service';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import roomStayHistoryService from '../../services/room-stay-history.service';
 
 const RoomStatus = () => {
     //LOADING
@@ -21,9 +22,8 @@ const RoomStatus = () => {
 
     //call list hotel registration
     const [roomList, setRoomList] = useState([]);
-    const [roomSearchTerm, setRoomSearchTerm] = useState('');
-    const [currentRoomPage, setCurrentRoomPage] = useState(0);
-    const [roomsPerPage] = useState(10);
+    const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
+
 
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const RoomStatus = () => {
             .then((res) => {
                 const sortedRoomList = [...res.data].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
-                    return new Date(b.createdDate) - new Date(a.createdDate);
+                    return a.roomNumber - b.roomNumber; // Sort by roomNumber in ascending order
                 });
                 setRoomList(sortedRoomList);
                 setLoading(false);
@@ -41,29 +41,28 @@ const RoomStatus = () => {
                 console.log(error);
                 setLoading(false);
             });
+        roomStayHistoryService
+            .getAllRoomStayHistory()
+            .then((res) => {
+                setRoomStayHistoryList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }, []);
 
+    const [filter, setFilter] = useState('All'); // Filter state for room status
 
-    const handleRoomSearch = (event) => {
-        setRoomSearchTerm(event.target.value);
-    };
+    // Filtered room list based on the selected filter
+    const filteredRooms = roomList.filter(room => {
+        if (filter === 'All') return true;
+        return room.status === filter;
+    });
 
-    const filteredRooms = roomList
-        .filter((room) => {
-            return (
-                room.room?.type?.typeName.toString().toLowerCase().includes(roomSearchTerm.toLowerCase()) ||
-                room.createdDate.toString().toLowerCase().includes(roomSearchTerm.toLowerCase())
-            );
-        });
-
-    const pageRoomCount = Math.ceil(filteredRooms.length / roomsPerPage);
-
-    const handleRoomPageClick = (data) => {
-        setCurrentRoomPage(data.selected);
-    };
-
-    const offsetRoom = currentRoomPage * roomsPerPage;
-    const currentRooms = filteredRooms.slice(offsetRoom, offsetRoom + roomsPerPage);
+    // Calculate counts for each status
+    const availableCount = roomList.filter(room => room.status === 'Available').length;
+    const occupiedCount = roomList.filter(room => room.status === 'Occupied').length;
+    const maintenanceCount = roomList.filter(room => room.status === 'Maintenance').length;
 
 
 
@@ -139,7 +138,7 @@ const RoomStatus = () => {
                     .then((res) => {
                         const sortedRoomList = [...res.data].sort((a, b) => {
                             // Assuming requestedDate is a string in ISO 8601 format
-                            return new Date(b.createdDate) - new Date(a.createdDate);
+                            return a.roomNumber - b.roomNumber; // Sort by roomNumber in ascending order
                         });
                         setRoomList(sortedRoomList);
 
@@ -212,104 +211,123 @@ const RoomStatus = () => {
                     </ol>
                 </div>
                 <div className="page-content fade-in-up">
-                    {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title">Danh Sách Phòng</div>
-                            <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={roomSearchTerm}
-                                    onChange={handleRoomSearch} />
-                            </div>
+                            <div className="ibox-title">Danh sách phòng</div>
                         </div>
                         <div className="ibox-body">
-                            <div className="table-responsive">
-                                <table className="table table-borderless table-hover table-wrap table-centered">
-                                    <thead>
-                                        <tr>
-                                            <th><span>STT</span></th>
-                                            <th><span>Số phòng</span></th>
-                                            <th><span>Loại phòng</span></th>
-                                            <th><span>Khách sạn</span></th>
-                                            <th><span>Trạng thái</span></th>
-                                            <th><span>Hành động</span></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            currentRooms.length > 0 && currentRooms.map((item, index) => (
-                                                <>
-                                                    <tr>
-                                                        <td>{index + 1}</td>
-                                                        <td>Phòng số {item.roomNumber}</td>
-                                                        <td>{item.roomType?.type?.typeName}</td>
-                                                        <td>
-                                                            <Link to={`/edit-hotel/${item.roomType?.hotel?.hotelId}`}>
-                                                                {item.roomType?.hotel?.hotelName}
-                                                            </Link>
-                                                        </td>
-                                                        <td>
-                                                            {item.status === "Available" && (
-                                                                <span className="badge label-table badge-success">Có sẵn</span>
-                                                            )}
-                                                            {item.status === "Occupied" && (
-                                                                <span className="badge label-table badge-danger">Không có sẵn</span>
-                                                            )}
-                                                            {item.status === "Maintenance" && (
-                                                                <span className="badge label-table badge-warning">Bảo trì</span>
-                                                            )}
-                                                        </td>
-                                                        <td>
-                                                            <button className="btn btn-default btn-xs m-r-5"
-                                                                data-toggle="tooltip" data-original-title="Edit">
-                                                                <i className="fa fa-pencil font-14"
-                                                                    onClick={() => openRoomModal(item.roomId)} /></button>
-                                                        </td>
-                                                    </tr>
-                                                </>
-                                            ))
-                                        }
+                            {/* Filter Buttons */}
+                            <div className="mb-3">
+                                <button
+                                    onClick={() => setFilter('All')}
+                                    style={{ backgroundColor: 'white', color: 'black', marginRight: '10px' }}
+                                    className="btn"
+                                >
+                                    Tất cả ({roomList.length})
+                                </button>
+                                <button
+                                    onClick={() => setFilter('Available')}
+                                    style={{ backgroundColor: 'green', color: 'white', marginRight: '10px' }}
+                                    className="btn"
+                                >
+                                    Trống ({availableCount})
+                                </button>
+                                <button
+                                    onClick={() => setFilter('Occupied')}
+                                    style={{ backgroundColor: 'red', color: 'white', marginRight: '10px' }}
+                                    className="btn"
+                                >
+                                    Nhận phòng ({occupiedCount})
+                                </button>
+                                <button
+                                    onClick={() => setFilter('Maintenance')}
+                                    style={{ backgroundColor: '#E4A11B', color: 'black' }}
+                                    className="btn"
+                                >
+                                    Bảo trì ({maintenanceCount})
+                                </button>
+                            </div>
 
+                            {/* Room Cards */}
+                            <div className="row">
+                                {filteredRooms.map(room => {
+                                    const occupiedRoom = roomStayHistoryList.find(
+                                        history =>
+                                            history.roomId === room.roomId &&
+                                            history.checkInDate &&
+                                            !history.checkOutDate &&
+                                            history.reservation.reservationStatus === 'CheckIn'
+                                    );
 
-                                    </tbody>
-                                </table>
+                                    return (
+                                        <div
+                                        onClick={() => openRoomModal(room.roomId)}
+                                            key={room.roomNumber}
+                                            className="col-md-4 mb-3"
+                                            style={{ padding: '10px' }}
+                                        >
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    backgroundColor:
+                                                        room.status === 'Available' ? 'green' :
+                                                            room.status === 'Occupied' ? 'red' :
+                                                                '#E4A11B',
+                                                    color: 'white',
+                                                    borderRadius: '5px',
+                                                    overflow: 'hidden'
+                                                }}
+                                            >
+                                                {/* Left section (1/4 of the card) with a darker color and icon */}
+                                                <div
+                                                    style={{
+                                                        flex: '1',
+                                                        backgroundColor:
+                                                            room.status === 'Available' ? 'darkgreen' :
+                                                                room.status === 'Occupied' ? 'darkred' :
+                                                                    'goldenrod',
+                                                        textAlign: 'center',
+                                                        fontWeight: 'bold',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        padding: '10px'
+                                                    }}
+                                                >
+                                                    <p>{room.roomType?.type?.typeName}</p>
+                                                    <p>{room.roomNumber}</p>
+                                                    {/* Font Awesome icon based on room status */}
+                                                    <i
+                                                        className={
+                                                            room.status === 'Available' ? 'fa fa-check-circle' :
+                                                                room.status === 'Occupied' ? 'fa fa-bed' :
+                                                                    'fa fa-wrench'
+                                                        }
+                                                        style={{ fontSize: '1.5em', marginTop: '5px' }}
+                                                    ></i>
+                                                </div>
+                                                {/* Right section (3/4 of the card) for additional information */}
+                                                <div style={{ flex: '3', padding: '20px' }}>
+                                                    {room.status === 'Available' && (
+                                                        <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
+                                                    )}
+                                                    {room.status === 'Occupied' && occupiedRoom && (
+                                                        <div>
+                                                            <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
+                                                            <p>Khách: {occupiedRoom.reservation.customer.name}</p>
+                                                        </div>
+                                                    )}
+                                                    {room.status === 'Maintenance' && (
+                                                        <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-
-                    </div>
-                    {/* end ibox */}
-                    {/* Pagination */}
-                    <div className='container-fluid'>
-                        {/* Pagination */}
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <ReactPaginate
-                                previousLabel={
-                                    <IconContext.Provider value={{ color: "#000", size: "14px" }}>
-                                        <AiFillCaretLeft />
-                                    </IconContext.Provider>
-                                }
-                                nextLabel={
-                                    <IconContext.Provider value={{ color: "#000", size: "14px" }}>
-                                        <AiFillCaretRight />
-                                    </IconContext.Provider>
-                                } breakLabel={'...'}
-                                breakClassName={'page-item'}
-                                breakLinkClassName={'page-link'}
-                                pageCount={pageRoomCount}
-                                marginPagesDisplayed={2}
-                                pageRangeDisplayed={5}
-                                onPageChange={handleRoomPageClick}
-                                containerClassName={'pagination'}
-                                activeClassName={'active'}
-                                previousClassName={'page-item'}
-                                nextClassName={'page-item'}
-                                pageClassName={'page-item'}
-                                previousLinkClassName={'page-link'}
-                                nextLinkClassName={'page-link'}
-                                pageLinkClassName={'page-link'}
-                            />
-                        </div>
-
                     </div>
                 </div>
             </div>

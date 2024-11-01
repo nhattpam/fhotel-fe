@@ -28,6 +28,8 @@ import ListOrder from './components/orders/ListOrder';
 import RoomManagement from './components/rooms/RoomManagement';
 import RoomStatus from './components/rooms/RoomStatus';
 import ListRoom from './components/rooms/ListRoom';
+import ListStaffCustomer from './components/users/ListStaffCustomer';
+import ListOwnerCustomer from './components/users/ListOwnerCustomer';
 
 function App() {
   return (
@@ -46,6 +48,8 @@ function App() {
         <Route path="/list-manager" element={<ListManager />} />
         <Route path="/list-receptionist" element={<ListReceptionist />} />
         <Route path="/list-room-attendant" element={<ListRoomAttendant />} />
+        <Route path="/list-staff-customer" element={<ListStaffCustomer />} />
+        <Route path="/list-owner-customer" element={<ListOwnerCustomer />} />
         {/* hotel */}
         <Route path="/list-hotel" element={<ListHotel />} />
         <Route path="/list-owner-hotel" element={<ListOwnerHotel />} />
@@ -69,7 +73,8 @@ function App() {
         {/* room management */}
         <Route path="/room-management" element={<RoomManagement />} />
         <Route path="/room-status" element={<RoomStatus />} />
-        <Route path="/list-room/:roomTypeId" element={<ListRoom />} />
+        {/* <Route path="/list-room/:roomTypeId" element={<ListRoom />} /> */}
+        <Route path="/list-room/" element={<ListRoom />} />
       </Routes>
     </div>
   );

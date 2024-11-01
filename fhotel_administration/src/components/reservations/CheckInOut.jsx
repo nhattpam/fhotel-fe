@@ -11,6 +11,8 @@ import roomImageService from '../../services/room-image.service';
 import userDocumentService from '../../services/user-document.service';
 import roomService from '../../services/room.service';
 import serviceTypeService from '../../services/service-type.service';
+import orderService from '../../services/order.service';
+import orderDetailService from '../../services/order-detail.service';
 
 const CheckInOut = () => {
     //get user information
@@ -368,7 +370,7 @@ const CheckInOut = () => {
 
     const openCheckOutModal = (reservationId) => {
         setShowCheckOutModal(true);
-
+        setSelectedReservationId(reservationId)
         reservationService
             .getReservationById(reservationId)
             .then((res) => {
@@ -425,10 +427,11 @@ const CheckInOut = () => {
 
     //CREATE ORDER
     const [showModalCreateOrder, setShowModalCreateOrder] = useState(false);
-    const [createOrder, setCreateOrder] = useState({
+    const [createOrderDetail, setCreateOrderDetail] = useState({
 
     });
     const [serviceTypeList, setServiceTypeList] = useState([]);
+    const [serviceList, setServiceList] = useState([]);
     const [selectedServiceType, setSelectedServiceType] = useState(''); // Add state for selected city
 
 
@@ -447,8 +450,78 @@ const CheckInOut = () => {
         }
     };
 
+
+    useEffect(() => {
+        if (selectedServiceType) {
+            serviceTypeService
+                .getAllServiceByServiceType(selectedServiceType)
+                .then((res) => {
+                    setServiceList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            setServiceList([]); // Clear service list if no service type is selected
+        }
+    }, [selectedServiceType]);
+
+    const sortedServices = serviceList.some(service => service.serviceType?.serviceTypeName === "Trả phòng muộn")
+        ? serviceList
+            .filter(service => service.serviceType?.serviceTypeName === "Trả phòng muộn")
+            .sort((a, b) => parseInt(a.serviceName) - parseInt(b.serviceName)) // Sort by serviceName as integer
+        : serviceList; // No sorting for other conditions
+
+
+    const handleChangeCreateOrderDetail = (e) => {
+        const { name, value } = e.target;
+        setCreateOrderDetail(prevState => ({ ...prevState, [name]: value }));
+    };
+
+
     const closeModalCreateOrder = () => {
         setShowModalCreateOrder(false);
+        setServiceList([]);
+    };
+
+
+    const submitCreateOrder = async (e) => {
+        e.preventDefault();
+
+        try {
+            if (selectedReservationId) {
+                const createOrder = {
+                    reservationId: selectedReservationId,
+                    totalAmount: 0
+                }
+                // Post the hotel first
+                const orderResponse = await orderService.saveOrder(createOrder);
+
+                // Handle 201 success
+                if (orderResponse.status === 201) {
+                    const orderId = orderResponse.data.orderId;
+
+                    createOrderDetail.orderId = orderId;
+                    console.log(JSON.stringify(createOrderDetail))
+                    const orderDetailResponse = await orderDetailService.saveOrderDetail(createOrderDetail);
+                    if (orderDetailResponse.status === 201) {
+                        reservationService
+                            .getAllOrderDetailByReservationId(selectedReservationId)
+                            .then((res) => {
+                                setOrderDetailList(res.data);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
+                } else {
+                    handleResponseError(orderResponse);
+                }
+            }
+
+        } catch (error) {
+            handleResponseError(error.response);
+        }
     };
 
     //END CREATE ORDER
@@ -947,11 +1020,11 @@ const CheckInOut = () => {
                                                         <thead>
                                                             <tr>
                                                                 <th><span>STT</span></th>
-                                                                <th><span>Hình Ảnh</span></th>
-                                                                <th><span>Tên Dịch Vụ</span></th>
-                                                                <th><span>Số Lượng</span></th>
-                                                                <th><span>Loại Dịch Vụ</span></th>
-                                                                <th><span>Đơn Giá (VND)</span></th>
+                                                                <th><span>Hình ảnh</span></th>
+                                                                <th><span>Tên dịch vụ</span></th>
+                                                                <th><span>Số lượng</span></th>
+                                                                <th><span>Loại dịch vụ</span></th>
+                                                                <th><span>Giá (VND)</span></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -959,13 +1032,54 @@ const CheckInOut = () => {
                                                                 orderDetailList.length > 0 && orderDetailList.map((item, index) => (
                                                                     <tr key={index}>
                                                                         <td>{index + 1}</td>
-                                                                        <td>
-                                                                            <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
-                                                                        </td>
-                                                                        <td>{item.service?.serviceName}</td>
+                                                                        {
+                                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                                <>
+                                                                                    <td>
+                                                                                        <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                                                                    </td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                                <>
+                                                                                    <td>
+                                                                                        <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                                    </td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                                <>
+                                                                                    <td>Muộn {item.service?.serviceName} ngày</td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                                <>
+                                                                                    <td>{item.service?.serviceName}</td>
+                                                                                </>
+                                                                            )
+                                                                        }
                                                                         <td>{item.quantity}</td>
                                                                         <td>{item.service?.serviceType?.serviceTypeName}</td>
-                                                                        <td>{item.service?.price}</td>
+                                                                        {
+                                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                                <>
+                                                                                    <td>{item.order?.totalAmount}</td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                                <>
+                                                                                    <td>{item.order?.totalAmount}</td>
+                                                                                </>
+                                                                            )
+                                                                        }
                                                                     </tr>
                                                                 ))
                                                             }
@@ -986,10 +1100,12 @@ const CheckInOut = () => {
                                                 <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                     <h5>
                                                         <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
-                                                        {(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))
+                                                        {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
                                                             + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
                                                     </h5>
                                                 </div>
+
+
                                             </div>
 
                                         </div>
@@ -1075,7 +1191,7 @@ const CheckInOut = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div className="modal-content">
-                            <form>
+                            <form onSubmit={(e) => submitCreateOrder(e)}>
 
                                 <div className="modal-header  bg-dark text-light">
                                     <h5 className="modal-title">Thêm dịch vụ</h5>
@@ -1085,28 +1201,83 @@ const CheckInOut = () => {
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                     <div className="row">
-                                        <label>Loại dịch vụ</label>
-                                        <select
-                                            className="form-control"
-                                            onChange={(e) => {
-                                                setSelectedServiceType(e.target.value); // Update selected city
-                                            }}
-                                            required
-                                            style={{height: '50px'}}
-                                        >
-                                            <option value="">Chọn dịch vụ</option>
-                                            {serviceTypeList.map((type) => (
-                                                <option key={type.serviceTypeId} value={type.serviceTypeId}>
-                                                    {type.serviceTypeName}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <div className="col-md-6" style={{ textAlign: 'left' }}>
+                                            <label>Loại dịch vụ</label>
+                                            <select
+                                                className="form-control"
+                                                onChange={(e) => {
+                                                    setSelectedServiceType(e.target.value); // Update selected city
+                                                }}
+                                                required
+                                                style={{ height: '50px' }}
+                                            >
+                                                <option value="">Chọn loại dịch vụ</option>
+                                                {serviceTypeList.map((type) => (
+                                                    <option key={type.serviceTypeId} value={type.serviceTypeId}>
+                                                        {type.serviceTypeName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="col-md-6" style={{ textAlign: 'left' }}>
+                                            <label>Dịch vụ</label>
+                                            <select
+                                                name='serviceId'
+                                                className="form-control"
+                                                value={createOrderDetail.serviceId}
+                                                onChange={(e) => handleChangeCreateOrderDetail(e)}
+                                                required
+                                                style={{ height: '50px' }}
+                                            >
+                                                <option value="">Chọn dịch vụ</option>
+                                                {sortedServices.map((service) => (
+                                                    <option key={service.serviceId} value={service.serviceId}>
+                                                        {
+                                                            service.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                <>
+                                                                    {service.serviceName} ngày
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            service.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                <>
+                                                                    {service.serviceName}
+                                                                </>
+                                                            )
+                                                        }
+
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="col-md-6 mt-2" style={{ textAlign: 'left' }}>
+                                            <label>Số lượng</label>
+                                            <div className="input-group">
+                                                <input
+                                                    name='quantity'
+                                                    type="number"
+                                                    className="form-control"
+                                                    value={createOrderDetail.quantity}
+                                                    onChange={(e) => handleChangeCreateOrderDetail(e)}
+                                                    min="1" // Prevent negative values
+                                                    style={{ height: '50px' }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+
                                     </div>
 
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-success">Lưu</button>
+                                    <button type="submit" className="btn btn-success">Lưu</button>
                                     <button type="button" className="btn btn-dark" onClick={closeModalCreateOrder} >Đóng</button>
                                 </div>
                             </form>

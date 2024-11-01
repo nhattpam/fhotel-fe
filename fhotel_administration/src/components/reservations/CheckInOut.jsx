@@ -427,9 +427,6 @@ const CheckInOut = () => {
 
     //CREATE ORDER
     const [showModalCreateOrder, setShowModalCreateOrder] = useState(false);
-    const [createOrderDetail, setCreateOrderDetail] = useState({
-
-    });
     const [serviceTypeList, setServiceTypeList] = useState([]);
     const [serviceList, setServiceList] = useState([]);
     const [selectedServiceType, setSelectedServiceType] = useState(''); // Add state for selected city
@@ -484,6 +481,25 @@ const CheckInOut = () => {
         setServiceList([]);
     };
 
+    const [createOrderDetail, setCreateOrderDetail] = useState({
+        quantity: 1, // Initialize quantity to 1 or desired default
+    });
+
+    // Function to handle quantity increment
+    const incrementQuantity = () => {
+        setCreateOrderDetail((prevState) => ({
+            ...prevState,
+            quantity: prevState.quantity + 1 // Increment the quantity
+        }));
+    };
+
+    // Function to handle quantity decrement
+    const decrementQuantity = () => {
+        setCreateOrderDetail((prevState) => ({
+            ...prevState,
+            quantity: Math.max(1, prevState.quantity - 1) // Decrement the quantity, ensuring it doesn't go below 1
+        }));
+    };
 
     const submitCreateOrder = async (e) => {
         e.preventDefault();
@@ -1014,7 +1030,8 @@ const CheckInOut = () => {
                                                 <hr />
                                             </div>
                                             <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                                <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{(orderDetailList.reduce((total, item) => total + (item.quantity * item.service?.price || 0), 0))}</span></h5>
+                                                <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                                                            }</span></h5>
                                                 <div className="table-responsive">
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>
@@ -1254,18 +1271,25 @@ const CheckInOut = () => {
                                         <div className="col-md-6 mt-2" style={{ textAlign: 'left' }}>
                                             <label>Số lượng</label>
                                             <div className="input-group">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-secondary"
+                                                    onClick={decrementQuantity} // Call decrement function on click
+                                                >
+                                                    -
+                                                </button>
                                                 <input
                                                     name='quantity'
                                                     type="number"
                                                     className="form-control"
                                                     value={createOrderDetail.quantity}
-                                                    onChange={(e) => handleChangeCreateOrderDetail(e)}
-                                                    min="1" // Prevent negative values
-                                                    style={{ height: '50px' }}
+                                                    readOnly // Make it read-only to prevent direct input
+                                                    style={{ height: '50px', textAlign: 'center' }} // Center the text in the input
                                                 />
                                                 <button
                                                     type="button"
                                                     className="btn btn-primary"
+                                                    onClick={incrementQuantity} // Call increment function on click
                                                 >
                                                     +
                                                 </button>

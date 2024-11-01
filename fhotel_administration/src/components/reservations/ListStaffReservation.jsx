@@ -332,6 +332,9 @@ const ListStaffReservation = () => {
                                                 <h5>Thanh Toán</h5>
                                                 <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
                                                 <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
+                                                    {reservation.reservationStatus === "Pending" && (
+                                                        <span className="badge label-table badge-warning">Đang chờ</span>
+                                                    )}
                                                     {reservation.reservationStatus === "CheckIn" && (
                                                         <span className="badge label-table badge-success">Đã check-in</span>
                                                     )}

@@ -363,7 +363,7 @@ const ListHotelVerification = () => {
                         <div className="modal-content">
 
                             <div className="modal-header bg-dark text-light">
-                                <h5 className="modal-title">Thông tin khách sạn</h5>
+                                <h5 className="modal-title">Thông Tin Khách Sạn</h5>
                                 <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalHotelVerification}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -440,7 +440,7 @@ const ListHotelVerification = () => {
                                         <table className="table table-responsive table-hover mt-3">
                                             <tbody>
                                                 <tr>
-                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>tên khách sạn:</th>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
                                                     <td>{hotelVerification.hotel?.hotelName}</td>
                                                 </tr>
                                                 <tr>

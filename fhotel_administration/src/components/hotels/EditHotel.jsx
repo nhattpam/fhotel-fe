@@ -934,6 +934,45 @@ const EditHotel = () => {
         setSelectedImageLarger(null); // Reset the selected image
     };
 
+
+    //DETAIL HOTEL OWNER
+    //detail user modal 
+    const [showModalUser, setShowModalUser] = useState(false);
+
+    const [user, setUser] = useState({
+
+    });
+
+    //list hotels by hotel manager
+    const [hotelList, setHotelList] = useState([]);
+
+    const openUserModal = (userId) => {
+        setShowModalUser(true);
+        if (userId) {
+            userService
+                .getUserById(userId)
+                .then((res) => {
+                    setUser(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            userService
+                .getAllHotelByUserId(userId)
+                .then((res) => {
+                    setHotelList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    const closeModalUser = () => {
+        setShowModalUser(false);
+    };
+
+
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
             const validationErrors = response.data.errors || [];
@@ -967,6 +1006,8 @@ const EditHotel = () => {
             return () => clearTimeout(timer); // Cleanup timer on unmount
         }
     }, [showError]); // Only run effect if showError changes
+
+
 
 
     return (
@@ -1081,7 +1122,12 @@ const EditHotel = () => {
                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
                                         <td>{hotel.email}</td>
                                     </tr>
-
+                                    <tr>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
+                                        <td>
+                                            <Link  onClick={() => openUserModal(hotel.ownerId)}>{hotel.owner?.name}</Link>
+                                        </td>
+                                    </tr>
                                     <tr >
                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Giấy tờ doanh nghiệp:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
@@ -2216,6 +2262,111 @@ const EditHotel = () => {
                 </div>
             )
             }
+            {showModalUser && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', }}>
+                                    <div className="row">
+                                        <div className="col-md-4 d-flex align-items-center flex-column">
+                                            <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
+                                        </div>
+                                        <div className="col-md-8">
+                                            <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
+                                                <tbody>
+                                                    <tr>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h4 style={{ fontWeight: 'bold' }}>Danh Sách Khách Sạn</h4>
+                                            <div className="ibox-body">
+                                                <div className="table-responsive">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><span>STT</span></th>
+                                                                <th><span>Tên khách sạn</span></th>
+                                                                <th><span>Chủ sở hữu</span></th>
+                                                                <th><span>Quận</span></th>
+                                                                <th><span>Thành phố</span></th>
+                                                                <th><span>Trạng thái</span></th>
+                                                                <th><span>Hành động</span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                hotelList.length > 0 && hotelList.map((item, index) => (
+                                                                    <>
+                                                                        <tr>
+                                                                            <td>{index + 1}</td>
+
+                                                                            <td>{item.hotelName}</td>
+                                                                            <td>{item.owner?.name}</td>
+                                                                            <td>{item.district?.districtName}</td>
+                                                                            <td>{item.district?.city?.cityName}</td>
+                                                                            <td>
+                                                                                {item.isActive ? (
+                                                                                    <span className="badge label-table badge-success">Đang hoạt động</span>
+                                                                                ) : (
+                                                                                    <span className="badge label-table badge-danger">Chưa kích hoạt</span>
+                                                                                )}
+                                                                            </td>
+                                                                            <td>
+                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" 
+                                                                                    to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14" /></Link>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </>
+                                                                ))
+                                                            }
+
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div className="modal-footer">
+                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div >
+                </div >
+            )}
             <style>
                 {`
                     .page-item.active .page-link{

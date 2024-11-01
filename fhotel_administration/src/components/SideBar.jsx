@@ -378,7 +378,7 @@ const SideBar = () => {
                             user.role?.roleName === "Admin" && (
                                 <li>
                                     <Link className="active" to={`/admin-home`}><i className="sidebar-item-icon fa fa-th-large" />
-                                        <span className="nav-label">Báo Cáo/Thống Kê</span>
+                                        <span className="nav-label">Thông tin chung</span>
                                     </Link>
                                 </li>
                             )
@@ -387,7 +387,7 @@ const SideBar = () => {
                             user.role?.roleName === "Manager" && (
                                 <li>
                                     <Link className="active" to={`/manager-home`}><i className="sidebar-item-icon fa fa-th-large" />
-                                        <span className="nav-label">Báo Cáo/Thống Kê</span>
+                                        <span className="nav-label">Thông tin chung</span>
                                     </Link>
                                 </li>
                             )
@@ -396,7 +396,7 @@ const SideBar = () => {
                             user.role?.roleName === "Hotel Manager" && (
                                 <li>
                                     <Link className="active" to={`/hotel-manager-home`}><i className="sidebar-item-icon fa fa-th-large" />
-                                        <span className="nav-label">Báo Cáo/Thống Kê</span>
+                                        <span className="nav-label">Thông tin chung</span>
                                     </Link>
                                 </li>
                             )
@@ -405,7 +405,7 @@ const SideBar = () => {
                             user.role?.roleName === "Receptionist" && (
                                 <li>
                                     <Link className="active" to={`/receptionist-home`}><i className="sidebar-item-icon fa fa-th-large" />
-                                        <span className="nav-label">Báo Cáo/Thống Kê</span>
+                                        <span className="nav-label">Thông tin chung</span>
                                     </Link>
                                 </li>
                             )
@@ -428,30 +428,30 @@ const SideBar = () => {
                                     <li>
                                         <a href="javascript:;" onClick={toggleUserMenu}>
                                             <i className="sidebar-item-icon fa fa-user" />
-                                            <span className="nav-label">Tài Khoản</span>
+                                            <span className="nav-label">Tài khoản</span>
                                             <i className={`fa fa-angle-left arrow ${isUserMenuOpen ? '' : 'collapsed'}`} />
                                         </a>
                                         {/* Conditionally apply collapse class based on the state */}
                                         <ul className={`nav-2-level collapse ${isUserMenuOpen ? 'show' : ''}`}>
                                             <li>
-                                                <Link to="/list-hotel-manager">Chủ Khách Sạn</Link>
+                                                <Link to="/list-hotel-manager">Chủ khách sạn</Link>
                                             </li>
                                             <li>
-                                                <Link to="/list-customer">Khách Hàng</Link>
+                                                <Link to="/list-customer">Khách hàng</Link>
                                             </li>
                                             <li>
-                                                <Link to="/list-manager">Quản Lý</Link>
+                                                <Link to="/list-manager">Quản lý</Link>
                                             </li>
                                         </ul>
                                     </li>
                                     <li>
                                         <Link to="/list-hotel"><i className="sidebar-item-icon fa fa-building" />
-                                            <span className="nav-label">Khách Sạn</span>
+                                            <span className="nav-label">Khách sạn</span>
                                         </Link>
                                     </li>
                                     <li>
                                         <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Phòng</span>
+                                            <span className="nav-label">Đặt phòng</span>
                                         </Link>
                                     </li>
                                     <li>
@@ -463,10 +463,10 @@ const SideBar = () => {
                                         {/* Conditionally apply collapse class based on the state */}
                                         <ul className={`nav-2-level collapse ${isPolicyMenuOpen ? 'show' : ''}`}>
                                             <li>
-                                                <Link to="/list-service">Dịch Vụ</Link>
+                                                <Link to="/list-service">Dịch vụ</Link>
                                             </li>
                                             <li>
-                                                <Link onClick={openCreateServiceTypeModal}>Thêm Loại Dịch Vụ</Link>
+                                                <Link onClick={openCreateServiceTypeModal}>Thêm loại dịch vụ</Link>
                                             </li>
                                         </ul>
                                     </li>
@@ -474,7 +474,7 @@ const SideBar = () => {
                                     <li>
                                         <a href="javascript:;" onClick={togglePricingMenu}>
                                             <i className="sidebar-item-icon fa fa-usd" />
-                                            <span className="nav-label">Bảng Giá</span>
+                                            <span className="nav-label">Bảng giá</span>
                                             <i className={`fa fa-angle-left arrow ${isPricingMenuOpen ? '' : 'collapsed'}`} />
                                         </a>
                                         {/* Conditionally apply collapse class based on the state */}
@@ -492,7 +492,7 @@ const SideBar = () => {
                                                         <a className='text-white'
                                                             onClick={openCreateTypePricingModal} // This will trigger the modal for creating a new hotel
                                                         >
-                                                            Tạo Bảng Giá
+                                                            Tạo bảng giá
                                                         </a>
                                                     </li>
                                                 )
@@ -510,46 +510,46 @@ const SideBar = () => {
                                     <li>
                                         <a href="javascript:;" onClick={toggleUserMenu}>
                                             <i className="sidebar-item-icon fa fa-user" />
-                                            <span className="nav-label">Tài Khoản</span>
+                                            <span className="nav-label">Tài khoản</span>
                                             <i className={`fa fa-angle-left arrow ${isUserMenuOpen ? '' : 'collapsed'}`} />
                                         </a>
                                         {/* Conditionally apply collapse class based on the state */}
                                         <ul className={`nav-2-level collapse ${isUserMenuOpen ? 'show' : ''}`}>
                                             <li>
-                                                <Link to="/list-receptionist">Lễ Tân</Link>
+                                                <Link to="/list-receptionist">Lễ tân</Link>
                                             </li>
                                             <li>
-                                                <Link to="/list-room-attendant">Dọn Phòng</Link>
+                                                <Link to="/list-room-attendant">NV dọn phòng</Link>
                                             </li>
                                         </ul>
                                     </li>
                                     <li>
                                         <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Phòng</span>
+                                            <span className="nav-label">Đặt phòng</span>
                                         </Link>
                                     </li>
-                                    
+
                                     <li>
                                         <Link to="/list-owner-hotel"><i className="sidebar-item-icon fa fa-building" />
-                                            <span className="nav-label">Khách Sạn</span>
+                                            <span className="nav-label">Khách sạn</span>
                                         </Link>
                                     </li>
-                                     {/* Room Management Section */}
-                                     {/* <li>
+                                    {/* Room Management Section */}
+                                    {/* <li>
                                         <Link to="/room-management"><i className="sidebar-item-icon fa fa-bed" />
                                             <span className="nav-label">Quản Lý Phòng</span>
                                         </Link>
                                     </li> */}
-                                     <li>
+                                    <li>
                                         <Link to="/list-owner-customer"><i className="sidebar-item-icon fa fa-user" />
-                                            <span className="nav-label">Quản Lý Khách Hàng</span>
+                                            <span className="nav-label">Khách hàng</span>
                                         </Link>
                                     </li>
 
                                     {/* Billing Section */}
                                     <li>
                                         <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
-                                            <span className="nav-label">Hóa Đơn</span>
+                                            <span className="nav-label">Hóa đơn</span>
                                         </Link>
                                     </li>
 
@@ -561,15 +561,19 @@ const SideBar = () => {
                                 <>
                                     <li>
                                         <Link to="/list-hotel-verification"><i className="sidebar-item-icon fa fa-map" />
-                                            <span className="nav-label">Yêu Cầu Xác Minh</span>
+                                            <span className="nav-label">Yêu cầu xác minh</span>
                                         </Link>
                                     </li>
                                     <li>
                                         <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Phòng</span>
+                                            <span className="nav-label">Đặt phòng</span>
                                         </Link>
                                     </li>
-                                    
+                                    <li>
+                                        <Link to="/list-hotel"><i className="sidebar-item-icon fa fa-building" />
+                                            <span className="nav-label">Khách sạn</span>
+                                        </Link>
+                                    </li>
                                     <li>
                                         <Link to="/list-service"><i className="sidebar-item-icon fa fa-coffee" />
                                             <span className="nav-label">Dịch vụ</span>
@@ -578,7 +582,7 @@ const SideBar = () => {
                                     {/* Billing Section */}
                                     <li>
                                         <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
-                                            <span className="nav-label">Hóa Đơn</span>
+                                            <span className="nav-label">Hóa đơn</span>
                                         </Link>
                                     </li>
 
@@ -591,20 +595,20 @@ const SideBar = () => {
                                     {/* Reservation Section */}
                                     <li>
                                         <Link to="/list-staff-reservation"><i className="sidebar-item-icon fa fa-ship" />
-                                            <span className="nav-label">Đặt Phòng</span>
+                                            <span className="nav-label">Đặt phòng</span>
                                         </Link>
                                     </li>
 
                                     {/* Check-In / Check-Out Section */}
                                     <li>
                                         <Link to="/check-in-out"><i className="sidebar-item-icon fa fa-sign-in" />
-                                            <span className="nav-label">Nhận Phòng / Trả Phòng</span>
+                                            <span className="nav-label">Nhận phòng / Trả phòng</span>
                                         </Link>
                                     </li>
 
                                     <li>
                                         <Link to="/list-order"><i className="sidebar-item-icon fa fa-shopping-basket" />
-                                            <span className="nav-label">Đặt Dịch Vụ</span>
+                                            <span className="nav-label">Đặt dịch vụ</span>
                                         </Link>
                                     </li>
 
@@ -616,24 +620,24 @@ const SideBar = () => {
                                     </li> */}
                                     <li>
                                         <Link to="/list-room"><i className="sidebar-item-icon fa fa-bed" />
-                                            <span className="nav-label">Quản Lý Phòng</span>
+                                            <span className="nav-label">Quản lý phòng</span>
                                         </Link>
                                     </li>
 
                                     {/* Customer Management Section */}
                                     <li>
                                         <Link to="/list-staff-customer"><i className="sidebar-item-icon fa fa-user" />
-                                            <span className="nav-label">Quản Lý Khách Hàng</span>
+                                            <span className="nav-label">Khách hàng</span>
                                         </Link>
                                     </li>
 
                                     {/* Billing / Payment Management Section */}
                                     <li>
                                         <Link to="/billing"><i className="sidebar-item-icon fa fa-credit-card" />
-                                            <span className="nav-label">Hóa Đơn / Thanh Toán</span>
+                                            <span className="nav-label">Hóa đơn / Thanh toán</span>
                                         </Link>
                                     </li>
-                                   
+
 
 
                                 </>
@@ -644,7 +648,7 @@ const SideBar = () => {
                                 <>
                                     <li>
                                         <Link to="/room-status"><i className="sidebar-item-icon fa fa-bed" />
-                                            <span className="nav-label">Quản Lý Phòng</span>
+                                            <span className="nav-label">Quản lý phòng</span>
                                         </Link>
                                     </li>
 

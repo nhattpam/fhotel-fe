@@ -19,6 +19,22 @@ const ListHotel = () => {
 
     //LOADING
 
+    const loginUserId = sessionStorage.getItem('userId');
+    const [loginUser, setLoginUser] = useState({
+    });
+    useEffect(() => {
+        if (loginUserId) {
+            userService
+                .getUserById(loginUserId)
+                .then((res) => {
+                    setLoginUser(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, loginUserId);
+
     //call list hotel registration
     const [hotelList, setHotelRegistrationList] = useState([]);
     //assign hotel maanager to hotel
@@ -538,31 +554,38 @@ const ListHotel = () => {
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
                                                                 <i className="fa fa-pencil font-14" onClick={() => openHotelModal(item.hotelId)} /></button>
-                                                            <form
-                                                                id="demo-form"
-                                                                onSubmit={(e) => submitUpdateHotel(e, item.hotelId, updateHotel.isActive)} // Use isActive from the local state
-                                                                className="d-inline"
-                                                            >
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs m-r-5"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Activate"
-                                                                    onClick={() => setUpdateHotel({ ...updateHotel, isActive: true })} // Activate
-                                                                >
-                                                                    <i className="fa fa-check font-14 text-success" />
-                                                                </button>
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs m-r-5"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Deactivate"
-                                                                    onClick={() => setUpdateHotel({ ...updateHotel, isActive: false })} // Deactivate
-                                                                >
-                                                                    <i className="fa fa-times font-14 text-danger" />
-                                                                </button>
+                                                            {
+                                                                loginUser.role?.roleName === "Admin" && (
+                                                                    <>
+                                                                        <form
+                                                                            id="demo-form"
+                                                                            onSubmit={(e) => submitUpdateHotel(e, item.hotelId, updateHotel.isActive)} // Use isActive from the local state
+                                                                            className="d-inline"
+                                                                        >
+                                                                            <button
+                                                                                type="submit"
+                                                                                className="btn btn-default btn-xs m-r-5"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Activate"
+                                                                                onClick={() => setUpdateHotel({ ...updateHotel, isActive: true })} // Activate
+                                                                            >
+                                                                                <i className="fa fa-check font-14 text-success" />
+                                                                            </button>
+                                                                            <button
+                                                                                type="submit"
+                                                                                className="btn btn-default btn-xs m-r-5"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Deactivate"
+                                                                                onClick={() => setUpdateHotel({ ...updateHotel, isActive: false })} // Deactivate
+                                                                            >
+                                                                                <i className="fa fa-times font-14 text-danger" />
+                                                                            </button>
 
-                                                            </form>
+                                                                        </form>
+                                                                    </>
+                                                                )
+                                                            }
+
                                                         </td>
                                                     </tr>
                                                 </>
@@ -748,7 +771,7 @@ const ListHotel = () => {
                                                 </tbody>
                                             </table>
                                             <div>
-                                                <h4 className='text-primary' style={{ textAlign: 'left', fontWeight: 'bold' }}>Lịch Sử Xác Minh</h4>
+                                                <h4 className='text-primary' style={{ textAlign: 'left', fontWeight: 'bold' }}>Lịch sử xác minh</h4>
                                                 <div className="table-responsive" style={{ textAlign: 'left' }}>
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>
@@ -813,15 +836,22 @@ const ListHotel = () => {
                                 </div>
                                 <div className="modal-footer">
                                     {
-                                        hotel.verifyStatus !== "Done" && (
+                                        loginUser.role?.roleName === "Admin" && (
                                             <>
-                                                <button type="button" className="btn btn-danger btn-sm"
-                                                    onClick={() => openCreateHotelVerificationModal(hotel.hotelId)}>Xác Minh Ngay</button>
+                                                {
+                                                    hotel.verifyStatus !== "Done" && (
+                                                        <>
+                                                            <button type="button" className="btn btn-danger btn-sm"
+                                                                onClick={() => openCreateHotelVerificationModal(hotel.hotelId)}>Xác Minh Ngay</button>
+                                                        </>
+                                                    )
+                                                }
+
+                                                <button type="button" className="btn btn-success btn-sm" onClick={handleCreateHotelManager}>Tạo tài khoản</button>
                                             </>
                                         )
                                     }
 
-                                    <button type="button" className="btn btn-success btn-sm" onClick={handleCreateHotelManager}>Tạo tài khoản</button>
                                     <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
                                     <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                                 </div>

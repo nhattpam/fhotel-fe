@@ -560,7 +560,15 @@ const CheckInOut = () => {
         console.log(JSON.stringify(createBill))
         const billResponse = await billService.saveBill(createBill);
         if (billResponse.status === 201) {
-            window.alert("OK");
+            billService
+                .payBill(billResponse.data.billId)
+                .then((res) => {
+                    window.open(res.data, '_blank');
+                    
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     };
     //END CHECKOUT

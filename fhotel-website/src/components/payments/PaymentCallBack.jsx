@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import reservationService from '../../services/reservation.service';
+import billService from '../../services/bill.service';
 
 const PaymentCallBack = () => {
 
@@ -10,6 +11,28 @@ const PaymentCallBack = () => {
     const [reservation, setReservation] = useState({
     });
 
+    const [billList, setBillList] = useState([]);
+    const [reservationList, setReservationList] = useState([]);
+
+    useEffect(() => {
+        reservationService
+            .getAllReservation()
+            .then((res) => {
+                setReservationList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        billService
+            .getAllBill()
+            .then((res) => {
+                setBillList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    }, []);
 
 
 
@@ -17,50 +40,73 @@ const PaymentCallBack = () => {
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const paramsObject = {};
-
+    
         try {
             queryParams.forEach((value, key) => {
                 paramsObject[key] = value;
             });
-
+    
             setPaymentDetails(paramsObject);
-
-            const reservationId = paramsObject.vnp_OrderInfo;
-
-            if (reservationId && paramsObject.vnp_ResponseCode === '00') {
-                // Fetch reservation and update it with payment status
-                reservationService.getReservationById(reservationId)
-                    .then((response) => {
-                        // Assuming response is in the correct format
-                        const updatedReservation = {
-                            ...response.data,
-                            paymentStatus: "Paid"
+    
+            const orderId = paramsObject.vnp_OrderInfo;
+    
+            if (orderId && paramsObject.vnp_ResponseCode === '00') {
+                // Check if the orderId exists in reservations
+                const matchingReservation = reservationList.find(reservation => reservation.reservationId === orderId);
+    
+                if (matchingReservation) {
+                    // Update reservation payment status
+                    const updatedReservation = {
+                        ...matchingReservation,
+                        paymentStatus: "Paid"
+                    };
+    
+                    reservationService.updateReservation(orderId, updatedReservation)
+                        .then((updateResponse) => {
+                            if (updateResponse.status === 200) {
+                                window.alert("THANH TOÁN ĐẶT PHÒNG THÀNH CÔNG");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error while updating reservation:", error);
+                            window.alert("Có lỗi xảy ra trong quá trình cập nhật đặt phòng.");
+                        });
+                } else {
+                    // Check if the orderId exists in bills
+                    const matchingBill = billList.find(bill => bill.billId === orderId);
+                    
+                    console.log(orderId)
+                    if (matchingBill) {
+                        // Update bill payment status
+                        const updatedBill = {
+                            ...matchingBill,
+                            billStatus: "Paid",
+                            lastUpdated: new Date()
                         };
-
-                        console.log(JSON.stringify(updatedReservation))
-                        // Attempt to update the reservation with new payment status
-                        return reservationService.updateReservation(reservationId, updatedReservation);
-                    })
-                    .then((updateReservationResponse) => {
-                        if (updateReservationResponse.status === 200) {
-                            window.alert("THANH TOÁN THÀNH CÔNG");
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error while updating reservation:", error);
-                        window.alert("Có lỗi xảy ra trong quá trình cập nhật.");
-                    });
+    
+                        console.log(JSON.stringify(updatedBill))
+                        billService.updateBill(orderId, updatedBill)
+                            .then((updateResponse) => {
+                                if (updateResponse.status === 200) {
+                                    window.alert("THANH TOÁN HÓA ĐƠN THÀNH CÔNG");
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error while updating bill:", error);
+                                window.alert("Có lỗi xảy ra trong quá trình cập nhật hóa đơn.");
+                            });
+                    } else {
+                        console.error("Order ID not found in reservations or bills:", orderId);
+                        // window.alert("Không tìm thấy ID đặt phòng hoặc hóa đơn.");
+                    }
+                }
             }
         } catch (error) {
             console.error("Error processing payment details:", error);
             window.alert("Có lỗi xảy ra khi xử lý thông tin thanh toán.");
         }
-
-        // Cleanup function if needed
-        return () => {
-            // Perform cleanup tasks if any
-        };
-    }, [location.search]);
+    }, [location.search, reservationList, billList]);
+    
 
 
     return (

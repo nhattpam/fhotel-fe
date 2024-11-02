@@ -117,8 +117,9 @@ const PaymentCallBack = () => {
                                                             //update reservation
                                                             const updatedReservation = {
                                                                 ...response.data,
-                                                                reservationStatus: "CheckOut",
-                                                                actualCheckoutDate: new Date()
+                                                                // reservationStatus: "CheckOut",
+                                                                // actualCheckoutDate: new Date()
+                                                                paymentStatus: "Paid"
                                                             };
                                                             reservationService.updateReservation(matchingBill.reservationId, updatedReservation)
                                                                 .then((updateResponse) => {

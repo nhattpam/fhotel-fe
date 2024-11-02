@@ -367,6 +367,8 @@ const CheckInOut = () => {
 
     const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
     const [orderDetailList, setOrderDetailList] = useState([]);
+    const [billByReservation, setBillByReservation] = useState(null);
+
 
 
     const openCheckOutModal = (reservationId) => {
@@ -396,7 +398,21 @@ const CheckInOut = () => {
             .catch((error) => {
                 console.log(error);
             });
+        reservationService
+            .getBillByReservation(reservationId)
+            .then((res) => {
+                setBillByReservation(res.data);
+                console.log(res.data)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
+
+    // Log `billByReservation` after it's updated
+    useEffect(() => {
+        console.log("Updated billByReservation:", billByReservation);
+    }, [billByReservation]);
 
 
 
@@ -555,22 +571,81 @@ const CheckInOut = () => {
         const createBill = {
             reservationId: reservationId,
             totalAmount: totalAmount
-        }
+        };
 
-        console.log(JSON.stringify(createBill))
-        const billResponse = await billService.saveBill(createBill);
-        if (billResponse.status === 201) {
+        try {
+            console.log("Payload to create bill:", JSON.stringify(createBill));
+            const billResponse = await billService.saveBill(createBill);
+
+            if (billResponse.status === 201) {
+                // Proceed with payment logic
+                try {
+                    const paymentResponse = await billService.payBill(billResponse.data.billId);
+                    window.open(paymentResponse.data, '_blank');
+                    reservationService
+                        .getBillByReservation(reservationId)
+                        .then((res) => {
+                            setBillByReservation(res.data);
+                            console.log(res.data)
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                } catch (paymentError) {
+                    console.error("Payment Error:", paymentError.response.data); // Log payment error details
+                    window.alert("Error processing payment!");
+                }
+            } else {
+                window.alert("Đã tồn tại hóa đơn!"); // Bill already exists
+            }
+        } catch (error) {
+            window.alert("Đã tồn tại hóa đơn!"); // Or another error message based on context
+        }
+    };
+
+    const handlePayBill = async (billId, reservationId) => {
+
+        try {
             billService
-                .payBill(billResponse.data.billId)
+                .payBill(billId)
                 .then((res) => {
                     window.open(res.data, '_blank');
-                    
+
                 })
                 .catch((error) => {
                     console.log(error);
                 });
+
+        } catch (error) {
+            handleResponseError(error.response);
         }
     };
+
+    const handleDeleteBill = async (billId, reservationId) => {
+
+        try {
+            const billResponse = await billService.deleteBillById(billId);
+            if (billResponse.status === 200) {
+                reservationService
+                    .getBillByReservation(reservationId)
+                    .then((res) => {
+                        setBillByReservation(res.data);
+                        console.log(res.data)
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                window.alert("Không thể xóa!")
+            }
+
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+
+
     //END CHECKOUT
 
 
@@ -1177,7 +1252,80 @@ const CheckInOut = () => {
                                                     </h5>
                                                 </div>
 
+                                            </div>
+                                            {/* Divider */}
+                                            <div className="col-md-12">
+                                                <hr />
+                                            </div>
+                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                                <h5>
+                                                    <i className="fa fa-file-text text-success"></i>  Hóa đơn:
+                                                </h5>
+                                                <div className="table-responsive">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><span>STT</span></th>
+                                                                <th><span>Ngày tạo</span></th>
+                                                                <th><span>Tổng số tiền</span></th>
+                                                                <th><span>Trạng thái</span></th>
+                                                                <th><span>Hành động</span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                billByReservation && (
+                                                                    <tr>
+                                                                        <td>1</td>
+                                                                        <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
+                                                                        <td>{billByReservation.totalAmount}</td>
+                                                                        {
+                                                                            billByReservation.billStatus === "Pending" && (
+                                                                                <>
+                                                                                    <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            billByReservation.billStatus === "Paid" && (
+                                                                                <>
+                                                                                    <td><span className="badge label-table badge-success">Đã thanh toán</span></td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        <td>
 
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn btn-default btn-xs m-r-5"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Activate"
+                                                                                onClick={() => handlePayBill(billByReservation.billId)} // Activate
+                                                                            >
+                                                                                <i className="fa fa-credit-card-alt text-success" aria-hidden="true"></i>
+                                                                            </button>
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn btn-default btn-xs m-r-5"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Activate"
+                                                                                onClick={() => handleDeleteBill(billByReservation.billId, billByReservation.reservationId)}                                                                            >
+                                                                                <i className="fa fa-times text-danger" aria-hidden="true"></i>
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                    {
+                                                        !billByReservation && (
+                                                            <>
+                                                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
                                             </div>
 
                                         </div>
@@ -1186,11 +1334,17 @@ const CheckInOut = () => {
 
 
                                 <div className="modal-footer">
+
                                     {loginUser.role?.roleName === "Receptionist" && (
-                                        <button type="button" className="btn btn-primary" onClick={() =>
-                                            handleCheckOut(reservation.reservationId, totalAmount)}>Trả Phòng</button>
+                                        <button type="button" className="btn btn-danger" onClick={() =>
+                                            handleCheckOut(reservation.reservationId, totalAmount)}><i class="fa fa-money" aria-hidden="true"></i>
+                                            Thanh Toán</button>
                                     )}
-                                    <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button>
+                                    {loginUser.role?.roleName === "Receptionist" && (
+                                        <button type="button" className="btn btn-primary"><i class="fa fa-sign-out" aria-hidden="true"></i>
+                                            Trả Phòng</button>
+                                    )}
+                                    {/* <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button> */}
                                 </div>
                             </form>
                         </div>

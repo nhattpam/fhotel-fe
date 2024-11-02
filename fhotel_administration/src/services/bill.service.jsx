@@ -52,6 +52,15 @@ class BillService {
     });
   }
 
+  deleteBillById(id) {
+    return axios.delete(API_URL + "/bills/" + id, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
+
+
 
 }
 export default new BillService;

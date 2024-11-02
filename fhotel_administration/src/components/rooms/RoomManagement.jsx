@@ -138,7 +138,7 @@ const RoomManagement = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Loại Phòng</div>
                             <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
+                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={roomTypeSearchTerm}
                                     onChange={handleRoomTypeSearch} />
                             </div>

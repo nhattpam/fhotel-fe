@@ -389,7 +389,7 @@ const ListTypePricing = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Bảng Giá Cho Loại Phòng {type.typeName}</div>
                             <div className="form-group d-flex align-items-center">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm Kiếm" className="form-control form-control-sm"
+                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
                                     autoComplete="on" value={typePricingSearchTerm}
                                     onChange={handleTypePricingSearch} />
                                 <button

@@ -13,6 +13,7 @@ import roomService from '../../services/room.service';
 import serviceTypeService from '../../services/service-type.service';
 import orderService from '../../services/order.service';
 import orderDetailService from '../../services/order-detail.service';
+import billService from '../../services/bill.service';
 
 const CheckInOut = () => {
     //get user information
@@ -435,6 +436,7 @@ const CheckInOut = () => {
 
     const openModalCreateOrder = (reservationId) => {
         setShowModalCreateOrder(true);
+        setShowCheckOutModal(false);
         if (reservationId) {
             serviceTypeService
                 .getAllServiceType()
@@ -478,6 +480,7 @@ const CheckInOut = () => {
 
     const closeModalCreateOrder = () => {
         setShowModalCreateOrder(false);
+        setShowCheckOutModal(true);
         setServiceList([]);
     };
 
@@ -529,6 +532,8 @@ const CheckInOut = () => {
                             .catch((error) => {
                                 console.log(error);
                             });
+                        setShowCheckOutModal(true);
+                        setShowModalCreateOrder(false);
                     }
                 } else {
                     handleResponseError(orderResponse);
@@ -541,6 +546,24 @@ const CheckInOut = () => {
     };
 
     //END CREATE ORDER
+
+    //START CHECKOUT
+    const totalAmount = orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+        + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0);
+
+    const handleCheckOut = async (reservationId, totalAmount) => {
+        const createBill = {
+            reservationId: reservationId,
+            totalAmount: totalAmount
+        }
+
+        console.log(JSON.stringify(createBill))
+        const billResponse = await billService.saveBill(createBill);
+        if (billResponse.status === 201) {
+            window.alert("OK");
+        }
+    };
+    //END CHECKOUT
 
 
     /// notification
@@ -602,7 +625,7 @@ const CheckInOut = () => {
                 <div className="page-content">
                     <div className="card shadow-lg border-0 rounded">
                         <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                            <h4 className="mb-0">Tìm Kiếm Đặt Phòng</h4>
+                            <h4 className="mb-0">Tìm kiếm Đặt Phòng</h4>
                         </div>
 
                         <div className="card-body p-4" style={{ textAlign: 'left' }}>
@@ -696,6 +719,16 @@ const CheckInOut = () => {
                                                             <button disabled className="btn btn-success " onClick={() =>
                                                                 openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
                                                                 <i className="la la-sign-out" /> Nhận phòng
+                                                            </button>
+                                                        )}
+                                                        {reservation.reservationStatus === "CheckOut" && (
+                                                            <button disabled className="btn btn-success ">
+                                                                <i className="la la-sign-out" /> Nhận phòng
+                                                            </button>
+                                                        )}
+                                                        {reservation.reservationStatus === "CheckOut" && (
+                                                            <button disabled className="btn btn-danger "  >
+                                                                <i className="la la-sign-out" /> Trả phòng
                                                             </button>
                                                         )}
 
@@ -952,7 +985,7 @@ const CheckInOut = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form onSubmit={handleCreateRoomStayHistory}>
+                            <form >
                                 <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Thanh Toán Phòng {reservation.roomType?.type?.typeName}</h5>
                                     <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeCheckOutModal}>
@@ -1143,9 +1176,11 @@ const CheckInOut = () => {
                                     </div>
                                 </div>
 
+
                                 <div className="modal-footer">
                                     {loginUser.role?.roleName === "Receptionist" && (
-                                        <button type="submit" className="btn btn-primary">Trả Phòng</button>
+                                        <button type="button" className="btn btn-primary" onClick={() =>
+                                            handleCheckOut(reservation.reservationId, totalAmount)}>Trả Phòng</button>
                                     )}
                                     <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button>
                                 </div>

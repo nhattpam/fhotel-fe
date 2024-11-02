@@ -351,7 +351,7 @@ const ListManager = () => {
                                 <input
                                     id="demo-foo-search"
                                     type="text"
-                                    placeholder="Tìm Kiếm"
+                                    placeholder="Tìm kiếm"
                                     className="form-control form-control-sm"
                                     autoComplete="on"
                                     value={userSearchTerm}

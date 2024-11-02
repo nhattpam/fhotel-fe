@@ -15,8 +15,6 @@ import ManagerHome from './components/home/ManagerHome';
 import ReceptionistHome from './components/home/ReceptionistHome';
 import RoomAttendantHome from './components/home/RoomAttendantHome';
 import ListService from './components/services/ListService';
-import ListRefundPolicy from './components/policies/ListRefundPolicy';
-import ListLateCheckOutPolicy from './components/policies/ListLateCheckOutPolicy';
 import ListTypePricing from './components/type-pricings/ListTypePricing';
 import ListManager from './components/users/ListManager';
 import ListStaffReservation from './components/reservations/ListStaffReservation';
@@ -56,9 +54,7 @@ function App() {
         <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
         {/* service */}
         <Route path="/list-service" element={<ListService />} />
-        {/* policy */}
-        <Route path="/list-refund-policy" element={<ListRefundPolicy />} />
-        <Route path="/list-late-check-out-policy" element={<ListLateCheckOutPolicy />} />
+      
         {/* type-pricing */}
         <Route path="/list-type-pricing/:typeId" element={<ListTypePricing />} />
         {/* reservation */}

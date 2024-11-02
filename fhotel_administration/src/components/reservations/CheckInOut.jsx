@@ -1001,7 +1001,21 @@ const CheckInOut = () => {
                                             </div>
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thanh Toán</h5>
-                                                <p className="mb-1"><strong className='mr-2'>Mã đặt chỗ:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
+                                                    {reservation.reservationStatus === "Pending" && (
+                                                        <span className="badge label-table badge-warning">Đang chờ</span>
+                                                    )}
+                                                    {reservation.reservationStatus === "CheckIn" && (
+                                                        <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                                    )}
+                                                    {reservation.reservationStatus === "CheckOut" && (
+                                                        <span className="badge label-table badge-danger">Đã trả phòng</span>
+                                                    )}
+                                                    {reservation.reservationStatus === "Cancelled" && (
+                                                        <span className="badge label-table badge-danger">Đã hủy</span>
+                                                    )}
+                                                </p>
                                                 <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
                                                     {reservation.paymentStatus === "Paid" && (
                                                         <span className="badge label-table badge-success">Đã thanh toán</span>
@@ -1031,7 +1045,7 @@ const CheckInOut = () => {
                                             </div>
                                             <div className="col-md-12" style={{ textAlign: 'left' }}>
                                                 <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                                            }</span></h5>
+                                                }</span></h5>
                                                 <div className="table-responsive">
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
                                                         <thead>

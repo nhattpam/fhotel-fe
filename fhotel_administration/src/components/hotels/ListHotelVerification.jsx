@@ -412,7 +412,7 @@ const ListHotelVerification = () => {
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Giấy tờ doanh nghiệp:</th>
+                                                    <th>Giấy tờ khách sạn:</th>
                                                     <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                         {
                                                             hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (

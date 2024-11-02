@@ -524,7 +524,7 @@ const SideBar = () => {
                                         </ul>
                                     </li>
                                     <li>
-                                        <Link to="/list-reservation"><i className="sidebar-item-icon fa fa-ship" />
+                                        <Link to="/list-owner-reservation"><i className="sidebar-item-icon fa fa-ship" />
                                             <span className="nav-label">Đặt phòng</span>
                                         </Link>
                                     </li>

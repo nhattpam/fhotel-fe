@@ -59,6 +59,7 @@ const EditHotel = () => {
     const [hotelImageList, setHotelImageList] = useState([]);
     const [roomPrices, setRoomPrices] = useState({}); // New state to store room prices
     const [documentList, setDocumentList] = useState([]);
+    const [feedbackList, setFeedbackList] = useState([]);
 
     useEffect(() => {
         hotelService
@@ -138,6 +139,14 @@ const EditHotel = () => {
             .getAllDocument()
             .then((res) => {
                 setDocumentList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        hotelService
+            .getAllFeedbackByHotelId(hotelId)
+            .then((res) => {
+                setFeedbackList(res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -1125,11 +1134,11 @@ const EditHotel = () => {
                                     <tr>
                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
                                         <td>
-                                            <Link  onClick={() => openUserModal(hotel.ownerId)}>{hotel.owner?.name}</Link>
+                                            <Link onClick={() => openUserModal(hotel.ownerId)}>{hotel.owner?.name}</Link>
                                         </td>
                                     </tr>
                                     <tr >
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Giấy tờ doanh nghiệp:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Giấy tờ khách sạn:</th>
                                         <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                             {
                                                 hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
@@ -1213,7 +1222,7 @@ const EditHotel = () => {
                                             {hotel.isActive ? (
                                                 <span className="badge label-table badge-success">Đang hoạt động</span>
                                             ) : (
-                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                             )}</td>
                                     </tr>
                                     <tr>
@@ -1318,7 +1327,7 @@ const EditHotel = () => {
                             <hr />
 
                             <div className="form-group d-flex align-items-center justify-content-between">
-                                <h4 style={{ fontWeight: 'bold' }}>Các Loại Phòng Của Khách Sạn</h4>
+                                <h4 style={{ fontWeight: 'bold' }}>Các loại phòng của khách sạn</h4>
                                 {
                                     loginUser.role?.roleName === "Hotel Manager" && (
                                         <>
@@ -1326,7 +1335,7 @@ const EditHotel = () => {
                                                 className="btn btn-primary ml-auto btn-sm"
                                                 onClick={openCreateRoomTypeModal}
                                             >
-                                                Tạo Loại Phòng
+                                                Tạo loại phòng
                                             </button>
                                         </>
                                     )
@@ -1340,7 +1349,7 @@ const EditHotel = () => {
                                         <tr>
                                             <th><span>STT</span></th>
                                             <th data-hide="phone"><span>Loại phòng</span></th>
-                                            <th><span>DIện tích phòng</span></th>
+                                            <th><span>Diện tích phòng</span></th>
                                             <th><span>Giá hôm nay</span></th> {/* Add a new column for the price */}
                                             <th data-toggle="true"><span>Trạng thái</span></th>
                                             <th><span>Hành động</span></th>
@@ -1422,7 +1431,7 @@ const EditHotel = () => {
 
                             <hr />
                             <div className="form-group d-flex align-items-center justify-content-between">
-                                <h4 style={{ fontWeight: 'bold' }}>Nhân Viên Của Khách Sạn</h4>
+                                <h4 style={{ fontWeight: 'bold' }}>Nhân viên của khách sạn</h4>
                             </div>
 
 
@@ -1504,6 +1513,47 @@ const EditHotel = () => {
                                     )
                                 }
                             </div> {/* end .table-responsive */}
+                            <hr />
+                            <div className="form-group d-flex align-items-center justify-content-between">
+                                <h4 style={{ fontWeight: 'bold' }}>Đánh giá gần đây</h4>
+                            </div>
+
+                            <div className="table-responsive">
+                                <table id="demo-foo-filtering" className="table table-borderless table-hover table-wrap table-centered mb-0" data-page-size={7}>
+                                    <thead className="thead-light">
+                                        <tr>
+                                            <th><span>STT</span></th>
+                                            <th data-hide="phone"><span>Khách hàng</span></th>
+                                            <th><span>Đánh giá</span></th>
+                                            <th><span>Sao</span></th> {/* Add a new column for the price */}
+                                            <th><span>Loại phòng</span></th> {/* Add a new column for the price */}
+                                            <th><span>Ngày đánh giá</span></th> {/* Add a new column for the price */}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            feedbackList.length > 0 && feedbackList.map((item, index) => (
+                                                <tr key={item.roomTypeId}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{item.reservation?.customer?.name}</td>
+                                                    <td>{item.comment}</td>
+                                                    <td>{item.hotelRating} <i className="fa fa-star text-warning" aria-hidden="true"></i>
+                                                    </td>
+                                                    <td>{item.reservation?.roomType?.type?.typeName}</td>
+                                                    <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                                {
+                                    roomTypeList.length === 0 && (
+                                        <>
+                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                        </>
+                                    )
+                                }
+                            </div> {/* end .table-responsive */}
 
                         </div>
 
@@ -1574,7 +1624,7 @@ const EditHotel = () => {
                                                         <div className="form-group mt-3">
                                                             <input type="file" onChange={handleFileChange} />
                                                             <button type="button" className="btn btn-success mt-2 btn-sm" onClick={handleUploadAndPost}>
-                                                                + Upload
+                                                                + Tải lên
                                                             </button>
                                                         </div>
                                                     </>
@@ -1786,7 +1836,7 @@ const EditHotel = () => {
                                         <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Loại Phòng * :</label>
+                                                <label htmlFor="hotelName">Loại phòng * :</label>
                                                 <select
                                                     name="typeId"
                                                     className="form-control"
@@ -1794,7 +1844,7 @@ const EditHotel = () => {
                                                     onChange={(e) => handleChange(e)}
                                                     required
                                                 >
-                                                    <option value="">Chọn Loại</option>
+                                                    <option value="">Chọn loại</option>
                                                     {typeList.map((type) => (
                                                         <option key={type.typeId} value={type.typeId}>
                                                             {type.typeName}
@@ -1804,7 +1854,7 @@ const EditHotel = () => {
                                             </div>
 
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="size">Diện Tích * :</label>
+                                                <label htmlFor="size">Diện tích * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -1831,7 +1881,7 @@ const EditHotel = () => {
 
                                         <div className="form-row">
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="maxOccupancy">Số Lượng Phòng * :</label>
+                                                <label htmlFor="maxOccupancy">Số lượng phòng * :</label>
                                                 <select
                                                     className="form-control"
                                                     id="totalRooms"
@@ -1852,7 +1902,7 @@ const EditHotel = () => {
                                             </div>
 
                                             <div className="form-group col-md-12">
-                                                <label htmlFor="description">Mô Tả * :</label>
+                                                <label htmlFor="description">Mô tả * :</label>
                                                 <ReactQuill
                                                     value={createRoomType.description}
                                                     onChange={handleCreateRoomTypeDescriptionChange}
@@ -1873,7 +1923,7 @@ const EditHotel = () => {
                                                 />
                                             </div>
                                             <div className="form-group col-md-12">
-                                                <label htmlFor="">Thêm Hình Ảnh * :</label>
+                                                <label htmlFor="">Thêm hình ảnh * :</label>
 
                                                 {/* Container for images */}
                                                 <Dropzone
@@ -1887,7 +1937,7 @@ const EditHotel = () => {
                                                             <input {...getInputProps()} />
                                                             <div className="dz-message needsclick">
                                                                 <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                <h3>Chọn File.</h3>
+                                                                <h5>Chọn file.</h5>
                                                             </div>
                                                             {imagePreviewsRoomImage.length > 0 && (
                                                                 <div className="image-previews">
@@ -1915,11 +1965,11 @@ const EditHotel = () => {
 
                                             </div>
                                             <div className="form-group col-md-12">
-                                                <label htmlFor="">Thêm Tiện Nghi * :</label>
+                                                <label htmlFor="">Thêm tiện ích * :</label>
                                                 <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                                                     <i className="fa fa-check-square" aria-hidden="true"
                                                         onClick={handleSelectAllFacility}>
-                                                        {selectedFacilities.length === facilityList.length ? ' Bỏ Chọn Tất Cả' : ' Chọn Tất Cả'}
+                                                        {selectedFacilities.length === facilityList.length ? ' Bỏ chọn tất cả' : ' Chọn tất cả'}
                                                     </i>
                                                     {facilityList.length > 0 && facilityList.map((item, index) => (
                                                         <>
@@ -2081,7 +2131,7 @@ const EditHotel = () => {
                             <form>
 
                                 <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Upload Hình Ảnh Khách Sạn</h5>
+                                    <h5 className="modal-title">Thêm Hình Ảnh Khách Sạn</h5>
                                     <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelImage}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -2132,7 +2182,7 @@ const EditHotel = () => {
                                                         <div className="form-group mt-3">
                                                             <input type="file" onChange={handleFileChange3} />
                                                             <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost3}>
-                                                                + Upload
+                                                                + Tải lên
                                                             </button>
                                                         </div>
                                                     </>
@@ -2304,7 +2354,7 @@ const EditHotel = () => {
 
 
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h4 style={{ fontWeight: 'bold' }}>Danh Sách Khách Sạn</h4>
+                                            <h4 style={{ fontWeight: 'bold' }}>Danh sách khách sạn</h4>
                                             <div className="ibox-body">
                                                 <div className="table-responsive">
                                                     <table className="table table-borderless table-hover table-wrap table-centered">
@@ -2338,7 +2388,7 @@ const EditHotel = () => {
                                                                                 )}
                                                                             </td>
                                                                             <td>
-                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" 
+                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip"
                                                                                     to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14" /></Link>
                                                                             </td>
                                                                         </tr>

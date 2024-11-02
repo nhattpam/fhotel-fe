@@ -108,5 +108,20 @@ class HotelService {
     });
   }
 
+  getAllFeedbackByHotelId(id) {
+    return axios.get(API_URL + `/hotels/${id}/feedbacks`, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
+
+  getAllReservationByHotelId(id) {
+    return axios.get(API_URL + `/hotels/${id}/reservations`, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
 }
 export default new HotelService;

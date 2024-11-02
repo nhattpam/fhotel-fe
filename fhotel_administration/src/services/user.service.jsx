@@ -140,5 +140,14 @@ class UserService {
         });
       }
 
+      getAllReservationByOwner(id) {
+        return axios.get(API_URL + `/users/${id}/owner-reservations`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+
 }
 export default new UserService;

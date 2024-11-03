@@ -173,7 +173,7 @@ const Header = () => {
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
             const validationErrors = response.data.errors || [];
-            setError({ general: response.data.message, validation: validationErrors });
+            setError({ validation: validationErrors });
         } else {
             setError({ general: "An unexpected error occurred. Please try again." });
         }
@@ -235,7 +235,7 @@ const Header = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title" style={{fontWeight: 'bold'}}>Đăng Ký Khách Sạn</h5>
+                                    <h5 className="modal-title" style={{ fontWeight: 'bold' }}>Đăng Ký Khách Sạn</h5>
                                     <button type="button" className="close" onClick={() => setShowCreateHotelRegistrationModal(false)}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -322,7 +322,7 @@ const Header = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Chọn File.</h3>
+                                                                    <h5>Tải File.</h5>
                                                                 </div>
                                                                 {imagePreviewsHotelImage.length > 0 && (
                                                                     <div className="image-previews">
@@ -332,8 +332,8 @@ const Header = () => {
                                                                                 src={preview}
                                                                                 alt={`Preview ${index}`}
                                                                                 style={{
-                                                                                    maxWidth: "60%",
-                                                                                    maxHeight: "50px",
+                                                                                    maxWidth: "70%",
+                                                                                    maxHeight: "80px",
                                                                                     marginTop: "10px",
                                                                                     cursor: "pointer",
                                                                                     border: selectedImageIndexHotelImage === index ? '2px solid blue' : 'none' // Highlight selected image
@@ -361,7 +361,7 @@ const Header = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Chọn File.</h3>
+                                                                    <h5>Tải File.</h5>
                                                                 </div>
                                                                 {imagePreviewsHotelDocument.length > 0 && (
                                                                     <div className="image-previews">
@@ -371,8 +371,8 @@ const Header = () => {
                                                                                 src={preview}
                                                                                 alt={`Preview ${index}`}
                                                                                 style={{
-                                                                                    maxWidth: "60%",
-                                                                                    maxHeight: "50px",
+                                                                                    maxWidth: "70%",
+                                                                                    maxHeight: "100px",
                                                                                     marginTop: "10px",
                                                                                     cursor: "pointer",
                                                                                     border: selectedImageIndexHotelDocument === index ? '2px solid blue' : 'none' // Highlight selected image
@@ -391,7 +391,7 @@ const Header = () => {
                                             <div className="col-md-7">
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Tên Khách Sạn</label>
+                                                        <label>Tên khách sạn</label>
                                                         <input
                                                             type="text"
                                                             name="hotelName"
@@ -402,7 +402,7 @@ const Header = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Số Điện Thoại</label>
+                                                        <label>Số điện thoại</label>
                                                         <input
                                                             type="number"
                                                             name="phone"
@@ -426,7 +426,7 @@ const Header = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Thành Phố</label>
+                                                        <label>Thành phố</label>
                                                         <select
                                                             className="form-control"
                                                             onChange={(e) => {
@@ -434,7 +434,7 @@ const Header = () => {
                                                             }}
                                                             required
                                                         >
-                                                            <option value="">Chọn Thành Phố</option>
+                                                            <option value="">Chọn thành phố</option>
                                                             {cityList.map((city) => (
                                                                 <option key={city.cityId} value={city.cityId}>
                                                                     {city.cityName}
@@ -462,7 +462,7 @@ const Header = () => {
                                                         </select>
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Địa Chỉ</label>
+                                                        <label>Địa chỉ</label>
                                                         <textarea
                                                             name="address"
                                                             className="form-control"
@@ -476,7 +476,7 @@ const Header = () => {
 
 
                                                 <div className="form-group">
-                                                    <label>Mô Tả</label>
+                                                    <label>Mô tả</label>
                                                     <ReactQuill
                                                         theme="snow"
                                                         value={createHotel.description}
@@ -500,8 +500,8 @@ const Header = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
                                     <button type="submit" className="btn btn-primary btn-sm">Gửi</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
                                 </div>
                             </div>
 

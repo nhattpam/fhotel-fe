@@ -567,7 +567,7 @@ const CheckInOut = () => {
     const totalAmount = orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
         + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0);
 
-    const handleCheckOut = async (reservationId, totalAmount) => {
+    const handlePay = async (reservationId, totalAmount) => {
         const createBill = {
             reservationId: reservationId,
             totalAmount: totalAmount
@@ -639,6 +639,36 @@ const CheckInOut = () => {
                 window.alert("Không thể xóa!")
             }
 
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+
+    const [updateReservationStatus, setUpdateReservationStatus] = useState({
+
+    });
+
+    const submitUpdateReservationStatus = async (e, reservationId, reservationStatus) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the user data
+            const res = await reservationService.getReservationById(reservationId);
+            const reservationData = res.data;
+
+            // Update the local state with the fetched data and new isActive flag
+            setUpdateReservationStatus({ ...reservationData, reservationStatus });
+            console.log(updateReservationStatus)
+            // Make the update request
+            const updateRes = await reservationService.updateReservation(reservationId, { ...reservationData, reservationStatus });
+            console.log(updateRes)
+            if (updateRes.status === 200) {
+                setSuccess({ general: "Trả phòng thành công!" });
+                setShowSuccess(true); // Show error
+            } else {
+                handleResponseError(error.response);
+            }
         } catch (error) {
             handleResponseError(error.response);
         }
@@ -1068,285 +1098,331 @@ const CheckInOut = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form >
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thanh Toán Phòng {reservation.roomType?.type?.typeName}</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeCheckOutModal}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Thanh Toán Phòng {reservation.roomType?.type?.typeName}</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeCheckOutModal}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                {showSuccess && Object.entries(success).length > 0 && (
+                                    <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                        {Object.entries(success).map(([key, message]) => (
+                                            <p key={key} style={{ margin: '0' }}>{message}</p>
+                                        ))}
+                                    </div>
+                                )}
+                                {showError && Object.entries(error).length > 0 && (
+                                    <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                        {Object.entries(error).map(([key, message]) => (
+                                            <p key={key} style={{ margin: '0' }}>{message}</p>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
 
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="container-fluid">
-                                        {/* Reservation Information */}
-                                        <div className='row'>
-                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
-                                                <h5>Thông Tin Khách Hàng</h5>
-                                                <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
-                                                <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
-                                                <p className="mb-1"><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                                <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
-                                            </div>
-                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
-                                                <h5>Thông Tin Phòng</h5>
-                                                <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
-                                                <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
-                                                <div className="room-list">
-                                                    {roomStayHistoryList.map((roomStayHistory) => (
-                                                        <div
-                                                            key={roomStayHistory.room?.roomNumber}
-                                                            className="room-box"
-                                                            onClick={() => openRoomModal(roomStayHistory?.room.roomId)}
-                                                            style={{
-                                                                backgroundColor: 'grey',
-                                                                position: 'relative',
-                                                                textAlign: 'center',
-                                                                flex: '0 1 auto',
-                                                                margin: '5px'
-                                                            }}
-                                                        >
-                                                            <p>{roomStayHistory.room?.roomNumber}</p>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="container-fluid">
+                                    {/* Reservation Information */}
+                                    <div className='row'>
+                                        <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                            <h5>Thông Tin Khách Hàng</h5>
+                                            <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                            <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
+                                        </div>
+                                        <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                            <h5>Thông Tin Phòng</h5>
+                                            <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
+                                            <div className="room-list">
+                                                {roomStayHistoryList.map((roomStayHistory) => (
+                                                    <div
+                                                        key={roomStayHistory.room?.roomNumber}
+                                                        className="room-box"
+                                                        onClick={() => openRoomModal(roomStayHistory?.room.roomId)}
+                                                        style={{
+                                                            backgroundColor: 'grey',
+                                                            position: 'relative',
+                                                            textAlign: 'center',
+                                                            flex: '0 1 auto',
+                                                            margin: '5px'
+                                                        }}
+                                                    >
+                                                        <p>{roomStayHistory.room?.roomNumber}</p>
 
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                {roomStayHistoryList.length === 0 && (
-                                                    <>
-                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </>)}
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className="col-md-4" style={{ textAlign: 'left' }}>
-                                                <h5>Thanh Toán</h5>
-                                                <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
-                                                <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
-                                                    {reservation.reservationStatus === "Pending" && (
-                                                        <span className="badge label-table badge-warning">Đang chờ</span>
-                                                    )}
-                                                    {reservation.reservationStatus === "CheckIn" && (
-                                                        <span className="badge label-table badge-success">Đã nhận phòng</span>
-                                                    )}
-                                                    {reservation.reservationStatus === "CheckOut" && (
-                                                        <span className="badge label-table badge-danger">Đã trả phòng</span>
-                                                    )}
-                                                    {reservation.reservationStatus === "Cancelled" && (
-                                                        <span className="badge label-table badge-danger">Đã hủy</span>
-                                                    )}
-                                                </p>
-                                                <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
-                                                    {reservation.paymentStatus === "Paid" && (
-                                                        <span className="badge label-table badge-success">Đã thanh toán</span>
-                                                    )}
-                                                    {reservation.paymentStatus === "Not Paid" && (
-                                                        <span className="badge label-table badge-danger">Chưa thanh toán</span>
-                                                    )}
-                                                </p>
+                                            {roomStayHistoryList.length === 0 && (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>)}
+                                        </div>
+                                        <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                            <h5>Thanh Toán</h5>
+                                            <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
+                                                {reservation.reservationStatus === "Pending" && (
+                                                    <span className="badge label-table badge-warning">Đang chờ</span>
+                                                )}
+                                                {reservation.reservationStatus === "CheckIn" && (
+                                                    <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                                )}
+                                                {reservation.reservationStatus === "CheckOut" && (
+                                                    <span className="badge label-table badge-danger">Đã trả phòng</span>
+                                                )}
+                                                {reservation.reservationStatus === "Cancelled" && (
+                                                    <span className="badge label-table badge-danger">Đã hủy</span>
+                                                )}
+                                            </p>
+                                            <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
                                                 {reservation.paymentStatus === "Paid" && (
-                                                    <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                                                    <span className="badge label-table badge-success">Đã thanh toán</span>
                                                 )}
                                                 {reservation.paymentStatus === "Not Paid" && (
-                                                    <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                                                    <span className="badge label-table badge-danger">Chưa thanh toán</span>
                                                 )}
+                                            </p>
+                                            {reservation.paymentStatus === "Paid" && (
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                                            )}
+                                            {reservation.paymentStatus === "Not Paid" && (
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                                            )}
 
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="col-md-12">
+                                            <hr />
+                                        </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h5><i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng: <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}</span></h5>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="col-md-12">
+                                            <hr />
+                                        </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                                            }</span></h5>
+                                            <div className="table-responsive">
+                                                <table className="table table-borderless table-hover table-wrap table-centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>STT</span></th>
+                                                            <th><span>Hình ảnh</span></th>
+                                                            <th><span>Tên dịch vụ</span></th>
+                                                            <th><span>Số lượng</span></th>
+                                                            <th><span>Loại dịch vụ</span></th>
+                                                            <th><span>Giá (VND)</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                                                <tr key={index}>
+                                                                    <td>{index + 1}</td>
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>
+                                                                                    <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                                                                </td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>
+                                                                                    <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                                </td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>Muộn {item.service?.serviceName} ngày</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>{item.service?.serviceName}</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    <td>{item.quantity}</td>
+                                                                    <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>{item.order?.totalAmount}</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>{item.order?.totalAmount}</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                </tr>
+                                                            ))
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                {
+                                                    orderDetailList.length === 0 && (
+                                                        <>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                        </>
+                                                    )
+                                                }
                                             </div>
-                                            {/* Divider */}
-                                            <div className="col-md-12">
-                                                <hr />
-                                            </div>
-                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                                <h5><i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng: <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}</span></h5>
-                                            </div>
-                                            {/* Divider */}
-                                            <div className="col-md-12">
-                                                <hr />
-                                            </div>
-                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                                <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                                }</span></h5>
-                                                <div className="table-responsive">
-                                                    <table className="table table-borderless table-hover table-wrap table-centered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th><span>STT</span></th>
-                                                                <th><span>Hình ảnh</span></th>
-                                                                <th><span>Tên dịch vụ</span></th>
-                                                                <th><span>Số lượng</span></th>
-                                                                <th><span>Loại dịch vụ</span></th>
-                                                                <th><span>Giá (VND)</span></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                orderDetailList.length > 0 && orderDetailList.map((item, index) => (
-                                                                    <tr key={index}>
-                                                                        <td>{index + 1}</td>
-                                                                        {
-                                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
-                                                                                <>
-                                                                                    <td>
-                                                                                        <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
-                                                                                    </td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                        {
-                                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
-                                                                                <>
-                                                                                    <td>
-                                                                                        <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
-                                                                                    </td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                        {
-                                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
-                                                                                <>
-                                                                                    <td>Muộn {item.service?.serviceName} ngày</td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                        {
-                                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
-                                                                                <>
-                                                                                    <td>{item.service?.serviceName}</td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                        <td>{item.quantity}</td>
-                                                                        <td>{item.service?.serviceType?.serviceTypeName}</td>
-                                                                        {
-                                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
-                                                                                <>
-                                                                                    <td>{item.order?.totalAmount}</td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                        {
-                                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
-                                                                                <>
-                                                                                    <td>{item.order?.totalAmount}</td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                    </tr>
-                                                                ))
-                                                            }
-                                                        </tbody>
-                                                    </table>
-                                                    {
-                                                        orderDetailList.length === 0 && (
-                                                            <>
-                                                                <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                            </>
-                                                        )
-                                                    }
-                                                </div>
-                                                <button className='btn btn-success' onClick={() => openModalCreateOrder(reservation.reservationId)}>Thêm <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                </button>
+                                            <button className='btn btn-success' onClick={() => openModalCreateOrder(reservation.reservationId)}>Thêm <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                            </button>
 
-                                                {/* Calculate and display total amount */}
-                                                <div style={{ textAlign: 'right', marginTop: '10px' }}>
-                                                    <h5>
-                                                        <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
-                                                        {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                                            + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
-                                                    </h5>
-                                                </div>
-
-                                            </div>
-                                            {/* Divider */}
-                                            <div className="col-md-12">
-                                                <hr />
-                                            </div>
-                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            {/* Calculate and display total amount */}
+                                            <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                 <h5>
-                                                    <i className="fa fa-file-text text-success"></i>  Hóa đơn:
+                                                    <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
+                                                    {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                                                        + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
                                                 </h5>
-                                                <div className="table-responsive">
-                                                    <table className="table table-borderless table-hover table-wrap table-centered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th><span>STT</span></th>
-                                                                <th><span>Ngày tạo</span></th>
-                                                                <th><span>Tổng số tiền</span></th>
-                                                                <th><span>Trạng thái</span></th>
-                                                                <th><span>Hành động</span></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                billByReservation && (
-                                                                    <tr>
-                                                                        <td>1</td>
-                                                                        <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
-                                                                        <td>{billByReservation.totalAmount}</td>
-                                                                        {
-                                                                            billByReservation.billStatus === "Pending" && (
-                                                                                <>
-                                                                                    <td><span className="badge label-table badge-danger">Đang chờ</span></td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                        {
-                                                                            billByReservation.billStatus === "Paid" && (
-                                                                                <>
-                                                                                    <td><span className="badge label-table badge-success">Đã thanh toán</span></td>
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                        <td>
-
-                                                                            <button
-                                                                                type="button"
-                                                                                className="btn btn-default btn-xs m-r-5"
-                                                                                data-toggle="tooltip"
-                                                                                data-original-title="Activate"
-                                                                                onClick={() => handlePayBill(billByReservation.billId)} // Activate
-                                                                            >
-                                                                                <i className="fa fa-credit-card-alt text-success" aria-hidden="true"></i>
-                                                                            </button>
-                                                                            <button
-                                                                                type="button"
-                                                                                className="btn btn-default btn-xs m-r-5"
-                                                                                data-toggle="tooltip"
-                                                                                data-original-title="Activate"
-                                                                                onClick={() => handleDeleteBill(billByReservation.billId, billByReservation.reservationId)}                                                                            >
-                                                                                <i className="fa fa-times text-danger" aria-hidden="true"></i>
-                                                                            </button>
-                                                                        </td>
-                                                                    </tr>
-                                                                )
-                                                            }
-                                                        </tbody>
-                                                    </table>
-                                                    {
-                                                        !billByReservation && (
-                                                            <>
-                                                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
-                                                            </>
-                                                        )
-                                                    }
-                                                </div>
                                             </div>
 
                                         </div>
+                                        {/* Divider */}
+                                        <div className="col-md-12">
+                                            <hr />
+                                        </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h5>
+                                                <i className="fa fa-file-text text-success"></i>  Hóa đơn:
+                                            </h5>
+                                            <div className="table-responsive">
+                                                <table className="table table-borderless table-hover table-wrap table-centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>STT</span></th>
+                                                            <th><span>Ngày tạo</span></th>
+                                                            <th><span>Tổng số tiền</span></th>
+                                                            <th><span>Trạng thái</span></th>
+                                                            {
+                                                                billByReservation && (
+                                                                    billByReservation.billStatus !== "Paid" && (
+                                                                        <>
+                                                                            <th><span>Hành động</span></th>
+
+                                                                        </>
+                                                                    )
+                                                                )
+
+                                                            }
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            billByReservation && (
+                                                                <tr>
+                                                                    <td>1</td>
+                                                                    <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
+                                                                    <td>{billByReservation.totalAmount}</td>
+                                                                    {
+                                                                        billByReservation.billStatus === "Pending" && (
+                                                                            <>
+                                                                                <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        billByReservation.billStatus === "Paid" && (
+                                                                            <>
+                                                                                <td><span className="badge label-table badge-success">Đã thanh toán</span></td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    <td>
+                                                                        {
+                                                                            billByReservation.billStatus === "Paid" && (
+                                                                                <>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            billByReservation.billStatus !== "Paid" && (
+                                                                                <>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="btn btn-default btn-xs m-r-5"
+                                                                                        data-toggle="tooltip"
+                                                                                        data-original-title="Activate"
+                                                                                        onClick={() => handlePayBill(billByReservation.billId)} // Activate
+                                                                                    >
+                                                                                        <i className="fa fa-credit-card-alt text-success" aria-hidden="true"></i>
+                                                                                    </button>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="btn btn-default btn-xs m-r-5"
+                                                                                        data-toggle="tooltip"
+                                                                                        data-original-title="Activate"
+                                                                                        onClick={() => handleDeleteBill(billByReservation.billId, billByReservation.reservationId)}                                                                            >
+                                                                                        <i className="fa fa-times text-danger" aria-hidden="true"></i>
+                                                                                    </button>
+                                                                                </>
+                                                                            )
+                                                                        }
+
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                {
+                                                    !billByReservation && (
+                                                        <>
+                                                            <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                        </>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
+                            </div>
 
 
-                                <div className="modal-footer">
+                            <div className="modal-footer">
 
-                                    {loginUser.role?.roleName === "Receptionist" && (
-                                        <button type="button" className="btn btn-danger" onClick={() =>
-                                            handleCheckOut(reservation.reservationId, totalAmount)}><i class="fa fa-money" aria-hidden="true"></i>
-                                            Thanh Toán</button>
-                                    )}
-                                    {loginUser.role?.roleName === "Receptionist" && (
-                                        <button type="button" className="btn btn-primary"><i class="fa fa-sign-out" aria-hidden="true"></i>
-                                            Trả Phòng</button>
-                                    )}
-                                    {/* <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button> */}
-                                </div>
-                            </form>
+                                {loginUser.role?.roleName === "Receptionist" && (
+                                    <button type="button" className="btn btn-danger" onClick={() =>
+                                        handlePay(reservation.reservationId, totalAmount)}><i class="fa fa-money" aria-hidden="true"></i>
+                                        Thanh Toán</button>
+                                )}
+
+                                {loginUser.role?.roleName === "Receptionist" && (
+                                    <>
+                                        <form
+                                            id="demo-form"
+                                            onSubmit={(e) => submitUpdateReservationStatus(e, reservation.reservationId, updateReservationStatus.reservationStatus)}
+                                            className="d-inline"
+                                        >
+                                            <button type="submit" className="btn btn-primary"
+                                                onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
+                                            ><i class="fa fa-sign-out" aria-hidden="true"></i>
+                                                Trả Phòng</button>
+                                        </form>
+                                    </>
+
+                                )}
+                                {/* <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button> */}
+                            </div>
                         </div>
                     </div>
                 </div>

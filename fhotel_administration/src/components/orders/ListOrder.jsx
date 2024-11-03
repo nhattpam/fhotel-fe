@@ -332,31 +332,67 @@ const ListOrder = () => {
                                                     <th><span>STT</span></th>
                                                     <th><span>Hình ảnh</span></th>
                                                     <th><span>Tên dịch vụ</span></th>
-                                                    <th><span>Đơn giá (VND)</span></th>
                                                     <th><span>Số lượng</span></th>
                                                     <th><span>Loại dịch vụ</span></th>
+                                                    <th><span>Giá (VND)</span></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {
                                                     orderDetailList.length > 0 && orderDetailList.map((item, index) => (
-                                                        <>
-                                                            <tr>
-                                                                <td>{index + 1}</td>
-                                                                <td>
-                                                                    <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
-
-                                                                </td>
-                                                                <td>{item.service?.serviceName}</td>
-                                                                <td>{item.service?.price}</td>
-                                                                <td>{item.quantity} </td>
-                                                                <td>{item.service?.serviceType?.serviceTypeName}</td>
-                                                            </tr>
-                                                        </>
+                                                        <tr key={index}>
+                                                            <td>{index + 1}</td>
+                                                            {
+                                                                item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                    <>
+                                                                        <td>
+                                                                            <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                                                        </td>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                    <>
+                                                                        <td>
+                                                                            <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                        </td>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                    <>
+                                                                        <td>Muộn {item.service?.serviceName} ngày</td>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                    <>
+                                                                        <td>{item.service?.serviceName}</td>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            <td>{item.quantity}</td>
+                                                            <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                            {
+                                                                item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                    <>
+                                                                        <td>{item.order?.totalAmount}</td>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                    <>
+                                                                        <td>{item.order?.totalAmount}</td>
+                                                                    </>
+                                                                )
+                                                            }
+                                                        </tr>
                                                     ))
                                                 }
-
-
                                             </tbody>
                                         </table>
                                     </div>

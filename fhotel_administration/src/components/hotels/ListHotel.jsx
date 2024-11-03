@@ -247,7 +247,7 @@ const ListHotel = () => {
             const updateRes = await hotelService.updateHotel(hotelId, { ...hotelData, ownerId });
             console.log(updateRes)
             if (updateRes.status === 200) {
-                setSuccess({ general: "Update successfully!" });
+                setSuccess({ general: "Cập nhật thành công!" });
                 setShowSuccess(true); // Show error
                 // Refresh the list after update
                 const updatedHotels = await hotelService.getAllHotel();

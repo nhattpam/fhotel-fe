@@ -267,7 +267,7 @@ const ListCustomer = () => {
                                                             {item.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>

@@ -452,7 +452,7 @@ const ListRoomAttendant = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Tạo Nhân Viên Dọn Phòng
+                                    Tạo NV dọn phòng
                                 </button>
                             </div>
                         </div>
@@ -519,7 +519,7 @@ const ListRoomAttendant = () => {
                                                             {item.user?.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -653,7 +653,7 @@ const ListRoomAttendant = () => {
                                         <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Họ Và Tên * :</label>
+                                                <label htmlFor="hotelName">Họ và tên * :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -685,7 +685,7 @@ const ListRoomAttendant = () => {
 
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="password">Mật Khẩu * :</label>
+                                                <label htmlFor="password">Mật khẩu * :</label>
                                                 <input
                                                     type="password"
                                                     className="form-control"
@@ -698,7 +698,7 @@ const ListRoomAttendant = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="star">Só Căn Cước * :</label>
+                                                <label htmlFor="star">Số căn cước * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -714,7 +714,7 @@ const ListRoomAttendant = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Số Điện Thoại * :</label>
+                                                <label htmlFor="address">Số điện thoại * :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -728,7 +728,7 @@ const ListRoomAttendant = () => {
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Khách Sạn * :</label>
+                                                <label htmlFor="address">Khách sạn * :</label>
                                                 <select
                                                     name="hotelId"
                                                     className="form-control"
@@ -736,7 +736,7 @@ const ListRoomAttendant = () => {
                                                     onChange={(e) => handleInputChange(e)}
                                                     required
                                                 >
-                                                    <option value="">Chọn Khách Sạn</option>
+                                                    <option value="">Chọn khách sạn</option>
                                                     {hotelList.map((hotel) => (
                                                         <option key={hotel.hotelId} value={hotel.hotelId}>
                                                             {hotel.hotelName}

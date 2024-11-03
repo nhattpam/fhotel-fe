@@ -371,7 +371,7 @@ const ListManager = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Họ Và Tên</span></th>
+                                            <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Chức Vụ</span></th>
                                             <th><span>Trạng Thái</span></th>
@@ -424,7 +424,7 @@ const ListManager = () => {
                                                             {item.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>

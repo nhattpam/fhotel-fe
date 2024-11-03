@@ -379,7 +379,7 @@ const ListOwnerHotel = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={handleOpenHotelRegistrationModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Tạo Khách Sạn
+                                    Tạo khách sạn
                                 </button>
                             </div>
                         </div>

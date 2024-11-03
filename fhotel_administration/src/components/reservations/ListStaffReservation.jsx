@@ -514,16 +514,7 @@ const ListStaffReservation = () => {
                                                                                 </>
                                                                             )
                                                                         }
-                                                                        <td>
-                                                                            {
-                                                                                billByReservation.billStatus === "Paid" && (
-                                                                                    <>
-                                                                                    </>
-                                                                                )
-                                                                            }
-                                                                            
-
-                                                                        </td>
+                                                                       
                                                                     </tr>
                                                                 )
                                                             }

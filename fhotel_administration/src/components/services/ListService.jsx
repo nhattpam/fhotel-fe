@@ -11,10 +11,10 @@ import Dropzone from 'react-dropzone';
 import serviceTypeService from '../../services/service-type.service';
 
 const ListService = () => {
- //LOADING
- const [loading, setLoading] = useState(true); // State to track loading
+    //LOADING
+    const [loading, setLoading] = useState(true); // State to track loading
 
- //LOADING
+    //LOADING
 
     //call list service registration
     const [serviceList, setServiceList] = useState([]);
@@ -27,7 +27,29 @@ const ListService = () => {
         serviceService
             .getAllService()
             .then((res) => {
-                setServiceList(res.data);
+                // Sort services with the specified conditions
+                const sortedServiceList = res.data.sort((a, b) => {
+                    const serviceTypeNameA = a.serviceType?.serviceTypeName || "";
+                    const serviceTypeNameB = b.serviceType?.serviceTypeName || "";
+    
+                    // Primary sort by serviceTypeName
+                    if (serviceTypeNameA !== serviceTypeNameB) {
+                        return serviceTypeNameA.localeCompare(serviceTypeNameB);
+                    }
+    
+                    // Secondary sort by serviceName as integer if serviceTypeName is "Trả phòng muộn"
+                    if (serviceTypeNameA === "Trả phòng muộn") {
+                        const serviceNameA = parseInt(a.serviceName) || 0;
+                        const serviceNameB = parseInt(b.serviceName) || 0;
+                        return serviceNameA - serviceNameB;
+                    }
+    
+                    // If no specific sorting needed, return 0
+                    return 0;
+                });
+    
+                // Set the sorted service list
+                setServiceList(sortedServiceList);
                 setLoading(false);
             })
             .catch((error) => {
@@ -35,6 +57,7 @@ const ListService = () => {
                 setLoading(false);
             });
     }, []);
+    
 
 
     const handleHotelSearch = (event) => {
@@ -342,8 +365,8 @@ const ListService = () => {
                                         <tr>
                                             <th><span>STT</span></th>
                                             <th><span>Hình ảnh</span></th>
-                                            <th><span>Tên</span></th>
-                                            <th><span>Đơn giá</span></th>
+                                            <th><span>Tên dịch vụ</span></th>
+                                            <th><span>Đơn giá (VND)</span></th>
                                             <th><span>Mô tả</span></th>
                                             <th><span>Loại dịch vụ</span></th>
                                             <th><span>Trạng thái</span></th>
@@ -356,12 +379,39 @@ const ListService = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-                                                        <td>
-                                                            <img src={item.image} alt="avatar" style={{ width: "70px", height: '100px' }} />
-
-                                                        </td>
-                                                        <td>{item.serviceName}</td>
-                                                        <td>{item.price} (VND)</td>
+                                                        {
+                                                            item.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>
+                                                                        <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                                                    </td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>
+                                                                        <img src={item.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                    </td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>Muộn {item.serviceName} ngày</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>{item.serviceName}</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        <td>{item.price}</td>
                                                         <td className='wordwrap'>{item.description}</td>
                                                         <td>{item.serviceType?.serviceTypeName}</td>
                                                         <td>
@@ -464,7 +514,22 @@ const ListService = () => {
                                         <div className="col-md-5">
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
-                                                    <img src={service.image} alt="avatar" style={{ width: '50%' }} />
+                                                    {
+                                                        service.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                            <>
+                                                                <img src={service.image} alt="avatar" style={{ width: '50%' }} />
+
+                                                            </>
+                                                        )
+                                                    }
+                                                    {
+                                                        service.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                            <>
+                                                                <i className="fa fa-calendar-times-o fa-5x" aria-hidden="true"></i>
+                                                            </>
+                                                        )
+                                                    }
+
 
                                                 </tbody>
                                             </table>
@@ -475,7 +540,21 @@ const ListService = () => {
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên dịch vụ:</th>
-                                                        <td >{service.serviceName}</td>
+                                                        {
+                                                            service.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td >{service.serviceName}</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            service.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>Muộn {service.serviceName} ngày</td>
+                                                                </>
+                                                            )
+                                                        }
+
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn giá:</th>

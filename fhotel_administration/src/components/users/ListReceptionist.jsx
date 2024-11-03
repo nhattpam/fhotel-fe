@@ -452,7 +452,7 @@ const ListReceptionist = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Tạo Lễ Tân
+                                    Tạo lễ tân
                                 </button>
                             </div>
                         </div>
@@ -520,7 +520,7 @@ const ListReceptionist = () => {
                                                             {item.user?.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang hoạt động</span>
                                                             ) : (
-                                                                <span className="badge label-table badge-danger">Chưa Kích Hoạt</span>
+                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
                                                             )}
                                                         </td>
                                                         <td>
@@ -737,7 +737,7 @@ const ListReceptionist = () => {
                                                     onChange={(e) => handleInputChange(e)}
                                                     required
                                                 >
-                                                    <option value="">Chọn Khách Sạn</option>
+                                                    <option value="">Chọn khách sạn</option>
                                                     {hotelList.map((hotel) => (
                                                         <option key={hotel.hotelId} value={hotel.hotelId}>
                                                             {hotel.hotelName}

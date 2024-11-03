@@ -148,6 +148,23 @@ class UserService {
         });
       }
 
+      getAllBillByOwner(id) {
+        return axios.get(API_URL + `/users/${id}/owner-bills`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+      getAllBillByStaff(id) {
+        return axios.get(API_URL + `/users/${id}/staff-bills`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+
 
 }
 export default new UserService;

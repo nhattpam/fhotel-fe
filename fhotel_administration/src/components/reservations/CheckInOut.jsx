@@ -393,11 +393,19 @@ const CheckInOut = () => {
         reservationService
             .getAllOrderDetailByReservationId(reservationId)
             .then((res) => {
-                setOrderDetailList(res.data);
+                // Filter for order details where orderStatus is "Confirmed"
+                const confirmedOrderDetails = res.data
+                    .filter((orderDetail) => orderDetail.order?.orderStatus === "Confirmed")
+                    // Sort by orderedDate in descending order (newest first)
+                    .sort((a, b) => new Date(b.orderedDate) - new Date(a.orderedDate));
+
+                // Set the sorted and filtered order details list
+                setOrderDetailList(confirmedOrderDetails);
             })
             .catch((error) => {
                 console.log(error);
             });
+
         reservationService
             .getBillByReservation(reservationId)
             .then((res) => {
@@ -527,7 +535,8 @@ const CheckInOut = () => {
             if (selectedReservationId) {
                 const createOrder = {
                     reservationId: selectedReservationId,
-                    totalAmount: 0
+                    totalAmount: 0,
+                    orderStatus: "Confirmed"
                 }
                 // Post the hotel first
                 const orderResponse = await orderService.saveOrder(createOrder);
@@ -543,7 +552,14 @@ const CheckInOut = () => {
                         reservationService
                             .getAllOrderDetailByReservationId(selectedReservationId)
                             .then((res) => {
-                                setOrderDetailList(res.data);
+                                // Filter for order details where orderStatus is "Confirmed"
+                                const confirmedOrderDetails = res.data
+                                    .filter((orderDetail) => orderDetail.order?.orderStatus === "Confirmed")
+                                    // Sort by orderedDate in descending order (newest first)
+                                    .sort((a, b) => new Date(b.orderedDate) - new Date(a.orderedDate));
+
+                                // Set the sorted and filtered order details list
+                                setOrderDetailList(confirmedOrderDetails);
                             })
                             .catch((error) => {
                                 console.log(error);

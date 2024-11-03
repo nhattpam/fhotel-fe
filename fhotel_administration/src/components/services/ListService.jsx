@@ -309,7 +309,7 @@ const ListService = () => {
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
             const validationErrors = response.data.errors || [];
-            setError({ general: response.data.message, validation: validationErrors });
+            setError({ validation: validationErrors });
         } else {
             setError({ general: "An unexpected error occurred. Please try again." });
         }
@@ -354,7 +354,7 @@ const ListService = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateServiceModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Thêm Dịch Vụ
+                                    Thêm dịch vụ
                                 </button>
                             </div>
                         </div>

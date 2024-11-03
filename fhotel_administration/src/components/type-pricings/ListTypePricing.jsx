@@ -356,7 +356,7 @@ const ListTypePricing = () => {
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
             const validationErrors = response.data.errors || [];
-            setError({ general: response.data.message, validation: validationErrors });
+            setError({ validation: validationErrors });
         } else {
             setError({ general: "An unexpected error occurred. Please try again." });
         }
@@ -396,7 +396,7 @@ const ListTypePricing = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateTypePricingModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Tạo Bảng Giá
+                                    Thêm giá
                                 </button>
                             </div>
                         </div>
@@ -408,7 +408,7 @@ const ListTypePricing = () => {
                                             <th><span>STT</span></th>
                                             <th><span>Loại phòng</span></th>
                                             <th><span>Ngày trong tuần</span></th>
-                                            <th><span>Giá</span></th>
+                                            <th><span>Giá (VND)</span></th>
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
                                             <th><span>Ngày tạo</span></th>
@@ -424,7 +424,7 @@ const ListTypePricing = () => {
                                                         <td>{index + 1}</td>
                                                         <td>{item.type?.typeName}</td>
                                                         <td>{daysOfWeek[item.dayOfWeek]}</td>
-                                                        <td>{item.price} (VND)</td>
+                                                        <td>{item.price} </td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
@@ -607,7 +607,7 @@ const ListTypePricing = () => {
 
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label>Thành Phố</label>
+                                                <label>Thành phố</label>
                                                 <select
                                                     name="cityId"
                                                     className="form-control"
@@ -617,7 +617,7 @@ const ListTypePricing = () => {
                                                     }}
                                                     required
                                                 >
-                                                    <option value="">Chọn Thành Phố</option>
+                                                    <option value="">Chọn thành phố</option>
                                                     {cityList.map((city) => (
                                                         <option key={city.cityId} value={city.cityId}>
                                                             {city.cityName}
@@ -635,7 +635,7 @@ const ListTypePricing = () => {
                                                     onChange={(e) => handleChange(e)}
                                                     required
                                                 >
-                                                    <option value="">Chọn Quận</option>
+                                                    <option value="">Chọn quận</option>
                                                     {districtList.map((district) => (
                                                         <option key={district.districtId} value={district.districtId}>
                                                             {district.districtName}

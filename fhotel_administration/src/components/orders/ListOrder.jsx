@@ -163,7 +163,7 @@ const ListOrder = () => {
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
             const validationErrors = response.data.errors || [];
-            setError({ general: response.data.message, validation: validationErrors });
+            setError({ validation: validationErrors });
         } else {
             setError({ general: "An unexpected error occurred. Please try again." });
         }

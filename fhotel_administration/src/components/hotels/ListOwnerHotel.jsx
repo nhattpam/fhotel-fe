@@ -308,7 +308,7 @@ const ListOwnerHotel = () => {
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
             const validationErrors = response.data.errors || [];
-            setError({ general: response.data.message, validation: validationErrors });
+            setError({ validation: validationErrors });
         } else {
             setError({ general: "An unexpected error occurred. Please try again." });
         }
@@ -571,7 +571,7 @@ const ListOwnerHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Xem Chi Tiết</Link>
+                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Xem chi tiết</Link>
                                     <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>

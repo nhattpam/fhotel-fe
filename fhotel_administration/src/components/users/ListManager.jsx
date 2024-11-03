@@ -252,7 +252,7 @@ const ListManager = () => {
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
             const validationErrors = response.data.errors || [];
-            setError({ general: response.data.message, validation: validationErrors });
+            setError({ validation: validationErrors });
         } else {
             setError({ general: "An unexpected error occurred. Please try again." });
         }
@@ -373,9 +373,9 @@ const ListManager = () => {
                                             <th><span>STT</span></th>
                                             <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
-                                            <th><span>Chức Vụ</span></th>
-                                            <th><span>Trạng Thái</span></th>
-                                            <th><span>Hành Động</span></th>
+                                            <th><span>Chức vụ</span></th>
+                                            <th><span>Trạng thái</span></th>
+                                            <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -578,7 +578,7 @@ const ListManager = () => {
                                     style={{ textAlign: "left" }}
                                 >
                                     <div className="modal-header  bg-dark text-light">
-                                        <h5 className="modal-title">Tạo Quản Lý</h5>
+                                        <h5 className="modal-title">Tạo quản lý</h5>
 
                                         <button
                                             type="button"

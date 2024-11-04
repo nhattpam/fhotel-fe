@@ -61,9 +61,39 @@ const ListHoliday = () => {
 
     });
 
-    // Set the start date to the first day of the current month
-    const startDateOfMonth = new Date(2024, 10, 1); // November 1, 2024
-    const startDayOfWeek = startDateOfMonth.getDay(); // Day of the week for November 1, 2024
+    // State for current month and year
+    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0 for January, 11 for December
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+    // Calculate the start date and day of week for the current month
+    const startDateOfMonth = new Date(currentYear, currentMonth, 1);
+    const startDayOfWeek = startDateOfMonth.getDay(); // Day of the week for the 1st day of the month
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); // Total days in the current month
+
+    // Filter holidays for the current month and year
+    const holidaysInMonth = currentHolidays.filter(holiday => {
+        const holidayDate = new Date(holiday.holidayDate);
+        return holidayDate.getMonth() === currentMonth && holidayDate.getFullYear() === currentYear;
+    });
+
+    // Navigation functions for changing months
+    const goToPreviousMonth = () => {
+        if (currentMonth === 0) {
+            setCurrentMonth(11);
+            setCurrentYear(currentYear - 1);
+        } else {
+            setCurrentMonth(currentMonth - 1);
+        }
+    };
+
+    const goToNextMonth = () => {
+        if (currentMonth === 11) {
+            setCurrentMonth(0);
+            setCurrentYear(currentYear + 1);
+        } else {
+            setCurrentMonth(currentMonth + 1);
+        }
+    };
 
     return (
         <>
@@ -74,22 +104,20 @@ const ListHoliday = () => {
                     <div className="loading-spinner" />
                 </div>
             )}
-          <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
-            {/* START PAGE CONTENT */}
-            <div className="page-heading">
-                <ol className="breadcrumb">
-                    <li className="breadcrumb-item">
-                        <a href="index.html"><i className="la la-home font-20" /></a>
-                    </li>
-                </ol>
-            </div>
-            <div className="page-content fade-in-up">
-                {/* Header with search bar */}
-                <div className="ibox">
-                    <div className="ibox-head bg-dark text-light">
-                        <div className="ibox-title">Danh Sách Ngày Lễ - Calendar View</div>
-                        <div className="form-group">
-                            <input 
+            <div className="content-wrapper" style={{ textAlign: 'left', display: 'block' }}>
+                <div className="page-heading">
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                            <a href="index.html"><i className="la la-home font-20" /></a>
+                        </li>
+                    </ol>
+                </div>
+                <div className="page-content fade-in-up">
+                    <div className="ibox">
+                        <div className="ibox-head bg-dark text-light">
+                            <div className="ibox-title">Danh Sách Ngày Lễ - {startDateOfMonth.toLocaleString('default', { month: 'long' })} {currentYear}</div>
+                            <div className="form-group">
+                                {/* <input 
                                 id="demo-foo-search" 
                                 type="text" 
                                 placeholder="Tìm kiếm" 
@@ -97,70 +125,74 @@ const ListHoliday = () => {
                                 autoComplete="on" 
                                 value={holidaySearchTerm}
                                 onChange={handleHolidaySearch} 
-                            />
+                            /> */}
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                                <button onClick={goToPreviousMonth} >
+                                    <i className="fa fa-chevron-left" aria-hidden="true"></i> 
+                                </button>
+                                <button onClick={goToNextMonth}>
+                                     <i className="fa fa-chevron-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                        <div className="ibox-body">
+                            <div className="calendar-container" style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(7, 1fr)',
+                                gap: '0.5rem',
+                                textAlign: 'center'
+                            }}>
+                                {['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'].map(day => (
+                                    <div key={day} style={{ fontWeight: 'bold', padding: '0.5rem' }}>{day}</div>
+                                ))}
+
+                                {/* Empty cells for days before the 1st */}
+                                {Array.from({ length: startDayOfWeek }).map((_, index) => (
+                                    <div key={`empty-${index}`} style={{ visibility: 'hidden' }} />
+                                ))}
+
+                                {/* Calendar cells for each day in the current month */}
+                                {Array.from({ length: daysInMonth }, (_, index) => {
+                                    const dayInMonth = new Date(currentYear, currentMonth, index + 1);
+
+                                    const holiday = holidaysInMonth.find(h =>
+                                        new Date(h.holidayDate).toDateString() === dayInMonth.toDateString()
+                                    );
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="calendar-cell"
+                                            style={{
+                                                border: '1px solid #ddd',
+                                                borderRadius: '5px',
+                                                padding: '0.75rem',
+                                                minHeight: '100px',
+                                                backgroundColor: holiday ? '#f0f9ff' : '#fff',
+                                                position: 'relative'
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: 'bold' }}>{dayInMonth.getDate()}</div>
+
+                                            {holiday && (
+                                                <div className="holiday-info" style={{
+                                                    marginTop: '0.5rem',
+                                                    textAlign: 'left',
+                                                    fontSize: '0.85rem'
+                                                }}>
+                                                    <p><strong>{holiday.description}</strong></p>
+                                                    <p>Tăng Giá: {holiday.percentageIncrease}%</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
-                    {/* Calendar Container */}
-                    <div className="ibox-body">
-                        <div className="calendar-container" style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(7, 1fr)',
-                            gap: '0.5rem',
-                            textAlign: 'center'
-                        }}>
-                            {/* Days of the week header */}
-                            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                                <div key={day} style={{ fontWeight: 'bold', padding: '0.5rem' }}>{day}</div>
-                            ))}
-                            
-                            {/* Empty cells to align the first day of the month */}
-                            {Array.from({ length: startDayOfWeek }).map((_, index) => (
-                                <div key={`empty-${index}`} style={{ visibility: 'hidden' }} />
-                            ))}
-
-                            {/* Calendar cells */}
-                            {Array.from({ length: 30 }, (_, index) => {
-                                // Get the date for each cell
-                                const dayInMonth = new Date(2024, 10, 1 + index); // Adjust for November 1
-
-                                // Check if there is a holiday on this day
-                                const holiday = currentHolidays.find(h => 
-                                    new Date(h.holidayDate).toDateString() === dayInMonth.toDateString()
-                                );
-
-                                return (
-                                    <div 
-                                        key={index} 
-                                        className="calendar-cell" 
-                                        style={{
-                                            border: '1px solid #ddd',
-                                            borderRadius: '5px',
-                                            padding: '0.75rem',
-                                            minHeight: '100px',
-                                            backgroundColor: holiday ? '#f0f9ff' : '#fff',
-                                            position: 'relative'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: 'bold' }}>{dayInMonth.getDate()}</div>
-                                        
-                                        {holiday && (
-                                            <div className="holiday-info" style={{
-                                                marginTop: '0.5rem',
-                                                textAlign: 'left',
-                                                fontSize: '0.85rem'
-                                            }}>
-                                                <p><strong>{holiday.description}</strong></p>
-                                                <p>Tăng Giá: {holiday.percentageIncrease}%</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
-                {/* Pagination */}
-                <div className='container-fluid'>
+                    {/* <div className='container-fluid'>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <ReactPaginate
                             previousLabel={<IconContext.Provider value={{ color: "#000", size: "14px" }}><AiFillCaretLeft /></IconContext.Provider>}
@@ -182,9 +214,9 @@ const ListHoliday = () => {
                             pageLinkClassName={'page-link'}
                         />
                     </div>
+                </div> */}
                 </div>
             </div>
-        </div>
 
             <style>
                 {`

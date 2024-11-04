@@ -5,6 +5,7 @@ import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import holidayPricingService from '../../services/holiday-pricing.service';
+import holidayService from '../../services/holiday.service';
 
 const ListHoliday = () => {
     //LOADING
@@ -19,8 +20,8 @@ const ListHoliday = () => {
 
 
     useEffect(() => {
-        holidayPricingService
-            .getAllHolidayPricingRule()
+        holidayService
+            .getAllHoliday()
             .then((res) => {
                 setHolidayList(res.data);
                 setLoading(false);
@@ -53,13 +54,6 @@ const ListHoliday = () => {
     const currentHolidays = filteredHolidays.slice(offsetHoliday, offsetHoliday + holidaysPerPage);
 
 
-
-    //detail holiday modal 
-    const [showModalHoliday, setShowModalHoliday] = useState(false);
-
-    const [holiday, setHoliday] = useState({
-
-    });
 
     // State for current month and year
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0 for January, 11 for December
@@ -95,6 +89,34 @@ const ListHoliday = () => {
         }
     };
 
+    const [showModalHoliday, setShowModalHoliday] = useState(false);
+    const [holidayPricingRuleList, setHolidayPricingRuleList] = useState(false);
+
+
+    const openHolidayModal = (holidayId) => {
+        if (!holidayId) {
+            alert("Holiday ID is required.");
+            return; // Exit the function early if holidayId is null or undefined
+        }
+        
+        setShowModalHoliday(true);
+    
+        holidayService
+            .getAllHolidayPricingRuleById(holidayId)
+            .then((res) => {
+                setHolidayPricingRuleList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    
+
+    const closeModalHoliday = () => {
+        setShowModalHoliday(false);
+        setHolidayPricingRuleList([]);
+    };
+
     return (
         <>
             <Header />
@@ -117,22 +139,14 @@ const ListHoliday = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Ngày Lễ - {startDateOfMonth.toLocaleString('default', { month: 'long' })} {currentYear}</div>
                             <div className="form-group">
-                                {/* <input 
-                                id="demo-foo-search" 
-                                type="text" 
-                                placeholder="Tìm kiếm" 
-                                className="form-control form-control-sm"
-                                autoComplete="on" 
-                                value={holidaySearchTerm}
-                                onChange={handleHolidaySearch} 
-                            /> */}
+
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
                                 <button onClick={goToPreviousMonth} >
-                                    <i className="fa fa-chevron-left" aria-hidden="true"></i> 
+                                    <i className="fa fa-chevron-left" aria-hidden="true"></i>
                                 </button>
                                 <button onClick={goToNextMonth}>
-                                     <i className="fa fa-chevron-right" aria-hidden="true"></i>
+                                    <i className="fa fa-chevron-right" aria-hidden="true"></i>
                                 </button>
                             </div>
 
@@ -165,6 +179,7 @@ const ListHoliday = () => {
                                         <div
                                             key={index}
                                             className="calendar-cell"
+                                            onClick={() => holiday ? openHolidayModal(holiday.holidayId) : alert("Không có.")}
                                             style={{
                                                 border: '1px solid #ddd',
                                                 borderRadius: '5px',
@@ -175,48 +190,92 @@ const ListHoliday = () => {
                                             }}
                                         >
                                             <div style={{ fontWeight: 'bold' }}>{dayInMonth.getDate()}</div>
-
+                                    
                                             {holiday && (
                                                 <div className="holiday-info" style={{
                                                     marginTop: '0.5rem',
                                                     textAlign: 'left',
                                                     fontSize: '0.85rem'
-                                                }}>
+                                                }} >
                                                     <p><strong>{holiday.description}</strong></p>
-                                                    <p>Tăng Giá: {holiday.percentageIncrease}%</p>
+                                                    {/* <p>Tăng Giá: {holiday.percentageIncrease}%</p> */}
                                                 </div>
                                             )}
                                         </div>
                                     );
+                                    
                                 })}
                             </div>
                         </div>
                     </div>
-                    {/* <div className='container-fluid'>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <ReactPaginate
-                            previousLabel={<IconContext.Provider value={{ color: "#000", size: "14px" }}><AiFillCaretLeft /></IconContext.Provider>}
-                            nextLabel={<IconContext.Provider value={{ color: "#000", size: "14px" }}><AiFillCaretRight /></IconContext.Provider>}
-                            breakLabel={'...'}
-                            breakClassName={'page-item'}
-                            breakLinkClassName={'page-link'}
-                            pageCount={pageHolidayCount}
-                            marginPagesDisplayed={2}
-                            pageRangeDisplayed={5}
-                            onPageChange={handleHolidayPageClick}
-                            containerClassName={'pagination'}
-                            activeClassName={'active'}
-                            previousClassName={'page-item'}
-                            nextClassName={'page-item'}
-                            pageClassName={'page-item'}
-                            previousLinkClassName={'page-link'}
-                            nextLinkClassName={'page-link'}
-                            pageLinkClassName={'page-link'}
-                        />
-                    </div>
-                </div> */}
+
                 </div>
             </div>
+            {showModalHoliday && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header  bg-dark text-light">
+                                    <h5 className="modal-title">Thông Tin Ngày Lễ</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalHoliday}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className='col-md-12' style={{ textAlign: 'left' }}>
+                                            <div className="table-responsive">
+                                                <table className="table table-borderless table-hover table-wrap table-centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>STT</span></th>
+                                                            <th><span>Quận</span></th>
+                                                            <th><span>Tăng (%)</span></th>
+                                                            <th><span>Ngày lễ</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            holidayPricingRuleList.length > 0 && holidayPricingRuleList.map((item, index) => (
+                                                                <>
+                                                                    <tr>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{item.district?.districtName}</td>
+                                                                        <td>{item.percentageIncrease}</td>
+                                                                        <td> {item.holiday?.description}</td>
+                                                                       
+                                                                    </tr>
+                                                                </>
+                                                            ))
+                                                        }
+
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                            {
+                                                holidayPricingRuleList.length === 0 && (
+                                                    <p className='text-center' style={{ color: 'gray' }}>Không có</p>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div className="modal-footer">
+                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHoliday} >Đóng</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style>
                 {`

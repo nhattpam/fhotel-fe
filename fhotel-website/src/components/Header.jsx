@@ -259,7 +259,7 @@ const Header = () => {
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
                                     <div className="form-row mb-3">
                                         <div className="form-group col-md-6">
-                                            <label>Họ và tên chủ sở hữu</label>
+                                            <label>Họ và tên chủ sở hữu</label> <span className='text-danger'>*</span>
                                             <input
                                                 name='ownerName'
                                                 type="text"
@@ -270,7 +270,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Email chủ sở hữu</label>
+                                            <label>Email chủ sở hữu</label> <span className='text-danger'>*</span>
                                             <input
                                                 name='ownerEmail'
                                                 type="email"
@@ -281,7 +281,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Số căn cước chủ sở hữu</label>
+                                            <label>Số căn cước chủ sở hữu</label> <span className='text-danger'>*</span>
                                             <input
                                                 name='ownerIdentificationNumber'
                                                 type="text"
@@ -292,7 +292,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Số điện thoại chủ sở hữu</label>
+                                            <label>Số điện thoại chủ sở hữu</label> <span className='text-danger'>*</span>
                                             <input
                                                 name='ownerPhoneNumber'
                                                 type="text"
@@ -310,7 +310,7 @@ const Header = () => {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload hình ảnh khách sạn * :</label>
+                                                    <label htmlFor="imageUrl">Upload hình ảnh khách sạn:</label> <span className='text-danger'>*</span>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelImage(acceptedFiles)}
                                                         accept="image/*"
@@ -349,7 +349,7 @@ const Header = () => {
                                                     </Dropzone>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload giấy tờ liên quan của khách sạn  * :</label>
+                                                    <label htmlFor="imageUrl">Upload giấy tờ liên quan của khách sạn:</label> <span className='text-danger'>*</span>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelDocument(acceptedFiles)}
                                                         accept="image/*"
@@ -391,7 +391,7 @@ const Header = () => {
                                             <div className="col-md-7">
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Tên khách sạn</label>
+                                                        <label>Tên khách sạn</label> <span className='text-danger'>*</span>
                                                         <input
                                                             type="text"
                                                             name="hotelName"
@@ -402,7 +402,7 @@ const Header = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Số điện thoại</label>
+                                                        <label>Số điện thoại</label> <span className='text-danger'>*</span>
                                                         <input
                                                             type="number"
                                                             name="phone"
@@ -415,7 +415,7 @@ const Header = () => {
                                                 </div>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Email</label>
+                                                        <label>Email</label> <span className='text-danger'>*</span>
                                                         <input
                                                             type="email"
                                                             name="email"
@@ -426,7 +426,7 @@ const Header = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Thành phố</label>
+                                                        <label>Thành phố</label> <span className='text-danger'>*</span>
                                                         <select
                                                             className="form-control"
                                                             onChange={(e) => {
@@ -445,7 +445,7 @@ const Header = () => {
                                                 </div>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Quận</label>
+                                                        <label>Quận/Huyện</label> <span className='text-danger'>*</span>
                                                         <select
                                                             name="districtId"
                                                             className="form-control"
@@ -462,7 +462,7 @@ const Header = () => {
                                                         </select>
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Địa chỉ</label>
+                                                        <label>Địa chỉ</label> <span className='text-danger'>*</span>
                                                         <input
                                                             name="address"
                                                             className="form-control"
@@ -476,7 +476,7 @@ const Header = () => {
 
 
                                                 <div className="form-group">
-                                                    <label>Mô tả</label>
+                                                    <label>Mô tả</label> <span className='text-danger'>*</span>
                                                     <ReactQuill
                                                         theme="snow"
                                                         value={createHotel.description}

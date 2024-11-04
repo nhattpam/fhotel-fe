@@ -64,7 +64,9 @@ const ListTypePricing = () => {
 
 
 
-
+    const [selectedDistrictId, setSelectedDistrictId] = useState('');
+    const uniqueDistricts = [...new Set(typePricingList.map((typePricing) => typePricing.district?.districtName))]
+        .filter(Boolean);
 
     const handleTypePricingSearch = (event) => {
         setTypePricingSearchTerm(event.target.value);
@@ -72,10 +74,14 @@ const ListTypePricing = () => {
 
     const filteredTypePricings = typePricingList
         .filter((typePricing) => {
-            return (
+            const matchesDistrict = selectedDistrictId ? typePricing.district?.districtName === selectedDistrictId : true;
+            const matchesSearchTerm = (
                 typePricing.dayOfWeek.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase()) ||
-                typePricing.price.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase()));
+                typePricing.price.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase())
+            );
+            return matchesDistrict && matchesSearchTerm;
         });
+
 
     const pageTypePricingCount = Math.ceil(filteredTypePricings.length / typePricingsPerPage);
 
@@ -346,6 +352,8 @@ const ListTypePricing = () => {
     //Display holiday
 
 
+
+
     // Effect to handle error message visibility
     useEffect(() => {
         if (showError) {
@@ -403,17 +411,34 @@ const ListTypePricing = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Bảng Giá Cho Loại Phòng {type.typeName}</div>
                             <div className="form-group d-flex align-items-center">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={typePricingSearchTerm}
-                                    onChange={handleTypePricingSearch} />
+                                <select
+                                    value={selectedDistrictId}
+                                    onChange={(e) => setSelectedDistrictId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả quận</option>
+                                    {uniqueDistricts.map((districtName, index) => (
+                                        <option key={index} value={districtName}>{districtName}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    id="demo-foo-search"
+                                    type="text"
+                                    placeholder="Tìm kiếm"
+                                    className="form-control form-control-sm ml-3"
+                                    autoComplete="on"
+                                    value={typePricingSearchTerm}
+                                    onChange={handleTypePricingSearch}
+                                />
                                 <button
                                     className="btn btn-primary ml-3 btn-sm"
-                                    onClick={openCreateTypePricingModal} // This will trigger the modal for creating a new hotel
+                                    onClick={openCreateTypePricingModal}
                                 >
                                     Thêm giá
                                 </button>
                             </div>
                         </div>
+
                         <div className="ibox-body">
                             <div className="table-responsive">
                                 <table className="table table-borderless table-hover table-wrap table-centered">

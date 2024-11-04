@@ -259,7 +259,7 @@ const Header = () => {
                                 <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
                                     <div className="form-row mb-3">
                                         <div className="form-group col-md-6">
-                                            <label>Chủ Sở Hữu</label>
+                                            <label>Họ và tên chủ sở hữu</label>
                                             <input
                                                 name='ownerName'
                                                 type="text"
@@ -270,7 +270,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Email Chủ Sở Hữu</label>
+                                            <label>Email chủ sở hữu</label>
                                             <input
                                                 name='ownerEmail'
                                                 type="email"
@@ -281,7 +281,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Số Căn Cước Chủ Sở Hữu</label>
+                                            <label>Số căn cước chủ sở hữu</label>
                                             <input
                                                 name='ownerIdentificationNumber'
                                                 type="text"
@@ -292,7 +292,7 @@ const Header = () => {
                                             />
                                         </div>
                                         <div className="form-group col-md-6">
-                                            <label>Số Điện Thoại Chủ Sở Hữu</label>
+                                            <label>Số điện thoại chủ sở hữu</label>
                                             <input
                                                 name='ownerPhoneNumber'
                                                 type="text"
@@ -463,7 +463,7 @@ const Header = () => {
                                                     </div>
                                                     <div className="form-group col-md-6">
                                                         <label>Địa chỉ</label>
-                                                        <textarea
+                                                        <input
                                                             name="address"
                                                             className="form-control"
                                                             value={createHotel.address}

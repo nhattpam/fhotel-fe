@@ -156,7 +156,7 @@ const PaymentCallBack = () => {
 
     return (
         <div>
-            {/* <h2>PaymentCallBack</h2>
+            <h2>PaymentCallBack</h2>
             <p>This component displays payment details:</p>
             <ul>
                 {Object.entries(paymentDetails).map(([key, value]) => (
@@ -164,7 +164,7 @@ const PaymentCallBack = () => {
                         <strong>{key}:</strong> {value}
                     </li>
                 ))}
-            </ul> */}
+            </ul>
         </div>
     );
 };

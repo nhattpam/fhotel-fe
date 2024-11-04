@@ -352,6 +352,70 @@ const ListTypePricing = () => {
     //Display holiday
 
 
+    //CREATE HOLIDAY
+    const [showModalCreateHolidayPricing, setShowModalCreateHolidayPricing] = useState(false);
+
+    const openCreateHolidayPricingModal = () => {
+        setShowModalCreateHolidayPricing(true);
+
+    };
+
+    const closeModalCreateHolidayPricing = () => {
+        setShowModalCreateHolidayPricing(false);
+    };
+
+    const [createHolidayPricing, setCreateHolidayPricing] = useState({
+        districtId: '',
+        holidayDate: '',
+        percentageIncrease: 0,
+        description: ''
+    });
+
+
+    const handleChange2 = (e) => {
+        const value = e.target.value;
+
+        setCreateHolidayPricing({ ...createHolidayPricing, [e.target.name]: value });
+    };
+    const validateForm2 = () => {
+        let isValid = true;
+        const newError = {};
+
+        // Validate District
+        if (!createHolidayPricing.holidayDate || createTypePricing.holidayDate.trim() === "") {
+            newError.holidayDate = "holidayDate is required";
+            isValid = false;
+        }
+
+       
+
+        setError(newError); // Set the validation errors
+        setShowError(Object.keys(newError).length > 0); // Toggle error visibility based on errors
+        return isValid;
+    };
+
+    const submitCreateHolidayPricing = async (e) => {
+        e.preventDefault();
+
+        // Run validation before submitting
+        if (!validateForm2()) {
+            return; // Stop the function if validation fails
+        }
+
+        console.log(JSON.stringify(createHolidayPricing))
+        const holidayPricingResponse = await holidayPricingService.saveHolidayPricingRule(createHolidayPricing);
+        if(holidayPricingResponse.status === 201){
+            setSuccess({general: 'Tạo thành công!'});
+            setShowSuccess(true);
+        }
+
+        try {
+            
+        } catch (error) {
+            handleResponseError(error.response);
+            // You can show a user-friendly message here
+        } 
+    };
 
 
     // Effect to handle error message visibility
@@ -435,6 +499,12 @@ const ListTypePricing = () => {
                                     onClick={openCreateTypePricingModal}
                                 >
                                     Thêm giá
+                                </button>
+                                <button
+                                    className="btn btn-success ml-3 btn-sm"
+                                    onClick={openCreateHolidayPricingModal}
+                                >
+                                    Thêm ngày lễ
                                 </button>
                             </div>
                         </div>
@@ -768,6 +838,99 @@ const ListTypePricing = () => {
 
                 )
             }
+            {
+                showModalCreateHolidayPricing && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                            <div className="modal-content">
+                                <form
+                                    method="post"
+                                    id="createHolidayPricingForm"
+                                    data-parsley-validate
+                                    onSubmit={(e) => submitCreateHolidayPricing(e)}
+                                    style={{ textAlign: "left" }}
+                                >
+                                    <div className="modal-header bg-dark text-light">
+                                        <h5 className="modal-title">Tạo Ngày Lễ</h5>
+                                        <button
+                                            type="button"
+                                            className="close text-light"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={closeModalCreateHolidayPricing}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                        <h4 className="header-title">Thông Tin Ngày Lễ</h4>
+                                        <div className="form-row">
+                                            {/* Holiday Date Field */}
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="holidayDate">Ngày Lễ</label>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    id="holidayDate"
+                                                    name="holidayDate"
+                                                    value={createHolidayPricing.holidayDate} // Default date from example data
+                                                    onChange={(e) => handleChange2(e)}
+                                                    required
+                                                />
+                                            </div>
+
+                                            {/* Percentage Increase Field */}
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="percentageIncrease">Tăng Giá (%)</label>
+                                                <select
+                                                    className="form-control"
+                                                    id="percentageIncrease"
+                                                    name="percentageIncrease"
+                                                    value={createHolidayPricing.percentageIncrease}
+                                                    onChange={(e) => handleChange2(e)}
+                                                    required
+                                                >
+                                                    <option value="">Chọn mức tăng</option>
+                                                    {[...Array(18)].map((_, i) => (
+                                                        <option key={i} value={(i + 1) * 5}>
+                                                            {(i + 1) * 5}%
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                        <div className="form-row">
+                                            {/* Description Field */}
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="description">Mô Tả</label>
+                                                <textarea
+                                                    className="form-control"
+                                                    id="description"
+                                                    name="description"
+                                                    rows="2"
+                                                    value={createHolidayPricing.description}
+                                                    onChange={(e) => handleChange2(e)}
+                                                    required
+                                                ></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Modal Footer */}
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-success btn-sm">Lưu</button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHolidayPricing}>Đóng</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
             <style>
                 {`
                     .page-item.active .page-link{

@@ -28,6 +28,7 @@ import RoomStatus from './components/rooms/RoomStatus';
 import ListRoom from './components/rooms/ListRoom';
 import ListStaffCustomer from './components/users/ListStaffCustomer';
 import ListOwnerCustomer from './components/users/ListOwnerCustomer';
+import ListHoliday from './components/type-pricings/ListHoliday';
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
       
         {/* type-pricing */}
         <Route path="/list-type-pricing/:typeId" element={<ListTypePricing />} />
+        <Route path="/list-holiday" element={<ListHoliday />} />
         {/* reservation */}
         <Route path="/list-staff-reservation" element={<ListStaffReservation />} />
         <Route path="/list-owner-reservation" element={<ListOwnerReservation />} />

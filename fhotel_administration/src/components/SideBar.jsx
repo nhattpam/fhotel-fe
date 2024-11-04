@@ -497,6 +497,10 @@ const SideBar = () => {
                                                     </li>
                                                 )
                                             }
+                                            <li>
+                                                <Link to={`/list-holiday`}>Ngày lễ</Link>
+
+                                            </li>
                                         </ul>
                                     </li>
 

@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import typeService from '../../services/type.service';
 import cityService from '../../services/city.service';
 import districtService from '../../services/district.service';
+import holidayPricingService from '../../services/holiday-pricing.service';
 
 const ListTypePricing = () => {
 
@@ -154,6 +155,7 @@ const ListTypePricing = () => {
 
     const [cityList, setCityList] = useState([]);
     const [districtList, setDistrictList] = useState([]);
+    const [holidayPricingRuleList, setHolidayPricingRuleList] = useState([]);
     const [selectedCity, setSelectedCity] = useState(''); // Add state for selected city
 
     useEffect(() => {
@@ -165,6 +167,15 @@ const ListTypePricing = () => {
             .catch((error) => {
                 console.log(error);
             });
+        holidayPricingService
+            .getAllHolidayPricingRule()
+            .then((res) => {
+                setHolidayPricingRuleList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
     }, []);
 
     // Fetch districts when selectedCity changes
@@ -332,6 +343,9 @@ const ListTypePricing = () => {
     };
 
 
+    //Display holiday
+
+
     // Effect to handle error message visibility
     useEffect(() => {
         if (showError) {
@@ -411,39 +425,70 @@ const ListTypePricing = () => {
                                             <th><span>Giá (VND)</span></th>
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
-                                            <th><span>Ngày tạo</span></th>
-                                            <th><span>Ngày cập nhật</span></th>
+                                            <th><span>Ngày thực tế</span></th> {/* New column for Actual Date */}
+                                            <th><span>Ngày lễ</span></th>
                                             <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            currentTypePricings.length > 0 && currentTypePricings.map((item, index) => (
-                                                <>
-                                                    <tr>
+                                            currentTypePricings.length > 0 && currentTypePricings.map((item, index) => {
+                                                // Calculate the actual date for the specific day of the week
+                                                const today = new Date();
+                                                // Calculate the days to add to get the date for the target day of the week
+                                                const daysToAdd = (item.dayOfWeek - (today.getDay() === 0 ? 7 : today.getDay()) + 7) % 7;
+                                                const actualDate = new Date(today);
+                                                actualDate.setDate(today.getDate() + daysToAdd);
+                                                const actualDateString = actualDate.toLocaleDateString().split('T')[0]; // Format to "YYYY-MM-DD"
+
+                                                // Check for applicable holiday pricing rules
+                                                const holidayRules = holidayPricingRuleList.filter(h =>
+                                                    h.districtId === item.district?.districtId &&
+                                                    actualDateString === new Date(h.holidayDate).toLocaleDateString().split('T')[0] // Convert holidayDate to Date object
+                                                );
+
+                                                return (
+                                                    <tr key={item.typePricingId}>
                                                         <td>{index + 1}</td>
                                                         <td>{item.type?.typeName}</td>
                                                         <td>{daysOfWeek[item.dayOfWeek]}</td>
-                                                        <td>{item.price} </td>
+                                                        <td>{item.price.toLocaleString()} </td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
-                                                        <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
-                                                        <td> {item.updatedDate === null ? "None" : new Date(item.updatedDate).toLocaleString('en-US')}</td>
+                                                        <td>{actualDateString} {/* Displaying actual date */}</td> {/* Actual Date */}
+                                                        <td>
+                                                            {holidayRules.length > 0 ? (
+                                                                holidayRules.map((rule, ruleIndex) => {
+                                                                    const holidayDate = new Date(rule.holidayDate); // Convert to Date object
+                                                                    const holidayDateString = holidayDate.toLocaleDateString().split('T')[0];
+                                                                    return (
+                                                                        <div key={ruleIndex}>
+                                                                            {rule.description}: {rule.percentageIncrease}%
+                                                                            <br />
+                                                                            (Ngày: {holidayDateString}) {/* Displaying the holiday date */}
+                                                                        </div>
+                                                                    );
+                                                                })
+                                                            ) : (
+                                                                <span>Không</span>
+                                                            )}
+                                                        </td>
 
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
-                                                                <i className="fa fa-pencil font-14" onClick={() => openTypePricingModal(item.typePricingId)} /></button>
+                                                                <i className="fa fa-pencil font-14" onClick={() => openTypePricingModal(item.typePricingId)} />
+                                                            </button>
                                                         </td>
                                                     </tr>
-                                                </>
-                                            ))
+                                                );
+                                            })
                                         }
-
-
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+
+
 
                     </div>
                     {/* end ibox */}
@@ -541,6 +586,16 @@ const ListTypePricing = () => {
                                                                 required
                                                             />
                                                         </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Ngày tạo:</th>
+                                                        <td>{new Date(typePricing.createdDate).toLocaleString('en-US')}</td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Ngày chỉnh sửa gần nhất:</th>
+                                                        <td>{typePricing.updatedDate === null ? "Không có" : new Date(typePricing.updatedDate).toLocaleString('en-US')}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

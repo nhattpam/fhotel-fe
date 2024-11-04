@@ -653,7 +653,7 @@ const ListRoomAttendant = () => {
                                         <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Họ và tên * :</label>
+                                                <label htmlFor="hotelName">Họ và tên <span className='text-danger'>*</span> :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -667,7 +667,7 @@ const ListRoomAttendant = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="email">Email * :</label>
+                                                <label htmlFor="email">Email <span className='text-danger'>*</span> :</label>
                                                 <input
                                                     type="email"
                                                     className="form-control"
@@ -685,7 +685,7 @@ const ListRoomAttendant = () => {
 
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="password">Mật khẩu * :</label>
+                                                <label htmlFor="password">Mật khẩu <span className='text-danger'>*</span> :</label>
                                                 <input
                                                     type="password"
                                                     className="form-control"
@@ -698,7 +698,7 @@ const ListRoomAttendant = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="star">Số căn cước * :</label>
+                                                <label htmlFor="star">Số căn cước <span className='text-danger'>*</span> :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -714,7 +714,7 @@ const ListRoomAttendant = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Số điện thoại * :</label>
+                                                <label htmlFor="address">Số điện thoại <span className='text-danger'>*</span> :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -728,7 +728,7 @@ const ListRoomAttendant = () => {
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Khách sạn * :</label>
+                                                <label htmlFor="address">Khách sạn <span className='text-danger'>*</span> :</label>
                                                 <select
                                                     name="hotelId"
                                                     className="form-control"

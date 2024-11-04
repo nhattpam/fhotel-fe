@@ -847,7 +847,7 @@ const SideBar = () => {
 
                                         <div className="form-row">
                                             <div className="form-group col-md-12">
-                                                <label>Tên Loại</label>
+                                                <label>Tên Loại <span className='text-danger'>*</span> :</label>
                                                 <input
                                                     type="text"
                                                     name="serviceTypeName"

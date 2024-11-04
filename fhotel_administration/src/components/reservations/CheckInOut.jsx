@@ -845,18 +845,18 @@ const CheckInOut = () => {
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckIn" && (
-                                                            <button disabled className="btn btn-success " onClick={() =>
+                                                            <button disabled className="btn btn-success mr-2" onClick={() =>
                                                                 openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
                                                                 <i className="la la-sign-out" /> Nhận phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckOut" && (
-                                                            <button disabled className="btn btn-success ">
+                                                            <button disabled className="btn btn-success mr-2">
                                                                 <i className="la la-sign-out" /> Nhận phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckOut" && (
-                                                            <button disabled className="btn btn-danger "  >
+                                                            <button disabled className="btn btn-danger mr-2"  >
                                                                 <i className="la la-sign-out" /> Trả phòng
                                                             </button>
                                                         )}

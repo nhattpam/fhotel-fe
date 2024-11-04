@@ -636,7 +636,7 @@ const ListService = () => {
 
                                         <div className='row'>
                                             <div className='col-md-4'>
-                                                <label htmlFor="imageUrl">Hình ảnh * :</label>
+                                                <label htmlFor="imageUrl">Hình ảnh <span className='text-danger'>*</span> :</label>
                                                 <Dropzone
                                                     onDrop={handleFileDrop}
                                                     accept="image/*" multiple={false}
@@ -664,7 +664,7 @@ const ListService = () => {
                                                 <h4 className="header-title ">Thông Tin Dịch Vụ</h4>
                                                 <div className="form-row">
                                                     <div className="form-group  col-md-6">
-                                                        <label htmlFor="serviceName">Tên dịch vụ * :</label>
+                                                        <label htmlFor="serviceName">Tên dịch vụ <span className='text-danger'>*</span> :</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -677,7 +677,7 @@ const ListService = () => {
                                                     </div>
 
                                                     <div className="form-group  col-md-6">
-                                                        <label htmlFor="price">Đơn giá * :</label>
+                                                        <label htmlFor="price">Đơn giá <span className='text-danger'>*</span> :</label>
                                                         <div className="input-group">
                                                             <input
                                                                 type="number"
@@ -700,7 +700,7 @@ const ListService = () => {
 
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label htmlFor="description">Mô tả * :</label>
+                                                        <label htmlFor="description">Mô tả <span className='text-danger'>*</span> :</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -712,7 +712,7 @@ const ListService = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label htmlFor="serviceTypeId">Loại Dịch Vụ * :</label>
+                                                        <label htmlFor="serviceTypeId">Loại Dịch Vụ <span className='text-danger'>*</span> :</label>
                                                         <select
                                                             name="serviceTypeId"
                                                             className="form-control"

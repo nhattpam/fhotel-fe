@@ -640,7 +640,7 @@ const ListOwnerHotel = () => {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload Hình Ảnh * :</label>
+                                                    <label htmlFor="imageUrl">Upload hình ảnh khách sạn <span className='text-danger'>*</span> :</label>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelImage(acceptedFiles)}
                                                         accept="image/*"
@@ -679,7 +679,7 @@ const ListOwnerHotel = () => {
                                                     </Dropzone>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="imageUrl">Upload Giấy Tờ Khách Sạn * :</label>
+                                                    <label htmlFor="imageUrl">Upload giấy tờ khách sạn <span className='text-danger'>*</span> :</label>
                                                     <Dropzone
                                                         onDrop={(acceptedFiles) => handleFileDropHotelDocument(acceptedFiles)}
                                                         accept="image/*"
@@ -721,7 +721,7 @@ const ListOwnerHotel = () => {
                                             <div className="col-md-7">
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Tên Khách Sạn</label>
+                                                        <label>Tên khách sạn <span className='text-danger'>*</span> :</label>
                                                         <input
                                                             type="text"
                                                             name="hotelName"
@@ -732,7 +732,7 @@ const ListOwnerHotel = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Số Điện Thoại</label>
+                                                        <label>Số điện thoại <span className='text-danger'>*</span> :</label>
                                                         <input
                                                             type="number"
                                                             name="phone"
@@ -745,7 +745,7 @@ const ListOwnerHotel = () => {
                                                 </div>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Email</label>
+                                                        <label>Email <span className='text-danger'>*</span> :</label>
                                                         <input
                                                             type="email"
                                                             name="email"
@@ -756,7 +756,7 @@ const ListOwnerHotel = () => {
                                                         />
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Thành Phố</label>
+                                                        <label>Thành phố <span className='text-danger'>*</span> :</label>
                                                         <select
                                                             className="form-control"
                                                             onChange={(e) => {
@@ -764,7 +764,7 @@ const ListOwnerHotel = () => {
                                                             }}
                                                             required
                                                         >
-                                                            <option value="">Chọn Thành Phố</option>
+                                                            <option value="">Chọn thành phố</option>
                                                             {cityList.map((city) => (
                                                                 <option key={city.cityId} value={city.cityId}>
                                                                     {city.cityName}
@@ -775,7 +775,7 @@ const ListOwnerHotel = () => {
                                                 </div>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Quận</label>
+                                                        <label>Quận <span className='text-danger'>*</span> :</label>
                                                         <select
                                                             name="districtId"
                                                             className="form-control"
@@ -792,8 +792,8 @@ const ListOwnerHotel = () => {
                                                         </select>
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Địa Chỉ</label>
-                                                        <textarea
+                                                        <label>Địa chỉ <span className='text-danger'>*</span> :</label>
+                                                        <input
                                                             name="address"
                                                             className="form-control"
                                                             value={createHotel.address}
@@ -806,7 +806,7 @@ const ListOwnerHotel = () => {
 
 
                                                 <div className="form-group">
-                                                    <label>Mô Tả</label>
+                                                    <label>Mô tả <span className='text-danger'>*</span> :</label>
                                                     <ReactQuill
                                                         theme="snow"
                                                         value={createHotel.description}

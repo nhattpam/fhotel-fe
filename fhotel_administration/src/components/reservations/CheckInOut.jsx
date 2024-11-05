@@ -767,7 +767,7 @@ const CheckInOut = () => {
                                             type="text"
                                             id="reservation-search"
                                             className="form-control"
-                                            placeholder="Nhập mã đặt chỗ, tên khách hàng, số điện thoại, email hoặc số căn cước"
+                                            placeholder="Nhập mã đặt phòng, tên khách hàng, số điện thoại, email hoặc số căn cước"
                                             value={customerSearch}
                                             onChange={(e) => setCustomerSearch(e.target.value)}
                                         />
@@ -786,7 +786,7 @@ const CheckInOut = () => {
                                                 <div className="card-body">
                                                     <div className="row">
                                                         <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Mã đặt chỗ:</strong> {reservation.code}</p>
+                                                            <p><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
                                                             <p><strong className='mr-2'>Tên khách hàng:</strong> {reservation.customer?.name}</p>
                                                             <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
                                                             <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>

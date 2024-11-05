@@ -331,27 +331,62 @@ const EditHotel = () => {
     };
 
     // Validation function
-    const validateForm = () => {
+    // Validation function
+    const validateForm = async () => {
         const errors = {};
 
         // Type Name validation
-        if (!createRoomType.typeId.trim()) {
-            errors.typeId = "Type Name is required";
+        if (!createRoomType.typeId || !createRoomType.typeId.trim()) {
+            errors.typeId = "Loại phòng chưa chọn!";
         }
 
-        // Room Size validation
+        if (createRoomType.typeId) {
+            try {
+                const res = await typeService.getTypeById(createRoomType.typeId);
+                const typeName = res.data.typeName;
+                console.log(typeName);
+
+                if (typeName === "Tiêu chuẩn") {
+                    if (createRoomType.roomSize < 15 || createRoomType.roomSize > 25) {
+                        errors.roomSize = "Diện tích phòng Tiêu chuẩn phải từ 15 đến 25m²!";
+                    }
+                } else if (typeName === "Cao cấp") {
+                    if (createRoomType.roomSize < 20 || createRoomType.roomSize > 30) {
+                        errors.roomSize = "Diện tích phòng Cao cấp phải từ 20 đến 30m²!";
+                    }
+                } else if (typeName === "Gia đình") {
+                    if (createRoomType.roomSize < 25 || createRoomType.roomSize > 35) {
+                        errors.roomSize = "Diện tích phòng Gia đình phải từ 25 đến 35m²!";
+                    }
+                } else if (typeName === "Hạng sang") {
+                    if (createRoomType.roomSize < 25 || createRoomType.roomSize > 40) {
+                        errors.roomSize = "Diện tích phòng Hạng sang phải từ 25 đến 40m²!";
+                    }
+                } else if (typeName === "Suite") {
+                    if (createRoomType.roomSize < 30 || createRoomType.roomSize > 60) {
+                        errors.roomSize = "Diện tích phòng Suite phải từ 30 đến 60m²!";
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        // Room Size validation (kiểm tra thêm nếu không rơi vào loại phòng nào)
         if (createRoomType.roomSize <= 0) {
-            errors.roomSize = "Room Size must be greater than 0";
+            errors.roomSize = "Diện tích phòng phải lớn hơn 0m²!";
+        } else if (createRoomType.roomSize > 60) {
+            errors.roomSize = "Diện tích phòng không được vượt quá 60m²!";
         }
-
 
         // Total Rooms validation
         if (!createRoomType.totalRooms) {
-            errors.totalRooms = "Total Rooms is required";
+            errors.totalRooms = "Tổng số phòng bắt buộc!";
         }
+
         // Description validation
-        if (!createRoomType.description.trim()) {
-            errors.description = "Description is required";
+        if (!createRoomType.description || !createRoomType.description.trim()) {
+            errors.description = "Mô tả là bắt buộc!";
         }
 
         setError(errors);
@@ -374,7 +409,8 @@ const EditHotel = () => {
         e.preventDefault();
 
         // Validate the form before submitting
-        if (!validateForm()) {
+        const isValid = await validateForm();
+        if (!isValid) {
             setShowError(true);
             return;
         }
@@ -398,27 +434,24 @@ const EditHotel = () => {
                     const imageResponse = await hotelImageService.uploadImage(imageData);
                     const imageUrl = imageResponse.data.link; // Assuming this gives you the URL
                     // Create hotel image object
-                    const createRoomImageData = { roomTypeId, image: imageUrl, };
+                    const createRoomImageData = { roomTypeId, image: imageUrl };
 
                     await roomImageService.saveRoomImage(createRoomImageData);
                 }
 
-                selectedFacilities.forEach(facilityId => {
-                    roomFacilityService.saveRoomFacility({ roomTypeId: roomTypeId, facilityId })
-                        .then(response => {
-                            console.log("Facility added:", response);
-                            // Optionally refresh the facilities list or perform other actions
-                            fetchRoomFacilities(selectedRoomTypeId)
-                        })
-                        .catch(error => {
-                            console.error("Error adding facility:", error);
-                        });
+                selectedFacilities.forEach(async (facilityId) => {
+                    try {
+                        const response = await roomFacilityService.saveRoomFacility({ roomTypeId: roomTypeId, facilityId });
+                        console.log("Facility added:", response);
+                        // Optionally refresh the facilities list or perform other actions
+                        fetchRoomFacilities(selectedRoomTypeId);
+                    } catch (error) {
+                        console.error("Error adding facility:", error);
+                    }
                 });
 
                 // Optionally clear selections and close modal
                 setSelectedFacilities([]);
-
-
                 setSuccess({ general: "Tạo Thành Công!" });
                 setShowSuccess(true); // Show success
                 hotelService

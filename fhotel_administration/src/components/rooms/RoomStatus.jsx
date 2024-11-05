@@ -99,10 +99,13 @@ const RoomStatus = () => {
     });
 
     const handleChange = (e) => {
-        const value = e.target.value;
-
-        setUpdateRoom({ ...updateRoom, [e.target.name]: value });
+        const { name, value } = e.target;
+        setUpdateRoom((prev) => ({
+            ...prev,
+            [name]: value
+        }));
     };
+    
 
     const handleUpdateRoomNoteChange = (value) => {
         setUpdateRoom({ ...updateRoom, note: value });

@@ -473,7 +473,7 @@ const ListTypePricing = () => {
                                                 // Check for applicable holiday pricing rules
                                                 const holidayRules = holidayPricingRuleList.filter(h =>
                                                     h.districtId === item.district?.districtId &&
-                                                    actualDateString === new Date(h.holidayDate).toLocaleDateString().split('T')[0] // Convert holidayDate to Date object
+                                                    actualDateString === new Date(h.holiday?.holidayDate).toLocaleDateString().split('T')[0] // Convert holidayDate to Date object
                                                 );
 
                                                 return (
@@ -488,13 +488,14 @@ const ListTypePricing = () => {
                                                         <td>
                                                             {holidayRules.length > 0 ? (
                                                                 holidayRules.map((rule, ruleIndex) => {
-                                                                    const holidayDate = new Date(rule.holidayDate); // Convert to Date object
+                                                                    const holidayDate = new Date(rule.holiday?.holidayDate); // Convert to Date object
                                                                     const holidayDateString = holidayDate.toLocaleDateString().split('T')[0];
                                                                     return (
                                                                         <div key={ruleIndex}>
-                                                                            {rule.description}: {rule.percentageIncrease}%
+                                                                            {rule.holiday?.description}: {rule.percentageIncrease}%
                                                                             <br />
-                                                                            (Ngày: {holidayDateString}) {/* Displaying the holiday date */}
+                                                                            {/* (Ngày: {holidayDateString}) */}
+                                                                             {/* Displaying the holiday date */}
                                                                         </div>
                                                                     );
                                                                 })

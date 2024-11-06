@@ -55,20 +55,21 @@ const CheckInOut = () => {
     }, []);
 
     const handleSearch = () => {
-        // Simulate searching for reservation
-        const filteredReservations = reservationList.filter(res =>
-            res.customer?.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
-            res.customer?.email.toLowerCase().includes(customerSearch.toLowerCase()) ||
-            res.code.toLowerCase().includes(customerSearch.toLowerCase()) ||
-            res.customer?.identificationNumber.includes(customerSearch)
-        );
-
-        if (filteredReservations.length > 0) {
-            setReservationDetails(filteredReservations);
-        } else {
-            setReservationDetails(null);
-        }
+        // Use the reservationService to search with the API
+        reservationService.searchReservation(customerSearch)
+            .then((res) => {
+                if (res.data.length > 0) {
+                    setReservationDetails(res.data);
+                } else {
+                    setReservationDetails(null);
+                }
+            })
+            .catch((error) => {
+                console.log("Search error:", error);
+                setReservationDetails(null);
+            });
     };
+    
 
 
 
@@ -263,7 +264,7 @@ const CheckInOut = () => {
 
         try {
             // Only proceed if the selected rooms are within the allowed quantity
-            if (selectedRooms.length > selectedQuantity) {
+            if (selectedRooms.length !== selectedQuantity) {
                 setError({ general: `Khách yêu cầu ${selectedQuantity} phòng!` });
                 setShowError(true);
                 return;
@@ -317,13 +318,13 @@ const CheckInOut = () => {
             if (updateRes.status === 200) {
                 setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
                 setShowSuccess(true);
-
-                /// refresh search list with search term
-                // window.location.reload();
+            
+                // Refresh search results with the current query
+                handleSearch();
             } else {
                 handleResponseError(error.response);
             }
-
+            
             // After submitting, clear the selected rooms
             setSelectedRooms([]); // Clear selected amenities after submission
         } catch (error) {
@@ -682,6 +683,8 @@ const CheckInOut = () => {
             if (updateRes.status === 200) {
                 setSuccess({ general: "Trả phòng thành công!" });
                 setShowSuccess(true); // Show error
+
+                handleSearch();
             } else {
                 handleResponseError(error.response);
             }
@@ -971,7 +974,7 @@ const CheckInOut = () => {
                                                         <div
                                                             key={room.roomNumber}
                                                             className="room-box"
-                                                            onClick={() => openRoomModal(room.roomId)}
+                                                            
                                                             style={{
                                                                 backgroundColor: room.status === 'Available' ? 'green' :
                                                                     room.status === 'Occupied' ? 'red' :
@@ -982,7 +985,7 @@ const CheckInOut = () => {
                                                                 margin: '5px'
                                                             }}
                                                         >
-                                                            <p>{room.roomNumber}</p>
+                                                            <p onClick={() => openRoomModal(room.roomId)}>{room.roomNumber}</p>
                                                             {
                                                                 reservation.reservationStatus !== "CheckIn" &&
                                                                 reservation.reservationStatus !== "Cancelled" &&

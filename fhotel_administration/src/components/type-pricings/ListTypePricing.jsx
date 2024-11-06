@@ -124,13 +124,8 @@ const ListTypePricing = () => {
     //create type pricing modal
     const [createTypePricing, setCreateTypePricing] = useState({
         districtId: '',
-        price_1: '',  // Monday
-        price_2: '',  // Tuesday
-        price_3: '',  // Wednesday
-        price_4: '',  // Thursday
-        price_5: '',  // Friday
-        price_6: '',  // Saturday
-        price_7: '',  // Sunday
+        percentageIncrease: '',
+        basePrice: '' // Single input for base price
     });
 
     const [showModalCreateTypePricing, setShowModalCreateTypePricing] = useState(false);
@@ -236,63 +231,71 @@ const ListTypePricing = () => {
         return isValid;
     };
 
+    // Function to calculate weekend price based on percentage increase
+    const calculateWeekendPrice = () => {
+        const basePrice = Number(createTypePricing.basePrice) || 0;
+        const percentageIncrease = Number(createTypePricing.percentageIncrease) || 0;
+        return basePrice * (1 + percentageIncrease / 100);
+    };
+
+    // Updated form submission to use the new pricing setup
     const submitCreateTypePricing = async (e) => {
         e.preventDefault();
 
-        // Run validation before submitting
-        if (!validateForm()) {
-            return; // Stop the function if validation fails
-        }
+        // if (!validateForm()) return;
 
-        setIsSubmitting(true); // Disable the button to prevent multiple submissions
-
+        setIsSubmitting(true);
         try {
             for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
-                if (createTypePricing[`price_${dayOfWeek}`]) {
-                    const pricingData = {
-                        districtId: createTypePricing.districtId,
-                        price: Number(createTypePricing[`price_${dayOfWeek}`]), // Convert to number
-                        dayOfWeek: dayOfWeek,
-                        typeId: typeId // Ensure typeId is defined earlier
-                    };
+                const isWeekend = dayOfWeek >= 6; // Saturday & Sunday
+                const price = isWeekend ? calculateWeekendPrice() : createTypePricing.basePrice;
 
-                    // Call API to save the pricing
-                    const typePricingResponse = await typePricingService.saveTypePricing(pricingData);
+                const pricingData = {
+                    districtId: createTypePricing.districtId,
+                    price: price,
+                    dayOfWeek: dayOfWeek,
+                    typeId: typeId
+                };
+                console.log(JSON.stringify(pricingData))
 
-                    if (typePricingResponse.status !== 201) {
-                        handleResponseError(error.response);
-                    }
+                // Call API to save the pricing
+                // Call API to save the pricing
+                const typePricingResponse = await typePricingService.saveTypePricing(pricingData);
 
-                    typeService
-                        .getAllTypePricingByTypeId(typeId)
-                        .then((res) => {
-                            // Sorting by districtId and then dayOfWeek
-                            const sortedData = res.data.sort((a, b) => {
-                                // First, sort by districtId
-                                const districtComparison = a.districtId.localeCompare(b.districtId);
-                                if (districtComparison !== 0) {
-                                    return districtComparison;
-                                }
-                                // If districtId is the same, sort by dayOfWeek
-                                return a.dayOfWeek - b.dayOfWeek;
-                            });
-                            setTypePricingList(sortedData);
-                        })
-                        .catch((error) => {
-                            handleResponseError(error.response);
-                        });
-                    // Clear the state for the submitted day to prevent duplicate submission
-                    setCreateTypePricing(prevState => ({
-                        ...prevState,
-                        [`price_${dayOfWeek}`]: "" // Clear the price after submission
-                    }));
+                if (typePricingResponse.status !== 201) {
+                    handleResponseError(error.response);
                 }
+
+                typeService
+                    .getAllTypePricingByTypeId(typeId)
+                    .then((res) => {
+                        // Sorting by districtId and then dayOfWeek
+                        const sortedData = res.data.sort((a, b) => {
+                            // First, sort by districtId
+                            const districtComparison = a.districtId.localeCompare(b.districtId);
+                            if (districtComparison !== 0) {
+                                return districtComparison;
+                            }
+                            // If districtId is the same, sort by dayOfWeek
+                            return a.dayOfWeek - b.dayOfWeek;
+                        });
+                        setTypePricingList(sortedData);
+                    })
+                    .catch((error) => {
+                        handleResponseError(error.response);
+                    });
+                // Clear the state for the submitted day to prevent duplicate submission
+                setCreateTypePricing(prevState => ({
+                    ...prevState,
+                    [`price_${dayOfWeek}`]: "" // Clear the price after submission
+                }));
             }
+
+            // Refresh or clear form after submission
         } catch (error) {
             handleResponseError(error.response);
-            // You can show a user-friendly message here
         } finally {
-            setIsSubmitting(false); // Re-enable the button after the process is done
+            setIsSubmitting(false);
         }
     };
 
@@ -352,7 +355,7 @@ const ListTypePricing = () => {
     //Display holiday
 
 
-   
+
 
     // Effect to handle error message visibility
     useEffect(() => {
@@ -436,7 +439,7 @@ const ListTypePricing = () => {
                                 >
                                     Thêm giá
                                 </button>
-                               
+
                             </div>
                         </div>
 
@@ -643,27 +646,11 @@ const ListTypePricing = () => {
                 showModalCreateTypePricing && (
                     <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
-
                             <div className="modal-content">
-                                <form
-                                    method="post"
-                                    id="myAwesomeDropzone"
-                                    data-plugin="dropzone"
-                                    data-previews-container="#file-previews"
-                                    data-upload-preview-template="#uploadPreviewTemplate"
-                                    data-parsley-validate
-                                    onSubmit={(e) => submitCreateTypePricing(e)}
-                                    style={{ textAlign: "left" }}
-                                >
+                                <form onSubmit={(e) => submitCreateTypePricing(e)} style={{ textAlign: "left" }}>
                                     <div className="modal-header bg-dark text-light">
                                         <h5 className="modal-title">Tạo Bảng Giá Cho Tuần</h5>
-                                        <button
-                                            type="button"
-                                            className="close text-light"
-                                            data-dismiss="modal"
-                                            aria-label="Close"
-                                            onClick={closeModalCreateTypePricing}
-                                        >
+                                        <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateTypePricing}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         {showSuccess && Object.entries(success).length > 0 && (
@@ -683,93 +670,72 @@ const ListTypePricing = () => {
                                     </div>
 
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                        {/* Form Fields */}
-                                        <h4 className="header-title ">Thông Tin</h4>
-
+                                        <h4 className="header-title">Thông Tin</h4>
+                                        {/* Select fields for city and district */}
                                         <div className="form-row">
-                                            <div className="form-group  col-md-6">
-                                                <label>Thành phố <span className='text-danger'>*</span> :</label>
-                                                <select
-                                                    name="cityId"
-                                                    className="form-control"
-                                                    onChange={(e) => {
-                                                        handleChange(e);
-                                                        setSelectedCity(e.target.value); // Update selected city
-                                                    }}
-                                                    required
-                                                >
+                                            {/* City Select */}
+                                            <div className="form-group col-md-6">
+                                                <label>Thành phố <span className="text-danger">*</span> :</label>
+                                                <select name="cityId" className="form-control" onChange={(e) => {
+                                                    handleChange(e);
+                                                    setSelectedCity(e.target.value);
+                                                }} required>
                                                     <option value="">Chọn thành phố</option>
-                                                    {cityList.map((city) => (
-                                                        <option key={city.cityId} value={city.cityId}>
-                                                            {city.cityName}
-                                                        </option>
+                                                    {cityList.map(city => (
+                                                        <option key={city.cityId} value={city.cityId}>{city.cityName}</option>
                                                     ))}
                                                 </select>
                                             </div>
 
+                                            {/* District Select */}
                                             <div className="form-group col-md-6">
-                                                <label>Quận <span className='text-danger'>*</span> :</label>
-                                                <select
-                                                    name="districtId"
-                                                    className="form-control"
-                                                    value={createTypePricing.districtId}
-                                                    onChange={(e) => handleChange(e)}
-                                                    required
-                                                >
+                                                <label>Quận <span className="text-danger">*</span> :</label>
+                                                <select name="districtId" className="form-control" value={createTypePricing.districtId} onChange={handleChange} required>
                                                     <option value="">Chọn quận</option>
-                                                    {districtList.map((district) => (
-                                                        <option key={district.districtId} value={district.districtId}>
-                                                            {district.districtName}
-                                                        </option>
+                                                    {districtList.map(district => (
+                                                        <option key={district.districtId} value={district.districtId}>{district.districtName}</option>
                                                     ))}
                                                 </select>
                                             </div>
                                         </div>
 
-                                        {/* Price inputs for each day */}
-                                        <h4 className="header-title">Giá Cho Các Ngày</h4>
-                                        {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'].map((day, index) => (
-                                            <div className="form-group col-md-12" key={index}>
-                                                <label htmlFor={`price_${index}`}>{day} <span className='text-danger'>*</span> :</label>
-                                                <div className="input-group">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        name={`price_${index + 1}`} // DayOfWeek values: 1 for Monday, 7 for Sunday
-                                                        id={`price_${index}`}
-                                                        value={createTypePricing[`price_${index + 1}`] || ""}
-                                                        onChange={(e) => handleDayPriceChange(e, index + 1)}
-                                                        min={0}
-                                                        required
-                                                    />
-                                                    <div className="input-group-append">
-                                                        <span className="input-group-text custom-append">VND</span>
-                                                    </div>
+                                        {/* Single Base Price Input */}
+                                        <h4 className="header-title">Giá Cơ Bản</h4>
+                                        <div className="form-group col-md-12">
+                                            <label htmlFor="basePrice">Giá cơ bản (Thứ 2 - Thứ 6) <span className="text-danger">*</span> :</label>
+                                            <div className="input-group">
+                                                <input type="number" className="form-control" name="basePrice" id="basePrice" value={createTypePricing.basePrice || ''} onChange={handleChange} min={0} required />
+                                                <div className="input-group-append">
+                                                    <span className="input-group-text custom-append">VND</span>
                                                 </div>
                                             </div>
-                                        ))}
+                                        </div>
+
+                                        {/* Percentage Increase for Weekend */}
+                                        <h4 className="header-title">Tăng Giá Cuối Tuần</h4>
+                                        <div className="form-group col-md-12">
+                                            <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) :</label>
+                                            <select name="percentageIncrease" className="form-control" id="percentageIncrease" value={createTypePricing.percentageIncrease} onChange={handleChange}>
+                                                <option value="">Chọn phần trăm</option>
+                                                {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70].map(percent => (
+                                                    <option key={percent} value={percent}>{percent}%</option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div className="modal-footer">
-                                        <button
-                                            type="submit"
-                                            className="btn btn-custom btn-sm"
-                                            disabled={isSubmitting}  // Disable button when submitting
-                                        >
-                                            Lưu
-                                        </button>
+                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting}>Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
                                     </div>
                                 </form>
-
-
                             </div>
                         </div>
-                    </div >
+                    </div>
 
                 )
             }
-            
+
             <style>
                 {`
                     .page-item.active .page-link{

@@ -60,6 +60,13 @@ class BillService {
     });
   }
 
+  getAllBillTransactionImageByBillId(id) {
+    return axios.get(API_URL + `/bills/${id}/bill-transaction-images` , {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
 
 
 }

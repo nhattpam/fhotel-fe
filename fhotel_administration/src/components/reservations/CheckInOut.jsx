@@ -14,6 +14,7 @@ import serviceTypeService from '../../services/service-type.service';
 import orderService from '../../services/order.service';
 import orderDetailService from '../../services/order-detail.service';
 import billService from '../../services/bill.service';
+import billTransactionImageService from '../../services/bill-transaction-image.service';
 
 const CheckInOut = () => {
     //get user information
@@ -69,7 +70,7 @@ const CheckInOut = () => {
                 setReservationDetails(null);
             });
     };
-    
+
 
 
 
@@ -318,13 +319,13 @@ const CheckInOut = () => {
             if (updateRes.status === 200) {
                 setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
                 setShowSuccess(true);
-            
+
                 // Refresh search results with the current query
                 handleSearch();
             } else {
                 handleResponseError(error.response);
             }
-            
+
             // After submitting, clear the selected rooms
             setSelectedRooms([]); // Clear selected amenities after submission
         } catch (error) {
@@ -698,6 +699,104 @@ const CheckInOut = () => {
     //END CHECKOUT
 
 
+    //CREATE BILL TRANSACTION IMAGE:
+    const [billTransactionImageList, setBillTransactionImageList] = useState([]);
+    const [selectedBillId, setSelectedBillId] = useState(null);
+
+    const [showModalCreateBillTransactionImage, setShowModalCreateBillTransactionImage] = useState(false);
+    const closeModalCreateBillTransactionImage = () => {
+        setShowModalCreateBillTransactionImage(false);
+    };
+
+
+    const openCreateBillTransactionImageModal = (billId) => {
+        setShowModalCreateBillTransactionImage(true);
+        setSelectedBillId(billId);
+        billService
+            .getAllBillTransactionImageByBillId(billId)
+            .then((res) => {
+                setBillTransactionImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    };
+    const [selectedFile4, setSelectedFile4] = useState(null);
+
+    // Handle file selection
+    const handleFileChange4 = (event) => {
+        setSelectedFile4(event.target.files[0]);
+    };
+
+    const [imageList4, setImageList4] = useState(billTransactionImageList);
+
+
+    // Upload image and refresh the room image list without closing the modal
+    const handleUploadAndPost4 = async () => {
+        if (!selectedFile4) {
+            alert("Chọn hình!");
+            return;
+        }
+
+        try {
+            // Prepare the FormData with the correct key expected by the API
+            const formData = new FormData();
+            formData.append("file", selectedFile4); // Adjust key if needed
+            console.log([...formData.entries()]); // Logs the form data before submission
+
+            // Upload the image to the API
+            const uploadResponse = await roomImageService.uploadImage(formData);
+
+            if (uploadResponse && uploadResponse.data) {
+                const imageUrl = uploadResponse.data.link; // Extract the returned image URL from the response
+                // Update roomImage object
+                const createBillTransactionImage = {
+                    billId: selectedBillId,
+                    image: imageUrl,
+                };
+
+                // Save the room image to your database
+                await billTransactionImageService.saveBillTransactionImage(createBillTransactionImage);
+
+                // Refresh the room image list by calling the fetchRoomImages function
+                fetchHotelBillTransactionImages(selectedBillId);
+
+                // Optionally, update the local image list without refetching (in case you want instant visual feedback)
+                setImageList4((prevList) => [...prevList, { image: imageUrl }]);
+
+            }
+        } catch (error) {
+            console.error("Error uploading and posting image:", error);
+        }
+    };
+
+    const fetchHotelBillTransactionImages = (billId) => {
+        billService
+            .getAllBillTransactionImageByBillId(billId)
+            .then((res) => {
+                setBillTransactionImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const handleDeleteImage4 = async (billTransactionImageId) => {
+        try {
+            // Call the API to delete the image by roomImageId
+            await billTransactionImageService.deleteBillTransactionImageById(billTransactionImageId);
+
+            // After successful deletion, remove the image from the imageList
+            setBillTransactionImageList(prevList => prevList.filter(item => item.billTransactionImageId !== billTransactionImageId));
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
+    };
+
+
+
+
     /// notification
     const [success, setSuccess] = useState({}); // State to hold error messages
     const [showSuccess, setShowSuccess] = useState(false); // State to manage error visibility
@@ -974,7 +1073,7 @@ const CheckInOut = () => {
                                                         <div
                                                             key={room.roomNumber}
                                                             className="room-box"
-                                                            
+
                                                             style={{
                                                                 backgroundColor: room.status === 'Available' ? 'green' :
                                                                     room.status === 'Occupied' ? 'red' :
@@ -1391,9 +1490,19 @@ const CheckInOut = () => {
                                                                                         className="btn btn-default btn-xs m-r-5"
                                                                                         data-toggle="tooltip"
                                                                                         data-original-title="Activate"
+                                                                                        onClick={() => openCreateBillTransactionImageModal(billByReservation.billId)}                                                                            >
+                                                                                        <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
+
+                                                                                    </button>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="btn btn-default btn-xs m-r-5"
+                                                                                        data-toggle="tooltip"
+                                                                                        data-original-title="Activate"
                                                                                         onClick={() => handleDeleteBill(billByReservation.billId, billByReservation.reservationId)}                                                                            >
                                                                                         <i className="fa fa-times text-danger" aria-hidden="true"></i>
                                                                                     </button>
+
                                                                                 </>
                                                                             )
                                                                         }
@@ -1618,6 +1727,87 @@ const CheckInOut = () => {
                     </div>
                 </div>
             )}
+
+            {showModalCreateBillTransactionImage && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Upload Hình Ảnh Chuyển Tiền</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateBillTransactionImage}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            {
+                                                billTransactionImageList.length > 0 ? (
+                                                    billTransactionImageList.map((item, index) => (
+                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                            {
+                                                                loginUser.role?.roleName === "Receptionist" && (
+                                                                    <>
+                                                                        {/* Delete Icon/Button */}
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn btn-danger"
+                                                                            style={{
+                                                                                position: 'absolute',
+                                                                                top: '10px',
+                                                                                right: '10px',
+                                                                                background: 'transparent',
+                                                                                border: 'none',
+                                                                                color: 'red',
+                                                                                fontSize: '20px',
+                                                                                cursor: 'pointer',
+                                                                            }}
+                                                                            onClick={() => handleDeleteImage4(item.hotelDocumentId)}
+                                                                        >
+                                                                            &times; {/* This represents the delete icon (X symbol) */}
+                                                                        </button>
+                                                                    </>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
+                                                )
+                                            }
+
+
+                                            {
+                                                loginUser.role?.roleName === "Receptionist" && (
+                                                    <>
+                                                        <div className="form-group mt-3">
+                                                            <input type="file" onChange={handleFileChange4} />
+                                                            <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost4}>
+                                                                + Tải file
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )
+            }
 
 
             <style jsx>{`

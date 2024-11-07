@@ -652,7 +652,7 @@ const ListOwnerHotel = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Tải File.</h3>
+                                                                    <h3>Tải file.</h3>
                                                                 </div>
                                                                 {imagePreviewsHotelImage.length > 0 && (
                                                                     <div className="image-previews">
@@ -691,7 +691,7 @@ const ListOwnerHotel = () => {
                                                                 <input {...getInputProps()} />
                                                                 <div className="dz-message needsclick">
                                                                     <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                    <h3>Tải File.</h3>
+                                                                    <h3>Tải file.</h3>
                                                                 </div>
                                                                 {imagePreviewsHotelDocument.length > 0 && (
                                                                     <div className="image-previews">

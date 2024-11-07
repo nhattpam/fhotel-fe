@@ -647,7 +647,7 @@ const ListService = () => {
                                                             <input {...getInputProps()} />
                                                             <div className="dz-message needsclick">
                                                                 <i className="h1 text-muted dripicons-cloud-upload" />
-                                                                <h3>Tải File.</h3>
+                                                                <h3>Tải file.</h3>
                                                             </div>
                                                             {imagePreview && (
                                                                 <img src={imagePreview} alt="Preview" style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "10px" }} />

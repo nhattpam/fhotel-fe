@@ -125,7 +125,9 @@ const ListTypePricing = () => {
     const [createTypePricing, setCreateTypePricing] = useState({
         districtId: '',
         percentageIncrease: '',
-        basePrice: '' // Single input for base price
+        basePrice: '', // Single input for base price
+        from: '',
+        to: ''
     });
 
     const [showModalCreateTypePricing, setShowModalCreateTypePricing] = useState(false);
@@ -254,7 +256,9 @@ const ListTypePricing = () => {
                     districtId: createTypePricing.districtId,
                     price: price,
                     dayOfWeek: dayOfWeek,
-                    typeId: typeId
+                    typeId: typeId,
+                    from: createTypePricing.from,
+                    to: createTypePricing.to
                 };
                 console.log(JSON.stringify(pricingData))
 
@@ -495,7 +499,7 @@ const ListTypePricing = () => {
                                                                             {rule.holiday?.description}: {rule.percentageIncrease}%
                                                                             <br />
                                                                             {/* (Ngày: {holidayDateString}) */}
-                                                                             {/* Displaying the holiday date */}
+                                                                            {/* Displaying the holiday date */}
                                                                         </div>
                                                                     );
                                                                 })
@@ -674,6 +678,17 @@ const ListTypePricing = () => {
                                         <h4 className="header-title">Thông Tin</h4>
                                         {/* Select fields for city and district */}
                                         <div className="form-row">
+                                            {/* From Date */}
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
+                                                <input type="date" className="form-control" name="from" id="from" value={createTypePricing.from || ''} onChange={handleChange} required />
+                                            </div>
+
+                                            {/* To Date */}
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
+                                                <input type="date" className="form-control" name="to" id="to" value={createTypePricing.to || ''} onChange={handleChange} required />
+                                            </div>
                                             {/* City Select */}
                                             <div className="form-group col-md-6">
                                                 <label>Thành phố <span className="text-danger">*</span> :</label>
@@ -698,31 +713,32 @@ const ListTypePricing = () => {
                                                     ))}
                                                 </select>
                                             </div>
-                                        </div>
-
-                                        {/* Single Base Price Input */}
-                                        <h4 className="header-title">Giá Cơ Bản</h4>
-                                        <div className="form-group col-md-12">
-                                            <label htmlFor="basePrice">Giá cơ bản (Thứ 2 - Thứ 6) <span className="text-danger">*</span> :</label>
-                                            <div className="input-group">
-                                                <input type="number" className="form-control" name="basePrice" id="basePrice" value={createTypePricing.basePrice || ''} onChange={handleChange} min={0} required />
-                                                <div className="input-group-append">
-                                                    <span className="input-group-text custom-append">VND</span>
+                                            {/* Single Base Price Input */}
+                                            {/* <h4 className="header-title">Giá Cơ Bản</h4> */}
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="basePrice">Giá cơ bản <span className="text-danger">*</span> :</label>
+                                                <div className="input-group">
+                                                    <input type="number" className="form-control" name="basePrice" id="basePrice" value={createTypePricing.basePrice || ''} onChange={handleChange} min={0} required />
+                                                    <div className="input-group-append">
+                                                        <span className="input-group-text custom-append">VND</span>
+                                                    </div>
                                                 </div>
+                                            </div>
+
+                                            {/* Percentage Increase for Weekend */}
+                                            {/* <h4 className="header-title">Tăng Giá Cuối Tuần</h4> */}
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) :</label>
+                                                <select name="percentageIncrease" className="form-control" id="percentageIncrease" value={createTypePricing.percentageIncrease} onChange={handleChange}>
+                                                    <option value="">Chọn phần trăm</option>
+                                                    {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70].map(percent => (
+                                                        <option key={percent} value={percent}>{percent}%</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
 
-                                        {/* Percentage Increase for Weekend */}
-                                        <h4 className="header-title">Tăng Giá Cuối Tuần</h4>
-                                        <div className="form-group col-md-12">
-                                            <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) :</label>
-                                            <select name="percentageIncrease" className="form-control" id="percentageIncrease" value={createTypePricing.percentageIncrease} onChange={handleChange}>
-                                                <option value="">Chọn phần trăm</option>
-                                                {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70].map(percent => (
-                                                    <option key={percent} value={percent}>{percent}%</option>
-                                                ))}
-                                            </select>
-                                        </div>
+
                                     </div>
 
                                     <div className="modal-footer">

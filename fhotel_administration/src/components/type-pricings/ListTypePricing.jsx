@@ -33,25 +33,34 @@ const ListTypePricing = () => {
 
     useEffect(() => {
         typeService
-            .getAllTypePricingByTypeId(typeId)
-            .then((res) => {
-                // Sorting by districtId and then dayOfWeek
-                const sortedData = res.data.sort((a, b) => {
-                    // First, sort by districtId
-                    const districtComparison = a.districtId.localeCompare(b.districtId);
-                    if (districtComparison !== 0) {
-                        return districtComparison;
-                    }
-                    // If districtId is the same, sort by dayOfWeek
-                    return a.dayOfWeek - b.dayOfWeek;
-                });
-                setTypePricingList(sortedData);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.log(error);
-                setLoading(false);
-            });
+    .getAllTypePricingByTypeId(typeId)
+    .then((res) => {
+        // Sorting by "From", "To", and then "dayOfWeek"
+        const sortedData = res.data.sort((a, b) => {
+            // First, compare the "From" dates
+            const fromComparison = new Date(a.from) - new Date(b.from);
+            if (fromComparison !== 0) {
+                return fromComparison;
+            }
+
+            // If "From" dates are the same, compare the "To" dates
+            const toComparison = new Date(a.to) - new Date(b.to);
+            if (toComparison !== 0) {
+                return toComparison;
+            }
+
+            // If both "From" and "To" dates are the same, compare the "dayOfWeek"
+            return a.dayOfWeek - b.dayOfWeek;
+        });
+
+        setTypePricingList(sortedData);
+        setLoading(false);
+    })
+    .catch((error) => {
+        console.log(error);
+        setLoading(false);
+    });
+
         typeService
             .getTypeById(typeId)
             .then((res) => {
@@ -121,14 +130,7 @@ const ListTypePricing = () => {
         setShowModalTypePricing(false);
     };
 
-    //create type pricing modal
-    const [createTypePricing, setCreateTypePricing] = useState({
-        districtId: '',
-        percentageIncrease: '',
-        basePrice: '', // Single input for base price
-        from: '',
-        to: ''
-    });
+
 
     const [showModalCreateTypePricing, setShowModalCreateTypePricing] = useState(false);
 
@@ -147,13 +149,7 @@ const ListTypePricing = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [success, setSuccess] = useState({});
 
-    // const handleChange = (e) => {
-    //     const value = e.target.value;
-
-    //     setCreateTypePricing({ ...createTypePricing, [e.target.name]: value });
-    // };
-
-    const handleChange = (e, index, field) => {
+    const handleChange = (e, index) => {
         const newTypePricings = [...typePricings];
 
         const { name, value } = e.target;
@@ -161,18 +157,6 @@ const ListTypePricing = () => {
 
         setTypePricings(newTypePricings);
     };
-
-    const addNewTypePricing = () => {
-        setTypePricings([...typePricings, {
-            districtId: '',
-            percentageIncrease: '',
-            basePrice: '', // Single input for base price
-            from: '',
-            to: ''
-        }]);
-    };
-
-
 
 
     const [cityList, setCityList] = useState([]);
@@ -216,21 +200,48 @@ const ListTypePricing = () => {
         }
     }, [selectedCity]);
 
-    const [districtId, setDistrictId] = useState(''); // Owner Name - single input
-    // Update the hotels state structure to store selectedCity and districtList for each hotel
+    const [selectYear, setSelectYear] = useState(new Date().getFullYear()); // Default to the current year
+    const handleYearChange = (selectedYear) => {
+        const quarterlyDates = [
+            { from: `${selectedYear}-01-01`, to: `${selectedYear}-03-31` },
+            { from: `${selectedYear}-04-01`, to: `${selectedYear}-06-30` },
+            { from: `${selectedYear}-07-01`, to: `${selectedYear}-09-30` },
+            { from: `${selectedYear}-10-01`, to: `${selectedYear}-12-31` }
+        ];
+    
+        setTypePricings(quarterlyDates);
+    };
+    
+
+    const [districtId, setDistrictId] = useState('');
     const [typePricings, setTypePricings] = useState([
         {
             percentageIncrease: '',
-            basePrice: '', // Single input for base price
-            from: '',
-            to: '',
-        }
+            basePrice: '',
+            from: `01-01-${selectYear}`,
+            to: `03-31-${selectYear}`,
+        },
+        {
+            percentageIncrease: '',
+            basePrice: '',
+            from: `04-01-${selectYear}`,
+            to: `06-30-${selectYear}`,
+        },
+        {
+            percentageIncrease: '',
+            basePrice: '',
+            from: `07-01-${selectYear}`,
+            to: `09-30-${selectYear}`,
+        },
+        {
+            percentageIncrease: '',
+            basePrice: '',
+            from: `10-01-${selectYear}`,
+            to: `12-31-${selectYear}`,
+        },
     ]);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-
 
     // Updated form submission to use the new pricing setup
     const submitCreateTypePricing = async (e) => {
@@ -265,11 +276,12 @@ const ListTypePricing = () => {
                         ...pricingData,
                         districtId,
                     };
-                    console.log(JSON.stringify(typePricingWithDistrictInfo));
+
+                    console.log(JSON.stringify(typePricingWithDistrictInfo))
 
                     // Call API to save the pricing
-                    // Call API to save the pricing
                     const typePricingResponse = await typePricingService.saveTypePricing(typePricingWithDistrictInfo);
+
 
                     if (typePricingResponse.status !== 201) {
                         handleResponseError(error.response);
@@ -293,16 +305,9 @@ const ListTypePricing = () => {
                         .catch((error) => {
                             handleResponseError(error.response);
                         });
-                    // Clear the state for the submitted day to prevent duplicate submission
-                    setCreateTypePricing(prevState => ({
-                        ...prevState,
-                        [`price_${dayOfWeek}`]: "" // Clear the price after submission
-                    }));
+
                 }
             }
-
-
-            // Refresh or clear form after submission
         } catch (error) {
             handleResponseError(error.response);
         } finally {
@@ -465,7 +470,8 @@ const ListTypePricing = () => {
                                             <th><span>Giá (VND)</span></th>
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
-                                            <th><span>Ngày thực tế</span></th> {/* New column for Actual Date */}
+                                            {/* <th><span>Ngày thực tế</span></th> */}
+                                            <th><span>Thời gian áp dụng</span></th> 
                                             <th><span>Ngày lễ</span></th>
                                             <th><span>Hành động</span></th>
                                         </tr>
@@ -495,7 +501,8 @@ const ListTypePricing = () => {
                                                         <td>{item.price.toLocaleString()} </td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
-                                                        <td>{actualDateString} {/* Displaying actual date */}</td> {/* Actual Date */}
+                                                        {/* <td>{actualDateString}</td> */}
+                                                        <td>{new Date(item.from).toLocaleDateString('en-US')} - {new Date(item.to).toLocaleDateString('en-US')}</td>
                                                         <td>
                                                             {holidayRules.length > 0 ? (
                                                                 holidayRules.map((rule, ruleIndex) => {
@@ -685,6 +692,7 @@ const ListTypePricing = () => {
                                         <h4 className="header-title">Thông Tin</h4>
                                         <div className="row">
                                             <div className="col-md-12">
+
                                                 <div className="form-row">
                                                     {/* City Select */}
                                                     <div className="form-group col-md-6">
@@ -703,7 +711,7 @@ const ListTypePricing = () => {
                                                     {/* District Select */}
                                                     <div className="form-group col-md-6">
                                                         <label>Quận <span className="text-danger">*</span> :</label>
-                                                        <select className="form-control"   onChange={(e) => setDistrictId(e.target.value)} required>
+                                                        <select className="form-control" onChange={(e) => setDistrictId(e.target.value)} required>
                                                             <option value="">Chọn quận</option>
                                                             {districtList.map(d => (
                                                                 <option key={d.districtId} value={d.districtId}>{d.districtName}</option>
@@ -712,21 +720,33 @@ const ListTypePricing = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="col-md-12">
+                                                {/* Year Select */}
+                                                <div className="form-group">
+                                                    <label>Năm <span className="text-danger">*</span> :</label>
+                                                    <select name="year" className="form-control" onChange={(e) => handleYearChange(e.target.value)} required>
+                                                        <option value="">Chọn năm</option>
+                                                        {[2023, 2024, 2025].map(year => (
+                                                            <option key={year} value={year}>{year}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
                                             {typePricings.map((typePricing, index) => (
                                                 <>
                                                     <div className="col-md-4">
                                                         <div className="form-row">
-                                                            {/* From Date */}
-                                                            <div className="form-group col-md-6">
-                                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
-                                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} onChange={(e) => handleChange(e, index)} required />
-                                                            </div>
+                                                           {/* From Date - Read Only */}
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
+                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} readOnly required />
+                                            </div>
 
-                                                            {/* To Date */}
-                                                            <div className="form-group col-md-6">
-                                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
-                                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} onChange={(e) => handleChange(e, index)} required />
-                                                            </div>
+                                            {/* To Date - Read Only */}
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
+                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} readOnly required />
+                                            </div>
                                                         </div>
                                                     </div>
                                                     <div className="col-md-8">

@@ -33,33 +33,33 @@ const ListTypePricing = () => {
 
     useEffect(() => {
         typeService
-    .getAllTypePricingByTypeId(typeId)
-    .then((res) => {
-        // Sorting by "From", "To", and then "dayOfWeek"
-        const sortedData = res.data.sort((a, b) => {
-            // First, compare the "From" dates
-            const fromComparison = new Date(a.from) - new Date(b.from);
-            if (fromComparison !== 0) {
-                return fromComparison;
-            }
+            .getAllTypePricingByTypeId(typeId)
+            .then((res) => {
+                // Sorting by "From", "To", and then "dayOfWeek"
+                const sortedData = res.data.sort((a, b) => {
+                    // First, compare the "From" dates
+                    const fromComparison = new Date(a.from) - new Date(b.from);
+                    if (fromComparison !== 0) {
+                        return fromComparison;
+                    }
 
-            // If "From" dates are the same, compare the "To" dates
-            const toComparison = new Date(a.to) - new Date(b.to);
-            if (toComparison !== 0) {
-                return toComparison;
-            }
+                    // If "From" dates are the same, compare the "To" dates
+                    const toComparison = new Date(a.to) - new Date(b.to);
+                    if (toComparison !== 0) {
+                        return toComparison;
+                    }
 
-            // If both "From" and "To" dates are the same, compare the "dayOfWeek"
-            return a.dayOfWeek - b.dayOfWeek;
-        });
+                    // If both "From" and "To" dates are the same, compare the "dayOfWeek"
+                    return a.dayOfWeek - b.dayOfWeek;
+                });
 
-        setTypePricingList(sortedData);
-        setLoading(false);
-    })
-    .catch((error) => {
-        console.log(error);
-        setLoading(false);
-    });
+                setTypePricingList(sortedData);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+                setLoading(false);
+            });
 
         typeService
             .getTypeById(typeId)
@@ -208,10 +208,10 @@ const ListTypePricing = () => {
             { from: `${selectedYear}-07-01`, to: `${selectedYear}-09-30` },
             { from: `${selectedYear}-10-01`, to: `${selectedYear}-12-31` }
         ];
-    
+
         setTypePricings(quarterlyDates);
     };
-    
+
 
     const [districtId, setDistrictId] = useState('');
     const [typePricings, setTypePricings] = useState([
@@ -470,8 +470,7 @@ const ListTypePricing = () => {
                                             <th><span>Giá (VND)</span></th>
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
-                                            {/* <th><span>Ngày thực tế</span></th> */}
-                                            <th><span>Thời gian áp dụng</span></th> 
+                                            <th><span>Thời gian áp dụng</span></th>
                                             <th><span>Ngày lễ</span></th>
                                             <th><span>Hành động</span></th>
                                         </tr>
@@ -479,18 +478,20 @@ const ListTypePricing = () => {
                                     <tbody>
                                         {
                                             currentTypePricings.length > 0 && currentTypePricings.map((item, index) => {
-                                                // Calculate the actual date for the specific day of the week
                                                 const today = new Date();
-                                                // Calculate the days to add to get the date for the target day of the week
                                                 const daysToAdd = (item.dayOfWeek - (today.getDay() === 0 ? 7 : today.getDay()) + 7) % 7;
                                                 const actualDate = new Date(today);
                                                 actualDate.setDate(today.getDate() + daysToAdd);
-                                                const actualDateString = actualDate.toLocaleDateString().split('T')[0]; // Format to "YYYY-MM-DD"
+                                                const actualDateString = actualDate.toLocaleDateString().split('T')[0];
 
-                                                // Check for applicable holiday pricing rules
+                                                const fromDate = new Date(item.from);
+                                                const toDate = new Date(item.to);
+
+                                                // Filter holiday pricing rules based on both district and date range (from-to)
                                                 const holidayRules = holidayPricingRuleList.filter(h =>
                                                     h.districtId === item.district?.districtId &&
-                                                    actualDateString === new Date(h.holiday?.holidayDate).toLocaleDateString().split('T')[0] // Convert holidayDate to Date object
+                                                    new Date(h.holiday?.holidayDate) >= fromDate &&
+                                                    new Date(h.holiday?.holidayDate) <= toDate
                                                 );
 
                                                 return (
@@ -501,19 +502,15 @@ const ListTypePricing = () => {
                                                         <td>{item.price.toLocaleString()} </td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
-                                                        {/* <td>{actualDateString}</td> */}
-                                                        <td>{new Date(item.from).toLocaleDateString('en-US')} - {new Date(item.to).toLocaleDateString('en-US')}</td>
+                                                        <td>{fromDate.toLocaleDateString('en-US')} - {toDate.toLocaleDateString('en-US')}</td>
                                                         <td>
                                                             {holidayRules.length > 0 ? (
                                                                 holidayRules.map((rule, ruleIndex) => {
-                                                                    const holidayDate = new Date(rule.holiday?.holidayDate); // Convert to Date object
-                                                                    const holidayDateString = holidayDate.toLocaleDateString().split('T')[0];
+                                                                    const holidayDate = new Date(rule.holiday?.holidayDate);
                                                                     return (
                                                                         <div key={ruleIndex}>
-                                                                            {rule.holiday?.description}: {rule.percentageIncrease}%
+                                                                            {rule.holiday?.description}: {holidayDate.toLocaleDateString('en-US')} ({rule.percentageIncrease}%)
                                                                             <br />
-                                                                            {/* (Ngày: {holidayDateString}) */}
-                                                                            {/* Displaying the holiday date */}
                                                                         </div>
                                                                     );
                                                                 })
@@ -521,7 +518,6 @@ const ListTypePricing = () => {
                                                                 <span>Không</span>
                                                             )}
                                                         </td>
-
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
                                                                 <i className="fa fa-pencil font-14" onClick={() => openTypePricingModal(item.typePricingId)} />
@@ -535,6 +531,7 @@ const ListTypePricing = () => {
                                 </table>
                             </div>
                         </div>
+
 
 
 
@@ -668,7 +665,7 @@ const ListTypePricing = () => {
                             <div className="modal-content">
                                 <form onSubmit={(e) => submitCreateTypePricing(e)} style={{ textAlign: "left" }}>
                                     <div className="modal-header bg-dark text-light">
-                                        <h5 className="modal-title">Tạo Bảng Giá Cho Tuần</h5>
+                                        <h5 className="modal-title">Tạo Bảng Giá Cho Các Quý</h5>
                                         <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateTypePricing}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -724,9 +721,9 @@ const ListTypePricing = () => {
                                                 {/* Year Select */}
                                                 <div className="form-group">
                                                     <label>Năm <span className="text-danger">*</span> :</label>
-                                                    <select name="year" className="form-control" onChange={(e) => handleYearChange(e.target.value)} required>
+                                                    <select name="year" className="form-control" style={{ width: '30%' }} onChange={(e) => handleYearChange(e.target.value)} required>
                                                         <option value="">Chọn năm</option>
-                                                        {[2023, 2024, 2025].map(year => (
+                                                        {[2023, 2024, 2025, 2026, 2027, 2028, 2030].map(year => (
                                                             <option key={year} value={year}>{year}</option>
                                                         ))}
                                                     </select>
@@ -736,17 +733,17 @@ const ListTypePricing = () => {
                                                 <>
                                                     <div className="col-md-4">
                                                         <div className="form-row">
-                                                           {/* From Date - Read Only */}
-                                            <div className="form-group col-md-6">
-                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
-                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} readOnly required />
-                                            </div>
+                                                            {/* From Date - Read Only */}
+                                                            <div className="form-group col-md-6">
+                                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
+                                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} readOnly required />
+                                                            </div>
 
-                                            {/* To Date - Read Only */}
-                                            <div className="form-group col-md-6">
-                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
-                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} readOnly required />
-                                            </div>
+                                                            {/* To Date - Read Only */}
+                                                            <div className="form-group col-md-6">
+                                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
+                                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} readOnly required />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div className="col-md-8">
@@ -808,8 +805,8 @@ const ListTypePricing = () => {
                 }
 
                 .custom-modal-xl {
-    max-width:70%;
-    width: 70%;
+    max-width:60%;
+    width: 60%;
 }
     .btn-custom{
     background-color: #3498db;

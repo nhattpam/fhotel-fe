@@ -57,7 +57,7 @@ const CheckInOut = () => {
 
     const handleSearch = () => {
         // Use the reservationService to search with the API
-        reservationService.searchReservation(customerSearch)
+        reservationService.searchReservation(loginUserId, customerSearch)
             .then((res) => {
                 if (res.data.length > 0) {
                     setReservationDetails(res.data);
@@ -924,7 +924,7 @@ const CheckInOut = () => {
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
                                                             </p>
-                                                            <p><strong className='mr-2'>Ngày thực tế nhận phòng:</strong> {reservation.actualCheckInTime
+                                                            {/* <p><strong className='mr-2'>Ngày thực tế nhận phòng:</strong> {reservation.actualCheckInTime
                                                                 ? new Date(reservation.actualCheckInTime).toLocaleString('en-US')
                                                                 : "Chưa có"}</p>
                                                             <p>
@@ -932,7 +932,7 @@ const CheckInOut = () => {
                                                                 {reservation.actualCheckOutDate
                                                                     ? new Date(reservation.actualCheckOutDate).toLocaleString('en-US')
                                                                     : "Chưa có"}
-                                                            </p>
+                                                            </p> */}
                                                             <p><strong className='mr-2'>Khách sạn:</strong> {reservation.roomType?.hotel?.hotelName}</p>
 
 

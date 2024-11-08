@@ -147,10 +147,29 @@ const ListTypePricing = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [success, setSuccess] = useState({});
 
-    const handleChange = (e) => {
-        const value = e.target.value;
+    // const handleChange = (e) => {
+    //     const value = e.target.value;
 
-        setCreateTypePricing({ ...createTypePricing, [e.target.name]: value });
+    //     setCreateTypePricing({ ...createTypePricing, [e.target.name]: value });
+    // };
+
+    const handleChange = (e, index, field) => {
+        const newTypePricings = [...typePricings];
+
+        const { name, value } = e.target;
+        newTypePricings[index][name] = value; // Handle other form fields
+
+        setTypePricings(newTypePricings);
+    };
+
+    const addNewTypePricing = () => {
+        setTypePricings([...typePricings, {
+            districtId: '',
+            percentageIncrease: '',
+            basePrice: '', // Single input for base price
+            from: '',
+            to: ''
+        }]);
     };
 
 
@@ -197,48 +216,21 @@ const ListTypePricing = () => {
         }
     }, [selectedCity]);
 
-    const handleDayPriceChange = (e, dayOfWeek) => {
-        const value = e.target.value;
-        setCreateTypePricing(prevState => ({
-            ...prevState,
-            [`price_${dayOfWeek}`]: value
-        }));
-    };
+    const [districtId, setDistrictId] = useState(''); // Owner Name - single input
+    // Update the hotels state structure to store selectedCity and districtList for each hotel
+    const [typePricings, setTypePricings] = useState([
+        {
+            percentageIncrease: '',
+            basePrice: '', // Single input for base price
+            from: '',
+            to: '',
+        }
+    ]);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const validateForm = () => {
-        let isValid = true;
-        const newError = {};
 
-        // Validate District
-        if (!createTypePricing.districtId || createTypePricing.districtId.trim() === "") {
-            newError.districtId = "District is required";
-            isValid = false;
-        }
 
-        // Validate at least one price is filled out for any day of the week
-        let priceFilled = false;
-        for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
-            if (createTypePricing[`price_${dayOfWeek}`] && createTypePricing[`price_${dayOfWeek}`].trim() !== "") {
-                priceFilled = true;
-            }
-        }
-        if (!priceFilled) {
-            newError.price = "At least one price for a day of the week is required";
-            isValid = false;
-        }
 
-        setError(newError); // Set the validation errors
-        setShowError(Object.keys(newError).length > 0); // Toggle error visibility based on errors
-        return isValid;
-    };
-
-    // Function to calculate weekend price based on percentage increase
-    const calculateWeekendPrice = () => {
-        const basePrice = Number(createTypePricing.basePrice) || 0;
-        const percentageIncrease = Number(createTypePricing.percentageIncrease) || 0;
-        return basePrice * (1 + percentageIncrease / 100);
-    };
 
     // Updated form submission to use the new pricing setup
     const submitCreateTypePricing = async (e) => {
@@ -248,52 +240,67 @@ const ListTypePricing = () => {
 
         setIsSubmitting(true);
         try {
-            for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
-                const isWeekend = dayOfWeek >= 6; // Saturday & Sunday
-                const price = isWeekend ? calculateWeekendPrice() : createTypePricing.basePrice;
-
-                const pricingData = {
-                    districtId: createTypePricing.districtId,
-                    price: price,
-                    dayOfWeek: dayOfWeek,
-                    typeId: typeId,
-                    from: createTypePricing.from,
-                    to: createTypePricing.to
+            for (const typePricing of typePricings) {
+                // Function to calculate weekend price based on percentage increase
+                const calculateWeekendPrice = () => {
+                    const basePrice = Number(typePricing.basePrice) || 0;
+                    const percentageIncrease = Number(typePricing.percentageIncrease) || 0;
+                    return basePrice * (1 + percentageIncrease / 100);
                 };
-                console.log(JSON.stringify(pricingData))
+                for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+                    const isWeekend = dayOfWeek >= 6; // Saturday & Sunday
+                    const price = isWeekend ? calculateWeekendPrice() : typePricing.basePrice;
 
-                // Call API to save the pricing
-                // Call API to save the pricing
-                const typePricingResponse = await typePricingService.saveTypePricing(pricingData);
+                    const pricingData = {
+                        price: price,
+                        dayOfWeek: dayOfWeek,
+                        typeId: typeId,
+                        from: typePricing.from,
+                        to: typePricing.to,
+                        percentageIncrease: typePricing.percentageIncrease
+                    };
 
-                if (typePricingResponse.status !== 201) {
-                    handleResponseError(error.response);
-                }
+                    // Add owner info to each hotel object
+                    const typePricingWithDistrictInfo = {
+                        ...pricingData,
+                        districtId,
+                    };
+                    console.log(JSON.stringify(typePricingWithDistrictInfo));
 
-                typeService
-                    .getAllTypePricingByTypeId(typeId)
-                    .then((res) => {
-                        // Sorting by districtId and then dayOfWeek
-                        const sortedData = res.data.sort((a, b) => {
-                            // First, sort by districtId
-                            const districtComparison = a.districtId.localeCompare(b.districtId);
-                            if (districtComparison !== 0) {
-                                return districtComparison;
-                            }
-                            // If districtId is the same, sort by dayOfWeek
-                            return a.dayOfWeek - b.dayOfWeek;
-                        });
-                        setTypePricingList(sortedData);
-                    })
-                    .catch((error) => {
+                    // Call API to save the pricing
+                    // Call API to save the pricing
+                    const typePricingResponse = await typePricingService.saveTypePricing(typePricingWithDistrictInfo);
+
+                    if (typePricingResponse.status !== 201) {
                         handleResponseError(error.response);
-                    });
-                // Clear the state for the submitted day to prevent duplicate submission
-                setCreateTypePricing(prevState => ({
-                    ...prevState,
-                    [`price_${dayOfWeek}`]: "" // Clear the price after submission
-                }));
+                    }
+
+                    typeService
+                        .getAllTypePricingByTypeId(typeId)
+                        .then((res) => {
+                            // Sorting by districtId and then dayOfWeek
+                            const sortedData = res.data.sort((a, b) => {
+                                // First, sort by districtId
+                                const districtComparison = a.districtId.localeCompare(b.districtId);
+                                if (districtComparison !== 0) {
+                                    return districtComparison;
+                                }
+                                // If districtId is the same, sort by dayOfWeek
+                                return a.dayOfWeek - b.dayOfWeek;
+                            });
+                            setTypePricingList(sortedData);
+                        })
+                        .catch((error) => {
+                            handleResponseError(error.response);
+                        });
+                    // Clear the state for the submitted day to prevent duplicate submission
+                    setCreateTypePricing(prevState => ({
+                        ...prevState,
+                        [`price_${dayOfWeek}`]: "" // Clear the price after submission
+                    }));
+                }
             }
+
 
             // Refresh or clear form after submission
         } catch (error) {
@@ -676,67 +683,87 @@ const ListTypePricing = () => {
 
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                         <h4 className="header-title">Thông Tin</h4>
-                                        {/* Select fields for city and district */}
-                                        <div className="form-row">
-                                            {/* From Date */}
-                                            <div className="form-group col-md-6">
-                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
-                                                <input type="date" className="form-control" name="from" id="from" value={createTypePricing.from || ''} onChange={handleChange} required />
-                                            </div>
+                                        <div className="row">
+                                            <div className="col-md-12">
+                                                <div className="form-row">
+                                                    {/* City Select */}
+                                                    <div className="form-group col-md-6">
+                                                        <label>Thành phố <span className="text-danger">*</span> :</label>
+                                                        <select name="cityId" className="form-control" onChange={(e) => {
+                                                            // handleChange(e);
+                                                            setSelectedCity(e.target.value);
+                                                        }} required>
+                                                            <option value="">Chọn thành phố</option>
+                                                            {cityList.map(city => (
+                                                                <option key={city.cityId} value={city.cityId}>{city.cityName}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
 
-                                            {/* To Date */}
-                                            <div className="form-group col-md-6">
-                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
-                                                <input type="date" className="form-control" name="to" id="to" value={createTypePricing.to || ''} onChange={handleChange} required />
-                                            </div>
-                                            {/* City Select */}
-                                            <div className="form-group col-md-6">
-                                                <label>Thành phố <span className="text-danger">*</span> :</label>
-                                                <select name="cityId" className="form-control" onChange={(e) => {
-                                                    handleChange(e);
-                                                    setSelectedCity(e.target.value);
-                                                }} required>
-                                                    <option value="">Chọn thành phố</option>
-                                                    {cityList.map(city => (
-                                                        <option key={city.cityId} value={city.cityId}>{city.cityName}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            {/* District Select */}
-                                            <div className="form-group col-md-6">
-                                                <label>Quận <span className="text-danger">*</span> :</label>
-                                                <select name="districtId" className="form-control" value={createTypePricing.districtId} onChange={handleChange} required>
-                                                    <option value="">Chọn quận</option>
-                                                    {districtList.map(district => (
-                                                        <option key={district.districtId} value={district.districtId}>{district.districtName}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            {/* Single Base Price Input */}
-                                            {/* <h4 className="header-title">Giá Cơ Bản</h4> */}
-                                            <div className="form-group col-md-12">
-                                                <label htmlFor="basePrice">Giá cơ bản <span className="text-danger">*</span> :</label>
-                                                <div className="input-group">
-                                                    <input type="number" className="form-control" name="basePrice" id="basePrice" value={createTypePricing.basePrice || ''} onChange={handleChange} min={0} required />
-                                                    <div className="input-group-append">
-                                                        <span className="input-group-text custom-append">VND</span>
+                                                    {/* District Select */}
+                                                    <div className="form-group col-md-6">
+                                                        <label>Quận <span className="text-danger">*</span> :</label>
+                                                        <select className="form-control"   onChange={(e) => setDistrictId(e.target.value)} required>
+                                                            <option value="">Chọn quận</option>
+                                                            {districtList.map(d => (
+                                                                <option key={d.districtId} value={d.districtId}>{d.districtName}</option>
+                                                            ))}
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
+                                            {typePricings.map((typePricing, index) => (
+                                                <>
+                                                    <div className="col-md-4">
+                                                        <div className="form-row">
+                                                            {/* From Date */}
+                                                            <div className="form-group col-md-6">
+                                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
+                                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} onChange={(e) => handleChange(e, index)} required />
+                                                            </div>
 
-                                            {/* Percentage Increase for Weekend */}
-                                            {/* <h4 className="header-title">Tăng Giá Cuối Tuần</h4> */}
-                                            <div className="form-group col-md-12">
-                                                <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) :</label>
-                                                <select name="percentageIncrease" className="form-control" id="percentageIncrease" value={createTypePricing.percentageIncrease} onChange={handleChange}>
-                                                    <option value="">Chọn phần trăm</option>
-                                                    {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70].map(percent => (
-                                                        <option key={percent} value={percent}>{percent}%</option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                                            {/* To Date */}
+                                                            <div className="form-group col-md-6">
+                                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
+                                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} onChange={(e) => handleChange(e, index)} required />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-8">
+                                                        {/* Select fields for city and district */}
+                                                        <div className="form-row">
+
+
+                                                            {/* Single Base Price Input */}
+                                                            {/* <h4 className="header-title">Giá Cơ Bản</h4> */}
+                                                            <div className="form-group col-md-12">
+                                                                <label htmlFor="basePrice">Giá cơ bản <span className="text-danger">*</span> :</label>
+                                                                <div className="input-group">
+                                                                    <input type="number" className="form-control" name="basePrice" id="basePrice" value={typePricing.basePrice || ''} onChange={(e) => handleChange(e, index)} min={0} required />
+                                                                    <div className="input-group-append">
+                                                                        <span className="input-group-text custom-append">VND</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Percentage Increase for Weekend */}
+                                                            {/* <h4 className="header-title">Tăng Giá Cuối Tuần</h4> */}
+                                                            <div className="form-group col-md-12">
+                                                                <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) :</label>
+                                                                <select name="percentageIncrease" className="form-control" id="percentageIncrease" value={typePricing.percentageIncrease} onChange={(e) => handleChange(e, index)}>
+                                                                    <option value="">Chọn phần trăm</option>
+                                                                    {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70].map(percent => (
+                                                                        <option key={percent} value={percent}>{percent}%</option>
+                                                                    ))}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ))}
+
                                         </div>
+
 
 
                                     </div>
@@ -761,8 +788,8 @@ const ListTypePricing = () => {
                 }
 
                 .custom-modal-xl {
-    max-width:30%;
-    width: 30%;
+    max-width:70%;
+    width: 70%;
 }
     .btn-custom{
     background-color: #3498db;

@@ -476,58 +476,68 @@ const ListTypePricing = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {
-                                            currentTypePricings.length > 0 && currentTypePricings.map((item, index) => {
-                                                const today = new Date();
-                                                const daysToAdd = (item.dayOfWeek - (today.getDay() === 0 ? 7 : today.getDay()) + 7) % 7;
-                                                const actualDate = new Date(today);
-                                                actualDate.setDate(today.getDate() + daysToAdd);
-                                                const actualDateString = actualDate.toLocaleDateString().split('T')[0];
+    {
+        currentTypePricings.length > 0 && currentTypePricings.map((item, index) => {
+            const today = new Date();
+            const daysToAdd = (item.dayOfWeek - (today.getDay() === 0 ? 7 : today.getDay()) + 7) % 7;
+            const actualDate = new Date(today);
+            actualDate.setDate(today.getDate() + daysToAdd);
+            const actualDateString = actualDate.toLocaleDateString().split('T')[0];
 
-                                                const fromDate = new Date(item.from);
-                                                const toDate = new Date(item.to);
+            const fromDate = new Date(item.from);
+            const toDate = new Date(item.to);
 
-                                                // Filter holiday pricing rules based on both district and date range (from-to)
-                                                const holidayRules = holidayPricingRuleList.filter(h =>
-                                                    h.districtId === item.district?.districtId &&
-                                                    new Date(h.holiday?.holidayDate) >= fromDate &&
-                                                    new Date(h.holiday?.holidayDate) <= toDate
-                                                );
+            // Lọc các quy tắc giá ngày lễ trong khoảng thời gian từ - đến
+            const holidayRules = holidayPricingRuleList.filter(h =>
+                h.districtId === item.district?.districtId &&
+                new Date(h.holiday?.holidayDate) >= fromDate &&
+                new Date(h.holiday?.holidayDate) <= toDate
+            );
 
-                                                return (
-                                                    <tr key={item.typePricingId}>
-                                                        <td>{index + 1}</td>
-                                                        <td>{item.type?.typeName}</td>
-                                                        <td>{daysOfWeek[item.dayOfWeek]}</td>
-                                                        <td>{item.price.toLocaleString()} </td>
-                                                        <td>{item.district?.districtName}</td>
-                                                        <td>{item.district?.city?.cityName}</td>
-                                                        <td>{fromDate.toLocaleDateString('en-US')} - {toDate.toLocaleDateString('en-US')}</td>
-                                                        <td>
-                                                            {holidayRules.length > 0 ? (
-                                                                holidayRules.map((rule, ruleIndex) => {
-                                                                    const holidayDate = new Date(rule.holiday?.holidayDate);
-                                                                    return (
-                                                                        <div key={ruleIndex}>
-                                                                            {rule.holiday?.description}: {holidayDate.toLocaleDateString('en-US')} ({rule.percentageIncrease}%)
-                                                                            <br />
-                                                                        </div>
-                                                                    );
-                                                                })
-                                                            ) : (
-                                                                <span>Không</span>
-                                                            )}
-                                                        </td>
-                                                        <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
-                                                                <i className="fa fa-pencil font-14" onClick={() => openTypePricingModal(item.typePricingId)} />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })
-                                        }
-                                    </tbody>
+            // Lọc các ngày lễ trùng với ngày trong tuần của item (item.dayOfWeek)
+            const relevantHolidays = holidayRules.filter(rule => {
+                const holidayDate = new Date(rule.holiday?.holidayDate);
+                return holidayDate.getDay() === item.dayOfWeek;
+            });
+
+            return (
+                <tr key={item.typePricingId}>
+                    <td>{index + 1}</td>
+                    <td>{item.type?.typeName}</td>
+                    <td>{daysOfWeek[item.dayOfWeek]}</td>
+                    <td>{item.price.toLocaleString()} </td>
+                    <td>{item.district?.districtName}</td>
+                    <td>{item.district?.city?.cityName}</td>
+                    <td>{fromDate.toLocaleDateString('en-US')} - {toDate.toLocaleDateString('en-US')}</td>
+                    <td>
+                        {
+                            relevantHolidays.length > 0 ? (
+                                // Hiển thị ngày lễ chỉ khi có ngày lễ trùng với ngày trong tuần
+                                relevantHolidays.map((rule, ruleIndex) => {
+                                    const holidayDate = new Date(rule.holiday?.holidayDate);
+                                    return (
+                                        <div key={ruleIndex}>
+                                            {rule.holiday?.description}: ({holidayDate.toLocaleDateString('en-US')}) ({rule.percentageIncrease}%)
+                                            <br />
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <span>Không</span> 
+                            )
+                        }
+                    </td>
+                    <td>
+                        <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
+                            <i className="fa fa-pencil font-14" onClick={() => openTypePricingModal(item.typePricingId)} />
+                        </button>
+                    </td>
+                </tr>
+            );
+        })
+    }
+</tbody>
+
                                 </table>
                             </div>
                         </div>

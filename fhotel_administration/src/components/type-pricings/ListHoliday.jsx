@@ -255,7 +255,7 @@ const ListHoliday = () => {
                                     className="btn btn-primary mr-3 btn-sm"
                                     onClick={openCreateHolidayPricingModal}
                                 >
-                                    Thêm ngày lễ
+                                    Thêm quy định
                                 </button>
                                 <button onClick={goToPreviousMonth} >
                                     <i className="fa fa-chevron-left" aria-hidden="true"></i>
@@ -407,7 +407,7 @@ const ListHoliday = () => {
                                     style={{ textAlign: "left" }}
                                 >
                                     <div className="modal-header bg-dark text-light">
-                                        <h5 className="modal-title">Tạo Ngày Lễ</h5>
+                                        <h5 className="modal-title">Tạo Quy Định Tăng Giá</h5>
                                         <button
                                             type="button"
                                             className="close text-light"
@@ -434,7 +434,7 @@ const ListHoliday = () => {
                                     </div>
 
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                        <h4 className="header-title">Thông Tin Ngày Lễ</h4>
+                                        <h4 className="header-title">Thông Tin</h4>
                                         <div className="form-row">
                                             {/* Holiday Date Field */}
                                             <div className="form-group col-md-6">

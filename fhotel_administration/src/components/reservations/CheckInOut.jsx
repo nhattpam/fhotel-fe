@@ -284,6 +284,13 @@ const CheckInOut = () => {
                 return roomStayHistoryService.saveRoomStayHistory(roomStayHistory)
                     .then(response => {
                         console.log(`Room added: Room ID ${roomId}, Response:`, response);
+                        if (response.status === 201) {
+                                setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
+                                setShowSuccess(true);
+
+                                // Refresh search results with the current query
+                                handleSearch();
+                        }
                         return response; // Return the response for further processing if needed
                     })
                     .catch(error => {
@@ -303,28 +310,28 @@ const CheckInOut = () => {
                     // You can show a notification or error message to the user if needed
                 });
 
-            //update reservation status -> checkin
-            // Fetch the user data
-            const reservationStatus = "CheckIn";
-            const actualCheckInTime = new Date();
-            const res = await reservationService.getReservationById(selectedReservationId);
-            const reservationData = res.data;
+            // //update reservation status -> checkin
+            // // Fetch the user data
+            // const reservationStatus = "CheckIn";
+            // const actualCheckInTime = new Date();
+            // const res = await reservationService.getReservationById(selectedReservationId);
+            // const reservationData = res.data;
 
-            // Update the local state with the fetched data and new isActive flag
-            setUpdateReservation({ ...reservationData, reservationStatus, actualCheckInTime });
+            // // Update the local state with the fetched data and new isActive flag
+            // setUpdateReservation({ ...reservationData, reservationStatus, actualCheckInTime });
 
-            // Make the update request
-            const updateRes = await reservationService.updateReservation(selectedReservationId, { ...reservationData, reservationStatus });
+            // // Make the update request
+            // const updateRes = await reservationService.updateReservation(selectedReservationId, { ...reservationData, reservationStatus });
 
-            if (updateRes.status === 200) {
-                setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
-                setShowSuccess(true);
+            // if (updateRes.status === 200) {
+            //     setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
+            //     setShowSuccess(true);
 
-                // Refresh search results with the current query
-                handleSearch();
-            } else {
-                handleResponseError(error.response);
-            }
+            //     // Refresh search results with the current query
+            //     handleSearch();
+            // } else {
+            //     handleResponseError(error.response);
+            // }
 
             // After submitting, clear the selected rooms
             setSelectedRooms([]); // Clear selected amenities after submission

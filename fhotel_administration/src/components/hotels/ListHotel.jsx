@@ -80,18 +80,25 @@ const ListHotel = () => {
     }, []);
 
 
+    const [selectedDistrictId, setSelectedDistrictId] = useState('');
+    const uniqueDistricts = [...new Set(hotelList.map((hotel) => hotel.district?.districtName))]
+        .filter(Boolean);
+
     const handleHotelSearch = (event) => {
         setHotelSearchTerm(event.target.value);
     };
 
     const filteredHotels = hotelList
         .filter((hotel) => {
-            return (
+            const matchesDistrict = selectedDistrictId ? hotel.district?.districtName === selectedDistrictId : true;
+            const matchesSearchTerm = (
+                hotel.code.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
                 hotel.hotelName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
-                hotel.city?.cityName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
-                hotel.city?.country?.countryName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
+                hotel.district?.city?.cityName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
+                hotel.district?.districtName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
                 hotel.owner?.name.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase())
             );
+            return matchesDistrict && matchesSearchTerm;
         });
 
     const pageHotelRegistrationCount = Math.ceil(filteredHotels.length / hotelsPerPage);
@@ -490,11 +497,21 @@ const ListHotel = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Khách Sạn</div>
                             <div className="form-group d-flex align-items-center">
+                                <select
+                                    value={selectedDistrictId}
+                                    onChange={(e) => setSelectedDistrictId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả quận</option>
+                                    {uniqueDistricts.map((districtName, index) => (
+                                        <option key={index} value={districtName}>{districtName}</option>
+                                    ))}
+                                </select>
                                 <input
                                     id="demo-foo-search"
                                     type="text"
                                     placeholder="Tìm kiếm"
-                                    className="form-control form-control-sm"
+                                    className="form-control form-control-sm ml-3"
                                     autoComplete="on"
                                     value={hotelSearchTerm}
                                     onChange={handleHotelSearch}
@@ -508,6 +525,7 @@ const ListHotel = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Tên khách sạn</span></th>
                                             <th><span>Chủ sở hữu</span></th>
                                             <th><span>Quận</span></th>
@@ -523,7 +541,7 @@ const ListHotel = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
-
+                                                        <td>{item.code}</td>
                                                         <td>{item.hotelName}</td>
                                                         <td>{item.ownerName}</td>
                                                         <td>{item.district?.districtName}</td>
@@ -716,6 +734,10 @@ const ListHotel = () => {
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mã số:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.code}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
                                                         <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.hotelName}</td>
                                                     </tr>
@@ -842,7 +864,7 @@ const ListHotel = () => {
                                                     hotel.verifyStatus !== "Done" && (
                                                         <>
                                                             <button type="button" className="btn btn-danger btn-sm"
-                                                                onClick={() => openCreateHotelVerificationModal(hotel.hotelId)}>Xác Minh Ngay</button>
+                                                                onClick={() => openCreateHotelVerificationModal(hotel.hotelId)}>Xác minh ngay</button>
                                                         </>
                                                     )
                                                 }

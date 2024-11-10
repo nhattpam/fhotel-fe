@@ -31,23 +31,23 @@ const ListService = () => {
                 const sortedServiceList = res.data.sort((a, b) => {
                     const serviceTypeNameA = a.serviceType?.serviceTypeName || "";
                     const serviceTypeNameB = b.serviceType?.serviceTypeName || "";
-    
+
                     // Primary sort by serviceTypeName
                     if (serviceTypeNameA !== serviceTypeNameB) {
                         return serviceTypeNameA.localeCompare(serviceTypeNameB);
                     }
-    
+
                     // Secondary sort by serviceName as integer if serviceTypeName is "Trả phòng muộn"
                     if (serviceTypeNameA === "Trả phòng muộn") {
                         const serviceNameA = parseInt(a.serviceName) || 0;
                         const serviceNameB = parseInt(b.serviceName) || 0;
                         return serviceNameA - serviceNameB;
                     }
-    
+
                     // If no specific sorting needed, return 0
                     return 0;
                 });
-    
+
                 // Set the sorted service list
                 setServiceList(sortedServiceList);
                 setLoading(false);
@@ -57,26 +57,31 @@ const ListService = () => {
                 setLoading(false);
             });
     }, []);
-    
 
 
-    const handleHotelSearch = (event) => {
+    const [selectedTypeId, setSelectedTypeId] = useState('');
+    const uniqueTypes = [...new Set(serviceList.map((service) => service.serviceType?.serviceTypeName))]
+        .filter(Boolean);
+
+    const handleServiceSearch = (event) => {
         setServiceSearchTerm(event.target.value);
     };
 
     const filteredServices = serviceList
         .filter((service) => {
-            return (
+            const matchesType = selectedTypeId ? service.serviceType?.serviceTypeName === selectedTypeId : true;
+            const matchesSearchTerm = (
                 service.serviceName.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
                 service.price.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
                 service.description.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
                 service.serviceType?.serviceTypeName.toString().toLowerCase().includes(serviceSearchTerm.toLowerCase())
             );
+            return matchesType && matchesSearchTerm;
         });
 
     const pageServiceCount = Math.ceil(filteredServices.length / servicesPerPage);
 
-    const handleHotelPageClick = (data) => {
+    const handleServicePageClick = (data) => {
         setCurrentHotelPage(data.selected);
     };
 
@@ -341,14 +346,24 @@ const ListService = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Dịch Vụ</div>
                             <div className="form-group d-flex align-items-center">
+                                <select
+                                    value={selectedTypeId}
+                                    onChange={(e) => setSelectedTypeId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả loại</option>
+                                    {uniqueTypes.map((typeName, index) => (
+                                        <option key={index} value={typeName}>{typeName}</option>
+                                    ))}
+                                </select>
                                 <input
                                     id="demo-foo-search"
                                     type="text"
                                     placeholder="Tìm kiếm"
-                                    className="form-control form-control-sm"
+                                    className="form-control form-control-sm ml-3"
                                     autoComplete="on"
                                     value={serviceSearchTerm}
-                                    onChange={handleHotelSearch}
+                                    onChange={handleServiceSearch}
                                 />
                                 <button
                                     className="btn btn-primary ml-3 btn-sm"
@@ -481,7 +496,7 @@ const ListService = () => {
                                 pageCount={pageServiceCount}
                                 marginPagesDisplayed={2}
                                 pageRangeDisplayed={5}
-                                onPageChange={handleHotelPageClick}
+                                onPageChange={handleServicePageClick}
                                 containerClassName={'pagination'}
                                 activeClassName={'active'}
                                 previousClassName={'page-item'}

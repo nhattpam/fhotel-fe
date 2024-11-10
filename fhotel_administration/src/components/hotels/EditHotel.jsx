@@ -1153,6 +1153,10 @@ const EditHotel = () => {
                                         </td>
                                     </tr>
                                     <tr>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mã số:</th>
+                                        <td>{hotel.code}</td>
+                                    </tr>
+                                    <tr>
                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
                                         <td>{hotel.hotelName}</td>
                                     </tr>
@@ -1343,7 +1347,7 @@ const EditHotel = () => {
 
                                     </tr>
                                     <tr>
-                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô Tả:</th>
+                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
                                         <td
                                             dangerouslySetInnerHTML={{ __html: hotel.description }}
                                             style={{
@@ -1580,7 +1584,7 @@ const EditHotel = () => {
                                     </tbody>
                                 </table>
                                 {
-                                    roomTypeList.length === 0 && (
+                                    feedbackList.length === 0 && (
                                         <>
                                             <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                         </>
@@ -1644,9 +1648,9 @@ const EditHotel = () => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <>
+                                                    <div>
                                                         <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </>
+                                                    </div>
                                                 )
                                             }
 
@@ -2394,6 +2398,7 @@ const EditHotel = () => {
                                                         <thead>
                                                             <tr>
                                                                 <th><span>STT</span></th>
+                                                                <th><span>Mã số</span></th>
                                                                 <th><span>Tên khách sạn</span></th>
                                                                 <th><span>Chủ sở hữu</span></th>
                                                                 <th><span>Quận</span></th>
@@ -2409,6 +2414,7 @@ const EditHotel = () => {
                                                                         <tr>
                                                                             <td>{index + 1}</td>
 
+                                                                            <td>{item.code}</td>
                                                                             <td>{item.hotelName}</td>
                                                                             <td>{item.owner?.name}</td>
                                                                             <td>{item.district?.districtName}</td>

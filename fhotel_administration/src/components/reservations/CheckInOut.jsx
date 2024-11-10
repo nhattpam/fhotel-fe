@@ -895,7 +895,7 @@ const CheckInOut = () => {
                                                 <div className="card-body">
                                                     <div className="row">
                                                         <div className="col-md-6">
-                                                            <p><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                                            <p><strong className='mr-2'>Mã số:</strong> {reservation.code}</p>
                                                             <p><strong className='mr-2'>Tên khách hàng:</strong> {reservation.customer?.name}</p>
                                                             <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
                                                             <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
@@ -1287,7 +1287,7 @@ const CheckInOut = () => {
                                         </div>
                                         <div className="col-md-4" style={{ textAlign: 'left' }}>
                                             <h5>Thanh Toán</h5>
-                                            <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Mã số:</strong> {reservation.code}</p>
                                             <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
                                                 {reservation.reservationStatus === "Pending" && (
                                                     <span className="badge label-table badge-warning">Đang chờ</span>

@@ -171,6 +171,8 @@ const ListOwnerCustomer = () => {
     const [showModalReservation, setShowModalReservation] = useState(false);
     const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
     const [orderDetailList, setOrderDetailList] = useState([]);
+    const [billByReservation, setBillByReservation] = useState(null);
+
     const [reservation, setReservation] = useState({
 
     });
@@ -200,6 +202,15 @@ const ListOwnerCustomer = () => {
                 .getAllOrderDetailByReservationId(reservationId)
                 .then((res) => {
                     setOrderDetailList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getBillByReservation(reservationId)
+                .then((res) => {
+                    setBillByReservation(res.data);
+                    console.log(res.data)
                 })
                 .catch((error) => {
                     console.log(error);
@@ -248,6 +259,7 @@ const ListOwnerCustomer = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Số điện thoại</span></th>
@@ -261,6 +273,7 @@ const ListOwnerCustomer = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.code}</td>
                                                         <td>{item.name}</td>
                                                         <td>{item.email}</td>
                                                         <td>{item.phoneNumber}</td>
@@ -337,113 +350,111 @@ const ListOwnerCustomer = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div className="modal-content">
-                            <form>
 
-                                <div className="modal-header  bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-4 d-flex align-items-center flex-column">
-                                            <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
-                                        </div>
-                                        <div className="col-md-8">
-                                            <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
+                            <div className="modal-header  bg-dark text-light">
+                                <h5 className="modal-title">Thông Tin Tài Khoản</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-4 d-flex align-items-center flex-column">
+                                        <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
+                                    </div>
+                                    <div className="col-md-8">
+                                        <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className='col-md-12' style={{ textAlign: 'left' }}>
+                                        <h4>Đặt Phòng Gần Đây</h4>
+                                        <div className="table-responsive">
+                                            <table className="table table-borderless table-hover table-wrap table-centered">
+                                                <thead>
+                                                    <tr>
+                                                        <th><span>STT</span></th>
+                                                        <th><span>Khách hàng</span></th>
+                                                        <th><span>Khách sạn</span></th>
+                                                        <th><span>Loại phòng</span></th>
+                                                        <th><span>Số lượng</span></th>
+                                                        <th><span>Ngày đặt</span></th>
+                                                        <th><span>Trạng thái</span></th>
+                                                        <th><span>Hành động</span></th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
-                                                    </tr>
+                                                    {
+                                                        currentReservations.length > 0 && currentReservations.map((item, index) => (
+                                                            <>
+                                                                <tr>
+                                                                    <td>{index + 1}</td>
+                                                                    <td>{item.customer?.name}</td>
+                                                                    <td>{item.roomType?.hotel?.hotelName}</td>
+                                                                    <td>{item.roomType?.type?.typeName}</td>
+                                                                    <td>{item.numberOfRooms}</td>
+                                                                    <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
+                                                                    <td>
+                                                                        {item.reservationStatus === "Pending" && (
+                                                                            <span className="badge label-table badge-warning">Đang chờ</span>
+                                                                        )}
+                                                                        {item.reservationStatus === "CheckIn" && (
+                                                                            <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                                                        )}
+                                                                        {item.reservationStatus === "CheckOut" && (
+                                                                            <span className="badge label-table badge-danger">Đã trả phòng</span>
+                                                                        )}
+                                                                        {item.reservationStatus === "Cancelled" && (
+                                                                            <span className="badge label-table badge-danger">Đã hủy</span>
+                                                                        )}
+                                                                    </td>
+                                                                    <td>
+                                                                        <button className="btn btn-default btn-xs m-r-5"
+                                                                            data-toggle="tooltip" data-original-title="Edit">
+                                                                            <i className="fa fa-pencil font-14"
+                                                                                onClick={() => openReservationModal(item.reservationId)} /></button>
+                                                                    </td>
+                                                                </tr>
+                                                            </>
+                                                        ))
+                                                    }
+
+
                                                 </tbody>
                                             </table>
+
                                         </div>
-                                        <div className='col-md-12' style={{ textAlign: 'left' }}>
-                                            <h4>Đặt Phòng Gần Đây</h4>
-                                            <div className="table-responsive">
-                                                <table className="table table-borderless table-hover table-wrap table-centered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th><span>STT</span></th>
-                                                            <th><span>Khách hàng</span></th>
-                                                            <th><span>Khách sạn</span></th>
-                                                            <th><span>Loại phòng</span></th>
-                                                            <th><span>Số lượng</span></th>
-                                                            <th><span>Ngày đặt</span></th>
-                                                            <th><span>Trạng thái</span></th>
-                                                            <th><span>Hành động</span></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {
-                                                            currentReservations.length > 0 && currentReservations.map((item, index) => (
-                                                                <>
-                                                                    <tr>
-                                                                        <td>{index + 1}</td>
-                                                                        <td>{item.customer?.name}</td>
-                                                                        <td>{item.roomType?.hotel?.hotelName}</td>
-                                                                        <td>{item.roomType?.type?.typeName}</td>
-                                                                        <td>{item.numberOfRooms}</td>
-                                                                        <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
-                                                                        <td>
-                                                                            {item.reservationStatus === "Pending" && (
-                                                                                <span className="badge label-table badge-warning">Đang chờ</span>
-                                                                            )}
-                                                                            {item.reservationStatus === "CheckIn" && (
-                                                                                <span className="badge label-table badge-success">Đã nhận phòng</span>
-                                                                            )}
-                                                                            {item.reservationStatus === "CheckOut" && (
-                                                                                <span className="badge label-table badge-danger">Đã trả phòng</span>
-                                                                            )}
-                                                                            {item.reservationStatus === "Cancelled" && (
-                                                                                <span className="badge label-table badge-danger">Đã hủy</span>
-                                                                            )}
-                                                                        </td>
-                                                                        <td>
-                                                                            <button className="btn btn-default btn-xs m-r-5"
-                                                                                data-toggle="tooltip" data-original-title="Edit">
-                                                                                <i className="fa fa-pencil font-14"
-                                                                                    onClick={() => openReservationModal(item.reservationId)} /></button>
-                                                                        </td>
-                                                                    </tr>
-                                                                </>
-                                                            ))
-                                                        }
-
-
-                                                    </tbody>
-                                                </table>
-
-                                            </div>
-                                            {
-                                                currentReservations.length === 0 && (
-                                                    <p className='text-center' style={{ color: 'gray' }}>Không tìm thấy</p>
-                                                )
-                                            }
-                                        </div>
+                                        {
+                                            currentReservations.length === 0 && (
+                                                <p className='text-center' style={{ color: 'gray' }}>Không tìm thấy</p>
+                                            )
+                                        }
                                     </div>
+                                </div>
 
 
-                                </div>
-                                <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
-                                </div>
-                            </form>
+                            </div>
+                            <div className="modal-footer">
+                                {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
+                            </div>
 
                         </div>
                     </div>
@@ -639,6 +650,60 @@ const ListOwnerCustomer = () => {
                                                         {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
                                                             + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
                                                     </h5>
+                                                </div>
+                                            </div>
+                                            {/* Divider */}
+                                            <div className="col-md-12">
+                                                <hr />
+                                            </div>
+                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                                <h5>
+                                                    <i className="fa fa-file-text text-success"></i>  Hóa đơn:
+                                                </h5>
+                                                <div className="table-responsive">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><span>STT</span></th>
+                                                                <th><span>Ngày tạo</span></th>
+                                                                <th><span>Tổng số tiền</span></th>
+                                                                <th><span>Trạng thái</span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                billByReservation && (
+                                                                    <tr>
+                                                                        <td>1</td>
+                                                                        <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
+                                                                        <td>{billByReservation.totalAmount}</td>
+                                                                        {
+                                                                            billByReservation.billStatus === "Pending" && (
+                                                                                <>
+                                                                                    <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            billByReservation.billStatus === "Paid" && (
+                                                                                <>
+                                                                                    <td><span className="badge label-table badge-success">Đã thanh toán</span></td>
+                                                                                </>
+                                                                            )
+                                                                        }
+
+                                                                    </tr>
+                                                                )
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                    {
+                                                        !billByReservation && (
+                                                            <>
+                                                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                            </>
+                                                        )
+                                                    }
                                                 </div>
                                             </div>
 

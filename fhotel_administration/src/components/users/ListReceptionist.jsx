@@ -62,19 +62,26 @@ const ListReceptionist = () => {
     }, []);
 
 
+    const [selectedHotelId, setSelectedHotelId] = useState('');
+    const uniqueHotels = [...new Set(userList.map((item) => item.hotel?.hotelName))]
+        .filter(Boolean);
+
     const handleUserSearch = (event) => {
         setUserSearchTerm(event.target.value);
     };
 
     const filteredUsers = userList
         .filter((item) => {
-            return (
+            const matchesHotel = selectedHotelId ? item.hotel?.hotelName === selectedHotelId : true;
+            const matchesSearchTerm = (
                 item.user?.name.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 item.user?.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 item.user?.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 item.user?.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 item.user?.role?.roleName.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
             );
+            return matchesHotel && matchesSearchTerm;
+
         });
 
     const pageUserCount = Math.ceil(filteredUsers.length / usersPerPage);
@@ -439,11 +446,21 @@ const ListReceptionist = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Lễ Tân</div>
                             <div className="form-group d-flex align-items-center">
+                                <select
+                                    value={selectedHotelId}
+                                    onChange={(e) => setSelectedHotelId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả khách sạn</option>
+                                    {uniqueHotels.map((hotelname, index) => (
+                                        <option key={index} value={hotelname}>{hotelname}</option>
+                                    ))}
+                                </select>
                                 <input
                                     id="demo-foo-search"
                                     type="text"
                                     placeholder="Tìm kiếm"
-                                    className="form-control form-control-sm"
+                                    className="form-control form-control-sm ml-3"
                                     autoComplete="on"
                                     value={userSearchTerm}
                                     onChange={handleUserSearch}
@@ -462,6 +479,7 @@ const ListReceptionist = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Chức vụ</span></th>
@@ -476,6 +494,7 @@ const ListReceptionist = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.user?.code}</td>
                                                         <td>{item.user?.name}</td>
                                                         <td>{item.user?.email}</td>
                                                         {

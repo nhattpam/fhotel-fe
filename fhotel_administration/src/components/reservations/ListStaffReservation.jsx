@@ -186,7 +186,7 @@ const ListStaffReservation = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Mã đặt phòng</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Khách hàng</span></th>
                                             <th><span>Khách sạn</span></th>
                                             <th><span>Loại phòng</span></th>
@@ -341,7 +341,7 @@ const ListStaffReservation = () => {
                                             </div>
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thanh Toán</h5>
-                                                <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Mã số:</strong> {reservation.code}</p>
                                                 <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
                                                     {reservation.reservationStatus === "Pending" && (
                                                         <span className="badge label-table badge-warning">Đang chờ</span>

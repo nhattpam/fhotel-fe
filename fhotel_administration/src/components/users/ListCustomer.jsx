@@ -46,11 +46,12 @@ const ListCustomer = () => {
     const filteredUsers = userList
         .filter((user) => {
             return (
+                user.code.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.name.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.role?.roleName.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
+                user.phoneNumber.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
             );
         });
 
@@ -247,6 +248,7 @@ const ListCustomer = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Chức vụ</span></th>
@@ -260,9 +262,16 @@ const ListCustomer = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.code}</td>
                                                         <td>{item.name}</td>
                                                         <td>{item.email}</td>
-                                                        <td>{item.role?.roleName}</td>
+                                                        <td>
+                                                            {
+                                                                item.role?.roleName === "Customer" && (
+                                                                    "Khách hàng"
+                                                                )
+                                                            }
+                                                        </td>
                                                         <td>
                                                             {item.isActive ? (
                                                                 <span className="badge label-table badge-success">Đang hoạt động</span>

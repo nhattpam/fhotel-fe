@@ -38,18 +38,30 @@ const ListReservation = () => {
     }, []);
 
 
+    const [selectedHotelId, setSelectedHotelId] = useState('');
+    const uniqueHotels = [...new Set(reservationList.map((reservation) => reservation.roomType?.hotel?.hotelName))]
+        .filter(Boolean);
+
     const handleReservationSearch = (event) => {
         setReservationSearchTerm(event.target.value);
     };
 
     const filteredReservations = reservationList
         .filter((reservation) => {
-            return (
-                reservation.user?.name.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+            const matchesType = selectedHotelId ? reservation.roomType?.hotel?.hotelName === selectedHotelId : true;
+            const matchesSearchTerm = (
+                reservation.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.name.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.email.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.phoneNumber.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.roomType?.type?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.hotelName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.createdDate.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.numberOfRooms?.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())
             );
+            return matchesType && matchesSearchTerm;
         });
 
     const pageReservationCount = Math.ceil(filteredReservations.length / reservationsPerPage);
@@ -131,8 +143,18 @@ const ListReservation = () => {
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Đặt Phòng</div>
-                            <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
+                            <div className="form-group d-flex align-items-center">
+                                <select
+                                    value={selectedHotelId}
+                                    onChange={(e) => setSelectedHotelId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả khách sạn</option>
+                                    {uniqueHotels.map((hotelName, index) => (
+                                        <option key={index} value={hotelName}>{hotelName}</option>
+                                    ))}
+                                </select>
+                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm ml-3"
                                     autoComplete="on" value={reservationSearchTerm}
                                     onChange={handleReservationSearch} />
                             </div>
@@ -143,7 +165,7 @@ const ListReservation = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
-                                            <th><span>Mã đặt Phòng</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Khách hàng</span></th>
                                             <th><span>Khách sạn</span></th>
                                             <th><span>Loại phòng</span></th>
@@ -299,7 +321,7 @@ const ListReservation = () => {
                                             </div>
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thanh Toán</h5>
-                                                <p className="mb-1"><strong className='mr-2'>Mã đặt phòng:</strong> {reservation.code}</p>
+                                                <p className="mb-1"><strong className='mr-2'>Mã số:</strong> {reservation.code}</p>
                                                 <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
                                                     {reservation.reservationStatus === "Pending" && (
                                                         <span className="badge label-table badge-warning">Đang chờ</span>

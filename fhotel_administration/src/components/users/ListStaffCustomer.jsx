@@ -259,6 +259,7 @@ const ListStaffCustomer = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Họ và tên</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Trạng thái</span></th>
@@ -271,6 +272,7 @@ const ListStaffCustomer = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.code}</td>
                                                         <td>{item.name}</td>
                                                         <td>{item.email}</td>
                                                         <td>

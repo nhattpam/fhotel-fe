@@ -60,18 +60,24 @@ const ListOwnerHotel = () => {
     }, [loginUserId]);
 
 
+   const [selectedDistrictId, setSelectedDistrictId] = useState('');
+    const uniqueDistricts = [...new Set(hotelList.map((hotel) => hotel.district?.districtName))]
+        .filter(Boolean);
+
     const handleHotelSearch = (event) => {
         setHotelSearchTerm(event.target.value);
     };
 
     const filteredHotels = hotelList
         .filter((hotel) => {
-            return (
+            const matchesDistrict = selectedDistrictId ? hotel.district?.districtName === selectedDistrictId : true;
+            const matchesSearchTerm = (
+                hotel.code.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
                 hotel.hotelName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
-                hotel.city?.cityName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
-                hotel.city?.country?.countryName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
-                hotel.owner?.name.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase())
+                hotel.district?.city?.cityName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) ||
+                hotel.district?.districtName.toString().toLowerCase().includes(hotelSearchTerm.toLowerCase()) 
             );
+            return matchesDistrict && matchesSearchTerm;
         });
 
     const pageHotelRegistrationCount = Math.ceil(filteredHotels.length / hotelsPerPage);
@@ -366,11 +372,21 @@ const ListOwnerHotel = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Khách Sạn</div>
                             <div className="form-group d-flex align-items-center">
+                                <select
+                                    value={selectedDistrictId}
+                                    onChange={(e) => setSelectedDistrictId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả quận</option>
+                                    {uniqueDistricts.map((districtName, index) => (
+                                        <option key={index} value={districtName}>{districtName}</option>
+                                    ))}
+                                </select>
                                 <input
                                     id="demo-foo-search"
                                     type="text"
                                     placeholder="Tìm kiếm"
-                                    className="form-control form-control-sm"
+                                    className="form-control form-control-sm ml-3"
                                     autoComplete="on"
                                     value={hotelSearchTerm}
                                     onChange={handleHotelSearch}
@@ -389,6 +405,7 @@ const ListOwnerHotel = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Tên khách sạn</span> </th>
                                             <th><span>Chủ sở hữu</span></th>
                                             <th><span>Quận</span></th>
@@ -403,6 +420,7 @@ const ListOwnerHotel = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.code}</td>
                                                         <td>{item.hotelName}</td>
                                                         <td>{item.owner?.name}</td>
                                                         <td>{item.district?.districtName}</td>

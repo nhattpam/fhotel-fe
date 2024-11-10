@@ -373,7 +373,7 @@ const ListService = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateServiceModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Thêm dịch vụ
+                                    <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm dịch vụ
                                 </button>
                             </div>
                         </div>
@@ -758,7 +758,7 @@ const ListService = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateService}>Đóng</button>
                                     </div>
                                 </form>

@@ -501,7 +501,7 @@ const ListHoliday = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-primary btn-sm">Lưu</button>
+                                        <button type="submit" className="btn btn-primary btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHolidayPricing}>Đóng</button>
                                     </div>
                                 </form>

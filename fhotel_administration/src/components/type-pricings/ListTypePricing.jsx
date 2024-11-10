@@ -800,7 +800,7 @@ const ListTypePricing = () => {
                                     </div>
 
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting}>Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting}><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
                                     </div>
                                 </form>

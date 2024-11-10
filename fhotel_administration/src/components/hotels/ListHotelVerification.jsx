@@ -565,7 +565,7 @@ const ListHotelVerification = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-success btn-sm" onClick={() => openUpdateHotelVerificationModal(hotelVerification.hotelVerificationId)} >Xác Minh</button>
-                                <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotelVerification.hotel?.hotelId}`}>Xem chi tiết</Link>
+                                <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotelVerification.hotel?.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
                                 <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotelVerification} >Đóng</button>
                             </div>
 
@@ -684,7 +684,7 @@ const ListHotelVerification = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUpdateHotelVerification}>Đóng</button>
                                     </div>
                                 </form>

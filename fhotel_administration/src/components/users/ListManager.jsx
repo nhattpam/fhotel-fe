@@ -366,7 +366,7 @@ const ListManager = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Tạo Quản Lý
+                                    <i class="fa fa-user-plus" aria-hidden="true"></i> Tạo quản lý
                                 </button>
                             </div>
                         </div>
@@ -613,7 +613,7 @@ const ListManager = () => {
                                         <h4 className="header-title ">Thông Tin</h4>
                                         <div className="form-row">
                                             <div className="form-group  col-md-6">
-                                                <label htmlFor="hotelName">Họ và tên * :</label>
+                                                <label htmlFor="hotelName">Họ và tên <span className='text-danger'>*</span> :</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -625,7 +625,7 @@ const ListManager = () => {
                                                 />
                                             </div>
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="email">Email * :</label>
+                                                <label htmlFor="email">Email <span className='text-danger'>*</span> :</label>
                                                 <input
                                                     type="email"
                                                     className="form-control"
@@ -643,7 +643,7 @@ const ListManager = () => {
 
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="password">Mật khẩu * :</label>
+                                                <label htmlFor="password">Mật khẩu <span className='text-danger'>*</span> :</label>
                                                 <input
                                                     type="password"
                                                     className="form-control"
@@ -656,7 +656,7 @@ const ListManager = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="star">Số căn cước * :</label>
+                                                <label htmlFor="star">Số căn cước <span className='text-danger'>*</span> :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -672,7 +672,7 @@ const ListManager = () => {
                                             </div>
 
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="address">Số điện thoại * :</label>
+                                                <label htmlFor="address">Số điện thoại <span className='text-danger'>*</span> :</label>
                                                 <div className="input-group">
                                                     <input
                                                         type="number"
@@ -694,7 +694,7 @@ const ListManager = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i>                                         Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateUser}>Đóng</button>
                                     </div>
                                 </form>

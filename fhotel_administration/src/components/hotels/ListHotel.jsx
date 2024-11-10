@@ -878,7 +878,7 @@ const ListHotel = () => {
                                         )
                                     }
 
-                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Xem chi tiết</Link>
+                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
                                     <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>
@@ -1027,7 +1027,7 @@ const ListHotel = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelVerification}>Đóng</button>
                                     </div>
                                 </form>

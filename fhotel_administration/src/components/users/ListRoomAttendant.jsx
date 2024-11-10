@@ -473,7 +473,7 @@ const ListRoomAttendant = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Tạo NV dọn phòng
+                                    <i class="fa fa-user-plus" aria-hidden="true"></i> Tạo NV dọn phòng
                                 </button>
                             </div>
                         </div>
@@ -776,7 +776,7 @@ const ListRoomAttendant = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateUser}>Đóng</button>
                                     </div>
                                 </form>

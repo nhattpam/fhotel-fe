@@ -399,7 +399,7 @@ const ListOwnerHotel = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={handleOpenHotelRegistrationModal} // This will trigger the modal for creating a new hotel
                                 >
-                                    Tạo khách sạn
+                                    <i class="fa fa-plus-square" aria-hidden="true"></i> Tạo khách sạn
                                 </button>
                             </div>
                         </div>
@@ -593,7 +593,7 @@ const ListOwnerHotel = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Xem chi tiết</Link>
+                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
                                     <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>
@@ -852,7 +852,7 @@ const ListOwnerHotel = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-primary btn-sm">Gửi</button>
+                                    <button type="submit" className="btn btn-primary btn-sm"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Gửi yêu cầu</button>
                                     <button type="button" className="btn btn-dark btn-sm"
                                         onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
                                 </div>

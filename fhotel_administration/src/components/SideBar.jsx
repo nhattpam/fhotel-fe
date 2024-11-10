@@ -899,7 +899,7 @@ const SideBar = () => {
                                             className="btn btn-custom btn-sm"
                                             disabled={isSubmitting}  // Disable button when submitting
                                         >
-                                            Lưu
+                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu
                                         </button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateServiceType}>Đóng</button>
                                     </div>

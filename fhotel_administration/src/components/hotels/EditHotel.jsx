@@ -1372,7 +1372,7 @@ const EditHotel = () => {
                                                 className="btn btn-primary ml-auto btn-sm"
                                                 onClick={openCreateRoomTypeModal}
                                             >
-                                                Tạo loại phòng
+                                                <i class="fa fa-plus-square" aria-hidden="true"></i> Tạo loại phòng
                                             </button>
                                         </>
                                     )
@@ -2035,7 +2035,7 @@ const EditHotel = () => {
 
                                     {/* Modal Footer */}
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm" disabled={formSubmitted}>Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm" disabled={formSubmitted}><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateRoomType}>Đóng</button>
                                     </div>
 
@@ -2093,7 +2093,7 @@ const EditHotel = () => {
                                     <div className="modal-footer">
                                         {
                                             loginUser.role?.roleName === "Hotel Manager" && (
-                                                <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                                <button type="submit" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                             )
                                         }
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelAmenity}>Đóng</button>

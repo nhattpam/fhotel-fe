@@ -1725,7 +1725,7 @@ const CheckInOut = () => {
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-success">Lưu</button>
+                                    <button type="submit" className="btn btn-success"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                     <button type="button" className="btn btn-dark" onClick={closeModalCreateOrder} >Đóng</button>
                                 </div>
                             </form>

@@ -48,7 +48,9 @@ const ListOrder = () => {
     const filteredOrders = orderList
         .filter((order) => {
             return (
-                order.orderId.toString().toLowerCase().includes(orderSearchTerm.toLowerCase())
+                order.reservation?.customer?.name.toString().toLowerCase().includes(orderSearchTerm.toLowerCase()) ||
+                order.reservation?.customer?.email.toString().toLowerCase().includes(orderSearchTerm.toLowerCase()) ||
+                order.reservation?.customer?.phoneNumber.toString().toLowerCase().includes(orderSearchTerm.toLowerCase())
             );
         });
 
@@ -193,10 +195,14 @@ const ListOrder = () => {
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Dịch Vụ Được Yêu Cầu</div>
-                            <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={orderSearchTerm}
-                                    onChange={handleOrderSearch} />
+                            <div className="form-group d-flex align-items-center">
+                                <div className="search-bar ml-3">
+                                    <i className="fa fa-search search-icon" aria-hidden="true"></i>
+                                    <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
+                                        autoComplete="on" value={orderSearchTerm}
+                                        onChange={handleOrderSearch} />
+                                </div>
+
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -632,6 +638,25 @@ const ListOrder = () => {
                         transform: rotate(360deg);
                     }
                 }
+
+                   .search-bar {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar input {
+    padding-left: 30px; /* Adjust padding to make room for the icon */
+    width: 150px
+}
+
 
                                             `}
             </style>

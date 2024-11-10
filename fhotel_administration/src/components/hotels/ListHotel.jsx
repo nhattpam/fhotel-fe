@@ -507,15 +507,19 @@ const ListHotel = () => {
                                         <option key={index} value={districtName}>{districtName}</option>
                                     ))}
                                 </select>
-                                <input
-                                    id="demo-foo-search"
-                                    type="text"
-                                    placeholder="Tìm kiếm"
-                                    className="form-control form-control-sm ml-3"
-                                    autoComplete="on"
-                                    value={hotelSearchTerm}
-                                    onChange={handleHotelSearch}
-                                />
+                                <div className="search-bar ml-3">
+                                    <i className="fa fa-search search-icon" aria-hidden="true"></i>
+                                    <input
+                                        id="demo-foo-search"
+                                        type="text"
+                                        placeholder="Tìm kiếm"
+                                        className="form-control form-control-sm "
+                                        autoComplete="on"
+                                        value={hotelSearchTerm}
+                                        onChange={handleHotelSearch}
+                                    />
+                                </div>
+
                             </div>
                         </div>
 
@@ -1262,6 +1266,25 @@ const ListHotel = () => {
                         transform: rotate(360deg);
                     }
                 }
+
+                .search-bar {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar input {
+    padding-left: 30px; /* Adjust padding to make room for the icon */
+    width: 150px
+}
+
                                             `}
             </style>
 

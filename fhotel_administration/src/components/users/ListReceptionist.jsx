@@ -456,15 +456,19 @@ const ListReceptionist = () => {
                                         <option key={index} value={hotelname}>{hotelname}</option>
                                     ))}
                                 </select>
-                                <input
-                                    id="demo-foo-search"
-                                    type="text"
-                                    placeholder="Tìm kiếm"
-                                    className="form-control form-control-sm ml-3"
-                                    autoComplete="on"
-                                    value={userSearchTerm}
-                                    onChange={handleUserSearch}
-                                />
+                                <div className="search-bar ml-3">
+                                    <i className="fa fa-search search-icon" aria-hidden="true"></i>
+                                    <input
+                                        id="demo-foo-search"
+                                        type="text"
+                                        placeholder="Tìm kiếm"
+                                        className="form-control form-control-sm"
+                                        autoComplete="on"
+                                        value={userSearchTerm}
+                                        onChange={handleUserSearch}
+                                    />
+                                </div>
+
                                 <button
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
@@ -1104,7 +1108,23 @@ const ListReceptionist = () => {
                         transform: rotate(360deg);
                     }
                 }
+ .search-bar {
+    position: relative;
+    display: inline-block;
+}
 
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar input {
+    padding-left: 30px; /* Adjust padding to make room for the icon */
+    width: 150px
+}
 
                                             `}
             </style>

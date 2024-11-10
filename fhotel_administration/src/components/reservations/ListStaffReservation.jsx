@@ -44,18 +44,30 @@ const ListStaffReservation = () => {
     }, []);
 
 
+    const [selectedHotelId, setSelectedHotelId] = useState('');
+    const uniqueHotels = [...new Set(reservationList.map((reservation) => reservation.roomType?.hotel?.hotelName))]
+        .filter(Boolean);
+
     const handleReservationSearch = (event) => {
         setReservationSearchTerm(event.target.value);
     };
 
     const filteredReservations = reservationList
         .filter((reservation) => {
-            return (
-                reservation.user?.name.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+            const matchesType = selectedHotelId ? reservation.roomType?.hotel?.hotelName === selectedHotelId : true;
+            const matchesSearchTerm = (
+                reservation.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.name.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.email.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.phoneNumber.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.roomType?.type?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.hotelName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.createdDate.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.numberOfRooms?.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())
             );
+            return matchesType && matchesSearchTerm;
         });
 
     const pageReservationCount = Math.ceil(filteredReservations.length / reservationsPerPage);
@@ -174,10 +186,23 @@ const ListStaffReservation = () => {
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Đặt Phòng</div>
-                            <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={reservationSearchTerm}
-                                    onChange={handleReservationSearch} />
+                            <div className="form-group d-flex align-items-center">
+                            <select
+                                    value={selectedHotelId}
+                                    onChange={(e) => setSelectedHotelId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả khách sạn</option>
+                                    {uniqueHotels.map((hotelName, index) => (
+                                        <option key={index} value={hotelName}>{hotelName}</option>
+                                    ))}
+                                </select>
+                                <div className="search-bar ml-3">
+                                    <i className="fa fa-search search-icon" aria-hidden="true"></i>
+                                    <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
+                                        autoComplete="on" value={reservationSearchTerm}
+                                        onChange={handleReservationSearch} />
+                                </div>
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -848,6 +873,25 @@ const ListStaffReservation = () => {
                         transform: rotate(360deg);
                     }
                 }
+
+                  .search-bar {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar input {
+    padding-left: 30px; /* Adjust padding to make room for the icon */
+    width: 150px
+}
+
 
                                             `}
             </style>

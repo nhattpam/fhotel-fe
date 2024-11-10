@@ -55,7 +55,7 @@ const ListHotelManager = () => {
                 user.code.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.createdDate.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
                 user.email.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-                user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase()) 
+                user.address.toString().toLowerCase().includes(userSearchTerm.toLowerCase())
             );
         });
 
@@ -346,15 +346,19 @@ const ListHotelManager = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title ">Danh Sách Chủ Khách Sạn</div>
                             <div className="form-group d-flex align-items-center">
-                                <input
-                                    id="demo-foo-search"
-                                    type="text"
-                                    placeholder="Tìm kiếm"
-                                    className="form-control form-control-sm"
-                                    autoComplete="on"
-                                    value={userSearchTerm}
-                                    onChange={handleUserSearch}
-                                />
+                                <div className="search-bar">
+                                    <i className="fa fa-search search-icon" aria-hidden="true"></i>
+                                    <input
+                                        id="demo-foo-search"
+                                        type="text"
+                                        placeholder="Tìm kiếm"
+                                        className="form-control form-control-sm"
+                                        autoComplete="on"
+                                        value={userSearchTerm}
+                                        onChange={handleUserSearch}
+                                    />
+                                </div>
+
                             </div>
                         </div>
 
@@ -1086,6 +1090,23 @@ const ListHotelManager = () => {
                         transform: rotate(360deg);
                     }
                 }
+
+                .search-bar {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar input {
+    padding-left: 30px; /* Adjust padding to make room for the icon */
+}
 
 
                                             `}

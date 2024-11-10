@@ -237,9 +237,13 @@ const ListCustomer = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Khách Hàng</div>
                             <div className="form-group">
-                                <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
-                                    autoComplete="on" value={userSearchTerm}
-                                    onChange={handleUserSearch} />
+                                <div className="search-bar ml-3">
+                                    <i className="fa fa-search search-icon" aria-hidden="true"></i>
+                                    <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
+                                        autoComplete="on" value={userSearchTerm}
+                                        onChange={handleUserSearch} />
+                                </div>
+
                             </div>
                         </div>
                         <div className="ibox-body">
@@ -857,6 +861,25 @@ const ListCustomer = () => {
                         transform: rotate(360deg);
                     }
                 }
+
+                   .search-bar {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar input {
+    padding-left: 30px; /* Adjust padding to make room for the icon */
+    width: 150px
+}
+
 
                                             `}
             </style>

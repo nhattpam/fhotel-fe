@@ -343,41 +343,22 @@ const EditHotel = () => {
         if (createRoomType.typeId) {
             try {
                 const res = await typeService.getTypeById(createRoomType.typeId);
-                const typeName = res.data.typeName;
-                console.log(typeName);
-
-                if (typeName === "Tiêu chuẩn") {
-                    if (createRoomType.roomSize < 15 || createRoomType.roomSize > 25) {
-                        errors.roomSize = "Diện tích phòng Tiêu chuẩn phải từ 15 đến 25m²!";
-                    }
-                } else if (typeName === "Cao cấp") {
-                    if (createRoomType.roomSize < 20 || createRoomType.roomSize > 30) {
-                        errors.roomSize = "Diện tích phòng Cao cấp phải từ 20 đến 30m²!";
-                    }
-                } else if (typeName === "Gia đình") {
-                    if (createRoomType.roomSize < 25 || createRoomType.roomSize > 35) {
-                        errors.roomSize = "Diện tích phòng Gia đình phải từ 25 đến 35m²!";
-                    }
-                } else if (typeName === "Hạng sang") {
-                    if (createRoomType.roomSize < 25 || createRoomType.roomSize > 40) {
-                        errors.roomSize = "Diện tích phòng Hạng sang phải từ 25 đến 40m²!";
-                    }
-                } else if (typeName === "Suite") {
-                    if (createRoomType.roomSize < 30 || createRoomType.roomSize > 60) {
-                        errors.roomSize = "Diện tích phòng Suite phải từ 30 đến 60m²!";
-                    }
+                const type = res.data; // Assuming `typeService.getTypeById` returns an object with `data` that includes `minSize` and `maxSize`
+                console.log("DMM: " + res.data.minSize)
+                // Check if createRoomType.roomSize is within the range
+                if (createRoomType.roomSize < type.minSize || createRoomType.roomSize > type.maxSize) {
+                    errors.roomSize = `Diện tích phải từ ${type.minSize}m² tới ${type.maxSize}m²`;
+                    // You might want to return an error or handle it based on your needs
+                } else {
+                    console.log("Room size is within the valid range.");
+                    // Proceed with the next steps
                 }
             } catch (error) {
-                console.log(error);
+                console.log("Error fetching room type:", error);
             }
         }
+        
 
-        // Room Size validation (kiểm tra thêm nếu không rơi vào loại phòng nào)
-        if (createRoomType.roomSize <= 0) {
-            errors.roomSize = "Diện tích phòng phải lớn hơn 0m²!";
-        } else if (createRoomType.roomSize > 60) {
-            errors.roomSize = "Diện tích phòng không được vượt quá 60m²!";
-        }
 
         // Total Rooms validation
         if (!createRoomType.totalRooms) {

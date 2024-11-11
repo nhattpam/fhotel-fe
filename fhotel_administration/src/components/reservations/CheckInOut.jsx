@@ -71,7 +71,7 @@ const CheckInOut = () => {
                 setReservationDetails(null);
             });
     };
-    
+
 
 
 
@@ -287,11 +287,11 @@ const CheckInOut = () => {
                     .then(response => {
                         console.log(`Room added: Room ID ${roomId}, Response:`, response);
                         if (response.status === 201) {
-                                setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
-                                setShowSuccess(true);
+                            setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
+                            setShowSuccess(true);
 
-                                // Refresh search results with the current query
-                                handleSearch();
+                            // Refresh search results with the current query
+                            handleSearch();
                         }
                         return response; // Return the response for further processing if needed
                     })
@@ -883,7 +883,7 @@ const CheckInOut = () => {
                                             onChange={(e) => setCustomerSearch(e.target.value)}
                                         />
                                         <button className="btn btn-primary input-group-append ml-2" onClick={handleSearch}>
-                                            <i className="la la-search" /> Tìm
+                                            <i class="fa fa-search" aria-hidden="true"></i> Tìm
                                         </button>
                                     </div>
                                 </div>
@@ -953,36 +953,36 @@ const CheckInOut = () => {
                                                         {reservation.reservationStatus === "Pending" && (
                                                             <button className="btn btn-success " onClick={() =>
                                                                 openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                                <i className="la la-sign-out" /> Nhận phòng
+                                                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckIn" && (
                                                             <button disabled className="btn btn-success mr-2" onClick={() =>
                                                                 openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                                <i className="la la-sign-out" /> Nhận phòng
+                                                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckOut" && (
                                                             <button disabled className="btn btn-success mr-2">
-                                                                <i className="la la-sign-out" /> Nhận phòng
+                                                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckOut" && (
                                                             <button disabled className="btn btn-danger mr-2"  >
-                                                                <i className="la la-sign-out" /> Trả phòng
+                                                                <i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
                                                             </button>
                                                         )}
 
                                                         {reservation.reservationStatus === "CheckIn" && (
                                                             <button className="btn btn-danger ml-2" onClick={() =>
                                                                 openCheckOutModal(reservation.reservationId)}>
-                                                                <i className="la la-sign-out" /> Trả phòng
+                                                                <i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "Pending" && (
                                                             <button disabled className="btn btn-danger ml-2" onClick={() =>
                                                                 openCheckOutModal(reservation.reservationId)}>
-                                                                <i className="la la-sign-out" /> Trả phòng
+                                                                <i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
                                                             </button>
                                                         )}
 
@@ -1208,7 +1208,7 @@ const CheckInOut = () => {
                                     {
                                         loginUser.role?.roleName === "Receptionist" && (
                                             <>
-                                                <button type="submit" className="btn btn-primary" >Nhận phòng</button>
+                                                <button type="submit" className="btn btn-primary" ><i class="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng</button>
                                             </>
                                         )
                                     }
@@ -1542,7 +1542,7 @@ const CheckInOut = () => {
 
                                 {loginUser.role?.roleName === "Receptionist" && (
                                     <button type="button" className="btn btn-danger" onClick={() =>
-                                        handlePay(reservation.reservationId, totalAmount)}><i class="fa fa-money" aria-hidden="true"></i>
+                                        handlePay(reservation.reservationId, totalAmount)}><i class="fa fa-money" aria-hidden="true"></i>&nbsp;
                                         Thanh Toán</button>
                                 )}
 
@@ -1555,8 +1555,7 @@ const CheckInOut = () => {
                                         >
                                             <button type="submit" className="btn btn-primary"
                                                 onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
-                                            ><i class="fa fa-sign-out" aria-hidden="true"></i>
-                                                Trả Phòng</button>
+                                            ><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả Phòng</button>
                                         </form>
                                     </>
 

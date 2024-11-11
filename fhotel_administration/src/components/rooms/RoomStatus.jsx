@@ -95,8 +95,10 @@ const RoomStatus = () => {
 
     //update room status
     const [updateRoom, setUpdateRoom] = useState({
-
+        status: "",   // ensure this field has a valid initial value
+        note: ""      // same for note
     });
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -105,7 +107,7 @@ const RoomStatus = () => {
             [name]: value
         }));
     };
-    
+
 
     const handleUpdateRoomNoteChange = (value) => {
         setUpdateRoom({ ...updateRoom, note: value });
@@ -114,49 +116,40 @@ const RoomStatus = () => {
 
     const submitUpdateRoom = async (e, roomId) => {
         e.preventDefault();
-
-        try {
-            // Fetch the current type pricing data
-            const res = await roomService.getRoomById(roomId);
-            const roomData = res.data;
-
-            // Make the update request
-            console.log(JSON.stringify(updateRoom))
-            const updateRes = await roomService.updateRoom(roomId, { ...roomData, status: updateRoom.status, note: updateRoom.note });
-
-            if (updateRes.status === 200) {
-                // Use a notification library for better user feedback
-                setSuccess({ general: "Cập nhật thành công!" });
-                setShowSuccess(true); // Show error
-                roomService
-                    .getRoomById(roomId)
-                    .then((res) => {
-                        setRoom(res.data);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-                userService
-                    .getAllRoomByStaff(loginUserId)
-                    .then((res) => {
-                        const sortedRoomList = [...res.data].sort((a, b) => {
-                            // Assuming requestedDate is a string in ISO 8601 format
-                            return a.roomNumber - b.roomNumber; // Sort by roomNumber in ascending order
-                        });
-                        setRoomList(sortedRoomList);
-
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-
-            } else {
-                handleResponseError(updateRes);
-            }
-        } catch (error) {
-            handleResponseError(error.response);
+      
+        if (!updateRoom.status || !updateRoom.note) {
+          console.error("Status or note is missing!");
+          return; // Ensure that both fields have valid values
         }
-    };
+      
+        try {
+          const res = await roomService.getRoomById(roomId);
+          const roomData = res.data;
+      
+          const updateRes = await roomService.updateRoom(roomId, {
+            ...roomData, 
+            status: updateRoom.status, 
+            note: updateRoom.note 
+          });
+      
+          if (updateRes.status === 200) {
+            setSuccess({ general: "Cập nhật thành công!" });
+            setShowSuccess(true);
+            // Update room data
+            roomService.getRoomById(roomId).then((res) => setRoom(res.data));
+            // Update room list
+            userService.getAllRoomByStaff(loginUserId).then((res) => {
+              const sortedRoomList = [...res.data].sort((a, b) => a.roomNumber - b.roomNumber);
+              setRoomList(sortedRoomList);
+            });
+          } else {
+            handleResponseError(updateRes);
+          }
+        } catch (error) {
+          handleResponseError(error.response);
+        }
+      };
+      
 
     const [error, setError] = useState({}); // State to hold error messages
     const [showError, setShowError] = useState(false); // State to manage error visibility
@@ -264,7 +257,7 @@ const RoomStatus = () => {
 
                                     return (
                                         <div
-                                        onClick={() => openRoomModal(room.roomId)}
+                                            onClick={() => openRoomModal(room.roomId)}
                                             key={room.roomNumber}
                                             className="col-md-4 mb-3"
                                             style={{ padding: '10px' }}
@@ -387,13 +380,14 @@ const RoomStatus = () => {
                                                     name="status"
                                                     className='form-control'
                                                     onChange={(e) => handleChange(e)}
-                                                    value={updateRoom.status}
+                                                    value={updateRoom.status || ''} // add fallback value
                                                     required
                                                 >
                                                     <option value="Available">Có sẵn</option>
                                                     <option value="Occupied">Không có sẵn</option>
                                                     <option value="Maintenance">Bảo trì</option>
                                                 </select>
+
                                                 <label htmlFor="note">Ghi chú * :</label>
                                                 <ReactQuill
                                                     value={updateRoom.note}

@@ -591,6 +591,8 @@ const CheckInOut = () => {
     //END CREATE ORDER
 
     //START CHECKOUT
+    const [loading, setLoading] = useState(false);
+
     const totalAmount = orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
         + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0);
 
@@ -599,6 +601,8 @@ const CheckInOut = () => {
             reservationId: reservationId,
             totalAmount: totalAmount
         };
+
+        setLoading(true); // Set loading to true when payment is initiated
 
         try {
             console.log("Payload to create bill:", JSON.stringify(createBill));
@@ -609,26 +613,48 @@ const CheckInOut = () => {
                 try {
                     const paymentResponse = await billService.payBill(billResponse.data.billId);
                     window.open(paymentResponse.data, '_blank');
+
+                    // Refresh the bill info after payment
                     reservationService
                         .getBillByReservation(reservationId)
                         .then((res) => {
                             setBillByReservation(res.data);
-                            console.log(res.data)
+                            console.log(res.data);
                         })
                         .catch((error) => {
                             console.log(error);
                         });
+
+                    // Optionally, you can check for reservation status here and stop loading
+                    const checkReservationStatus = setInterval(() => {
+                        reservationService.getReservationById(reservationId)
+                            .then((res) => {
+                                if (res.data.paymentStatus === "Paid") {
+                                    clearInterval(checkReservationStatus); // Stop checking when paid
+                                    setLoading(false); // Set loading to false once paid
+                                    // Optionally, refresh reservation info
+                                    openCheckOutModal(reservationId);
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }, 2000); // Check every 2 seconds
                 } catch (paymentError) {
-                    console.error("Payment Error:", paymentError.response.data); // Log payment error details
+                    console.error("Payment Error:", paymentError.response.data);
                     window.alert("Error processing payment!");
+                    setLoading(false); // Stop loading if payment fails
                 }
             } else {
-                window.alert("Đã tồn tại hóa đơn!"); // Bill already exists
+                window.alert("Đã tồn tại hóa đơn!");
+                setLoading(false); // Stop loading if the bill already exists
             }
         } catch (error) {
-            window.alert("Đã tồn tại hóa đơn!"); // Or another error message based on context
+            window.alert("Đã tồn tại hóa đơn!");
+            setLoading(false); // Stop loading if there is an error creating the bill
         }
     };
+
 
     const handlePayBill = async (billId, reservationId) => {
 
@@ -1453,6 +1479,17 @@ const CheckInOut = () => {
                                                                 )
 
                                                             }
+                                                            {
+                                                                billByReservation && (
+                                                                    billByReservation.billStatus === "Paid" && (
+                                                                        <>
+                                                                            <th><span>Hành động</span></th>
+
+                                                                        </>
+                                                                    )
+                                                                )
+
+                                                            }
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1480,6 +1517,15 @@ const CheckInOut = () => {
                                                                         {
                                                                             billByReservation.billStatus === "Paid" && (
                                                                                 <>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="btn btn-default btn-xs m-r-5"
+                                                                                        data-toggle="tooltip"
+                                                                                        data-original-title="Activate"
+                                                                                        onClick={() => openCreateBillTransactionImageModal(billByReservation.billId)}                                                                            >
+                                                                                        <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
+
+                                                                                    </button>
                                                                                 </>
                                                                             )
                                                                         }
@@ -1495,15 +1541,7 @@ const CheckInOut = () => {
                                                                                     >
                                                                                         <i className="fa fa-credit-card-alt text-success" aria-hidden="true"></i>
                                                                                     </button>
-                                                                                    <button
-                                                                                        type="button"
-                                                                                        className="btn btn-default btn-xs m-r-5"
-                                                                                        data-toggle="tooltip"
-                                                                                        data-original-title="Activate"
-                                                                                        onClick={() => openCreateBillTransactionImageModal(billByReservation.billId)}                                                                            >
-                                                                                        <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
 
-                                                                                    </button>
                                                                                     <button
                                                                                         type="button"
                                                                                         className="btn btn-default btn-xs m-r-5"
@@ -1539,29 +1577,42 @@ const CheckInOut = () => {
 
 
                             <div className="modal-footer">
-
                                 {loginUser.role?.roleName === "Receptionist" && (
-                                    <button type="button" className="btn btn-danger" onClick={() =>
-                                        handlePay(reservation.reservationId, totalAmount)}><i class="fa fa-money" aria-hidden="true"></i>&nbsp;
-                                        Thanh Toán</button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={() => handlePay(reservation.reservationId, totalAmount)}
+                                        disabled={loading} // Disable the button while loading
+                                    >
+                                        {loading ? (
+                                            <span>
+                                                <i className="fa fa-spinner fa-spin"></i>&nbsp;Đang xử lý
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                <i className="fa fa-money" aria-hidden="true"></i>&nbsp;Thanh Toán
+                                            </span>
+                                        )}
+                                    </button>
                                 )}
 
                                 {loginUser.role?.roleName === "Receptionist" && (
-                                    <>
-                                        <form
-                                            id="demo-form"
-                                            onSubmit={(e) => submitUpdateReservationStatus(e, reservation.reservationId, updateReservationStatus.reservationStatus)}
-                                            className="d-inline"
+                                    <form
+                                        id="demo-form"
+                                        onSubmit={(e) => submitUpdateReservationStatus(e, reservation.reservationId, updateReservationStatus.reservationStatus)}
+                                        className="d-inline"
+                                    >
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary"
+                                            onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
                                         >
-                                            <button type="submit" className="btn btn-primary"
-                                                onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
-                                            ><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả Phòng</button>
-                                        </form>
-                                    </>
-
+                                            <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả Phòng
+                                        </button>
+                                    </form>
                                 )}
-                                {/* <button type="button" className="btn btn-dark" onClick={closeCheckOutModal}>Đóng</button> */}
                             </div>
+
                         </div>
                     </div>
                 </div>

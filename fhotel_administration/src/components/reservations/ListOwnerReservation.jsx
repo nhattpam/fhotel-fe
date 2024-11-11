@@ -237,8 +237,6 @@ const ListOwnerReservation = () => {
                                                 </>
                                             ))
                                         }
-
-
                                     </tbody>
                                 </table>
                             </div>

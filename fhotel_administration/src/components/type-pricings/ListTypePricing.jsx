@@ -144,10 +144,6 @@ const ListTypePricing = () => {
     };
 
 
-    const [error, setError] = useState({}); // State to hold error messages
-    const [showError, setShowError] = useState(false); // State to manage error visibility
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [success, setSuccess] = useState({});
 
     const handleChange = (e, index) => {
         const newTypePricings = [...typePricings];
@@ -374,6 +370,11 @@ const ListTypePricing = () => {
 
 
     // Effect to handle error message visibility
+    
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [success, setSuccess] = useState({});
     useEffect(() => {
         if (showError) {
             const timer = setTimeout(() => {
@@ -457,7 +458,7 @@ const ListTypePricing = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateTypePricingModal}
                                 >
-                                    Thêm giá
+                                    <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm giá
                                 </button>
 
                             </div>

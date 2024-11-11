@@ -56,11 +56,12 @@ const CheckInOut = () => {
     }, []);
 
     const handleSearch = () => {
-        // Use the reservationService to search with the API
         reservationService.searchReservation(loginUserId, customerSearch)
             .then((res) => {
                 if (res.data.length > 0) {
-                    setReservationDetails(res.data);
+                    // Sort reservations by createdDate in descending order
+                    const sortedData = res.data.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+                    setReservationDetails(sortedData);
                 } else {
                     setReservationDetails(null);
                 }
@@ -70,6 +71,7 @@ const CheckInOut = () => {
                 setReservationDetails(null);
             });
     };
+    
 
 
 
@@ -941,6 +943,7 @@ const CheckInOut = () => {
                                                                     : "Chưa có"}
                                                             </p> */}
                                                             <p><strong className='mr-2'>Khách sạn:</strong> {reservation.roomType?.hotel?.hotelName}</p>
+                                                            <p><strong className='mr-2'>Ngày đặt:</strong> {new Date(reservation.createdDate).toLocaleString('en-US')}</p>
 
 
                                                         </div>

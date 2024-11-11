@@ -500,7 +500,7 @@ const Header = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-primary btn-sm">Gửi</button>
+                                    <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-paper-plane-o" aria-hidden="true"></i> Gửi</button>
                                     <button type="button" className="btn btn-dark btn-sm" onClick={(e) => setShowCreateHotelRegistrationModal(false)}>Đóng</button>
                                 </div>
                             </div>

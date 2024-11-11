@@ -75,7 +75,7 @@ const PaymentCallBack = () => {
                     reservationService.updateReservation(orderId, updatedReservation)
                         .then((updateResponse) => {
                             if (updateResponse.status === 200) {
-                                window.alert("THANH TOÁN ĐẶT PHÒNG THÀNH CÔNG");
+                                navigate(`/success-payment`);
                             }
                         })
                         .catch((error) => {

@@ -21,6 +21,8 @@ import roomFacilityService from '../../services/room-facility.service';
 import hotelImageService from '../../services/hotel-image.service';
 import hotelDocumentService from '../../services/hotel-document.service';
 import documentService from '../../services/document.service';
+import reservationService from '../../services/reservation.service';
+import billService from '../../services/bill.service';
 
 const EditHotel = () => {
     //LOADING
@@ -357,7 +359,7 @@ const EditHotel = () => {
                 console.log("Error fetching room type:", error);
             }
         }
-        
+
 
 
         // Total Rooms validation
@@ -995,6 +997,149 @@ const EditHotel = () => {
         setShowModalUser(false);
     };
 
+    // RESERVATION BY ROOM TYPE
+    const [reservationByRoomTypeList, setReservationByRoomTypeList] = useState([]);
+
+    const [showModalReservationByRoomType, setShowModalReservationByRoomType] = useState(false);
+    const closeModalReservationByRoomType = () => {
+        setShowModalReservationByRoomType(false);
+    };
+
+
+    const openReservationByRoomTypeModal = (roomTypeId) => {
+        setShowModalReservationByRoomType(true);
+        // Clear the image list first to avoid showing images from the previous room type
+        // setRoomImageList([]); // Reset roomImageList to an empty array
+        if (roomTypeId) {
+            roomTypeService
+                .getAllReservationByRoomTypeId(roomTypeId)
+                .then((res) => {
+                    const sortedReservationList = [...res.data].sort((a, b) => {
+                        // Assuming requestedDate is a string in ISO 8601 format
+                        return new Date(b.createdDate) - new Date(a.createdDate);
+                    });
+                    setReservationByRoomTypeList(sortedReservationList);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+        }
+    };
+    const [reservationSearchTerm, setReservationSearchTerm] = useState('');
+    const [currentReservationPage, setCurrentReservationPage] = useState(0);
+    const [reservationsPerPage] = useState(10);
+    const [selectedHotelId, setSelectedHotelId] = useState('');
+    const uniqueHotels = [...new Set(reservationByRoomTypeList.map((reservation) => reservation.roomType?.hotel?.hotelName))]
+        .filter(Boolean);
+
+    const handleReservationSearch = (event) => {
+        setReservationSearchTerm(event.target.value);
+    };
+
+    const filteredReservations = reservationByRoomTypeList
+        .filter((reservation) => {
+            const matchesType = selectedHotelId ? reservation.roomType?.hotel?.hotelName === selectedHotelId : true;
+            const matchesSearchTerm = (
+                reservation.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.name.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.email.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.phoneNumber.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.type?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.hotelName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.createdDate.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.numberOfRooms?.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())
+            );
+            return matchesType && matchesSearchTerm;
+        });
+
+    const pageReservationCount = Math.ceil(filteredReservations.length / reservationsPerPage);
+
+    const handleReservationPageClick = (data) => {
+        setCurrentReservationPage(data.selected);
+    };
+
+    const offsetReservation = currentReservationPage * reservationsPerPage;
+    const currentReservations = filteredReservations.slice(offsetReservation, offsetReservation + reservationsPerPage);
+
+     //detail reservation modal 
+     const [showModalReservation, setShowModalReservation] = useState(false);
+     const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
+     const [orderDetailList, setOrderDetailList] = useState([]);
+     const [billByReservation, setBillByReservation] = useState(null);
+ 
+     const [reservation, setReservation] = useState({
+ 
+     });
+ 
+ 
+     const openReservationModal = (reservationId) => {
+         setShowModalReservation(true);
+         if (reservationId) {
+             reservationService
+                 .getReservationById(reservationId)
+                 .then((res) => {
+                     setReservation(res.data);
+                 })
+                 .catch((error) => {
+                     console.log(error);
+                 });
+             reservationService
+                 .getAllRoomStayHistoryByReservationId(reservationId)
+                 .then((res) => {
+                     setRoomStayHistoryList(res.data);
+                 })
+                 .catch((error) => {
+                     console.log(error);
+                 });
+             reservationService
+                 .getAllOrderDetailByReservationId(reservationId)
+                 .then((res) => {
+                     setOrderDetailList(res.data);
+                 })
+                 .catch((error) => {
+                     console.log(error);
+                 });
+             reservationService
+                 .getBillByReservation(reservationId)
+                 .then((res) => {
+                     setBillByReservation(res.data);
+                     console.log(res.data)
+                 })
+                 .catch((error) => {
+                     console.log(error);
+                 });
+         }
+     };
+ 
+     const closeModalReservation = () => {
+         setShowModalReservation(false);
+     };
+ 
+     const [billTransactionImageList, setBillTransactionImageList] = useState([]);
+     const [selectedBillId, setSelectedBillId] = useState(null);
+ 
+     const [showModalCreateBillTransactionImage, setShowModalCreateBillTransactionImage] = useState(false);
+     const closeModalCreateBillTransactionImage = () => {
+         setShowModalCreateBillTransactionImage(false);
+     };
+ 
+ 
+     const openCreateBillTransactionImageModal = (billId) => {
+         setShowModalCreateBillTransactionImage(true);
+         setSelectedBillId(billId);
+         billService
+             .getAllBillTransactionImageByBillId(billId)
+             .then((res) => {
+                 setBillTransactionImageList(res.data);
+             })
+             .catch((error) => {
+                 console.log(error);
+             });
+ 
+     };
 
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
@@ -1400,6 +1545,11 @@ const EditHotel = () => {
                                                             <i className="fa fa-pencil font-14"
                                                                 onClick={() => openRoomTypeModal(item.roomTypeId)} />
                                                         </button>
+                                                        <button className="btn btn-default btn-xs m-r-5"
+                                                            data-toggle="tooltip" data-original-title="Edit">
+                                                            <i className="fa fa-eye font-14"
+                                                                onClick={() => openReservationByRoomTypeModal(item.roomTypeId)} />
+                                                        </button>
                                                         {
 
                                                             loginUser.role?.roleName === "Hotel Manager" && (
@@ -1441,7 +1591,7 @@ const EditHotel = () => {
                                 {
                                     roomTypeList.length === 0 && (
                                         <>
-                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                            <p className='text-center mt-3' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                         </>
                                     )
                                 }
@@ -1526,7 +1676,7 @@ const EditHotel = () => {
                                 {
                                     hotelStaffList.length === 0 && (
                                         <>
-                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                            <p className='text-center mt-3' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                         </>
                                     )
                                 }
@@ -1567,7 +1717,7 @@ const EditHotel = () => {
                                 {
                                     feedbackList.length === 0 && (
                                         <>
-                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                            <p className='text-center mt-3' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                         </>
                                     )
                                 }
@@ -1586,215 +1736,212 @@ const EditHotel = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Thông Tin Loại Phòng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoomType}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-5" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {
+                                            roomImageList.length > 0 ? (
+                                                roomImageList.map((item, index) => (
+                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                        <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    {/* Delete Icon/Button */}
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '10px',
+                                                                            right: '10px',
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteImage(item.roomImageId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </div>
+                                            )
+                                        }
 
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Loại Phòng</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoomType}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-5" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                            {
-                                                roomImageList.length > 0 ? (
-                                                    roomImageList.map((item, index) => (
-                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+
+                                        {
+                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                <>
+                                                    <div className="form-group mt-3">
+                                                        <input type="file" onChange={handleFileChange} />
+                                                        <button type="button" className="btn btn-success mt-2 btn-sm" onClick={handleUploadAndPost}>
+                                                            + Tải lên
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )
+                                        }
+
+                                    </div>
+
+
+                                    <div className="col-md-7">
+                                        <table className="table table-responsive table-hover mt-3">
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại phòng:</th>
+                                                    <td>{roomType.type?.typeName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện tích:</th>
+                                                    <td>{roomType.roomSize} m²</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số lượng phòng:</th>
+                                                    <td>{roomType.totalRooms} phòng</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng còn trống:</th>
+                                                    <td>{roomType.availableRooms} phòng</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
+                                                    <td
+                                                        dangerouslySetInnerHTML={{ __html: roomType.description }}
+                                                        style={{
+                                                            wordWrap: 'break-word',
+                                                            whiteSpace: 'pre-wrap',
+                                                            maxWidth: '300px' // Adjust width as needed
+                                                        }}
+                                                        className="wordwrap"
+                                                    ></td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                        <div>
+                                            <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh sách phòng</h3>
+                                            <div className="room-list">
+                                                {roomList.map((room) => (
+                                                    <div
+                                                        key={room.roomNumber}
+                                                        className="room-box"
+                                                        style={{
+                                                            backgroundColor: room.status === 'Available' ? 'green' :
+                                                                room.status === 'Occupied' ? 'red' :
+                                                                    '#E4A11B'
+                                                        }}
+                                                    >
+                                                        <p>{room.roomNumber}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {roomList.length === 0 && (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )}
+                                        </div>
+                                        <hr />
+                                        <div>
+                                            <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện ích phòng</h3>
+                                            <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                {
+                                                    roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
+                                                        <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                            <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
+                                                            {/* Delete Button */}
                                                             {
                                                                 loginUser.role?.roleName === "Hotel Manager" && (
                                                                     <>
-                                                                        {/* Delete Icon/Button */}
                                                                         <button
                                                                             type="button"
                                                                             className="btn btn-danger"
                                                                             style={{
                                                                                 position: 'absolute',
-                                                                                top: '10px',
-                                                                                right: '10px',
+                                                                                top: '0', // Adjust to position the button as needed
+                                                                                right: '0', // Adjust to position the button as needed
                                                                                 background: 'transparent',
                                                                                 border: 'none',
                                                                                 color: 'red',
                                                                                 fontSize: '20px',
                                                                                 cursor: 'pointer',
                                                                             }}
-                                                                            onClick={() => handleDeleteImage(item.roomImageId)}
+                                                                            onClick={() => handleDeleteRoomFacility(item.roomFacilityId)}
                                                                         >
                                                                             &times; {/* This represents the delete icon (X symbol) */}
                                                                         </button>
                                                                     </>
                                                                 )
                                                             }
+
                                                         </div>
                                                     ))
-                                                ) : (
-                                                    <div>
-                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </div>
-                                                )
-                                            }
-
-
-                                            {
-                                                loginUser.role?.roleName === "Hotel Manager" && (
-                                                    <>
-                                                        <div className="form-group mt-3">
-                                                            <input type="file" onChange={handleFileChange} />
-                                                            <button type="button" className="btn btn-success mt-2 btn-sm" onClick={handleUploadAndPost}>
-                                                                + Tải lên
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                )
-                                            }
-
-                                        </div>
-
-
-                                        <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại phòng:</th>
-                                                        <td>{roomType.type?.typeName}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện tích:</th>
-                                                        <td>{roomType.roomSize} m²</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số lượng phòng:</th>
-                                                        <td>{roomType.totalRooms} phòng</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng còn trống:</th>
-                                                        <td>{roomType.availableRooms} phòng</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
-                                                        <td
-                                                            dangerouslySetInnerHTML={{ __html: roomType.description }}
-                                                            style={{
-                                                                wordWrap: 'break-word',
-                                                                whiteSpace: 'pre-wrap',
-                                                                maxWidth: '300px' // Adjust width as needed
-                                                            }}
-                                                            className="wordwrap"
-                                                        ></td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                            <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh sách phòng</h3>
-                                                <div className="room-list">
-                                                    {roomList.map((room) => (
-                                                        <div
-                                                            key={room.roomNumber}
-                                                            className="room-box"
-                                                            style={{
-                                                                backgroundColor: room.status === 'Available' ? 'green' :
-                                                                    room.status === 'Occupied' ? 'red' :
-                                                                        '#E4A11B'
-                                                            }}
-                                                        >
-                                                            <p>{room.roomNumber}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                {roomList.length === 0 && (
-                                                    <>
-                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </>
-                                                )}
-                                            </div>
-                                            <hr />
-                                            <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Tiện ích phòng</h3>
-                                                <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
-                                                    {
-                                                        roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
-                                                            <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
-                                                                {/* Delete Button */}
-                                                                {
-                                                                    loginUser.role?.roleName === "Hotel Manager" && (
-                                                                        <>
-                                                                            <button
-                                                                                type="button"
-                                                                                className="btn btn-danger"
-                                                                                style={{
-                                                                                    position: 'absolute',
-                                                                                    top: '0', // Adjust to position the button as needed
-                                                                                    right: '0', // Adjust to position the button as needed
-                                                                                    background: 'transparent',
-                                                                                    border: 'none',
-                                                                                    color: 'red',
-                                                                                    fontSize: '20px',
-                                                                                    cursor: 'pointer',
-                                                                                }}
-                                                                                onClick={() => handleDeleteRoomFacility(item.roomFacilityId)}
-                                                                            >
-                                                                                &times; {/* This represents the delete icon (X symbol) */}
-                                                                            </button>
-                                                                        </>
-                                                                    )
-                                                                }
-
-                                                            </div>
-                                                        ))
-                                                            : (
-                                                                <>
-                                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                                </>
-                                                            )
-                                                    }
-
-                                                    {/* Square Add Button */}
-                                                    {
-                                                        loginUser.role?.roleName === "Hotel Manager" && (
+                                                        : (
                                                             <>
-                                                                <div
-                                                                    style={{
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'center',
-                                                                        width: '40px', // Adjust the size as needed
-                                                                        backgroundColor: '#258cd1', // Button color
-                                                                        color: '#fff', // Text color
-                                                                        borderRadius: '4px', // Optional rounded corners
-                                                                        margin: '5px', // Space around the button
-                                                                        cursor: 'pointer',
-                                                                    }}
-                                                                    onClick={() => openCreateRoomFacilityModal(roomType.roomTypeId)}
-                                                                >
-                                                                    +
-                                                                </div>
+                                                                <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                                             </>
                                                         )
-                                                    }
+                                                }
 
-                                                </td>
+                                                {/* Square Add Button */}
+                                                {
+                                                    loginUser.role?.roleName === "Hotel Manager" && (
+                                                        <>
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    width: '40px', // Adjust the size as needed
+                                                                    backgroundColor: '#258cd1', // Button color
+                                                                    color: '#fff', // Text color
+                                                                    borderRadius: '4px', // Optional rounded corners
+                                                                    margin: '5px', // Space around the button
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                                onClick={() => openCreateRoomFacilityModal(roomType.roomTypeId)}
+                                                            >
+                                                                +
+                                                            </div>
+                                                        </>
+                                                    )
+                                                }
 
-                                            </div>
+                                            </td>
+
                                         </div>
-
                                     </div>
 
+                                </div>
 
-                                </div>
-                                <div className="modal-footer">
-                                    {
-                                        loginUser.role?.roleName === "Hotel Manager" && (
-                                            <>
-                                                <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link>
-                                            </>
-                                        )
-                                    }
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoomType} >Đóng</button>
-                                </div>
-                            </form>
+
+                            </div>
+                            <div className="modal-footer">
+                                {
+                                    loginUser.role?.roleName === "Hotel Manager" && (
+                                        <>
+                                            <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link>
+                                        </>
+                                    )
+                                }
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoomType} >Đóng</button>
+                            </div>
 
                         </div>
                     </div>
@@ -2146,75 +2293,72 @@ const EditHotel = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thêm Hình Ảnh Khách Sạn</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelImage}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                            {
-                                                hotelImageList.length > 0 ? (
-                                                    hotelImageList.map((item, index) => (
-                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
-                                                            {
-                                                                loginUser.role?.roleName === "Hotel Manager" && (
-                                                                    <>
-                                                                        {/* Delete Icon/Button */}
-                                                                        <button
-                                                                            type="button"
-                                                                            className="btn btn-danger"
-                                                                            style={{
-                                                                                position: 'absolute',
-                                                                                top: '10px',
-                                                                                right: '10px',
-                                                                                background: 'transparent',
-                                                                                border: 'none',
-                                                                                color: 'red',
-                                                                                fontSize: '20px',
-                                                                                cursor: 'pointer',
-                                                                            }}
-                                                                            onClick={() => handleDeleteImage3(item.hotelImageId)}
-                                                                        >
-                                                                            &times; {/* This represents the delete icon (X symbol) */}
-                                                                        </button>
-                                                                    </>
-                                                                )
-                                                            }
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <>
-                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </>
-                                                )
-                                            }
-                                            {
-                                                loginUser.role?.roleName === "Hotel Manager" && (
-                                                    <>
-                                                        <div className="form-group mt-3">
-                                                            <input type="file" onChange={handleFileChange3} />
-                                                            <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost3}>
-                                                                + Tải lên
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                )
-                                            }
-
-                                        </div>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Thêm Hình Ảnh Khách Sạn</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelImage}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {
+                                            hotelImageList.length > 0 ? (
+                                                hotelImageList.map((item, index) => (
+                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                        <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    {/* Delete Icon/Button */}
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '10px',
+                                                                            right: '10px',
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteImage3(item.hotelImageId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )
+                                        }
+                                        {
+                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                <>
+                                                    <div className="form-group mt-3">
+                                                        <input type="file" onChange={handleFileChange3} />
+                                                        <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost3}>
+                                                            + Tải lên
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )
+                                        }
 
                                     </div>
+
                                 </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelImage} >Đóng</button>
-                                </div>
-                            </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelImage} >Đóng</button>
+                            </div>
 
                         </div>
                     </div>
@@ -2226,76 +2370,73 @@ const EditHotel = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Upload Giấy Tờ Khách Sạn</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelDocument}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                            {
-                                                hotelDocumentList.length > 0 ? (
-                                                    hotelDocumentList.map((item, index) => (
-                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
-                                                            {
-                                                                loginUser.role?.roleName === "Hotel Manager" && (
-                                                                    <>
-                                                                        {/* Delete Icon/Button */}
-                                                                        <button
-                                                                            type="button"
-                                                                            className="btn btn-danger"
-                                                                            style={{
-                                                                                position: 'absolute',
-                                                                                top: '10px',
-                                                                                right: '10px',
-                                                                                background: 'transparent',
-                                                                                border: 'none',
-                                                                                color: 'red',
-                                                                                fontSize: '20px',
-                                                                                cursor: 'pointer',
-                                                                            }}
-                                                                            onClick={() => handleDeleteImage4(item.hotelDocumentId)}
-                                                                        >
-                                                                            &times; {/* This represents the delete icon (X symbol) */}
-                                                                        </button>
-                                                                    </>
-                                                                )
-                                                            }
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <>
-                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </>
-                                                )
-                                            }
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Upload Giấy Tờ Khách Sạn</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelDocument}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {
+                                            hotelDocumentList.length > 0 ? (
+                                                hotelDocumentList.map((item, index) => (
+                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                        <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    {/* Delete Icon/Button */}
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '10px',
+                                                                            right: '10px',
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteImage4(item.hotelDocumentId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )
+                                        }
 
 
-                                            {
-                                                loginUser.role?.roleName === "Hotel Manager" && (
-                                                    <>
-                                                        <div className="form-group mt-3">
-                                                            <input type="file" onChange={handleFileChange4} />
-                                                            <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost4}>
-                                                                + Upload
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                )
-                                            }
+                                        {
+                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                <>
+                                                    <div className="form-group mt-3">
+                                                        <input type="file" onChange={handleFileChange4} />
+                                                        <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost4}>
+                                                            + Upload
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )
+                                        }
 
-                                        </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelDocument} >Đóng</button>
-                                </div>
-                            </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateHotelDocument} >Đóng</button>
+                            </div>
 
                         </div>
                     </div>
@@ -2307,23 +2448,20 @@ const EditHotel = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Hình Ảnh</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Hình Ảnh</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    {selectedImageLarger && <img src={selectedImageLarger} alt="Large preview" style={{ width: '100%' }} />}
                                 </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        {selectedImageLarger && <img src={selectedImageLarger} alt="Large preview" style={{ width: '100%' }} />}
-                                    </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={handleCloseImageLargeModal} >Đóng</button>
-                                </div>
-                            </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={handleCloseImageLargeModal} >Đóng</button>
+                            </div>
 
                         </div>
                     </div>
@@ -2334,109 +2472,555 @@ const EditHotel = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', }}>
-                                    <div className="row">
-                                        <div className="col-md-4 d-flex align-items-center flex-column">
-                                            <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
-                                        </div>
-                                        <div className="col-md-8">
-                                            <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-
-                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h4 style={{ fontWeight: 'bold' }}>Danh sách khách sạn</h4>
-                                            <div className="ibox-body">
-                                                <div className="table-responsive">
-                                                    <table className="table table-borderless table-hover table-wrap table-centered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th><span>STT</span></th>
-                                                                <th><span>Mã số</span></th>
-                                                                <th><span>Tên khách sạn</span></th>
-                                                                <th><span>Chủ sở hữu</span></th>
-                                                                <th><span>Quận</span></th>
-                                                                <th><span>Thành phố</span></th>
-                                                                <th><span>Trạng thái</span></th>
-                                                                <th><span>Hành động</span></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                hotelList.length > 0 && hotelList.map((item, index) => (
-                                                                    <>
-                                                                        <tr>
-                                                                            <td>{index + 1}</td>
-
-                                                                            <td>{item.code}</td>
-                                                                            <td>{item.hotelName}</td>
-                                                                            <td>{item.owner?.name}</td>
-                                                                            <td>{item.district?.districtName}</td>
-                                                                            <td>{item.district?.city?.cityName}</td>
-                                                                            <td>
-                                                                                {item.isActive ? (
-                                                                                    <span className="badge label-table badge-success">Đang hoạt động</span>
-                                                                                ) : (
-                                                                                    <span className="badge label-table badge-danger">Chưa kích hoạt</span>
-                                                                                )}
-                                                                            </td>
-                                                                            <td>
-                                                                                <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip"
-                                                                                    to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14" /></Link>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </>
-                                                                ))
-                                                            }
-
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                        </div>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Thông Tin Tài Khoản</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', }}>
+                                <div className="row">
+                                    <div className="col-md-4 d-flex align-items-center flex-column">
+                                        <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
+                                    </div>
+                                    <div className="col-md-8">
+                                        <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
 
 
+                                    <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                        <h4 style={{ fontWeight: 'bold' }}>Danh sách khách sạn</h4>
+                                        <div className="ibox-body">
+                                            <div className="table-responsive">
+                                                <table className="table table-borderless table-hover table-wrap table-centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>STT</span></th>
+                                                            <th><span>Mã số</span></th>
+                                                            <th><span>Tên khách sạn</span></th>
+                                                            <th><span>Chủ sở hữu</span></th>
+                                                            <th><span>Quận</span></th>
+                                                            <th><span>Thành phố</span></th>
+                                                            <th><span>Trạng thái</span></th>
+                                                            <th><span>Hành động</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            hotelList.length > 0 && hotelList.map((item, index) => (
+                                                                <>
+                                                                    <tr>
+                                                                        <td>{index + 1}</td>
+
+                                                                        <td>{item.code}</td>
+                                                                        <td>{item.hotelName}</td>
+                                                                        <td>{item.owner?.name}</td>
+                                                                        <td>{item.district?.districtName}</td>
+                                                                        <td>{item.district?.city?.cityName}</td>
+                                                                        <td>
+                                                                            {item.isActive ? (
+                                                                                <span className="badge label-table badge-success">Đang hoạt động</span>
+                                                                            ) : (
+                                                                                <span className="badge label-table badge-danger">Chưa kích hoạt</span>
+                                                                            )}
+                                                                        </td>
+                                                                        <td>
+                                                                            <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip"
+                                                                                to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14" /></Link>
+                                                                        </td>
+                                                                    </tr>
+                                                                </>
+                                                            ))
+                                                        }
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
-                                <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
-                                </div>
-                            </form>
+
+
+                            </div>
+                            <div className="modal-footer">
+                                {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
+                            </div>
 
                         </div>
                     </div >
                 </div >
             )}
+
+            {showModalReservationByRoomType && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content" style={{ textAlign: 'left' }}>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Danh Sách Đặt Phòng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalReservationByRoomType}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                {/* start ibox */}
+                                <div className="table-responsive">
+                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                        <thead>
+                                            <tr>
+                                                <th><span>STT</span></th>
+                                                <th><span>Mã số</span></th>
+                                                <th><span>Khách hàng</span></th>
+                                                <th><span>Loại phòng</span></th>
+                                                <th><span>Số lượng</span></th>
+                                                <th><span>Ngày đặt</span></th>
+                                                <th><span>Ngày dự kiến nhận phòng</span></th>
+                                                <th><span>Ngày dự kiến trả phòng</span></th>
+                                                <th><span>Trạng thái</span></th>
+                                                <th><span>Hành động</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                currentReservations.length > 0 && currentReservations.map((item, index) => (
+                                                    <>
+                                                        <tr>
+                                                            <td>{index + 1}</td>
+                                                            <td>{item.code}</td>
+                                                            <td>
+                                                                {item.customer?.name}
+                                                            </td>
+                                                            <td>{item.roomType?.type?.typeName}</td>
+                                                            <td>{item.numberOfRooms}</td>
+                                                            <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
+                                                            <td> {new Date(item.checkInDate).toLocaleDateString('en-US')}</td>
+                                                            <td> {new Date(item.checkOutDate).toLocaleDateString('en-US')}</td>
+                                                            <td>
+                                                                {item.reservationStatus === "Pending" && (
+                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
+                                                                )}
+                                                                {item.reservationStatus === "CheckIn" && (
+                                                                    <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                                                )}
+                                                                {item.reservationStatus === "CheckOut" && (
+                                                                    <span className="badge label-table badge-danger">Đã trả phòng</span>
+                                                                )}
+                                                                {item.reservationStatus === "Cancelled" && (
+                                                                    <span className="badge label-table badge-danger">Đã hủy</span>
+                                                                )}
+                                                            </td>
+                                                            <td>
+                                                                <button className="btn btn-default btn-xs m-r-5"
+                                                                    data-toggle="tooltip" data-original-title="Edit">
+                                                                    <i className="fa fa-pencil font-14"
+                                                                        onClick={() => openReservationModal(item.reservationId)} /></button>
+                                                            </td>
+                                                        </tr>
+                                                    </>
+                                                ))
+                                            }
+
+
+                                        </tbody>
+                                    </table>
+                                    {
+                                        currentReservations.length === 0 && (
+                                            <>
+                                                <p className='text-center mt-3' style={{color: 'gray', fontStyle: 'italic'}}>Không có</p>
+                                            </>
+                                        )
+                                    }
+                                </div>
+                                {/* end ibox */}
+                                {/* Pagination */}
+                                <div className='container-fluid'>
+                                    {/* Pagination */}
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <ReactPaginate
+                                            previousLabel={
+                                                <IconContext.Provider value={{ color: "#000", size: "14px" }}>
+                                                    <AiFillCaretLeft />
+                                                </IconContext.Provider>
+                                            }
+                                            nextLabel={
+                                                <IconContext.Provider value={{ color: "#000", size: "14px" }}>
+                                                    <AiFillCaretRight />
+                                                </IconContext.Provider>
+                                            } breakLabel={'...'}
+                                            breakClassName={'page-item'}
+                                            breakLinkClassName={'page-link'}
+                                            pageCount={pageReservationCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={handleReservationPageClick}
+                                            containerClassName={'pagination'}
+                                            activeClassName={'active'}
+                                            previousClassName={'page-item'}
+                                            nextClassName={'page-item'}
+                                            pageClassName={'page-item'}
+                                            previousLinkClassName={'page-link'}
+                                            nextLinkClassName={'page-link'}
+                                            pageLinkClassName={'page-link'}
+                                        />
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalReservationByRoomType} >Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+            }
+            {showModalReservation && (
+                <div
+                    className="modal fade show"
+                    tabIndex="-1"
+                    role="dialog"
+                    style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
+                >
+                    <div className="modal-dialog modal-dialog-centered custom-modal-xl" role="document">
+                        <div className="modal-content shadow-lg rounded">
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Chi Tiết Đặt Phòng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
+                                {/* Section: Customer Information */}
+                                <div className="container-fluid">
+                                    {/* Reservation Information */}
+                                    <div className='row'>
+                                        <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                            <h5>Thông Tin Khách Hàng</h5>
+                                            <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                            <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
+                                        </div>
+                                        <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                            <h5>Thông Tin Phòng</h5>
+                                            <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
+                                            <div className="room-list">
+                                                {roomStayHistoryList.map((roomStayHistory) => (
+                                                    <div
+                                                        key={roomStayHistory.room?.roomNumber}
+                                                        className="room-box"
+                                                        style={{
+                                                            backgroundColor: 'grey',
+                                                            position: 'relative',
+                                                            textAlign: 'center',
+                                                            flex: '0 1 auto',
+                                                            margin: '5px'
+                                                        }}
+                                                    >
+                                                        <p>{roomStayHistory.room?.roomNumber}</p>
+
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {roomStayHistoryList.length === 0 && (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )}
+                                        </div>
+                                        <div className="col-md-4" style={{ textAlign: 'left' }}>
+                                            <h5>Thanh Toán</h5>
+                                            <p className="mb-1"><strong className='mr-2'>Mã số:</strong> {reservation.code}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
+                                                {reservation.reservationStatus === "Pending" && (
+                                                    <span className="badge label-table badge-warning">Đang chờ</span>
+                                                )}
+                                                {reservation.reservationStatus === "CheckIn" && (
+                                                    <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                                )}
+                                                {reservation.reservationStatus === "CheckOut" && (
+                                                    <span className="badge label-table badge-danger">Đã trả phòng</span>
+                                                )}
+                                                {reservation.reservationStatus === "Cancelled" && (
+                                                    <span className="badge label-table badge-danger">Đã hủy</span>
+                                                )}
+                                            </p>
+                                            <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
+                                                {reservation.paymentStatus === "Paid" && (
+                                                    <span className="badge label-table badge-success">Đã thanh toán</span>
+                                                )}
+                                                {reservation.paymentStatus === "Not Paid" && (
+                                                    <span className="badge label-table badge-danger">Chưa thanh toán</span>
+                                                )}
+                                            </p>
+                                            {reservation.paymentStatus === "Paid" && (
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                                            )}
+                                            {reservation.paymentStatus === "Not Paid" && (
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                                            )}
+
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="col-md-12">
+                                            <hr />
+                                        </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h5><i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng: <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}</span></h5>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="col-md-12">
+                                            <hr />
+                                        </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                                            }</span></h5>
+                                            <div className="table-responsive">
+                                                <table className="table table-borderless table-hover table-wrap table-centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>STT</span></th>
+                                                            <th><span>Hình ảnh</span></th>
+                                                            <th><span>Tên dịch vụ</span></th>
+                                                            <th><span>Số lượng</span></th>
+                                                            <th><span>Loại dịch vụ</span></th>
+                                                            <th><span>Giá (VND)</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                                                <tr key={index}>
+                                                                    <td>{index + 1}</td>
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>
+                                                                                    <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                                                                </td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>
+                                                                                    <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                                </td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>Muộn {item.service?.serviceName} ngày</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>{item.service?.serviceName}</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    <td>{item.quantity}</td>
+                                                                    <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>{item.order?.totalAmount}</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                            <>
+                                                                                <td>{item.order?.totalAmount}</td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                </tr>
+                                                            ))
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                {
+                                                    orderDetailList.length === 0 && (
+                                                        <>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                        </>
+                                                    )
+                                                }
+                                            </div>
+
+                                            {/* Calculate and display total amount */}
+                                            <div style={{ textAlign: 'right', marginTop: '10px' }}>
+                                                <h5>
+                                                    <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
+                                                    {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                                                        + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="col-md-12">
+                                            <hr />
+                                        </div>
+                                        <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                            <h5>
+                                                <i className="fa fa-file-text text-success"></i>  Hóa đơn:
+                                            </h5>
+                                            <div className="table-responsive">
+                                                <table className="table table-borderless table-hover table-wrap table-centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>STT</span></th>
+                                                            <th><span>Ngày tạo</span></th>
+                                                            <th><span>Tổng số tiền</span></th>
+                                                            <th><span>Trạng thái</span></th>
+                                                            {
+                                                                billByReservation && (
+                                                                    billByReservation.billStatus === "Paid" && (
+                                                                        <>
+                                                                            <th><span>Hành động</span></th>
+
+                                                                        </>
+                                                                    )
+                                                                )
+
+                                                            }
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            billByReservation && (
+                                                                <tr>
+                                                                    <td>1</td>
+                                                                    <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
+                                                                    <td>{billByReservation.totalAmount}</td>
+                                                                    {
+                                                                        billByReservation.billStatus === "Pending" && (
+                                                                            <>
+                                                                                <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        billByReservation.billStatus === "Paid" && (
+                                                                            <>
+                                                                                <td><span className="badge label-table badge-success">Đã thanh toán</span></td>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        billByReservation.billStatus === "Paid" && (
+                                                                            <>
+                                                                                <td>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="btn btn-default btn-xs m-r-5"
+                                                                                        data-toggle="tooltip"
+                                                                                        data-original-title="Activate"
+                                                                                        onClick={() => openCreateBillTransactionImageModal(billByReservation.billId)}                                                                            >
+                                                                                        <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
+
+                                                                                    </button>
+                                                                                </td>
+
+                                                                            </>
+                                                                        )
+                                                                    }
+
+                                                                </tr>
+                                                            )
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                {
+                                                    !billByReservation && (
+                                                        <>
+                                                            <p className='text-center' style={{color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                        </>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-footer">
+                                {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalReservation} >Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+             {showModalCreateBillTransactionImage && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Hình Ảnh Chuyển Tiền</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateBillTransactionImage}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {
+                                            billTransactionImageList.length > 0 ? (
+                                                billTransactionImageList.map((item, index) => (
+                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                        <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            )
+            }
             <style>
                 {`
                     .page-item.active .page-link{

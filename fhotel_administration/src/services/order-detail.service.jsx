@@ -45,6 +45,14 @@ class OrderDetailService {
         });
       }
 
+      deleteOrderDetailById(id) {
+        return axios.delete(API_URL + "/order-details/" + id, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+    
 
 
 }

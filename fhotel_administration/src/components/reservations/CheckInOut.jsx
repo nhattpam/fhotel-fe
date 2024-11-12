@@ -15,6 +15,9 @@ import orderService from '../../services/order.service';
 import orderDetailService from '../../services/order-detail.service';
 import billService from '../../services/bill.service';
 import billTransactionImageService from '../../services/bill-transaction-image.service';
+import ReactPaginate from 'react-paginate';
+import { IconContext } from 'react-icons';
+import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 
 const CheckInOut = () => {
     //get user information
@@ -830,7 +833,86 @@ const CheckInOut = () => {
     };
 
 
+    //DELETE ORDER, ORDER DETAIL
+    const handleDeleteOrderDetail = async (orderDetailId) => {
+        try {
+            // Call the API to delete the image by roomImageId
+            await orderDetailService.deleteOrderDetailById(orderDetailId);
 
+            // After successful deletion, remove the image from the imageList
+            setOrderDetailList(prevList => prevList.filter(item => item.orderDetailId !== orderDetailId));
+        } catch (error) {
+            console.error('Error deleting order:', error);
+        }
+    };
+
+
+    // RESERVATION BY ROOM TYPE
+    const [reservationByRoomTypeList, setReservationByRoomTypeList] = useState([]);
+
+    const [showModalReservationByRoomType, setShowModalReservationByRoomType] = useState(false);
+    const closeModalReservationByRoomType = () => {
+        setShowModalReservationByRoomType(false);
+    };
+
+
+    const openReservationByRoomTypeModal = (roomTypeId) => {
+        setShowModalReservationByRoomType(true);
+        // Clear the image list first to avoid showing images from the previous room type
+        // setRoomImageList([]); // Reset roomImageList to an empty array
+        if (roomTypeId) {
+            roomTypeService
+                .getAllReservationByRoomTypeId(roomTypeId)
+                .then((res) => {
+                    const sortedReservationList = [...res.data].sort((a, b) => {
+                        // Assuming requestedDate is a string in ISO 8601 format
+                        return new Date(b.createdDate) - new Date(a.createdDate);
+                    });
+                    setReservationByRoomTypeList(sortedReservationList);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+        }
+    };
+    const [reservationSearchTerm, setReservationSearchTerm] = useState('');
+    const [currentReservationPage, setCurrentReservationPage] = useState(0);
+    const [reservationsPerPage] = useState(10);
+    const [selectedHotelId, setSelectedHotelId] = useState('');
+    const uniqueHotels = [...new Set(reservationByRoomTypeList.map((reservation) => reservation.roomType?.hotel?.hotelName))]
+        .filter(Boolean);
+
+    const handleReservationSearch = (event) => {
+        setReservationSearchTerm(event.target.value);
+    };
+
+    const filteredReservations = reservationByRoomTypeList
+        .filter((reservation) => {
+            const matchesType = selectedHotelId ? reservation.roomType?.hotel?.hotelName === selectedHotelId : true;
+            const matchesSearchTerm = (
+                reservation.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.name.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.email.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.customer?.phoneNumber.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.type?.typeName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.roomType?.hotel?.hotelName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.createdDate.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
+                reservation.numberOfRooms?.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())
+            );
+            return matchesType && matchesSearchTerm;
+        });
+
+    const pageReservationCount = Math.ceil(filteredReservations.length / reservationsPerPage);
+
+    const handleReservationPageClick = (data) => {
+        setCurrentReservationPage(data.selected);
+    };
+
+    const offsetReservation = currentReservationPage * reservationsPerPage;
+    const currentReservations = filteredReservations.slice(offsetReservation, offsetReservation + reservationsPerPage);
 
     /// notification
     const [success, setSuccess] = useState({}); // State to hold error messages
@@ -994,7 +1076,8 @@ const CheckInOut = () => {
                                                             </button>
                                                         )}
                                                         {reservation.reservationStatus === "CheckOut" && (
-                                                            <button disabled className="btn btn-danger mr-2"  >
+                                                            <button className="btn btn-danger mr-2" onClick={() =>
+                                                                openCheckOutModal(reservation.reservationId)}>
                                                                 <i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
                                                             </button>
                                                         )}
@@ -1286,7 +1369,13 @@ const CheckInOut = () => {
                                         </div>
                                         <div className="col-md-4" style={{ textAlign: 'left' }}>
                                             <h5>Thông Tin Phòng</h5>
-                                            <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                                            <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}
+                                                <button className="btn btn-default btn-xs m-l-5 text-primary"
+                                                    data-toggle="tooltip" data-original-title="Edit">
+                                                    <i className="fa fa-eye font-14"
+                                                        onClick={() => openReservationByRoomTypeModal(reservation.roomTypeId)} />
+                                                </button>
+                                            </p>
                                             <p className="mb-1"><strong className='mr-2'>Ngày dự kiến nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
                                             <p className="mb-1"><strong className='mr-2'>Ngày dự kiến trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                             <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
@@ -1371,6 +1460,14 @@ const CheckInOut = () => {
                                                             <th><span>Số lượng</span></th>
                                                             <th><span>Loại dịch vụ</span></th>
                                                             <th><span>Giá (VND)</span></th>
+                                                            {
+
+                                                                reservation.reservationStatus === "CheckIn" && (
+                                                                    <>
+                                                                        <th><span>Hành động</span></th>
+                                                                    </>
+                                                                )
+                                                            }
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1426,6 +1523,25 @@ const CheckInOut = () => {
                                                                             </>
                                                                         )
                                                                     }
+                                                                    {
+
+                                                                        reservation.reservationStatus === "CheckIn" && (
+                                                                            <>
+                                                                                <td>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="btn btn-default btn-xs m-r-5"
+                                                                                        data-toggle="tooltip"
+                                                                                        data-original-title="Activate"
+                                                                                        onClick={() => handleDeleteOrderDetail(item.orderDetailId)}>
+                                                                                        <i class="fa fa-trash-o text-danger" aria-hidden="true"></i>
+
+                                                                                    </button>
+                                                                                </td>
+                                                                            </>
+                                                                        )
+                                                                    }
+
                                                                 </tr>
                                                             ))
                                                         }
@@ -1439,8 +1555,16 @@ const CheckInOut = () => {
                                                     )
                                                 }
                                             </div>
-                                            <button className='btn btn-success' onClick={() => openModalCreateOrder(reservation.reservationId)}>Thêm <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                            </button>
+                                            {
+
+                                                reservation.reservationStatus === "CheckIn" && (
+                                                    <>
+                                                        <button className='btn btn-success' onClick={() => openModalCreateOrder(reservation.reservationId)}>Thêm <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                        </button>
+                                                    </>
+                                                )
+                                            }
+
 
                                             {/* Calculate and display total amount */}
                                             <div style={{ textAlign: 'right', marginTop: '10px' }}>
@@ -1863,6 +1987,128 @@ const CheckInOut = () => {
                                 </div>
                             </form>
 
+                        </div>
+                    </div>
+                </div>
+            )
+            }
+            {showModalReservationByRoomType && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content" style={{ textAlign: 'left' }}>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Danh Sách Đặt Phòng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalReservationByRoomType}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                {/* start ibox */}
+                                <div className="table-responsive">
+                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                        <thead>
+                                            <tr>
+                                                <th><span>STT</span></th>
+                                                <th><span>Mã số</span></th>
+                                                <th><span>Khách hàng</span></th>
+                                                <th><span>Loại phòng</span></th>
+                                                <th><span>Số lượng</span></th>
+                                                <th><span>Ngày đặt</span></th>
+                                                <th><span>Ngày dự kiến nhận phòng</span></th>
+                                                <th><span>Ngày dự kiến trả phòng</span></th>
+                                                <th><span>Trạng thái</span></th>
+                                                {/* <th><span>Hành động</span></th> */}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                currentReservations.length > 0 && currentReservations.map((item, index) => (
+                                                    <>
+                                                        <tr>
+                                                            <td>{index + 1}</td>
+                                                            <td>{item.code}</td>
+                                                            <td>
+                                                                {item.customer?.name}
+                                                            </td>
+                                                            <td>{item.roomType?.type?.typeName}</td>
+                                                            <td>{item.numberOfRooms}</td>
+                                                            <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
+                                                            <td> {new Date(item.checkInDate).toLocaleDateString('en-US')}</td>
+                                                            <td> {new Date(item.checkOutDate).toLocaleDateString('en-US')}</td>
+                                                            <td>
+                                                                {item.reservationStatus === "Pending" && (
+                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
+                                                                )}
+                                                                {item.reservationStatus === "CheckIn" && (
+                                                                    <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                                                )}
+                                                                {item.reservationStatus === "CheckOut" && (
+                                                                    <span className="badge label-table badge-danger">Đã trả phòng</span>
+                                                                )}
+                                                                {item.reservationStatus === "Cancelled" && (
+                                                                    <span className="badge label-table badge-danger">Đã hủy</span>
+                                                                )}
+                                                            </td>
+                                                            {/* <td>
+                                                                <button className="btn btn-default btn-xs m-r-5"
+                                                                    data-toggle="tooltip" data-original-title="Edit">
+                                                                    <i className="fa fa-pencil font-14"
+                                                                        onClick={() => openReservationModal(item.reservationId)} /></button>
+                                                            </td> */}
+                                                        </tr>
+                                                    </>
+                                                ))
+                                            }
+
+
+                                        </tbody>
+                                    </table>
+                                    {
+                                        currentReservations.length === 0 && (
+                                            <>
+                                                <p className='text-center mt-3' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                            </>
+                                        )
+                                    }
+                                </div>
+                                {/* end ibox */}
+                                {/* Pagination */}
+                                <div className='container-fluid'>
+                                    {/* Pagination */}
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <ReactPaginate
+                                            previousLabel={
+                                                <IconContext.Provider value={{ color: "#000", size: "14px" }}>
+                                                    <AiFillCaretLeft />
+                                                </IconContext.Provider>
+                                            }
+                                            nextLabel={
+                                                <IconContext.Provider value={{ color: "#000", size: "14px" }}>
+                                                    <AiFillCaretRight />
+                                                </IconContext.Provider>
+                                            } breakLabel={'...'}
+                                            breakClassName={'page-item'}
+                                            breakLinkClassName={'page-link'}
+                                            pageCount={pageReservationCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={handleReservationPageClick}
+                                            containerClassName={'pagination'}
+                                            activeClassName={'active'}
+                                            previousClassName={'page-item'}
+                                            nextClassName={'page-item'}
+                                            pageClassName={'page-item'}
+                                            previousLinkClassName={'page-link'}
+                                            nextLinkClassName={'page-link'}
+                                            pageLinkClassName={'page-link'}
+                                        />
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalReservationByRoomType} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

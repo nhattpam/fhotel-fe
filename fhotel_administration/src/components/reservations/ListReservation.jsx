@@ -6,6 +6,7 @@ import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import reservationService from '../../services/reservation.service';
 import { Link } from 'react-router-dom';
+import billService from '../../services/bill.service';
 
 const ListReservation = () => {
 
@@ -79,6 +80,8 @@ const ListReservation = () => {
     const [showModalReservation, setShowModalReservation] = useState(false);
     const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
     const [orderDetailList, setOrderDetailList] = useState([]);
+    const [billByReservation, setBillByReservation] = useState(null);
+
     const [reservation, setReservation] = useState({
 
     });
@@ -111,6 +114,15 @@ const ListReservation = () => {
                 .catch((error) => {
                     console.log(error);
                 });
+            reservationService
+                .getBillByReservation(reservationId)
+                .then((res) => {
+                    setBillByReservation(res.data);
+                    console.log(res.data)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     };
 
@@ -118,6 +130,28 @@ const ListReservation = () => {
         setShowModalReservation(false);
     };
 
+    const [billTransactionImageList, setBillTransactionImageList] = useState([]);
+    const [selectedBillId, setSelectedBillId] = useState(null);
+
+    const [showModalCreateBillTransactionImage, setShowModalCreateBillTransactionImage] = useState(false);
+    const closeModalCreateBillTransactionImage = () => {
+        setShowModalCreateBillTransactionImage(false);
+    };
+
+
+    const openCreateBillTransactionImageModal = (billId) => {
+        setShowModalCreateBillTransactionImage(true);
+        setSelectedBillId(billId);
+        billService
+            .getAllBillTransactionImageByBillId(billId)
+            .then((res) => {
+                setBillTransactionImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    };
 
     return (
         <>
@@ -458,6 +492,89 @@ const ListReservation = () => {
                                                     </h5>
                                                 </div>
                                             </div>
+                                            {/* Divider */}
+                                            <div className="col-md-12">
+                                                <hr />
+                                            </div>
+                                            <div className="col-md-12" style={{ textAlign: 'left' }}>
+                                                <h5>
+                                                    <i className="fa fa-file-text text-success"></i>  Hóa đơn:
+                                                </h5>
+                                                <div className="table-responsive">
+                                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><span>STT</span></th>
+                                                                <th><span>Ngày tạo</span></th>
+                                                                <th><span>Tổng số tiền</span></th>
+                                                                <th><span>Trạng thái</span></th>
+                                                                {
+                                                                    billByReservation && (
+                                                                        billByReservation.billStatus === "Paid" && (
+                                                                            <>
+                                                                                <th><span>Hành động</span></th>
+
+                                                                            </>
+                                                                        )
+                                                                    )
+
+                                                                }
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                billByReservation && (
+                                                                    <tr>
+                                                                        <td>1</td>
+                                                                        <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
+                                                                        <td>{billByReservation.totalAmount}</td>
+                                                                        {
+                                                                            billByReservation.billStatus === "Pending" && (
+                                                                                <>
+                                                                                    <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            billByReservation.billStatus === "Paid" && (
+                                                                                <>
+                                                                                    <td><span className="badge label-table badge-success">Đã thanh toán</span></td>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            billByReservation.billStatus === "Paid" && (
+                                                                                <>
+                                                                                    <td>
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            className="btn btn-default btn-xs m-r-5"
+                                                                                            data-toggle="tooltip"
+                                                                                            data-original-title="Activate"
+                                                                                            onClick={() => openCreateBillTransactionImageModal(billByReservation.billId)}                                                                            >
+                                                                                            <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
+
+                                                                                        </button>
+                                                                                    </td>
+
+                                                                                </>
+                                                                            )
+                                                                        }
+
+                                                                    </tr>
+                                                                )
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                    {
+                                                        !billByReservation && (
+                                                            <>
+                                                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </div>
@@ -472,6 +589,48 @@ const ListReservation = () => {
                     </div>
                 </div>
             )}
+             {showModalCreateBillTransactionImage && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Hình Ảnh Chuyển Tiền</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateBillTransactionImage}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            {
+                                                billTransactionImageList.length > 0 ? (
+                                                    billTransactionImageList.map((item, index) => (
+                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
+                                                )
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )
+            }
             <style>
                 {`
                     .page-item.active .page-link{

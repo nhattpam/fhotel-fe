@@ -8,6 +8,7 @@ import reservationService from '../../services/reservation.service';
 import userService from '../../services/user.service';
 import { Link } from 'react-router-dom';
 import roomService from '../../services/room.service';
+import billService from '../../services/bill.service';
 
 const ListStaffReservation = () => {
     //LOADING
@@ -162,6 +163,30 @@ const ListStaffReservation = () => {
         setShowModalRoom(false);
     };
 
+
+    const [billTransactionImageList, setBillTransactionImageList] = useState([]);
+    const [selectedBillId, setSelectedBillId] = useState(null);
+
+    const [showModalCreateBillTransactionImage, setShowModalCreateBillTransactionImage] = useState(false);
+    const closeModalCreateBillTransactionImage = () => {
+        setShowModalCreateBillTransactionImage(false);
+    };
+
+
+    const openCreateBillTransactionImageModal = (billId) => {
+        setShowModalCreateBillTransactionImage(true);
+        setSelectedBillId(billId);
+        billService
+            .getAllBillTransactionImageByBillId(billId)
+            .then((res) => {
+                setBillTransactionImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    };
+
     return (
         <>
             <Header />
@@ -187,7 +212,7 @@ const ListStaffReservation = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Đặt Phòng</div>
                             <div className="form-group d-flex align-items-center">
-                            <select
+                                <select
                                     value={selectedHotelId}
                                     onChange={(e) => setSelectedHotelId(e.target.value)}
                                     className="form-control form-control-sm"
@@ -516,6 +541,17 @@ const ListStaffReservation = () => {
                                                                 <th><span>Ngày tạo</span></th>
                                                                 <th><span>Tổng số tiền</span></th>
                                                                 <th><span>Trạng thái</span></th>
+                                                                {
+                                                                    billByReservation && (
+                                                                        billByReservation.billStatus === "Paid" && (
+                                                                            <>
+                                                                                <th><span>Hành động</span></th>
+
+                                                                            </>
+                                                                        )
+                                                                    )
+
+                                                                }
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -539,7 +575,25 @@ const ListStaffReservation = () => {
                                                                                 </>
                                                                             )
                                                                         }
-                                                                       
+                                                                        {
+                                                                            billByReservation.billStatus === "Paid" && (
+                                                                                <>
+                                                                                    <td>
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            className="btn btn-default btn-xs m-r-5"
+                                                                                            data-toggle="tooltip"
+                                                                                            data-original-title="Activate"
+                                                                                            onClick={() => openCreateBillTransactionImageModal(billByReservation.billId)}                                                                            >
+                                                                                            <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
+
+                                                                                        </button>
+                                                                                    </td>
+
+                                                                                </>
+                                                                            )
+                                                                        }
+
                                                                     </tr>
                                                                 )
                                                             }
@@ -633,6 +687,48 @@ const ListStaffReservation = () => {
                 </div>
             )}
 
+            {showModalCreateBillTransactionImage && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                        <div className="modal-content">
+                            <form>
+
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Hình Ảnh Chuyển Tiền</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateBillTransactionImage}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                    <div className="row">
+                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            {
+                                                billTransactionImageList.length > 0 ? (
+                                                    billTransactionImageList.map((item, index) => (
+                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <>
+                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                    </>
+                                                )
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )
+            }
 
             <style>
                 {`

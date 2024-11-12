@@ -868,12 +868,12 @@ const ListHotel = () => {
                                                     hotel.verifyStatus !== "Done" && (
                                                         <>
                                                             <button type="button" className="btn btn-danger btn-sm"
-                                                                onClick={() => openCreateHotelVerificationModal(hotel.hotelId)}>Xác minh ngay</button>
+                                                                onClick={() => openCreateHotelVerificationModal(hotel.hotelId)}><i class="fa fa-check-square-o" aria-hidden="true"></i> Xác minh ngay</button>
                                                         </>
                                                     )
                                                 }
 
-                                                <button type="button" className="btn btn-success btn-sm" onClick={handleCreateHotelManager}>Tạo tài khoản</button>
+                                                <button type="button" className="btn btn-success btn-sm" onClick={handleCreateHotelManager}><i class="fa fa-user-plus" aria-hidden="true"></i> Tạo tài khoản</button>
                                             </>
                                         )
                                     }

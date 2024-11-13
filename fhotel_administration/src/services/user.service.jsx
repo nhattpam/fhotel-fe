@@ -164,6 +164,14 @@ class UserService {
         });
       }
 
+      getWalletByUser(id) {
+        return axios.get(API_URL + `/users/${id}/wallets`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 
 }

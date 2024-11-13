@@ -24,6 +24,8 @@ const HotelManagerHome = () => {
   const [reservationCount, setReservationCount] = useState(0);
   const [hotelCount, setHotelCount] = useState(0);
   const [customerCount, setCustomerCount] = useState(0);
+  const [feedbackList, setFeedbackList] = useState([]);
+
   const [wallet, setWallet] = useState({
 
   });
@@ -82,6 +84,15 @@ const HotelManagerHome = () => {
       .getAllCustomerByOwner(loginUserId)
       .then((res) => {
         setCustomerCount(res.data.length);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    userService
+      .getAllFeedbackByOwner(loginUserId)
+      .then((res) => {
+        setFeedbackList(res.data);
+        console.log("SO LUONG: " + feedbackList.length)
       })
       .catch((error) => {
         console.log(error);
@@ -467,20 +478,6 @@ const HotelManagerHome = () => {
                       {/* <div>Your shop sales analytics</div> */}
                     </div>
                     <div className="d-inline-flex">
-                      {/* <div className="px-3" style={{ borderRight: '1px solid rgba(0,0,0,.1)' }}>
-                        <div className="text-muted">WEEKLY INCOME</div>
-                        <div>
-                          <span className="h2 m-0">$850</span>
-                          <span className="text-success ml-2"><i className="fa fa-level-up" /> +25%</span>
-                        </div>
-                      </div>
-                      <div className="px-3">
-                        <div className="text-muted">WEEKLY SALES</div>
-                        <div>
-                          <span className="h2 m-0">240</span>
-                          <span className="text-warning ml-2"><i className="fa fa-level-down" /> -12%</span>
-                        </div>
-                      </div> */}
                     </div>
                   </div>
                   <div>
@@ -589,60 +586,37 @@ const HotelManagerHome = () => {
                   <div className="ibox-title">Đánh giá gần đây</div>
                 </div>
                 <div className="ibox-body">
-                  <ul className="media-list media-list-divider m-0">
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">Samsung</a>
-                          <span className="font-16 float-right">1200</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">iPhone</a>
-                          <span className="font-16 float-right">1150</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">iMac</a>
-                          <span className="font-16 float-right">800</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">apple Watch</a>
-                          <span className="font-16 float-right">705</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                  </ul>
+                  {
+                    feedbackList.length > 0 && feedbackList.map((item, index) => (
+                      <>
+                        <ul className="media-list media-list-divider m-0">
+                          <li className="media">
+                            <a className="media-img" href="javascript:;">
+                              <img src={item.reservation?.customer?.image} width="50px;" height={"60px"} />
+                            </a>
+                            <div className="media-body">
+                              <div className="media-heading">
+                                <a href="javascript:;">{item.reservation?.customer?.name}</a>
+                                <span className="font-16 float-right">{item.hotelRating} <i className="fa fa-star text-warning" aria-hidden="true"></i></span>
+                              </div>
+                              <span className="font-16 float-right">{item.reservation?.roomType?.hotel?.hotelName}</span>
+                              <div className="font-13">{item.comment}</div>
+                            </div>
+                          </li>
+                        </ul>
+                      </>
+                    )
+                    )}
+                  {
+                    feedbackList.length === 0 && (
+                      <>
+                        <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                      </>
+                    )
+                  }
+
                 </div>
-                <div className="ibox-footer text-center">
-                  <a href="javascript:;">View All Products</a>
-                </div>
+
               </div>
             </div>
           </div>

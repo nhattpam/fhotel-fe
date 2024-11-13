@@ -637,6 +637,7 @@ const CheckInOut = () => {
                                     setLoading(false); // Set loading to false once paid
                                     // Optionally, refresh reservation info
                                     openCheckOutModal(reservationId);
+
                                 }
                             })
                             .catch((error) => {
@@ -722,7 +723,7 @@ const CheckInOut = () => {
             if (updateRes.status === 200) {
                 setSuccess({ general: "Trả phòng thành công!" });
                 setShowSuccess(true); // Show error
-
+                openCheckOutModal(reservationId);
                 handleSearch();
             } else {
                 handleResponseError(error.response);

@@ -172,6 +172,14 @@ class UserService {
         });
       }
 
+      getAllFeedbackByOwner(id) {
+        return axios.get(API_URL + `/users/${id}/owner-feedbacks`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 
 }

@@ -183,7 +183,22 @@ const Header = () => {
                 <span />{user.name}<i className="fa fa-angle-down m-l-5" /></a>
               <ul className="dropdown-menu dropdown-menu-right">
                 <a className="dropdown-item" ><i className="fa fa-user" />Thông Tin</a>
-                <a className="dropdown-item" onClick={() => openWalletModal(wallet.walletId)}>Số dư: {wallet.balance}</a>
+                {
+                  user.role?.roleName === "Admin" && (
+                    <>
+                      <a className="dropdown-item" onClick={() => openWalletModal(wallet.walletId)}>Số dư: {wallet.balance}</a>
+
+                    </>
+                  )
+                }
+                {
+                  user.role?.roleName === "Hotel Manager" && (
+                    <>
+                      <a className="dropdown-item" onClick={() => openWalletModal(wallet.walletId)}>Số dư: {wallet.balance}</a>
+
+                    </>
+                  )
+                }
                 <li className="dropdown-divider" />
                 <a className="dropdown-item" onClick={handleLogout}><i className="fa fa-power-off" />Đăng Xuất</a>
               </ul>

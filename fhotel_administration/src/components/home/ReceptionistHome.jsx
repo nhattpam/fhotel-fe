@@ -741,7 +741,7 @@ const ReceptionistHome = () => {
                                     {
                                       billByReservation.billStatus === "Pending" && (
                                         <>
-                                          <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                          <td><span className="badge label-table badge-warning">Đang chờ</span></td>
                                         </>
                                       )
                                     }

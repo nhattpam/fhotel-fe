@@ -1036,7 +1036,7 @@ const CheckInOut = () => {
                                                                 ) : reservation.reservationStatus === "Pending" ? (
                                                                     <span className="badge label-table badge-warning">Đang chờ</span>
                                                                 ) : reservation.reservationStatus === "CheckOut" ? (
-                                                                    <span className="badge label-table badge-warning">Đã trả phòng</span>
+                                                                    <span className="badge label-table badge-danger">Đã trả phòng</span>
                                                                 ) : (
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
@@ -1626,7 +1626,7 @@ const CheckInOut = () => {
                                                                     {
                                                                         billByReservation.billStatus === "Pending" && (
                                                                             <>
-                                                                                <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                                                                <td><span className="badge label-table badge-warning">Đang chờ</span></td>
                                                                             </>
                                                                         )
                                                                     }

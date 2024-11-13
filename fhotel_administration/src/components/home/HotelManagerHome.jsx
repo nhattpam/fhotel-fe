@@ -17,7 +17,7 @@ const HotelManagerHome = () => {
 
   //count reservation by owner
   const [reservationList, setReservationList] = useState([]);
-  const [billList, setBillList] = useState([]);
+  const [transactionList, setTransactionList] = useState([]);
   const [reservationSearchTerm, setReservationSearchTerm] = useState('');
   const [currentReservationPage, setCurrentReservationPage] = useState(0);
   const [reservationsPerPage] = useState(5);
@@ -43,11 +43,21 @@ const HotelManagerHome = () => {
       });
 
     userService
-      .getAllBillByOwner(loginUserId)
+      .getWalletByUser(loginUserId)
       .then((res) => {
-        // Filter bills with status 'paid' before setting the state
-        const paidBills = res.data.filter((bill) => bill.billStatus === 'Paid');
-        setBillList(paidBills);
+        setWallet(res.data);
+        walletService
+          .getAllTransactionByWallet(res.data.walletId)
+          .then((res) => {
+            const sortedTransactionList = [...res.data].sort((a, b) => {
+              // Assuming requestedDate is a string in ISO 8601 format
+              return new Date(b.transactionDate) - new Date(a.transactionDate);
+            });
+            setTransactionList(sortedTransactionList);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -165,33 +175,27 @@ const HotelManagerHome = () => {
   //area chart
   const fetchMonthlyData = async () => {
     try {
-      const res = await userService.getAllBillByOwner(loginUserId);
-
-      // Filter bills with status 'paid' before setting the state
-      const paidBills = res.data.filter((bill) => bill.billStatus === 'Paid');
-      setBillList(paidBills);
-
       const currentYear = new Date().getFullYear();
 
       // Initialize an array to store monthly data
       const monthlyData = Array(12).fill(0);
 
       // Iterate over each paid bill
-      paidBills.forEach((bill) => {
-        const billDate = new Date(bill.createdDate);
-        const billYear = billDate.getFullYear();
-        const billMonth = billDate.getMonth();
+      transactionList.forEach((transaction) => {
+        const transactionDate = new Date(transaction.transactionDate);
+        const transactionYear = transactionDate.getFullYear();
+        const transactionMonth = transactionDate.getMonth();
 
         // Check if the bill belongs to the current year
-        if (billYear === currentYear) {
+        if (transactionYear === currentYear) {
           // Add 80% of the bill's total amount to the corresponding month's data
-          monthlyData[billMonth] += bill.totalAmount * 0.8;
+          monthlyData[transactionMonth] += transaction.amount;
         }
       });
 
       setMonthlyData(monthlyData);
     } catch (error) {
-      console.error("Error fetching bills:", error);
+      console.error("Error fetching transactions:", error);
     }
   };
 
@@ -289,13 +293,125 @@ const HotelManagerHome = () => {
   }, [monthlyData]);
 
   useEffect(() => {
-    if (billList.length > 0) {
+    if (transactionList.length > 0) {
       fetchMonthlyData();
+      const sumForCurrentMonth = calculateSumByMonth(transactionList);
+      setSumForCurrentMonth(sumForCurrentMonth);
+      const sumForPreviousMonth = calculateSumByPreviousMonth(transactionList);
+      setSumForPreviousMonth(sumForPreviousMonth);
     }
-  }, [billList]);
-  
+  }, [transactionList]);
+
   //end count reservation by owner
 
+  //pie chart
+  const [sumForCurrentMonth, setSumForCurrentMonth] = useState(0);
+  const [sumForPreviousMonth, setSumForPreviousMonth] = useState(0);
+
+  const calculateSumByPreviousMonth = (transactions) => {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Calculate the previous month
+    let previousMonth = currentDate.getMonth() - 1;
+
+    // Adjust the month if the previous month was in the previous year
+    if (previousMonth < 0) {
+      previousMonth = 11;
+    }
+
+    // Initialize the sum for the previous month
+    let sumForPreviousMonth = 0;
+
+    // Iterate over each transaction
+    transactions.forEach((transaction) => {
+      // Extract the month from the transaction date
+      const transactionMonth = new Date(transaction.transactionDate).getMonth();
+
+      // Check if the transaction belongs to the previous month
+      if (transactionMonth === previousMonth) {
+        sumForPreviousMonth += (transaction.amount);
+      }
+    });
+
+    return sumForPreviousMonth;
+  };
+
+  const calculateSumByMonth = (transactions) => {
+    // Get the current month
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+
+    // Initialize the sum for the current month
+    let sumForCurrentMonth = 0;
+
+    // Iterate over each transaction
+    transactions.forEach((transaction) => {
+      // Extract the month from the transaction date
+      const transactionDate = new Date(transaction.transactionDate);
+      const transactionMonth = transactionDate.getMonth() + 1; // Add 1 to match the format of transaction month
+
+      // Check if the transaction belongs to the current month
+      if (transactionMonth === currentMonth + 1) { // Add 1 to match the format of current month
+        sumForCurrentMonth += (transaction.amount); // Use the correct property name
+      }
+    });
+
+    return sumForCurrentMonth;
+  };
+
+
+
+  const createPieChart = () => {
+    const pieChartCanvas = pieChartRef.current.getContext("2d");
+
+    if (pieChartRef.current.chart) {
+      pieChartRef.current.chart.destroy();
+    }
+
+    const data = {
+      labels: ["Tháng trước", "Tháng hiện tại"],
+      datasets: [
+        {
+          data: [sumForPreviousMonth, sumForCurrentMonth],
+          backgroundColor: ["#088F8F", "#7CFC00"],
+          hoverBackgroundColor: ["#0047AB", "#008000"],
+        },
+      ],
+    };
+
+    const options = {
+      plugins: {
+        legend: {
+          display: true,
+        },
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            label: (context) => {
+              const label = context.label;
+              const value = context.formattedValue;
+              return `${label}: ${value}₫`;
+            },
+          },
+        },
+      },
+    };
+
+    pieChartRef.current.chart = new Chart(pieChartCanvas, {
+      type: "pie",
+      data: data,
+      options: options,
+    });
+  };
+
+  useEffect(() => {
+    if (sumForCurrentMonth !== 0 && sumForPreviousMonth !== 0) {
+      createPieChart();
+    }
+  }, [sumForCurrentMonth, sumForPreviousMonth]);
+
+  //END PIE CHART
   return (
     <>
       <Header />
@@ -308,7 +424,7 @@ const HotelManagerHome = () => {
               <div className="ibox bg-success color-white widget-stat">
                 <div className="ibox-body">
                   <h2 className="m-b-5 font-strong">{reservationCount}</h2>
-                  <div className="m-b-5">TỔNG SỐ ĐẶT PHÒNG</div><i className="ti-shopping-cart widget-stat-icon" />
+                  <div className="m-b-5">TỔNG SỐ ĐẶT PHÒNG</div><i className="ti-bookmark-alt widget-stat-icon" />
                   {/* <div><i className="fa fa-level-up m-r-5" /><small>25% higher</small></div> */}
                 </div>
               </div>
@@ -325,7 +441,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-warning color-white widget-stat">
                 <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">{wallet.balance} Vnd</h2>
+                  <h2 className="m-b-5 font-strong">{wallet.balance}₫</h2>
                   <div className="m-b-5">THU NHẬP</div><i className="fa fa-money widget-stat-icon" />
                   {/* <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div> */}
                 </div>
@@ -383,26 +499,8 @@ const HotelManagerHome = () => {
                 </div>
                 <div className="ibox-body">
                   <div className="row align-items-center">
-                    <div className="col-md-6">
-                      <canvas id="doughnut_chart" style={{ height: 160 }} />
-                    </div>
-                    <div className="col-md-6">
-                      <div className="m-b-20 text-success"><i className="fa fa-circle-o m-r-10" />Desktop 52%</div>
-                      <div className="m-b-20 text-info"><i className="fa fa-circle-o m-r-10" />Tablet 27%</div>
-                      <div className="m-b-20 text-warning"><i className="fa fa-circle-o m-r-10" />Mobile 21%</div>
-                    </div>
+                    <canvas ref={pieChartRef} id="myPieChart3"></canvas>
                   </div>
-                  <ul className="list-group list-group-divider list-group-full">
-                    <li className="list-group-item">Chrome
-                      <span className="float-right text-success"><i className="fa fa-caret-up" /> 24%</span>
-                    </li>
-                    <li className="list-group-item">Firefox
-                      <span className="float-right text-success"><i className="fa fa-caret-up" /> 12%</span>
-                    </li>
-                    <li className="list-group-item">Opera
-                      <span className="float-right text-danger"><i className="fa fa-caret-down" /> 4%</span>
-                    </li>
-                  </ul>
                 </div>
               </div>
             </div>
@@ -488,7 +586,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Best Sellers</div>
+                  <div className="ibox-title">Đánh giá gần đây</div>
                 </div>
                 <div className="ibox-body">
                   <ul className="media-list media-list-divider m-0">
@@ -772,7 +870,7 @@ const HotelManagerHome = () => {
                                     {
                                       billByReservation.billStatus === "Pending" && (
                                         <>
-                                          <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                          <td><span className="badge label-table badge-warning">Đang chờ</span></td>
                                         </>
                                       )
                                     }

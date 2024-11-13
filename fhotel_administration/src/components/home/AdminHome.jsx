@@ -292,11 +292,8 @@ const AdminHome = () => {
     if (transactionList.length > 0) {
       fetchMonthlyData();
       const sumForCurrentMonth = calculateSumByMonth(transactionList);
-      console.log("DMM: " + sumForCurrentMonth)
       setSumForCurrentMonth(sumForCurrentMonth);
       const sumForPreviousMonth = calculateSumByPreviousMonth(transactionList);
-      console.log("DMM2: " + sumForPreviousMonth)
-
       setSumForPreviousMonth(sumForPreviousMonth);
     }
   }, [transactionList]);
@@ -361,17 +358,7 @@ const AdminHome = () => {
     return sumForCurrentMonth;
   };
 
-  //Income by month
-  const fetchEnrollmentsAndCalculateSum = async () => {
-    try {
-      const sumForCurrentMonth = calculateSumByMonth(transactionList);
-      setSumForCurrentMonth(sumForCurrentMonth);
-      // console.log("Sum for current month:", sumForCurrentMonth);
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    }
-  };
-  // fetchEnrollmentsAndCalculateSum();
+ 
 
   const createPieChart = () => {
     const pieChartCanvas = pieChartRef.current.getContext("2d");
@@ -402,7 +389,7 @@ const AdminHome = () => {
             label: (context) => {
               const label = context.label;
               const value = context.formattedValue;
-              return `${label}: $${value}`;
+              return `${label}: ${value}₫`;
             },
           },
         },
@@ -436,7 +423,7 @@ const AdminHome = () => {
               <div className="ibox bg-success color-white widget-stat">
                 <div className="ibox-body">
                   <h2 className="m-b-5 font-strong">{reservationCount}</h2>
-                  <div className="m-b-5">TỔNG SỐ ĐẶT PHÒNG</div><i className="ti-shopping-cart widget-stat-icon" />
+                  <div className="m-b-5">TỔNG SỐ ĐẶT PHÒNG</div><i className="ti-bookmark-alt widget-stat-icon" />
                   {/* <div><i className="fa fa-level-up m-r-5" /><small>25% higher</small></div> */}
                 </div>
               </div>
@@ -453,7 +440,7 @@ const AdminHome = () => {
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-warning color-white widget-stat">
                 <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">{wallet.balance} Vnd</h2>
+                  <h2 className="m-b-5 font-strong">{wallet.balance}₫</h2>
                   <div className="m-b-5">THU NHẬP</div><i className="fa fa-money widget-stat-icon" />
                   {/* <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div> */}
                 </div>
@@ -882,7 +869,7 @@ const AdminHome = () => {
                                     {
                                       billByReservation.billStatus === "Pending" && (
                                         <>
-                                          <td><span className="badge label-table badge-danger">Đang chờ</span></td>
+                                          <td><span className="badge label-table badge-warning">Đang chờ</span></td>
                                         </>
                                       )
                                     }

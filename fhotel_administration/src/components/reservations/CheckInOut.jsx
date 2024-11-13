@@ -1688,7 +1688,7 @@ const CheckInOut = () => {
                                                 {
                                                     !billByReservation && (
                                                         <>
-                                                            <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                            <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                                                         </>
                                                     )
                                                 }

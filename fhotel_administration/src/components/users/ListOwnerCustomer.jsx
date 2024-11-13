@@ -302,7 +302,7 @@ const ListOwnerCustomer = () => {
                                 {
                                     userList.length === 0 && (
                                         <>
-                                            <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                            <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                                         </>
                                     )
 
@@ -704,7 +704,7 @@ const ListOwnerCustomer = () => {
                                                     {
                                                         !billByReservation && (
                                                             <>
-                                                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                                <p className='text-center' style={{ fontStyle: 'italic' , color: 'gray'}}>Không có</p>
                                                             </>
                                                         )
                                                     }

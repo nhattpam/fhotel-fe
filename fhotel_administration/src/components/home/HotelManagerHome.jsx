@@ -6,6 +6,7 @@ import { Chart, PieController, ArcElement, registerables } from "chart.js";
 import userService from "../../services/user.service";
 import reservationService from "../../services/reservation.service";
 import { Link } from "react-router-dom";
+import walletService from "../../services/wallet.service";
 
 const HotelManagerHome = () => {
   const loginUserId = sessionStorage.getItem('userId');
@@ -21,7 +22,11 @@ const HotelManagerHome = () => {
   const [currentReservationPage, setCurrentReservationPage] = useState(0);
   const [reservationsPerPage] = useState(5);
   const [reservationCount, setReservationCount] = useState(0);
+  const [hotelCount, setHotelCount] = useState(0);
+  const [customerCount, setCustomerCount] = useState(0);
+  const [wallet, setWallet] = useState({
 
+  });
   useEffect(() => {
     userService
       .getAllReservationByOwner(loginUserId)
@@ -43,6 +48,30 @@ const HotelManagerHome = () => {
         // Filter bills with status 'paid' before setting the state
         const paidBills = res.data.filter((bill) => bill.billStatus === 'Paid');
         setBillList(paidBills);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    userService
+      .getAllHotelByUserId(loginUserId)
+      .then((res) => {
+        setHotelCount(res.data.length);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    userService
+      .getWalletByUser(loginUserId)
+      .then((res) => {
+        setWallet(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    userService
+      .getAllCustomerByOwner(loginUserId)
+      .then((res) => {
+        setCustomerCount(res.data.length);
       })
       .catch((error) => {
         console.log(error);
@@ -137,35 +166,35 @@ const HotelManagerHome = () => {
   const fetchMonthlyData = async () => {
     try {
       const res = await userService.getAllBillByOwner(loginUserId);
-      
+
       // Filter bills with status 'paid' before setting the state
       const paidBills = res.data.filter((bill) => bill.billStatus === 'Paid');
       setBillList(paidBills);
-  
+
       const currentYear = new Date().getFullYear();
-  
+
       // Initialize an array to store monthly data
       const monthlyData = Array(12).fill(0);
-  
+
       // Iterate over each paid bill
       paidBills.forEach((bill) => {
         const billDate = new Date(bill.createdDate);
         const billYear = billDate.getFullYear();
         const billMonth = billDate.getMonth();
-  
+
         // Check if the bill belongs to the current year
         if (billYear === currentYear) {
           // Add 80% of the bill's total amount to the corresponding month's data
           monthlyData[billMonth] += bill.totalAmount * 0.8;
         }
       });
-  
+
       setMonthlyData(monthlyData);
     } catch (error) {
       console.error("Error fetching bills:", error);
     }
   };
-  
+
   const createAreaChart = () => {
     const areaChartCanvas = areaChartRef.current.getContext("2d");
 
@@ -260,9 +289,11 @@ const HotelManagerHome = () => {
   }, [monthlyData]);
 
   useEffect(() => {
-    fetchMonthlyData();
-  }, []);
-
+    if (billList.length > 0) {
+      fetchMonthlyData();
+    }
+  }, [billList]);
+  
   //end count reservation by owner
 
   return (
@@ -278,34 +309,34 @@ const HotelManagerHome = () => {
                 <div className="ibox-body">
                   <h2 className="m-b-5 font-strong">{reservationCount}</h2>
                   <div className="m-b-5">TỔNG SỐ ĐẶT PHÒNG</div><i className="ti-shopping-cart widget-stat-icon" />
-                  <div><i className="fa fa-level-up m-r-5" /><small>25% higher</small></div>
+                  {/* <div><i className="fa fa-level-up m-r-5" /><small>25% higher</small></div> */}
                 </div>
               </div>
             </div>
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-info color-white widget-stat">
                 <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">1250</h2>
-                  <div className="m-b-5">UNIQUE VIEWS</div><i className="ti-bar-chart widget-stat-icon" />
-                  <div><i className="fa fa-level-up m-r-5" /><small>17% higher</small></div>
+                  <h2 className="m-b-5 font-strong">{hotelCount}</h2>
+                  <div className="m-b-5">TỐNG SỐ KHÁCH SẠN</div><i className="ti-bar-chart widget-stat-icon" />
+                  {/* <div><i className="fa fa-level-up m-r-5" /><small>17% higher</small></div> */}
                 </div>
               </div>
             </div>
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-warning color-white widget-stat">
                 <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">$1570</h2>
-                  <div className="m-b-5">TOTAL INCOME</div><i className="fa fa-money widget-stat-icon" />
-                  <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div>
+                  <h2 className="m-b-5 font-strong">{wallet.balance} Vnd</h2>
+                  <div className="m-b-5">THU NHẬP</div><i className="fa fa-money widget-stat-icon" />
+                  {/* <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div> */}
                 </div>
               </div>
             </div>
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-danger color-white widget-stat">
                 <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">108</h2>
-                  <div className="m-b-5">NEW USERS</div><i className="ti-user widget-stat-icon" />
-                  <div><i className="fa fa-level-down m-r-5" /><small>-12% Lower</small></div>
+                  <h2 className="m-b-5 font-strong">{customerCount}</h2>
+                  <div className="m-b-5">TỔNG SỐ KHÁCH HÀNG</div><i className="ti-user widget-stat-icon" />
+                  {/* <div><i className="fa fa-level-down m-r-5" /><small>-12% Lower</small></div> */}
                 </div>
               </div>
             </div>
@@ -348,7 +379,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Statistics</div>
+                  <div className="ibox-title">So sánh</div>
                 </div>
                 <div className="ibox-body">
                   <div className="row align-items-center">
@@ -381,7 +412,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-8">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Danh sách đặt chỗ</div>
+                  <div className="ibox-title">Danh sách đặt phòng</div>
                   <div className="ibox-tools">
                     <a className="ibox-collapse"><i className="fa fa-minus" /></a>
                     <a className="dropdown-toggle" data-toggle="dropdown"><i className="fa fa-ellipsis-v" /></a>
@@ -761,7 +792,7 @@ const HotelManagerHome = () => {
                           {
                             !billByReservation && (
                               <>
-                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                               </>
                             )
                           }

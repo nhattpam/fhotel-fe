@@ -300,7 +300,7 @@ const ListStaffCustomer = () => {
                                 {
                                     userList.length === 0 && (
                                         <>
-                                            <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                            <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                                         </>
                                     )
 
@@ -700,7 +700,7 @@ const ListStaffCustomer = () => {
                                                 {
                                                     !billByReservation && (
                                                         <>
-                                                            <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                            <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                                                         </>
                                                     )
                                                 }

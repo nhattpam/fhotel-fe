@@ -602,7 +602,7 @@ const ListStaffReservation = () => {
                                                     {
                                                         !billByReservation && (
                                                             <>
-                                                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                                <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                                                             </>
                                                         )
                                                     }
@@ -670,7 +670,7 @@ const ListStaffReservation = () => {
 
                                             <h5 className="mb-3">
                                                 <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Ghi chú:</span>
-                                                <div style={{ marginTop: '8px', paddingLeft: '20px', fontStyle: 'italic', color: '#616161' }}
+                                                <div style={{ marginTop: '8px', paddingLeft: '20px', fontStyle: 'italic', color: 'gray' }}
                                                     dangerouslySetInnerHTML={{ __html: room.note ?? 'Không có' }}
                                                 ></div>
                                             </h5>

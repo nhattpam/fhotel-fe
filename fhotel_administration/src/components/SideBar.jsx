@@ -551,11 +551,11 @@ const SideBar = () => {
                                     </li>
 
                                     {/* Billing Section */}
-                                    <li>
+                                    {/* <li>
                                         <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
                                             <span className="nav-label">Hóa đơn</span>
                                         </Link>
-                                    </li>
+                                    </li> */}
 
                                 </>
                             )
@@ -584,11 +584,11 @@ const SideBar = () => {
                                         </Link>
                                     </li>
                                     {/* Billing Section */}
-                                    <li>
+                                    {/* <li>
                                         <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
                                             <span className="nav-label">Hóa đơn</span>
                                         </Link>
-                                    </li>
+                                    </li> */}
 
                                 </>
                             )
@@ -636,11 +636,11 @@ const SideBar = () => {
                                     </li>
 
                                     {/* Billing / Payment Management Section */}
-                                    <li>
+                                    {/* <li>
                                         <Link to="/billing"><i className="sidebar-item-icon fa fa-credit-card" />
                                             <span className="nav-label">Hóa đơn / Thanh toán</span>
                                         </Link>
-                                    </li>
+                                    </li> */}
 
 
 

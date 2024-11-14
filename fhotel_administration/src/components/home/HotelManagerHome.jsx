@@ -732,10 +732,10 @@ const HotelManagerHome = () => {
                           }
 
                         </p>
-                        {reservation.paymentStatus === "Paid" && (
+                        {reservation.isPrePaid === true && (
                           <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
                         )}
-                        {reservation.paymentStatus === "Not Paid" && (
+                        {reservation.isPrePaid === false && (
                           <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
                         )}
 
@@ -838,7 +838,7 @@ const HotelManagerHome = () => {
                           <h5>
                             <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
                             {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                              + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
+                              + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} VND
                           </h5>
                         </div>
                       </div>

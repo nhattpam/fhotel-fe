@@ -678,7 +678,7 @@ const ListOwnerCustomer = () => {
                                                     <h5>
                                                         <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
                                                         {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                                            + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0)} VND
+                                                            + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} VND
                                                     </h5>
                                                 </div>
                                             </div>

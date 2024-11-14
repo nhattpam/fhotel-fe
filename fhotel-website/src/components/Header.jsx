@@ -9,6 +9,7 @@ import districtService from '../services/district.service';
 import hotelImageService from '../services/hotel-image.service';
 import documentService from '../services/document.service';
 import hotelDocumentService from '../services/hotel-document.service';
+import { Link } from 'react-router-dom';
 
 
 const Header = () => {
@@ -213,15 +214,15 @@ const Header = () => {
         <>
             <nav className="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
                 <div className="container">
-                    <a className="navbar-brand" href="index.html">FHotel</a>
+                    <Link className="navbar-brand" to={`/home`}>FHotel</Link>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="oi oi-menu" /> Menu
                     </button>
                     <div className="collapse navbar-collapse" id="ftco-nav">
                         <ul className="navbar-nav ml-auto">
-                            <li className="nav-item active"><a href="index.html" className="nav-link">Trang Chủ</a></li>
-                            <li className="nav-item"><a href="about.html" className="nav-link">Về Chúng Tôi</a></li>
-                            <li className="nav-item"><a href="services.html" className="nav-link">Dịch Vụ</a></li>
+                            <li className="nav-item active"><Link to={`/home`} className="nav-link">Trang Chủ</Link></li>
+                            <li className="nav-item"><Link to={`/about`} className="nav-link">Về Chúng Tôi</Link></li>
+                            <li className="nav-item"><Link to={`/hotel-policy`} className="nav-link">Chính sách</Link></li>
                             <li className="nav-item"><a className="nav-link" onClick={() => handleOpenHotelRegistrationModal()}>Tham Gia Ngay!</a></li>
                         </ul>
                     </div>

@@ -5,6 +5,7 @@ import Home from './components/Home';
 import SuccessRegister from './components/authentication/SuccessRegister';
 import PaymentCallBack from './components/payments/PaymentCallBack';
 import SuccessPayment from './components/payments/SuccessPayment';
+import HotelPolicy from './components/information/HotelPolicy';
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/payment-callback" element={<PaymentCallBack />} />
 
         <Route path="/success-payment" element={<SuccessPayment />} />
+
+        <Route path="/hotel-policy" element={<HotelPolicy />} />
 
 
       </Routes>

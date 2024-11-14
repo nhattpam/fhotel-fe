@@ -181,6 +181,14 @@ const Header = () => {
         setShowError(true); // Show error modal or message
     };
 
+    //POLICY
+    const [showPolicyModal, setShowPolicyModal] = useState(false);
+
+
+    const handleOpenPolicy = () => {
+        setShowPolicyModal(true);
+    };
+
 
 
     //notification after creating
@@ -236,7 +244,13 @@ const Header = () => {
                         <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title" style={{ fontWeight: 'bold' }}>Đăng Ký Khách Sạn</h5>
+                                    <h5 className="modal-title" style={{ fontWeight: 'bold' }}>
+                                        Đăng Ký Khách Sạn
+                                        <i className="fa fa-question-circle"
+                                            title="Chính Sách" aria-hidden="true"
+                                            style={{ marginLeft: '10px', cursor: 'pointer', color: '#007bff' }}
+                                            onClick={() => handleOpenPolicy()}></i>
+                                    </h5>
                                     <button type="button" className="close" onClick={() => setShowCreateHotelRegistrationModal(false)}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -510,6 +524,42 @@ const Header = () => {
                         </div>
                     </div>
                 </form >
+            )}
+            {showPolicyModal && (
+                <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" style={{ fontWeight: 'bold' }}>
+                                    Chính Sách
+                                </h5>
+                                <button type="button" className="close" onClick={() => setShowPolicyModal(false)}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
+                                <div className="form-group">
+                                    <h5><i className="fa fa-question-circle"></i> Chính Sách Doanh Thu</h5>
+                                    <p><strong>1. Phân Chia Doanh Thu:</strong> FHotel giữ lại 20% doanh thu đặt phòng, khách sạn nhận 80%.</p>
+                                    <p><strong>2. Doanh Thu Bao Gồm:</strong> Chi phí phòng, đồ ăn, nước uống, và các dịch vụ liên quan.</p>
+                                    <p><strong>3. Quy Trình Khấu Trừ:</strong> Phí 20% được khấu trừ tự động trước khi tiền về ví khách sạn.</p>
+                                    <p><strong>4. Quy Trình Thanh Toán:</strong> Số tiền còn lại sẽ được chuyển vào ví của khách sạn hằng tuần.</p>
+                                    <p><strong>6. Giải Quyết Khiếu Nại:</strong> Khách sạn có thể yêu cầu hỗ trợ nếu có sai lệch trong doanh thu.</p>
+                                    <p><strong>7. Báo Cáo Doanh Thu:</strong> Chủ khách sạn có thể xem báo cáo chi tiết theo tháng và năm.</p>
+                                </div>
+
+
+
+
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={(e) => setShowPolicyModal(false)}>Đóng</button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
             )}
 
             <style>

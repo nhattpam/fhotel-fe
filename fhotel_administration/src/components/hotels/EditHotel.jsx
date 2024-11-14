@@ -1064,82 +1064,82 @@ const EditHotel = () => {
     const offsetReservation = currentReservationPage * reservationsPerPage;
     const currentReservations = filteredReservations.slice(offsetReservation, offsetReservation + reservationsPerPage);
 
-     //detail reservation modal 
-     const [showModalReservation, setShowModalReservation] = useState(false);
-     const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
-     const [orderDetailList, setOrderDetailList] = useState([]);
-     const [billByReservation, setBillByReservation] = useState(null);
- 
-     const [reservation, setReservation] = useState({
- 
-     });
- 
- 
-     const openReservationModal = (reservationId) => {
-         setShowModalReservation(true);
-         if (reservationId) {
-             reservationService
-                 .getReservationById(reservationId)
-                 .then((res) => {
-                     setReservation(res.data);
-                 })
-                 .catch((error) => {
-                     console.log(error);
-                 });
-             reservationService
-                 .getAllRoomStayHistoryByReservationId(reservationId)
-                 .then((res) => {
-                     setRoomStayHistoryList(res.data);
-                 })
-                 .catch((error) => {
-                     console.log(error);
-                 });
-             reservationService
-                 .getAllOrderDetailByReservationId(reservationId)
-                 .then((res) => {
-                     setOrderDetailList(res.data);
-                 })
-                 .catch((error) => {
-                     console.log(error);
-                 });
-             reservationService
-                 .getBillByReservation(reservationId)
-                 .then((res) => {
-                     setBillByReservation(res.data);
-                     console.log(res.data)
-                 })
-                 .catch((error) => {
-                     console.log(error);
-                 });
-         }
-     };
- 
-     const closeModalReservation = () => {
-         setShowModalReservation(false);
-     };
- 
-     const [billTransactionImageList, setBillTransactionImageList] = useState([]);
-     const [selectedBillId, setSelectedBillId] = useState(null);
- 
-     const [showModalCreateBillTransactionImage, setShowModalCreateBillTransactionImage] = useState(false);
-     const closeModalCreateBillTransactionImage = () => {
-         setShowModalCreateBillTransactionImage(false);
-     };
- 
- 
-     const openCreateBillTransactionImageModal = (billId) => {
-         setShowModalCreateBillTransactionImage(true);
-         setSelectedBillId(billId);
-         billService
-             .getAllBillTransactionImageByBillId(billId)
-             .then((res) => {
-                 setBillTransactionImageList(res.data);
-             })
-             .catch((error) => {
-                 console.log(error);
-             });
- 
-     };
+    //detail reservation modal 
+    const [showModalReservation, setShowModalReservation] = useState(false);
+    const [roomStayHistoryList, setRoomStayHistoryList] = useState([]);
+    const [orderDetailList, setOrderDetailList] = useState([]);
+    const [billByReservation, setBillByReservation] = useState(null);
+
+    const [reservation, setReservation] = useState({
+
+    });
+
+
+    const openReservationModal = (reservationId) => {
+        setShowModalReservation(true);
+        if (reservationId) {
+            reservationService
+                .getReservationById(reservationId)
+                .then((res) => {
+                    setReservation(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getAllRoomStayHistoryByReservationId(reservationId)
+                .then((res) => {
+                    setRoomStayHistoryList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getAllOrderDetailByReservationId(reservationId)
+                .then((res) => {
+                    setOrderDetailList(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            reservationService
+                .getBillByReservation(reservationId)
+                .then((res) => {
+                    setBillByReservation(res.data);
+                    console.log(res.data)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    const closeModalReservation = () => {
+        setShowModalReservation(false);
+    };
+
+    const [billTransactionImageList, setBillTransactionImageList] = useState([]);
+    const [selectedBillId, setSelectedBillId] = useState(null);
+
+    const [showModalCreateBillTransactionImage, setShowModalCreateBillTransactionImage] = useState(false);
+    const closeModalCreateBillTransactionImage = () => {
+        setShowModalCreateBillTransactionImage(false);
+    };
+
+
+    const openCreateBillTransactionImageModal = (billId) => {
+        setShowModalCreateBillTransactionImage(true);
+        setSelectedBillId(billId);
+        billService
+            .getAllBillTransactionImageByBillId(billId)
+            .then((res) => {
+                setBillTransactionImageList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    };
 
     const handleResponseError = (response) => {
         if (response && response.status === 400) {
@@ -2647,7 +2647,7 @@ const EditHotel = () => {
                                     {
                                         currentReservations.length === 0 && (
                                             <>
-                                                <p className='text-center mt-3' style={{color: 'gray', fontStyle: 'italic'}}>Không có</p>
+                                                <p className='text-center mt-3' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                             </>
                                         )
                                     }
@@ -2769,17 +2769,43 @@ const EditHotel = () => {
                                                 )}
                                             </p>
                                             <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
-                                                {reservation.paymentStatus === "Paid" && (
-                                                    <span className="badge label-table badge-success">Đã thanh toán</span>
-                                                )}
-                                                {reservation.paymentStatus === "Not Paid" && (
-                                                    <span className="badge label-table badge-danger">Chưa thanh toán</span>
-                                                )}
+                                                {
+                                                    reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                                                        <span className="badge label-table badge-success">
+                                                            <i className="fa fa-check-circle" aria-hidden="true"></i> Đã thanh toán
+                                                        </span>
+                                                    )
+                                                }
+
+                                                {
+                                                    reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                                                        <span className="badge label-table badge-warning">
+                                                            <i className="fa fa-clock" aria-hidden="true"></i> Đã thanh toán trước
+                                                        </span>
+                                                    )
+                                                }
+
+                                                {
+                                                    !reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                                                        <span className="badge label-table badge-success">
+                                                            <i className="fa fa-credit-card" aria-hidden="true"></i> Đã thanh toán
+                                                        </span>
+                                                    )
+                                                }
+
+                                                {
+                                                    !reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                                                        <span className="badge label-table badge-danger">
+                                                            <i className="fa fa-times-circle" aria-hidden="true"></i> Chưa thanh toán
+                                                        </span>
+                                                    )
+                                                }
+
                                             </p>
-                                            {reservation.paymentStatus === "Paid" && (
+                                            {reservation.isPrePaid === true && (
                                                 <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
                                             )}
-                                            {reservation.paymentStatus === "Not Paid" && (
+                                            {reservation.isPrePaid === false && (
                                                 <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
                                             )}
 
@@ -2963,7 +2989,7 @@ const EditHotel = () => {
                                                 {
                                                     !billByReservation && (
                                                         <>
-                                                            <p className='text-center' style={{color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                                         </>
                                                     )
                                                 }
@@ -2982,7 +3008,7 @@ const EditHotel = () => {
                     </div>
                 </div>
             )}
-             {showModalCreateBillTransactionImage && (
+            {showModalCreateBillTransactionImage && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">

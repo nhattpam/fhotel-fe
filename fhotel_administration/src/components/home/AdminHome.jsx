@@ -297,7 +297,7 @@ const AdminHome = () => {
       setSumForPreviousMonth(sumForPreviousMonth);
     }
   }, [transactionList]);
- 
+
 
 
   //end count reservation by admin
@@ -358,7 +358,7 @@ const AdminHome = () => {
     return sumForCurrentMonth;
   };
 
- 
+
 
   const createPieChart = () => {
     const pieChartCanvas = pieChartRef.current.getContext("2d");
@@ -498,7 +498,7 @@ const AdminHome = () => {
                 </div>
                 <div className="ibox-body">
                   <div className="row align-items-center">
-                      <canvas ref={pieChartRef} id="myPieChart3"></canvas>
+                    <canvas ref={pieChartRef} id="myPieChart3"></canvas>
                   </div>
                 </div>
               </div>
@@ -724,17 +724,43 @@ const AdminHome = () => {
                           )}
                         </p>
                         <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
-                          {reservation.paymentStatus === "Paid" && (
-                            <span className="badge label-table badge-success">Đã thanh toán</span>
-                          )}
-                          {reservation.paymentStatus === "Not Paid" && (
-                            <span className="badge label-table badge-danger">Chưa thanh toán</span>
-                          )}
+                          {
+                            reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                              <span className="badge label-table badge-success">
+                                <i className="fa fa-check-circle" aria-hidden="true"></i> Đã thanh toán
+                              </span>
+                            )
+                          }
+
+                          {
+                            reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                              <span className="badge label-table badge-warning">
+                                <i className="fa fa-clock" aria-hidden="true"></i> Đã thanh toán trước
+                              </span>
+                            )
+                          }
+
+                          {
+                            !reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                              <span className="badge label-table badge-success">
+                                <i className="fa fa-credit-card" aria-hidden="true"></i> Đã thanh toán
+                              </span>
+                            )
+                          }
+
+                          {
+                            !reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                              <span className="badge label-table badge-danger">
+                                <i className="fa fa-times-circle" aria-hidden="true"></i> Chưa thanh toán
+                              </span>
+                            )
+                          }
+
                         </p>
-                        {reservation.paymentStatus === "Paid" && (
+                        {reservation.isPrePaid === true && (
                           <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
                         )}
-                        {reservation.paymentStatus === "Not Paid" && (
+                        {reservation.isPrePaid === false && (
                           <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
                         )}
 

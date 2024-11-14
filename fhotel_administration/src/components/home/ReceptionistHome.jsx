@@ -137,35 +137,35 @@ const ReceptionistHome = () => {
   const fetchMonthlyData = async () => {
     try {
       const res = await userService.getAllBillByStaff(loginUserId);
-      
+
       // Filter bills with status 'paid' before setting the state
       const paidBills = res.data.filter((bill) => bill.billStatus === 'Paid');
       setBillList(paidBills);
-  
+
       const currentYear = new Date().getFullYear();
-  
+
       // Initialize an array to store monthly data
       const monthlyData = Array(12).fill(0);
-  
+
       // Iterate over each paid bill
       paidBills.forEach((bill) => {
         const billDate = new Date(bill.createdDate);
         const billYear = billDate.getFullYear();
         const billMonth = billDate.getMonth();
-  
+
         // Check if the bill belongs to the current year
         if (billYear === currentYear) {
           // Add 80% of the bill's total amount to the corresponding month's data
           monthlyData[billMonth] += bill.totalAmount * 0.8;
         }
       });
-  
+
       setMonthlyData(monthlyData);
     } catch (error) {
       console.error("Error fetching bills:", error);
     }
   };
-  
+
   const createAreaChart = () => {
     const areaChartCanvas = areaChartRef.current.getContext("2d");
 
@@ -596,17 +596,43 @@ const ReceptionistHome = () => {
                           )}
                         </p>
                         <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
-                          {reservation.paymentStatus === "Paid" && (
-                            <span className="badge label-table badge-success">Đã thanh toán</span>
-                          )}
-                          {reservation.paymentStatus === "Not Paid" && (
-                            <span className="badge label-table badge-danger">Chưa thanh toán</span>
-                          )}
+                          {
+                            reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                              <span className="badge label-table badge-success">
+                                <i className="fa fa-check-circle" aria-hidden="true"></i> Đã thanh toán
+                              </span>
+                            )
+                          }
+
+                          {
+                            reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                              <span className="badge label-table badge-warning">
+                                <i className="fa fa-clock" aria-hidden="true"></i> Đã thanh toán trước
+                              </span>
+                            )
+                          }
+
+                          {
+                            !reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                              <span className="badge label-table badge-success">
+                                <i className="fa fa-credit-card" aria-hidden="true"></i> Đã thanh toán
+                              </span>
+                            )
+                          }
+
+                          {
+                            !reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                              <span className="badge label-table badge-danger">
+                                <i className="fa fa-times-circle" aria-hidden="true"></i> Chưa thanh toán
+                              </span>
+                            )
+                          }
+
                         </p>
-                        {reservation.paymentStatus === "Paid" && (
+                        {reservation.isPrePaid === true && (
                           <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
                         )}
-                        {reservation.paymentStatus === "Not Paid" && (
+                        {reservation.isPrePaid === false && (
                           <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
                         )}
 
@@ -761,7 +787,7 @@ const ReceptionistHome = () => {
                           {
                             !billByReservation && (
                               <>
-                                <p className='text-center' style={{ fontStyle: 'italic' , color: 'gray'}}>Không có</p>
+                                <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                               </>
                             )
                           }

@@ -343,7 +343,7 @@ const ListHotel = () => {
             const userResponse = await userService.saveUser(createUser);
 
             if (userResponse.status === 201) {
-                window.alert("User created successfully!");
+                window.alert("Tạo tài khoản thành công!");
                 hotel.ownerId = userResponse.data.userId;
                 hotel.isActive = true;
                 const updateRes = await hotelService.updateHotel(hotel.hotelId, hotel);

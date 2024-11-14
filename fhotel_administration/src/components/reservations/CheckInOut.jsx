@@ -269,14 +269,14 @@ const CheckInOut = () => {
         const reservationId = selectedReservationId;
         const reservationResponse = await reservationService.getReservationById(reservationId);
         const roomTypeId = reservationResponse.data.roomTypeId;
-    
+
         try {
             if (selectedRooms.length !== selectedQuantity) {
                 setError({ general: `Khách yêu cầu ${selectedQuantity} phòng!` });
                 setShowError(true);
                 return;
             }
-    
+
             // Save room stay history for each selected room
             const promises = selectedRooms.map(roomId => {
                 const roomStayHistory = { reservationId, roomId };
@@ -293,32 +293,32 @@ const CheckInOut = () => {
                         return Promise.reject(error);
                     });
             });
-    
+
             // Wait for all save operations to complete
             await Promise.all(promises);
-    
+
             // Now update available rooms after all rooms are processed
             const decreaseAmount = selectedRooms.length;
             const roomTypeResponse = await roomTypeService.getRoomTypeById(roomTypeId);
             const roomType = roomTypeResponse.data;
-    
+
             const updatedRoomType = {
                 ...roomType,
                 availableRooms: roomType.availableRooms - decreaseAmount
             };
-    
+
             console.log("Updating Room Type:", JSON.stringify(updatedRoomType));
             await roomTypeService.updateRoomType(roomTypeId, updatedRoomType);
-    
+
             handleSearch();
             closeModalPickRoom();
             setSelectedRooms([]);
-    
+
         } catch (error) {
             handleResponseError(error.response);
         }
     };
-    
+
     // Function to fetch room images based on roomTypeId
     const fetchRoomImages = (roomTypeId) => {
         roomTypeService
@@ -990,15 +990,39 @@ const CheckInOut = () => {
                                                             <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
                                                             <p><strong className='mr-2'>Số lượng đặt:</strong> {reservation.numberOfRooms} phòng</p>
                                                             <p><strong className='mr-2'>Tổng số tiền:</strong> {reservation.totalAmount} (VND)</p>
-                                                            <p>
-                                                                <strong className='mr-2'>Trạng thái thanh toán:</strong>
-                                                                {reservation.paymentStatus === "Paid" ? (
-                                                                    <span className="badge label-table badge-success">Đã thanh toán</span>
-                                                                ) : reservation.paymentStatus === "Not Paid" ? (
-                                                                    <span className="badge label-table badge-danger">Chưa thanh toán</span>
-                                                                ) : (
-                                                                    <span className="badge label-table badge-warning">Unknown Status</span>
-                                                                )}
+                                                            <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
+                                                                {
+                                                                    reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                                                                        <span className="badge label-table badge-success">
+                                                                            <i className="fa fa-check-circle" aria-hidden="true"></i> Đã thanh toán
+                                                                        </span>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                                                                        <span className="badge label-table badge-warning">
+                                                                            <i className="fa fa-clock" aria-hidden="true"></i> Đã thanh toán trước
+                                                                        </span>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    !reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                                                                        <span className="badge label-table badge-success">
+                                                                            <i className="fa fa-credit-card" aria-hidden="true"></i> Đã thanh toán
+                                                                        </span>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    !reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                                                                        <span className="badge label-table badge-danger">
+                                                                            <i className="fa fa-times-circle" aria-hidden="true"></i> Chưa thanh toán
+                                                                        </span>
+                                                                    )
+                                                                }
+
                                                             </p>
                                                             <p>
                                                                 <strong className='mr-2'>Trạng thái đặt phòng:</strong>
@@ -1394,17 +1418,43 @@ const CheckInOut = () => {
                                                 )}
                                             </p>
                                             <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
-                                                {reservation.paymentStatus === "Paid" && (
-                                                    <span className="badge label-table badge-success">Đã thanh toán</span>
-                                                )}
-                                                {reservation.paymentStatus === "Not Paid" && (
-                                                    <span className="badge label-table badge-danger">Chưa thanh toán</span>
-                                                )}
+                                                {
+                                                    reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                                                        <span className="badge label-table badge-success">
+                                                            <i className="fa fa-check-circle" aria-hidden="true"></i> Đã thanh toán
+                                                        </span>
+                                                    )
+                                                }
+
+                                                {
+                                                    reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                                                        <span className="badge label-table badge-warning">
+                                                            <i className="fa fa-clock" aria-hidden="true"></i> Đã thanh toán trước
+                                                        </span>
+                                                    )
+                                                }
+
+                                                {
+                                                    !reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                                                        <span className="badge label-table badge-success">
+                                                            <i className="fa fa-credit-card" aria-hidden="true"></i> Đã thanh toán
+                                                        </span>
+                                                    )
+                                                }
+
+                                                {
+                                                    !reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                                                        <span className="badge label-table badge-danger">
+                                                            <i className="fa fa-times-circle" aria-hidden="true"></i> Chưa thanh toán
+                                                        </span>
+                                                    )
+                                                }
+
                                             </p>
-                                            {reservation.paymentStatus === "Paid" && (
+                                            {reservation.isPrePaid === true && (
                                                 <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
                                             )}
-                                            {reservation.paymentStatus === "Not Paid" && (
+                                            {reservation.isPrePaid === false && (
                                                 <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
                                             )}
 

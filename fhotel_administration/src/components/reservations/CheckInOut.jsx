@@ -263,90 +263,62 @@ const CheckInOut = () => {
 
     // Function to handle form submission
     const handleCreateRoomStayHistory = async (event) => {
-        event.preventDefault(); // Prevent the default form submission
-        setError({}); // Reset any previous errors
-        setShowError(false); // Hide error before validation
+        event.preventDefault();
+        setError({});
+        setShowError(false);
         const reservationId = selectedReservationId;
-
+        const reservationResponse = await reservationService.getReservationById(reservationId);
+        const roomTypeId = reservationResponse.data.roomTypeId;
+    
         try {
-            // Only proceed if the selected rooms are within the allowed quantity
             if (selectedRooms.length !== selectedQuantity) {
                 setError({ general: `Khách yêu cầu ${selectedQuantity} phòng!` });
                 setShowError(true);
                 return;
             }
-            // Array to hold promises for each save operation
+    
+            // Save room stay history for each selected room
             const promises = selectedRooms.map(roomId => {
-                // Prepare the room stay history object
-                const roomStayHistory = {
-                    reservationId,
-                    roomId
-                };
-
-                // Log the room stay history before saving
-                console.log("Preparing to save Room Stay History:", roomStayHistory);
-                console.log(JSON.stringify(roomStayHistory))
+                const roomStayHistory = { reservationId, roomId };
                 return roomStayHistoryService.saveRoomStayHistory(roomStayHistory)
                     .then(response => {
-                        console.log(`Room added: Room ID ${roomId}, Response:`, response);
                         if (response.status === 201) {
                             setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
                             setShowSuccess(true);
-
-                            // Refresh search results with the current query
-                            handleSearch();
                         }
-                        return response; // Return the response for further processing if needed
+                        return response;
                     })
                     .catch(error => {
                         console.error(`Error adding room stay history for Room ID ${roomId}:`, error);
-                        return Promise.reject(error); // Reject the promise for error handling
+                        return Promise.reject(error);
                     });
             });
-
-            // Wait for all promises to resolve
-            Promise.all(promises)
-                .then(() => {
-                    console.log("All room stay histories have been processed.");
-                    closeModalPickRoom(); // Close the modal here
-                })
-                .catch(() => {
-                    console.error("Some room stay histories could not be added. Check errors above.");
-                    // You can show a notification or error message to the user if needed
-                });
-
-            // //update reservation status -> checkin
-            // // Fetch the user data
-            // const reservationStatus = "CheckIn";
-            // const actualCheckInTime = new Date();
-            // const res = await reservationService.getReservationById(selectedReservationId);
-            // const reservationData = res.data;
-
-            // // Update the local state with the fetched data and new isActive flag
-            // setUpdateReservation({ ...reservationData, reservationStatus, actualCheckInTime });
-
-            // // Make the update request
-            // const updateRes = await reservationService.updateReservation(selectedReservationId, { ...reservationData, reservationStatus });
-
-            // if (updateRes.status === 200) {
-            //     setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
-            //     setShowSuccess(true);
-
-            //     // Refresh search results with the current query
-            //     handleSearch();
-            // } else {
-            //     handleResponseError(error.response);
-            // }
-
-            // After submitting, clear the selected rooms
-            setSelectedRooms([]); // Clear selected amenities after submission
+    
+            // Wait for all save operations to complete
+            await Promise.all(promises);
+    
+            // Now update available rooms after all rooms are processed
+            const decreaseAmount = selectedRooms.length;
+            const roomTypeResponse = await roomTypeService.getRoomTypeById(roomTypeId);
+            const roomType = roomTypeResponse.data;
+    
+            const updatedRoomType = {
+                ...roomType,
+                availableRooms: roomType.availableRooms - decreaseAmount
+            };
+    
+            console.log("Updating Room Type:", JSON.stringify(updatedRoomType));
+            await roomTypeService.updateRoomType(roomTypeId, updatedRoomType);
+    
+            handleSearch();
+            closeModalPickRoom();
+            setSelectedRooms([]);
+    
         } catch (error) {
             handleResponseError(error.response);
         }
-
-
     };
-
+    
     // Function to fetch room images based on roomTypeId
     const fetchRoomImages = (roomTypeId) => {
         roomTypeService

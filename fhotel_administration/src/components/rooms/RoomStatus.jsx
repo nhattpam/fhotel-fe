@@ -383,6 +383,7 @@ const RoomStatus = () => {
                                                     value={updateRoom.status || ''} // add fallback value
                                                     required
                                                 >
+                                                     <option value="">Chọn trạng thái</option>
                                                     <option value="Available">Có sẵn</option>
                                                     <option value="Occupied">Không có sẵn</option>
                                                     <option value="Maintenance">Bảo trì</option>

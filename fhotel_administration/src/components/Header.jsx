@@ -256,7 +256,7 @@ const Header = () => {
                   {
                     currentTransactions.length === 0 && (
                       <>
-                        <p className='text-center mt-2' style={{ fontStyle: 'italic', color: 'gray' }}></p>
+                        <p className='text-center mt-2' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                       </>
                     )
                   }

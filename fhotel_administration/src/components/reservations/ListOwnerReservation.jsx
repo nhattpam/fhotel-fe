@@ -239,6 +239,13 @@ const ListOwnerReservation = () => {
                                         }
                                     </tbody>
                                 </table>
+                                {
+                                    currentReservations.length === 0 && (
+                                        <>
+                                            <p className='text-center mt-3' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                        </>
+                                    )
+                                }
                             </div>
                         </div>
 
@@ -483,7 +490,7 @@ const ListOwnerReservation = () => {
                                                     {
                                                         orderDetailList.length === 0 && (
                                                             <>
-                                                                <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                <p className='text-center mt-3' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
                                                             </>
                                                         )
                                                     }
@@ -546,7 +553,7 @@ const ListOwnerReservation = () => {
                                                     {
                                                         !billByReservation && (
                                                             <>
-                                                                <p className='text-center' style={{ fontStyle: 'italic' }}>Không có</p>
+                                                                <p className='text-center mt-3' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                                                             </>
                                                         )
                                                     }

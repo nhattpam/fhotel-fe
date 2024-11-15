@@ -249,13 +249,18 @@ const SideBar = () => {
     };
 
     const [createServiceType, setCreateServiceType] = useState({
-        serviceTypeName: ""
+        serviceTypeName: "",
+        isVisibleToCustomer: false
     });
 
     const handleChangeServiceType = (e) => {
-        const { name, value } = e.target;
-        setCreateServiceType(prevState => ({ ...prevState, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setCreateServiceType(prevState => ({
+            ...prevState,
+            [name]: type === "checkbox" ? checked : value
+        }));
     };
+
 
     const submitCreateServiceType = async (e) => {
         e.preventDefault();
@@ -287,8 +292,15 @@ const SideBar = () => {
         try {
             // Call the API to delete the image by roomImageId
             const serviceTypeResponse = await serviceTypeService.deleteServiceTypeById(serviceTypeId);
-            if (serviceTypeResponse.status === 201) {
-                setServiceTypeList(prevList => prevList.filter(item => item.serviceTypeId !== serviceTypeId));
+            if (serviceTypeResponse.status === 200) {
+                serviceTypeService
+                    .getAllServiceType()
+                    .then((res) => {
+                        setServiceTypeList(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             }
             // After successful deletion, remove the image from the imageList
         } catch (error) {
@@ -497,10 +509,7 @@ const SideBar = () => {
                                                     </li>
                                                 )
                                             }
-                                            <li>
-                                                <Link to={`/list-holiday`}>Ngày lễ</Link>
 
-                                            </li>
                                         </ul>
                                     </li>
 
@@ -841,13 +850,14 @@ const SideBar = () => {
                                         )}
                                     </div>
 
-                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                        {/* Form Fields */}
-                                        <h4 className="header-title ">Thông Tin</h4>
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
+                                        <h4 className="header-title text-center mb-4">Thông Tin</h4>
 
                                         <div className="form-row">
-                                            <div className="form-group col-md-12">
-                                                <label>Tên Loại <span className='text-danger'>*</span> :</label>
+                                            <div className="form-group col-md-12 mb-3">
+                                                <label className="font-weight-bold">
+                                                    Tên Loại <span className="text-danger">*</span>:
+                                                </label>
                                                 <input
                                                     type="text"
                                                     name="serviceTypeName"
@@ -855,42 +865,76 @@ const SideBar = () => {
                                                     value={createServiceType.serviceTypeName}
                                                     onChange={(e) => handleChangeServiceType(e)}
                                                     required
+                                                    style={{
+                                                        padding: '10px',
+                                                        borderRadius: '5px',
+                                                        border: '1px solid #ced4da',
+                                                        backgroundColor: '#f9f9f9',
+                                                    }}
                                                 />
                                             </div>
-                                            <div className='form-group col-md-12'>
-                                                <label htmlFor="serviceTypes" className="form-label">Danh Sách Loại Dịch Vụ</label>
-                                                {serviceTypeList.length > 0 ? (
-                                                    serviceTypeList.map((item, index) => (
-                                                        <div key={item.serviceTypeId} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                            <span className="badge label-table badge-danger">{item.serviceTypeName}</span>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-danger"
-                                                                style={{
-                                                                    position: 'absolute',
-                                                                    top: '0', // Adjust to position the button as needed
-                                                                    right: '0', // Adjust to position the button as needed
-                                                                    background: 'transparent',
-                                                                    border: 'none',
-                                                                    color: 'red',
-                                                                    fontSize: '20px',
-                                                                    cursor: 'pointer',
-                                                                }}
-                                                                onClick={() => handleDeleteServiceType(item.serviceTypeId)}
-                                                                aria-label={`Delete service type ${item.serviceTypeName}`} // Accessibility improvement
-                                                            >
-                                                                &times; {/* This represents the delete icon (X symbol) */}
-                                                            </button>
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <p className="text-muted">Chưa có loại dịch vụ nào.</p> // Message when the list is empty
-                                                )}
+
+                                            <div className="form-group col-md-12 d-flex align-items-center mb-4">
+                                                <input
+                                                    type="checkbox"
+                                                    name="isVisibleToCustomer"
+                                                    className="mr-2"
+                                                    checked={createServiceType.isVisibleToCustomer}
+                                                    onChange={(e) => handleChangeServiceType(e)}
+                                                    required
+                                                />
+                                                <label htmlFor="isVisibleToCustomer">Hiện cho khách hàng</label>
                                             </div>
 
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="serviceTypes" className="font-weight-bold">
+                                                    Danh Sách Loại Dịch Vụ
+                                                </label>
+                                                {serviceTypeList.length > 0 ? (
+                                                    <div className="d-flex flex-wrap">
+                                                        {serviceTypeList.map((item, index) => (
+                                                            <div
+                                                                key={item.serviceTypeId}
+                                                                style={{
+                                                                    position: 'relative',
+                                                                    textAlign: 'center',
+                                                                    flex: '0 1 auto',
+                                                                    margin: '5px',
+                                                                    padding: '8px 12px',
+                                                                    backgroundColor: '#e57373',
+                                                                    color: 'white',
+                                                                    borderRadius: '15px',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'space-between',
+                                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                                                                }}
+                                                            >
+                                                                <span>{item.serviceTypeName}</span>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-danger ml-2 p-0"
+                                                                    style={{
+                                                                        background: 'transparent',
+                                                                        border: 'none',
+                                                                        color: 'white',
+                                                                        fontSize: '18px',
+                                                                        cursor: 'pointer',
+                                                                        marginLeft: '10px',
+                                                                    }}
+                                                                    onClick={() => handleDeleteServiceType(item.serviceTypeId)}
+                                                                    aria-label={`Delete service type ${item.serviceTypeName}`}
+                                                                >
+                                                                    &times;
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-muted text-center mt-3">Chưa có loại dịch vụ nào.</p>
+                                                )}
+                                            </div>
                                         </div>
-
-
                                     </div>
 
                                     <div className="modal-footer">

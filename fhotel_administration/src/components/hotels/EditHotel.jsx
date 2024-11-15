@@ -734,10 +734,11 @@ const EditHotel = () => {
 
     const handleDeleteRoomFacility = async (roomFacilityId) => {
         try {
-            console.log(roomFacilityId)
             // Call the API to delete the image by roomImageId
-            await roomFacilityService.deleteRoomFacilityById(roomFacilityId);
-            fetchRoomFacilities(selectedRoomTypeId);
+            const roomFacilityResponse = await roomFacilityService.deleteRoomFacilityById(roomFacilityId);
+            if(roomFacilityResponse.status === 200){
+                setRoomFacilities(prevList => prevList.filter(item => item.roomFacilityId !== roomFacilityId));
+            }
             // After successful deletion, remove the image from the imageList
             // setHotelAmenityList(prevList => prevList.filter(item => item.hotelAmenityId !== hotelAmenityId));
         } catch (error) {
@@ -1513,7 +1514,7 @@ const EditHotel = () => {
                                             <th><span>STT</span></th>
                                             <th data-hide="phone"><span>Loại phòng</span></th>
                                             <th><span>Diện tích phòng</span></th>
-                                            <th><span>Giá hôm nay</span></th> {/* Add a new column for the price */}
+                                            <th><span>Giá hôm nay (VND)</span></th> {/* Add a new column for the price */}
                                             <th data-toggle="true"><span>Trạng thái</span></th>
                                             <th><span>Hành động</span></th>
                                         </tr>
@@ -1528,7 +1529,7 @@ const EditHotel = () => {
                                                     <td>
                                                         {
                                                             roomPrices[item.roomTypeId] !== undefined
-                                                                ? `${roomPrices[item.roomTypeId]} (VND)` // Show price if available
+                                                                ? `${roomPrices[item.roomTypeId]}` // Show price if available
                                                                 : "Loading..." // Show loading message while fetching price
                                                         }
                                                     </td>
@@ -1863,8 +1864,21 @@ const EditHotel = () => {
                                             <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                 {
                                                     roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
-                                                        <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                            <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
+                                                        <div key={index} style={{
+                                                            position: 'relative',
+                                                            textAlign: 'center',
+                                                            flex: '0 1 auto',
+                                                            margin: '5px',
+                                                            padding: '8px 12px',
+                                                            backgroundColor: '#e57373',
+                                                            color: 'white',
+                                                            borderRadius: '15px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between',
+                                                            boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                                                        }}>
+                                                            <span >{item.facility?.facilityName}</span>
                                                             {/* Delete Button */}
                                                             {
                                                                 loginUser.role?.roleName === "Hotel Manager" && (
@@ -1873,14 +1887,12 @@ const EditHotel = () => {
                                                                             type="button"
                                                                             className="btn btn-danger"
                                                                             style={{
-                                                                                position: 'absolute',
-                                                                                top: '0', // Adjust to position the button as needed
-                                                                                right: '0', // Adjust to position the button as needed
                                                                                 background: 'transparent',
                                                                                 border: 'none',
-                                                                                color: 'red',
-                                                                                fontSize: '20px',
+                                                                                color: 'white',
+                                                                                fontSize: '18px',
                                                                                 cursor: 'pointer',
+                                                                                marginLeft: '10px',
                                                                             }}
                                                                             onClick={() => handleDeleteRoomFacility(item.roomFacilityId)}
                                                                         >
@@ -1936,7 +1948,7 @@ const EditHotel = () => {
                                 {
                                     loginUser.role?.roleName === "Hotel Manager" && (
                                         <>
-                                            <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link>
+                                            {/* <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}>Edit</Link> */}
                                         </>
                                     )
                                 }
@@ -2240,7 +2252,7 @@ const EditHotel = () => {
                             <div className="modal-content">
                                 <form onSubmit={handleSubmitRoomFacility}> {/* Attach handleSubmit here */}
                                     <div className="modal-header bg-dark text-light">
-                                        <h5 className="modal-title">Thêm Tiện Nghi</h5>
+                                        <h5 className="modal-title">Thêm Tiện Ích Cho Phòng</h5>
                                         <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateRoomFacility}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -2371,7 +2383,7 @@ const EditHotel = () => {
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
                             <div className="modal-header bg-dark text-light">
-                                <h5 className="modal-title">Upload Giấy Tờ Khách Sạn</h5>
+                                <h5 className="modal-title">Tải Lên Giấy Tờ Khách Sạn</h5>
                                 <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateHotelDocument}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -2424,7 +2436,7 @@ const EditHotel = () => {
                                                     <div className="form-group mt-3">
                                                         <input type="file" onChange={handleFileChange4} />
                                                         <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost4}>
-                                                            + Upload
+                                                            + Tải lên
                                                         </button>
                                                     </div>
                                                 </>

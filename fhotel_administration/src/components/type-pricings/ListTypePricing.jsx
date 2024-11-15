@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom';
 import typeService from '../../services/type.service';
 import cityService from '../../services/city.service';
 import districtService from '../../services/district.service';
-import holidayPricingService from '../../services/holiday-pricing.service';
 
 const ListTypePricing = () => {
 
@@ -35,32 +34,24 @@ const ListTypePricing = () => {
         typeService
             .getAllTypePricingByTypeId(typeId)
             .then((res) => {
-                // Sorting by "From", "To", and then "dayOfWeek"
+                // Sorting by districtId and then dayOfWeek
                 const sortedData = res.data.sort((a, b) => {
-                    // First, compare the "From" dates
-                    const fromComparison = new Date(a.from) - new Date(b.from);
-                    if (fromComparison !== 0) {
-                        return fromComparison;
+                    // First, sort by districtId
+                    const districtComparison = a.districtId.localeCompare(b.districtId);
+                    if (districtComparison !== 0) {
+                        return districtComparison;
                     }
-
-                    // If "From" dates are the same, compare the "To" dates
-                    const toComparison = new Date(a.to) - new Date(b.to);
-                    if (toComparison !== 0) {
-                        return toComparison;
-                    }
-
-                    // If both "From" and "To" dates are the same, compare the "dayOfWeek"
+                    // If districtId is the same, sort by dayOfWeek
                     return a.dayOfWeek - b.dayOfWeek;
                 });
-
                 setTypePricingList(sortedData);
+                
                 setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
                 setLoading(false);
             });
-
         typeService
             .getTypeById(typeId)
             .then((res) => {
@@ -130,7 +121,14 @@ const ListTypePricing = () => {
         setShowModalTypePricing(false);
     };
 
-
+    //create type pricing modal
+    const [createTypePricing, setCreateTypePricing] = useState({
+        districtId: '',
+        percentageIncrease: '',
+        basePrice: '', // Single input for base price
+        from: '',
+        to: ''
+    });
 
     const [showModalCreateTypePricing, setShowModalCreateTypePricing] = useState(false);
 
@@ -144,8 +142,18 @@ const ListTypePricing = () => {
     };
 
 
+    const [error, setError] = useState({}); // State to hold error messages
+    const [showError, setShowError] = useState(false); // State to manage error visibility
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [success, setSuccess] = useState({});
 
-    const handleChange = (e, index) => {
+    // const handleChange = (e) => {
+    //     const value = e.target.value;
+
+    //     setCreateTypePricing({ ...createTypePricing, [e.target.name]: value });
+    // };
+
+    const handleChange = (e, index, field) => {
         const newTypePricings = [...typePricings];
 
         const { name, value } = e.target;
@@ -154,10 +162,21 @@ const ListTypePricing = () => {
         setTypePricings(newTypePricings);
     };
 
+    const addNewTypePricing = () => {
+        setTypePricings([...typePricings, {
+            districtId: '',
+            percentageIncrease: '',
+            basePrice: '', // Single input for base price
+            from: '',
+            to: ''
+        }]);
+    };
+
+
+
 
     const [cityList, setCityList] = useState([]);
     const [districtList, setDistrictList] = useState([]);
-    const [holidayPricingRuleList, setHolidayPricingRuleList] = useState([]);
     const [selectedCity, setSelectedCity] = useState(''); // Add state for selected city
 
     useEffect(() => {
@@ -169,14 +188,7 @@ const ListTypePricing = () => {
             .catch((error) => {
                 console.log(error);
             });
-        holidayPricingService
-            .getAllHolidayPricingRule()
-            .then((res) => {
-                setHolidayPricingRuleList(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        
 
     }, []);
 
@@ -196,48 +208,21 @@ const ListTypePricing = () => {
         }
     }, [selectedCity]);
 
-    const [selectYear, setSelectYear] = useState(new Date().getFullYear()); // Default to the current year
-    const handleYearChange = (selectedYear) => {
-        const quarterlyDates = [
-            { from: `${selectedYear}-01-01`, to: `${selectedYear}-03-31` },
-            { from: `${selectedYear}-04-01`, to: `${selectedYear}-06-30` },
-            { from: `${selectedYear}-07-01`, to: `${selectedYear}-09-30` },
-            { from: `${selectedYear}-10-01`, to: `${selectedYear}-12-31` }
-        ];
-
-        setTypePricings(quarterlyDates);
-    };
-
-
-    const [districtId, setDistrictId] = useState('');
+    const [districtId, setDistrictId] = useState(''); // Owner Name - single input
+    // Update the hotels state structure to store selectedCity and districtList for each hotel
     const [typePricings, setTypePricings] = useState([
         {
             percentageIncrease: '',
-            basePrice: '',
-            from: `01-01-${selectYear}`,
-            to: `03-31-${selectYear}`,
-        },
-        {
-            percentageIncrease: '',
-            basePrice: '',
-            from: `04-01-${selectYear}`,
-            to: `06-30-${selectYear}`,
-        },
-        {
-            percentageIncrease: '',
-            basePrice: '',
-            from: `07-01-${selectYear}`,
-            to: `09-30-${selectYear}`,
-        },
-        {
-            percentageIncrease: '',
-            basePrice: '',
-            from: `10-01-${selectYear}`,
-            to: `12-31-${selectYear}`,
-        },
+            basePrice: '', // Single input for base price
+            from: '',
+            to: '',
+        }
     ]);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+
 
     // Updated form submission to use the new pricing setup
     const submitCreateTypePricing = async (e) => {
@@ -264,7 +249,8 @@ const ListTypePricing = () => {
                         typeId: typeId,
                         from: typePricing.from,
                         to: typePricing.to,
-                        percentageIncrease: typePricing.percentageIncrease
+                        percentageIncrease: typePricing.percentageIncrease,
+                        description: typePricing.description
                     };
 
                     // Add owner info to each hotel object
@@ -272,12 +258,11 @@ const ListTypePricing = () => {
                         ...pricingData,
                         districtId,
                     };
-
-                    console.log(JSON.stringify(typePricingWithDistrictInfo))
+                    console.log(JSON.stringify(typePricingWithDistrictInfo));
 
                     // Call API to save the pricing
+                    // Call API to save the pricing
                     const typePricingResponse = await typePricingService.saveTypePricing(typePricingWithDistrictInfo);
-
 
                     if (typePricingResponse.status !== 201) {
                         handleResponseError(error.response);
@@ -301,9 +286,16 @@ const ListTypePricing = () => {
                         .catch((error) => {
                             handleResponseError(error.response);
                         });
-
+                    // Clear the state for the submitted day to prevent duplicate submission
+                    setCreateTypePricing(prevState => ({
+                        ...prevState,
+                        [`price_${dayOfWeek}`]: "" // Clear the price after submission
+                    }));
                 }
             }
+
+
+            // Refresh or clear form after submission
         } catch (error) {
             handleResponseError(error.response);
         } finally {
@@ -364,17 +356,8 @@ const ListTypePricing = () => {
     };
 
 
-    //Display holiday
-
-
-
 
     // Effect to handle error message visibility
-    
-    const [error, setError] = useState({}); // State to hold error messages
-    const [showError, setShowError] = useState(false); // State to manage error visibility
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [success, setSuccess] = useState({});
     useEffect(() => {
         if (showError) {
             const timer = setTimeout(() => {
@@ -429,7 +412,7 @@ const ListTypePricing = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title">Bảng Giá Cho Loại Phòng {type.typeName}</div>
+                            <div className="ibox-title">Bảng Giá Cho Loại Phòng: {type.typeName}</div>
                             <div className="form-group d-flex align-items-center">
                                 <select
                                     value={selectedDistrictId}
@@ -453,12 +436,11 @@ const ListTypePricing = () => {
                                         onChange={handleTypePricingSearch}
                                     />
                                 </div>
-
                                 <button
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateTypePricingModal}
                                 >
-                                    <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm giá
+                                    Thêm giá
                                 </button>
 
                             </div>
@@ -476,35 +458,13 @@ const ListTypePricing = () => {
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
                                             <th><span>Thời gian áp dụng</span></th>
-                                            <th><span>Ngày lễ</span></th>
+                                            <th><span>Mô tả</span></th>
                                             <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             currentTypePricings.length > 0 && currentTypePricings.map((item, index) => {
-                                                const today = new Date();
-                                                const daysToAdd = (item.dayOfWeek - (today.getDay() === 0 ? 7 : today.getDay()) + 7) % 7;
-                                                const actualDate = new Date(today);
-                                                actualDate.setDate(today.getDate() + daysToAdd);
-                                                const actualDateString = actualDate.toLocaleDateString().split('T')[0];
-
-                                                const fromDate = new Date(item.from);
-                                                const toDate = new Date(item.to);
-
-                                                // Lọc các quy tắc giá ngày lễ trong khoảng thời gian từ - đến
-                                                const holidayRules = holidayPricingRuleList.filter(h =>
-                                                    h.districtId === item.district?.districtId &&
-                                                    new Date(h.holiday?.holidayDate) >= fromDate &&
-                                                    new Date(h.holiday?.holidayDate) <= toDate
-                                                );
-
-                                                // Lọc các ngày lễ trùng với ngày trong tuần của item (item.dayOfWeek)
-                                                const relevantHolidays = holidayRules.filter(rule => {
-                                                    const holidayDate = new Date(rule.holiday?.holidayDate);
-                                                    return holidayDate.getDay() === item.dayOfWeek;
-                                                });
-
                                                 return (
                                                     <tr key={item.typePricingId}>
                                                         <td>{index + 1}</td>
@@ -513,25 +473,11 @@ const ListTypePricing = () => {
                                                         <td>{item.price.toLocaleString()} </td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
-                                                        <td>{fromDate.toLocaleDateString('en-US')} - {toDate.toLocaleDateString('en-US')}</td>
+                                                        <td>{new Date(item.from).toLocaleDateString('en-US')} - {new Date(item.to).toLocaleDateString('en-US')}</td>
                                                         <td>
-                                                            {
-                                                                relevantHolidays.length > 0 ? (
-                                                                    // Hiển thị ngày lễ chỉ khi có ngày lễ trùng với ngày trong tuần
-                                                                    relevantHolidays.map((rule, ruleIndex) => {
-                                                                        const holidayDate = new Date(rule.holiday?.holidayDate);
-                                                                        return (
-                                                                            <div key={ruleIndex}>
-                                                                                {rule.holiday?.description}: ({holidayDate.toLocaleDateString('en-US')}) ({rule.percentageIncrease}%)
-                                                                                <br />
-                                                                            </div>
-                                                                        );
-                                                                    })
-                                                                ) : (
-                                                                    <span>Không</span>
-                                                                )
-                                                            }
+                                                           {item.description}
                                                         </td>
+
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
                                                                 <i className="fa fa-pencil font-14" onClick={() => openTypePricingModal(item.typePricingId)} />
@@ -542,11 +488,16 @@ const ListTypePricing = () => {
                                             })
                                         }
                                     </tbody>
-
                                 </table>
+                                {
+                                    currentTypePricings.length === 0 && (
+                                        <>
+                                            <p className='text-center mt-3' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                                        </>
+                                    )
+                                }
                             </div>
                         </div>
-
 
 
 
@@ -680,7 +631,7 @@ const ListTypePricing = () => {
                             <div className="modal-content">
                                 <form onSubmit={(e) => submitCreateTypePricing(e)} style={{ textAlign: "left" }}>
                                     <div className="modal-header bg-dark text-light">
-                                        <h5 className="modal-title">Tạo Bảng Giá Cho Các Quý</h5>
+                                        <h5 className="modal-title">Tạo Bảng Giá Cho Tuần</h5>
                                         <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateTypePricing}>
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -704,7 +655,6 @@ const ListTypePricing = () => {
                                         <h4 className="header-title">Thông Tin</h4>
                                         <div className="row">
                                             <div className="col-md-12">
-
                                                 <div className="form-row">
                                                     {/* City Select */}
                                                     <div className="form-group col-md-6">
@@ -732,32 +682,20 @@ const ListTypePricing = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-md-12">
-                                                {/* Year Select */}
-                                                <div className="form-group">
-                                                    <label>Năm <span className="text-danger">*</span> :</label>
-                                                    <select name="year" className="form-control" style={{ width: '30%' }} onChange={(e) => handleYearChange(e.target.value)} required>
-                                                        <option value="">Chọn năm</option>
-                                                        {[2023, 2024, 2025, 2026, 2027, 2028, 2030].map(year => (
-                                                            <option key={year} value={year}>{year}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            </div>
                                             {typePricings.map((typePricing, index) => (
                                                 <>
                                                     <div className="col-md-4">
                                                         <div className="form-row">
-                                                            {/* From Date - Read Only */}
+                                                            {/* From Date */}
                                                             <div className="form-group col-md-6">
                                                                 <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
-                                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} readOnly required />
+                                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} onChange={(e) => handleChange(e, index)} required />
                                                             </div>
 
-                                                            {/* To Date - Read Only */}
+                                                            {/* To Date */}
                                                             <div className="form-group col-md-6">
                                                                 <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
-                                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} readOnly required />
+                                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} onChange={(e) => handleChange(e, index)} required />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -779,15 +717,19 @@ const ListTypePricing = () => {
                                                             </div>
 
                                                             {/* Percentage Increase for Weekend */}
-                                                            {/* <h4 className="header-title">Tăng Giá Cuối Tuần</h4> */}
                                                             <div className="form-group col-md-12">
-                                                                <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) :</label>
-                                                                <select name="percentageIncrease" className="form-control" id="percentageIncrease" value={typePricing.percentageIncrease} onChange={(e) => handleChange(e, index)}>
-                                                                    <option value="">Chọn phần trăm</option>
-                                                                    {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70].map(percent => (
-                                                                        <option key={percent} value={percent}>{percent}%</option>
-                                                                    ))}
-                                                                </select>
+                                                                <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) <span className="text-danger">*</span> :</label>
+                                                                <div className="input-group">
+                                                                    <input type="number" className="form-control" name="percentageIncrease" id="percentageIncrease" value={typePricing.percentageIncrease || ''} onChange={(e) => handleChange(e, index)} min={0} required />
+                                                                    <div className="input-group-append">
+                                                                        <span className="input-group-text custom-append">%</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="form-group col-md-12">
+                                                                <label htmlFor="description">Mô tả <span className="text-danger">*</span> :</label>
+                                                                <input type="number" className="form-control" name="description" id="description" value={typePricing.description || ''} onChange={(e) => handleChange(e, index)}required />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -801,7 +743,7 @@ const ListTypePricing = () => {
                                     </div>
 
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting}><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting}>Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
                                     </div>
                                 </form>
@@ -1046,25 +988,6 @@ const ListTypePricing = () => {
                         transform: rotate(360deg);
                     }
                 }
-
-                    .search-bar {
-    position: relative;
-    display: inline-block;
-}
-
-.search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-}
-
-.search-bar input {
-    padding-left: 30px; /* Adjust padding to make room for the icon */
-    width: 150px
-}
-
 
                                             `}
             </style>

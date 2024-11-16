@@ -440,7 +440,7 @@ const ListTypePricing = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateTypePricingModal}
                                 >
-                                    Thêm giá
+                                    <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm giá
                                 </button>
 
                             </div>
@@ -614,7 +614,7 @@ const ListTypePricing = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-primary btn-sm">Lưu</button>
+                                    <button type="submit" className="btn btn-primary btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                     <button type="button" className="btn btn-dark btn-sm" onClick={closeModalTypePricing}>Đóng</button>
                                 </div>
                             </form>
@@ -684,7 +684,7 @@ const ListTypePricing = () => {
                                             </div>
                                             {typePricings.map((typePricing, index) => (
                                                 <>
-                                                    <div className="col-md-4">
+                                                    <div className="col-md-6">
                                                         <div className="form-row">
                                                             {/* From Date */}
                                                             <div className="form-group col-md-6">
@@ -699,13 +699,9 @@ const ListTypePricing = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="col-md-8">
+                                                    <div className="col-md-6">
                                                         {/* Select fields for city and district */}
                                                         <div className="form-row">
-
-
-                                                            {/* Single Base Price Input */}
-                                                            {/* <h4 className="header-title">Giá Cơ Bản</h4> */}
                                                             <div className="form-group col-md-12">
                                                                 <label htmlFor="basePrice">Giá cơ bản <span className="text-danger">*</span> :</label>
                                                                 <div className="input-group">
@@ -743,7 +739,7 @@ const ListTypePricing = () => {
                                     </div>
 
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting}>Lưu</button>
+                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting} ><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
                                     </div>
                                 </form>

@@ -6,6 +6,10 @@ import { Chart, PieController, ArcElement, registerables } from "chart.js";
 import userService from "../../services/user.service";
 import reservationService from "../../services/reservation.service";
 import { Link } from "react-router-dom";
+import orderService from "../../services/order.service";
+import billService from "../../services/bill.service";
+import roomService from "../../services/room.service";
+
 
 const ReceptionistHome = () => {
   const loginUserId = sessionStorage.getItem('userId');
@@ -21,6 +25,12 @@ const ReceptionistHome = () => {
   const [currentReservationPage, setCurrentReservationPage] = useState(0);
   const [reservationsPerPage] = useState(5);
   const [reservationCount, setReservationCount] = useState(0);
+  const [customerCount, setCustomerCount] = useState(0);
+  const [roomList, setRoomList] = useState([]);
+  const [orderList, setOrderList] = useState([]);
+  const [orderSearchTerm, setOrderSearchTerm] = useState('');
+  const [currentOrderPage, setCurrentOrderPage] = useState(0);
+  const [ordersPerPage] = useState(5);
 
   useEffect(() => {
     userService
@@ -36,19 +46,60 @@ const ReceptionistHome = () => {
       .catch((error) => {
         console.log(error);
       });
-
     userService
-      .getAllBillByStaff(loginUserId)
+      .getAllCustomerByStaff(loginUserId)
       .then((res) => {
-        // Filter bills with status 'paid' before setting the state
-        const paidBills = res.data.filter((bill) => bill.billStatus === 'Paid');
-        setBillList(paidBills);
+        setCustomerCount(res.data.length);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    userService
+      .getAllRoomByStaff(loginUserId)
+      .then((res) => {
+        const sortedRoomList = [...res.data].sort((a, b) => {
+          // Assuming requestedDate is a string in ISO 8601 format
+          return a.roomNumber - b.roomNumber; // Sort by roomNumber in ascending order
+        });
+        setRoomList(sortedRoomList);
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    userService
+      .getAllOrderByStaff(loginUserId)
+      .then((res) => {
+        const sortedOrderList = [...res.data].sort((a, b) => {
+          // Assuming requestedDate is a string in ISO 8601 format
+          return new Date(b.orderedDate) - new Date(a.orderedDate);
+        });
+        setOrderList(sortedOrderList);
       })
       .catch((error) => {
         console.log(error);
       });
 
+
+
   }, [loginUserId]);
+  const filteredOrders = orderList
+    .filter((order) => {
+      return (
+        order.reservation?.customer?.name.toString().toLowerCase().includes(orderSearchTerm.toLowerCase()) ||
+        order.reservation?.customer?.email.toString().toLowerCase().includes(orderSearchTerm.toLowerCase()) ||
+        order.reservation?.customer?.phoneNumber.toString().toLowerCase().includes(orderSearchTerm.toLowerCase())
+      );
+    });
+
+  const pageOrderCount = Math.ceil(filteredOrders.length / ordersPerPage);
+
+  const handleOrderPageClick = (data) => {
+    setCurrentOrderPage(data.selected);
+  };
+
+  const offsetOrder = currentOrderPage * ordersPerPage;
+  const currentOrders = filteredOrders.slice(offsetOrder, offsetOrder + ordersPerPage);
 
   const filteredReservations = reservationList
     .filter((reservation) => {
@@ -129,142 +180,125 @@ const ReceptionistHome = () => {
     setShowModalReservation(false);
   };
 
-  const pieChartRef = useRef(null);
-  const areaChartRef = useRef(null);
-
-  const [monthlyData, setMonthlyData] = useState([]);
-  //area chart
-  const fetchMonthlyData = async () => {
-    try {
-      const res = await userService.getAllBillByStaff(loginUserId);
-
-      // Filter bills with status 'paid' before setting the state
-      const paidBills = res.data.filter((bill) => bill.billStatus === 'Paid');
-      setBillList(paidBills);
-
-      const currentYear = new Date().getFullYear();
-
-      // Initialize an array to store monthly data
-      const monthlyData = Array(12).fill(0);
-
-      // Iterate over each paid bill
-      paidBills.forEach((bill) => {
-        const billDate = new Date(bill.createdDate);
-        const billYear = billDate.getFullYear();
-        const billMonth = billDate.getMonth();
-
-        // Check if the bill belongs to the current year
-        if (billYear === currentYear) {
-          // Add 80% of the bill's total amount to the corresponding month's data
-          monthlyData[billMonth] += bill.totalAmount * 0.8;
-        }
-      });
-
-      setMonthlyData(monthlyData);
-    } catch (error) {
-      console.error("Error fetching bills:", error);
-    }
-  };
-
-  const createAreaChart = () => {
-    const areaChartCanvas = areaChartRef.current.getContext("2d");
-
-    if (areaChartRef.current.chart) {
-      areaChartRef.current.chart.destroy();
-    }
-
-    const data = {
-      labels: [
-        "Tháng 1",
-        "Tháng 2",
-        "Tháng 3",
-        "Tháng 4",
-        "Tháng 5",
-        "Tháng 6",
-        "Tháng 7",
-        "Tháng 8",
-        "Tháng 9",
-        "Tháng 10",
-        "Tháng 11",
-        "Tháng 12",
-      ],
-      datasets: [
-        {
-          label: "Thu nhập",
-          data: monthlyData,
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 2,
-          pointBackgroundColor: "rgba(54, 162, 235, 1)",
-          pointBorderColor: "#fff",
-          pointRadius: 4,
-          pointHoverRadius: 6,
-        },
-      ],
-    };
-
-    const options = {
-      scales: {
-        x: {
-          grid: {
-            display: false,
-          },
-        },
-        y: {
-          beginAtZero: true,
-          grid: {
-            borderDash: [2],
-            borderDashOffset: [2],
-            drawBorder: false,
-            color: "rgba(0, 0, 0, 0.05)",
-            zeroLineColor: "rgba(0, 0, 0, 0.1)",
-          },
-          ticks: {
-            callback: (value) => {
-              if (value >= 1000000) {
-                return `${value}₫`;
-              } else if (value >= 1000) {
-                return `${value}₫`;
-              }
-              return `${value}₫`;
-            },
-          },
-        },
-      },
-      plugins: {
-        tooltip: {
-          enabled: true,
-          callbacks: {
-            label: (context) => {
-              const label = context.dataset.label;
-              const value = context.formattedValue;
-              return `${label}: ${value}₫`;
-            },
-          },
-        },
-      },
-    };
-
-    areaChartRef.current.chart = new Chart(areaChartCanvas, {
-      type: "line",
-      data: data,
-      options: options,
-    });
-  };
-
-
-  useEffect(() => {
-    if (monthlyData.length > 0) {
-      createAreaChart();
-    }
-  }, [monthlyData]);
-
-  useEffect(() => {
-    fetchMonthlyData();
-  }, []);
 
   //end count reservation by owner
+  const [showModalOrder, setShowModalOrder] = useState(false);
+  const openOrderModal = (orderId) => {
+    setShowModalOrder(true);
+    if (orderId) {
+      orderService
+        .getAllOrderDetailByOrder(orderId)
+        .then((res) => {
+          setOrderDetailList(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
+  const closeModalOrder = () => {
+    setShowModalOrder(false);
+  };
+
+  //transaction detail
+  //detail room modal 
+  const [showModalRoom, setShowModalRoom] = useState(false);
+  const [room, setRoom] = useState({
+
+  });
+
+
+  const openRoomModal = (roomId) => {
+    setShowModalRoom(true);
+    if (roomId) {
+      roomService
+        .getRoomById(roomId)
+        .then((res) => {
+          setRoom(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+    }
+  };
+
+  const closeModalRoom = () => {
+    setShowModalRoom(false);
+  };
+
+
+  const [billTransactionImageList, setBillTransactionImageList] = useState([]);
+  const [selectedBillId, setSelectedBillId] = useState(null);
+
+  const [showModalCreateBillTransactionImage, setShowModalCreateBillTransactionImage] = useState(false);
+  const closeModalCreateBillTransactionImage = () => {
+    setShowModalCreateBillTransactionImage(false);
+  };
+
+
+  const openCreateBillTransactionImageModal = (billId) => {
+    setShowModalCreateBillTransactionImage(true);
+    setSelectedBillId(billId);
+    billService
+      .getAllBillTransactionImageByBillId(billId)
+      .then((res) => {
+        setBillTransactionImageList(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  };
+
+
+  //color room
+  const chartRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  const availableCount = roomList.filter(room => room.status === 'Available').length;
+  const occupiedCount = roomList.filter(room => room.status === 'Occupied').length;
+  const maintenanceCount = roomList.filter(room => room.status === 'Maintenance').length;
+
+  useEffect(() => {
+    if (!canvasRef.current) {
+      console.log("Canvas element not available.");
+      return;
+    }
+
+    // Destroy existing chart instance if it exists
+    if (chartRef.current) {
+      chartRef.current.destroy();
+    }
+
+    try {
+      const ctx = canvasRef.current.getContext('2d');
+      chartRef.current = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Available', 'Occupied', 'Maintenance'],
+          datasets: [
+            {
+              data: [availableCount, occupiedCount, maintenanceCount],
+              backgroundColor: ['#28a745', '#dc3545', '#ffc107'],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+        },
+      });
+      console.log("Chart created successfully.");
+    } catch (error) {
+      console.error("Error creating chart:", error);
+    }
+  }, [availableCount, occupiedCount, maintenanceCount]);
   return (
     <>
       <Header />
@@ -278,34 +312,17 @@ const ReceptionistHome = () => {
                 <div className="ibox-body">
                   <h2 className="m-b-5 font-strong">{reservationCount}</h2>
                   <div className="m-b-5">TỔNG SỐ ĐẶT PHÒNG</div><i className="ti-shopping-cart widget-stat-icon" />
-                  <div><i className="fa fa-level-up m-r-5" /><small>25% higher</small></div>
+                  {/* <div><i className="fa fa-level-up m-r-5" /><small>25% higher</small></div> */}
                 </div>
               </div>
             </div>
-            <div className="col-lg-3 col-md-6">
-              <div className="ibox bg-info color-white widget-stat">
-                <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">1250</h2>
-                  <div className="m-b-5">UNIQUE VIEWS</div><i className="ti-bar-chart widget-stat-icon" />
-                  <div><i className="fa fa-level-up m-r-5" /><small>17% higher</small></div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6">
-              <div className="ibox bg-warning color-white widget-stat">
-                <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">$1570</h2>
-                  <div className="m-b-5">TOTAL INCOME</div><i className="fa fa-money widget-stat-icon" />
-                  <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div>
-                </div>
-              </div>
-            </div>
+
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-danger color-white widget-stat">
                 <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">108</h2>
-                  <div className="m-b-5">NEW USERS</div><i className="ti-user widget-stat-icon" />
-                  <div><i className="fa fa-level-down m-r-5" /><small>-12% Lower</small></div>
+                  <h2 className="m-b-5 font-strong">{customerCount}</h2>
+                  <div className="m-b-5">TỔNG SỐ KHÁCH HÀNG</div><i className="ti-user widget-stat-icon" />
+                  {/* <div><i className="fa fa-level-down m-r-5" /><small>-12% Lower</small></div> */}
                 </div>
               </div>
             </div>
@@ -316,72 +333,82 @@ const ReceptionistHome = () => {
                 <div className="ibox-body">
                   <div className="flexbox mb-4">
                     <div>
-                      <h3 className="m-0">Thống kê</h3>
+                      <h3 className="m-0">Danh sách phòng</h3>
                       {/* <div>Your shop sales analytics</div> */}
                     </div>
                     <div className="d-inline-flex">
-                      {/* <div className="px-3" style={{ borderRight: '1px solid rgba(0,0,0,.1)' }}>
-                        <div className="text-muted">WEEKLY INCOME</div>
-                        <div>
-                          <span className="h2 m-0">$850</span>
-                          <span className="text-success ml-2"><i className="fa fa-level-up" /> +25%</span>
-                        </div>
-                      </div>
-                      <div className="px-3">
-                        <div className="text-muted">WEEKLY SALES</div>
-                        <div>
-                          <span className="h2 m-0">240</span>
-                          <span className="text-warning ml-2"><i className="fa fa-level-down" /> -12%</span>
-                        </div>
-                      </div> */}
                     </div>
                   </div>
                   <div>
                     {/* <canvas id="bar_chart" style={{ height: 260 }} /> */}
                     <div className="chart-area">
-                      <canvas ref={areaChartRef} id="myAreaChart2" />
+                      <div className="room-list">
+                        {roomList.map((room) => (
+                          <div
+                            key={room.roomNumber}
+                            className="room-box"
+
+                            style={{
+                              backgroundColor: room.status === 'Available' ? 'green' :
+                                room.status === 'Occupied' ? 'red' :
+                                  '#E4A11B',
+                              position: 'relative',
+                              textAlign: 'center',
+                              flex: '0 1 auto',
+                              margin: '5px'
+                            }}
+                          >
+                            <p onClick={() => openRoomModal(room.roomId)}>{room.roomNumber}</p>
+
+
+                          </div>
+                        ))}
+                      </div>
+                      {roomList.length === 0 && (
+                        <>
+                          <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             <div className="col-lg-4">
-              <div className="ibox">
-                <div className="ibox-head">
-                  <div className="ibox-title">Statistics</div>
-                </div>
-                <div className="ibox-body">
-                  <div className="row align-items-center">
-                    <div className="col-md-6">
-                      <canvas id="doughnut_chart" style={{ height: 160 }} />
-                    </div>
-                    <div className="col-md-6">
-                      <div className="m-b-20 text-success"><i className="fa fa-circle-o m-r-10" />Desktop 52%</div>
-                      <div className="m-b-20 text-info"><i className="fa fa-circle-o m-r-10" />Tablet 27%</div>
-                      <div className="m-b-20 text-warning"><i className="fa fa-circle-o m-r-10" />Mobile 21%</div>
-                    </div>
-                  </div>
-                  <ul className="list-group list-group-divider list-group-full">
-                    <li className="list-group-item">Chrome
-                      <span className="float-right text-success"><i className="fa fa-caret-up" /> 24%</span>
-                    </li>
-                    <li className="list-group-item">Firefox
-                      <span className="float-right text-success"><i className="fa fa-caret-up" /> 12%</span>
-                    </li>
-                    <li className="list-group-item">Opera
-                      <span className="float-right text-danger"><i className="fa fa-caret-down" /> 4%</span>
-                    </li>
-                  </ul>
-                </div>
+      <div className="ibox">
+        <div className="ibox-head">
+          <div className="ibox-title">Chi tiết</div>
+        </div>
+        <div className="ibox-body">
+          <div className="row align-items-center">
+            <div className="col-md-6">
+              <canvas ref={canvasRef} id="doughnut_chart" style={{ height: 160, width: '100%' }} />
+            </div>
+            <div className="col-md-6">
+              <div className="m-b-20 text-success">
+                <i className="fa fa-circle-o m-r-10" style={{ color: '#28a745' }} />
+                Còn trống: {availableCount}
+              </div>
+              <div className="m-b-20 text-danger">
+                <i className="fa fa-circle-o m-r-10" style={{ color: '#dc3545' }} />
+                Không có sẵn: {occupiedCount}
+              </div>
+              <div className="m-b-20 text-warning">
+                <i className="fa fa-circle-o m-r-10" style={{ color: '#ffc107' }} />
+                Bảo trì: {maintenanceCount}
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
           </div>
 
           <div className="row">
             <div className="col-lg-8">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Danh sách đặt chỗ</div>
+                  <div className="ibox-title">Danh sách đặt phòng</div>
                   <div className="ibox-tools">
                     <a className="ibox-collapse"><i className="fa fa-minus" /></a>
                     <a className="dropdown-toggle" data-toggle="dropdown"><i className="fa fa-ellipsis-v" /></a>
@@ -451,68 +478,55 @@ const ReceptionistHome = () => {
                       }
                     </tbody>
                   </table>
+                  {
+                    currentReservations.length === 0 && (
+                      <>
+                        <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                      </>
+                    )
+                  }
                 </div>
               </div>
             </div>
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Best Sellers</div>
+                  <div className="ibox-title">Dịch vụ yêu cầu</div>
                 </div>
                 <div className="ibox-body">
-                  <ul className="media-list media-list-divider m-0">
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">Samsung</a>
-                          <span className="font-16 float-right">1200</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">iPhone</a>
-                          <span className="font-16 float-right">1150</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">iMac</a>
-                          <span className="font-16 float-right">800</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">apple Watch</a>
-                          <span className="font-16 float-right">705</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                  </ul>
+                  {
+                    currentOrders.length > 0 && currentOrders.map((item, index) => (
+                      <>
+                        <ul className="media-list media-list-divider m-0">
+                          <li className="media">
+                            <a className="media-img" href="javascript:;">
+                              {/* <img src="./assets/img/image.jpg" width="50px;" /> */}
+                            </a>
+                            <div className="media-body">
+                              <div className="media-heading">
+                                Mã đặt phòng: <a href="javascript:;" onClick={() => openReservationModal(item.reservationId)}>{item.reservation?.code}</a>
+                                <span className="font-16 float-right"><button className="btn btn-default btn-xs m-r-5"
+                                  data-toggle="tooltip" data-original-title="Edit">
+                                  <i className="fa fa-pencil font-14" onClick={() => openOrderModal(item.orderId)} /></button></span>
+                              </div>
+                              <div className="font-13">Khách hàng: {item.reservation?.customer?.name}</div>
+                            </div>
+                          </li>
+                        </ul>
+                      </>
+                    )
+                    )
+                  }
+                  {
+                    currentOrders.length === 0 && (
+                      <>
+                        <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                      </>
+                    )
+                  }
                 </div>
                 <div className="ibox-footer text-center">
-                  <a href="javascript:;">View All Products</a>
+                  <Link to={`/list-order`}>Xem tất cả</Link>
                 </div>
               </div>
             </div>
@@ -807,6 +821,529 @@ const ReceptionistHome = () => {
           </div>
         </div>
       )}
+      {
+        showModalOrder && (
+          <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+            <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+              <div className="modal-content">
+                <form>
+
+                  <div className="modal-header bg-dark text-light">
+                    <h5 className="modal-title">Thông Tin Yêu Cầu</h5>
+                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalOrder}>
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: 'left' }}>
+                    <div className="table-responsive">
+                      <table className="table table-borderless table-hover table-wrap table-centered">
+                        <thead>
+                          <tr>
+                            <th><span>STT</span></th>
+                            <th><span>Hình ảnh</span></th>
+                            <th><span>Tên dịch vụ</span></th>
+                            <th><span>Số lượng</span></th>
+                            <th><span>Loại dịch vụ</span></th>
+                            <th><span>Giá (VND)</span></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {
+                            orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                {
+                                  item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                    <>
+                                      <td>
+                                        <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                      </td>
+                                    </>
+                                  )
+                                }
+                                {
+                                  item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                    <>
+                                      <td>
+                                        <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                      </td>
+                                    </>
+                                  )
+                                }
+                                {
+                                  item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                    <>
+                                      <td>Muộn {item.service?.serviceName} ngày</td>
+                                    </>
+                                  )
+                                }
+                                {
+                                  item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                    <>
+                                      <td>{item.service?.serviceName}</td>
+                                    </>
+                                  )
+                                }
+                                <td>{item.quantity}</td>
+                                <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                {
+                                  item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                    <>
+                                      <td>{item.order?.totalAmount}</td>
+                                    </>
+                                  )
+                                }
+                                {
+                                  item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                    <>
+                                      <td>{item.order?.totalAmount}</td>
+                                    </>
+                                  )
+                                }
+                              </tr>
+                            ))
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+
+                  <div className="modal-footer">
+                    {/* <button type="button" className="btn btn-custom">Save</button> */}
+                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalOrder} >Đóng</button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        )
+      }
+      {showModalReservation && (
+        <div
+          className="modal fade show"
+          tabIndex="-1"
+          role="dialog"
+          style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
+        >
+          <div className="modal-dialog modal-dialog-centered custom-modal-xl" role="document">
+            <div className="modal-content shadow-lg rounded">
+              <form>
+                <div className="modal-header bg-dark text-light">
+                  <h5 className="modal-title">Chi Tiết Đặt Phòng</h5>
+                  <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalReservation}>
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
+                  {/* Section: Customer Information */}
+                  <div className="container-fluid">
+                    {/* Reservation Information */}
+                    <div className='row'>
+                      <div className="col-md-4" style={{ textAlign: 'left' }}>
+                        <h5>Thông Tin Khách Hàng</h5>
+                        <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
+                        <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
+                        <p className="mb-1"><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                        <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
+                      </div>
+                      <div className="col-md-4" style={{ textAlign: 'left' }}>
+                        <h5>Thông Tin Phòng</h5>
+                        <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
+                        <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
+                        <div className="room-list">
+                          {roomStayHistoryList.map((roomStayHistory) => (
+                            <div
+                              key={roomStayHistory.room?.roomNumber}
+                              onClick={() => openRoomModal(roomStayHistory.roomId)}
+                              className="room-box"
+                              style={{
+                                backgroundColor: 'grey',
+                                position: 'relative',
+                                textAlign: 'center',
+                                flex: '0 1 auto',
+                                margin: '5px'
+                              }}
+                            >
+                              <p>{roomStayHistory.room?.roomNumber}</p>
+
+                            </div>
+                          ))}
+                        </div>
+                        {roomStayHistoryList.length === 0 && (
+                          <>
+                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                          </>
+                        )}
+                      </div>
+                      <div className="col-md-4" style={{ textAlign: 'left' }}>
+                        <h5>Thanh Toán</h5>
+                        <p className="mb-1"><strong className='mr-2'>Mã số:</strong> {reservation.code}</p>
+                        <p className="mb-1"><strong className='mr-2'>Trạng thái đặt phòng:</strong>
+                          {reservation.reservationStatus === "Pending" && (
+                            <span className="badge label-table badge-warning">Đang chờ</span>
+                          )}
+                          {reservation.reservationStatus === "CheckIn" && (
+                            <span className="badge label-table badge-success">Đã nhận phòng</span>
+                          )}
+                          {reservation.reservationStatus === "CheckOut" && (
+                            <span className="badge label-table badge-danger">Đã trả phòng</span>
+                          )}
+                          {reservation.reservationStatus === "Cancelled" && (
+                            <span className="badge label-table badge-danger">Đã hủy</span>
+                          )}
+                        </p>
+                        <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
+                          {
+                            reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                              <span className="badge label-table badge-success">
+                                <i className="fa fa-check-circle" aria-hidden="true"></i> Đã thanh toán
+                              </span>
+                            )
+                          }
+
+                          {
+                            reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                              <span className="badge label-table badge-warning">
+                                <i className="fa fa-clock" aria-hidden="true"></i> Đã thanh toán trước
+                              </span>
+                            )
+                          }
+
+                          {
+                            !reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
+                              <span className="badge label-table badge-success">
+                                <i className="fa fa-credit-card" aria-hidden="true"></i> Đã thanh toán
+                              </span>
+                            )
+                          }
+
+                          {
+                            !reservation.isPrePaid && reservation.paymentStatus === "Not Paid" && (
+                              <span className="badge label-table badge-danger">
+                                <i className="fa fa-times-circle" aria-hidden="true"></i> Chưa thanh toán
+                              </span>
+                            )
+                          }
+
+                        </p>
+                        {reservation.isPrePaid === true && (
+                          <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                        )}
+                        {reservation.isPrePaid === false && (
+                          <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                        )}
+
+                      </div>
+                      {/* Divider */}
+                      <div className="col-md-12">
+                        <hr />
+                      </div>
+                      <div className="col-md-12" style={{ textAlign: 'left' }}>
+                        <h5><i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng: <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}</span></h5>
+                      </div>
+                      <div className="col-md-12">
+                        <hr />
+                      </div>
+                      <div className="col-md-12" style={{ textAlign: 'left' }}>
+                        <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                        }</span></h5>
+                        <div className="table-responsive">
+                          <table className="table table-borderless table-hover table-wrap table-centered">
+                            <thead>
+                              <tr>
+                                <th><span>STT</span></th>
+                                <th><span>Hình ảnh</span></th>
+                                <th><span>Tên dịch vụ</span></th>
+                                <th><span>Số lượng</span></th>
+                                <th><span>Loại dịch vụ</span></th>
+                                <th><span>Giá (VND)</span></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                  <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    {
+                                      item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                        <>
+                                          <td>
+                                            <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                          </td>
+                                        </>
+                                      )
+                                    }
+                                    {
+                                      item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                        <>
+                                          <td>
+                                            <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                          </td>
+                                        </>
+                                      )
+                                    }
+                                    {
+                                      item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                        <>
+                                          <td>Muộn {item.service?.serviceName} ngày</td>
+                                        </>
+                                      )
+                                    }
+                                    {
+                                      item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                        <>
+                                          <td>{item.service?.serviceName}</td>
+                                        </>
+                                      )
+                                    }
+                                    <td>{item.quantity}</td>
+                                    <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                    {
+                                      item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                        <>
+                                          <td>{item.order?.totalAmount}</td>
+                                        </>
+                                      )
+                                    }
+                                    {
+                                      item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                        <>
+                                          <td>{item.order?.totalAmount}</td>
+                                        </>
+                                      )
+                                    }
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
+                          {
+                            orderDetailList.length === 0 && (
+                              <>
+                                <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                              </>
+                            )
+                          }
+                        </div>
+
+
+                        {/* Calculate and display total amount */}
+                        <div style={{ textAlign: 'right', marginTop: '10px' }}>
+                          <h5>
+                            <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
+                            {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                              + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} VND
+                          </h5>
+                        </div>
+
+                      </div>
+                      {/* Divider */}
+                      <div className="col-md-12">
+                        <hr />
+                      </div>
+                      <div className="col-md-12" style={{ textAlign: 'left' }}>
+                        <h5>
+                          <i className="fa fa-file-text text-success"></i>  Hóa đơn:
+                        </h5>
+                        <div className="table-responsive">
+                          <table className="table table-borderless table-hover table-wrap table-centered">
+                            <thead>
+                              <tr>
+                                <th><span>STT</span></th>
+                                <th><span>Ngày tạo</span></th>
+                                <th><span>Tổng số tiền</span></th>
+                                <th><span>Trạng thái</span></th>
+                                {
+                                  billByReservation && (
+                                    billByReservation.billStatus === "Paid" && (
+                                      <>
+                                        <th><span>Hành động</span></th>
+
+                                      </>
+                                    )
+                                  )
+
+                                }
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                billByReservation && (
+                                  <tr>
+                                    <td>1</td>
+                                    <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
+                                    <td>{billByReservation.totalAmount}</td>
+                                    {
+                                      billByReservation.billStatus === "Pending" && (
+                                        <>
+                                          <td><span className="badge label-table badge-warning">Đang chờ</span></td>
+                                        </>
+                                      )
+                                    }
+                                    {
+                                      billByReservation.billStatus === "Paid" && (
+                                        <>
+                                          <td><span className="badge label-table badge-success">Đã thanh toán</span></td>
+                                        </>
+                                      )
+                                    }
+                                    {
+                                      billByReservation.billStatus === "Paid" && (
+                                        <>
+                                          <td>
+                                            <button
+                                              type="button"
+                                              className="btn btn-default btn-xs m-r-5"
+                                              data-toggle="tooltip"
+                                              data-original-title="Activate"
+                                              onClick={() => openCreateBillTransactionImageModal(billByReservation.billId)}                                                                            >
+                                              <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
+
+                                            </button>
+                                          </td>
+
+                                        </>
+                                      )
+                                    }
+
+                                  </tr>
+                                )
+                              }
+                            </tbody>
+                          </table>
+                          {
+                            !billByReservation && (
+                              <>
+                                <p className='text-center' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                              </>
+                            )
+                          }
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  {/* <button type="button" className="btn btn-custom">Save</button> */}
+                  <button type="button" className="btn btn-dark btn-sm" onClick={closeModalReservation} >Đóng</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showModalRoom && (
+        <div
+          className="modal fade show"
+          tabIndex="-1"
+          role="dialog"
+          style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div className="modal-content shadow-lg rounded">
+              <div className="modal-header bg-dark text-light">
+                <h5 className="modal-title">Chi Tiết Phòng</h5>
+                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoom}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
+                <div className="container-fluid">
+                  <div className="row">
+                    <div className="col-12">
+                      <h5 className="mb-3">
+                        <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Phòng số:</span>
+                        <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomNumber}</span>
+                      </h5>
+
+                      <h5 className="mb-3">
+                        <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Loại phòng:</span>
+                        <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomType?.type?.typeName}</span>
+                      </h5>
+
+                      <h5 className="mb-3">
+                        <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Trạng thái:</span>
+                        <span style={{ marginLeft: '10px' }}>
+                          {room.status === "Available" && (
+                            <span style={{ backgroundColor: '#4caf50', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Có sẵn</span>
+                          )}
+                          {room.status === "Occupied" && (
+                            <span style={{ backgroundColor: '#f44336', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Không có sẵn</span>
+                          )}
+                          {room.status === "Maintenance" && (
+                            <span style={{ backgroundColor: '#ff9800', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Bảo trì</span>
+                          )}
+                        </span>
+                      </h5>
+
+                      <h5 className="mb-3">
+                        <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Ghi chú:</span>
+                        <div style={{ marginTop: '8px', paddingLeft: '20px', fontStyle: 'italic', color: 'gray' }}
+                          dangerouslySetInnerHTML={{ __html: room.note ?? 'Không có' }}
+                        ></div>
+                      </h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoom} >Đóng</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showModalCreateBillTransactionImage && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+          <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+            <div className="modal-content">
+              <form>
+
+                <div className="modal-header bg-dark text-light">
+                  <h5 className="modal-title">Hình Ảnh Chuyển Tiền</h5>
+                  <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateBillTransactionImage}>
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                  <div className="row">
+                    <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                      {
+                        billTransactionImageList.length > 0 ? (
+                          billTransactionImageList.map((item, index) => (
+                            <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                              <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                            </div>
+                          ))
+                        ) : (
+                          <>
+                            <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                          </>
+                        )
+                      }
+
+                    </div>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      )
+      }
       <style>
         {`
                     .page-item.active .page-link{
@@ -820,8 +1357,8 @@ const ReceptionistHome = () => {
 }
 
 .room-box {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;

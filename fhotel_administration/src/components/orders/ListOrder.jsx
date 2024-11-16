@@ -38,7 +38,7 @@ const ListOrder = () => {
                 console.log(error);
                 setLoading(false);
             });
-    }, []);
+    }, [loginUserId]);
 
 
     const handleOrderSearch = (event) => {

@@ -552,36 +552,36 @@ const ListOwnerHotel = () => {
                                         </div>
 
                                         <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3">
+                                            <table className="table table-responsive table-hover mt-3" style={{fontSize: '20px'}}>
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
-                                                        <td>{hotel.hotelName}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.hotelName}</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
-                                                        <td>{hotel.email}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.email}</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
-                                                        <td>{hotel && hotel.phone ? hotel.phone : 'Không tìm thấy'}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.phone ? hotel.phone : 'Không tìm thấy'}</td>
                                                     </tr>
 
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Quận:</th>
-                                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Không tìm thấy'}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
-                                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Không tìm thấy'}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
-                                                        <td>{hotel && hotel.address ? hotel.address : 'Không tìm thấy'}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.address ? hotel.address : 'Không tìm thấy'}</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
-                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Không tìm thấy'}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.ownerName ? hotel.ownerName : 'Không tìm thấy'}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

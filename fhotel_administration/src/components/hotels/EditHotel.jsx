@@ -1801,24 +1801,24 @@ const EditHotel = () => {
                                     </div>
 
 
-                                    <div className="col-md-7">
+                                    <div className="col-md-7" style={{fontSize: '15px'}}>
                                         <table className="table table-responsive table-hover mt-3">
                                             <tbody>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại phòng:</th>
-                                                    <td>{roomType.type?.typeName}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.type?.typeName}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện tích:</th>
-                                                    <td>{roomType.roomSize} m²</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.roomSize} m²</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số lượng phòng:</th>
-                                                    <td>{roomType.totalRooms} phòng</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.totalRooms} phòng</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng còn trống:</th>
-                                                    <td>{roomType.availableRooms} phòng</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.availableRooms} phòng</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
@@ -1827,9 +1827,12 @@ const EditHotel = () => {
                                                         style={{
                                                             wordWrap: 'break-word',
                                                             whiteSpace: 'pre-wrap',
-                                                            maxWidth: '300px' // Adjust width as needed
+                                                            maxWidth: '300px', // Adjust width as needed
+                                                            textAlign: 'left',
+                                                             padding: '5px' 
                                                         }}
                                                         className="wordwrap"
+                                                        
                                                     ></td>
                                                 </tr>
 
@@ -3099,8 +3102,8 @@ const EditHotel = () => {
 }
 
 .room-box {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;

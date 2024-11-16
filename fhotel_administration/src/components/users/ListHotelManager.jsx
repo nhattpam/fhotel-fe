@@ -817,31 +817,31 @@ const ListHotelManager = () => {
                                         </div>
 
                                         <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3">
+                                            <table className="table table-responsive table-hover mt-3"  style={{fontSize: '20px'}}>
                                                 <tbody>
                                                     <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
-                                                        <td>{hotel.hotelName}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Name:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.hotelName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Email:</th>
-                                                        <td>{hotel.email}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.email}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Phone Number:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>District:</th>
-                                                        <td>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>District:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Unknown District'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>City:</th>
-                                                        <td>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>City:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Unknown City'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Address:</th>
-                                                        <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
+                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Address:</th>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
                                                     </tr>
 
                                                 </tbody>

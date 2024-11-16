@@ -261,7 +261,7 @@ const ListRoomAttendant = () => {
                     const staffResponse = await hotelStaffService.saveHotelStaff(createHotelStaff); // Replace with your actual service call
 
                     if (staffResponse.status === 201) {
-                        setSuccess({ general: "Tạo Tài Khoản Thành Công!" });
+                        setSuccess({ general: "Tạo thành công!" });
                         setShowSuccess(true); // Show success
                         userService
                             .getAllStaffByOwnerId(loginUserId)

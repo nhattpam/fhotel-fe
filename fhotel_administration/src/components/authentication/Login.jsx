@@ -10,7 +10,7 @@ const Login = () => {
     const navigate = useNavigate();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format check
-    const passwordMinLength = 6; // Define your password length requirement here
+    // const passwordMinLength = 6; // Define your password length requirement here
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -42,26 +42,26 @@ const Login = () => {
 
         // Check if fields are empty
         if (!email) {
-            showErrorMessage('Email is required');
+            showErrorMessage('Bạn chưa nhập email');
             return;
         }
 
         if (!password) {
-            showErrorMessage('Password is required');
+            showErrorMessage('Bạn chưa nhập mật khẩu');
             return;
         }
 
         // Validate email format
         if (!emailRegex.test(email)) {
-            showErrorMessage('Please enter a valid email address.');
+            showErrorMessage('Sai định dạng email.');
             return;
         }
 
         // Check password length (you can add more complex validation like uppercase, numbers, etc.)
-        if (password.length < passwordMinLength) {
-            showErrorMessage(`Password must be at least ${passwordMinLength} characters long.`);
-            return;
-        }
+        // if (password.length < passwordMinLength) {
+        //     showErrorMessage(`Password must be at least ${passwordMinLength} characters long.`);
+        //     return;
+        // }
 
         try {
             const response = await userService.loginUser(email, password);

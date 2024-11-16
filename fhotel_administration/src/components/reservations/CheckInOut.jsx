@@ -283,7 +283,7 @@ const CheckInOut = () => {
                 return roomStayHistoryService.saveRoomStayHistory(roomStayHistory)
                     .then(response => {
                         if (response.status === 201) {
-                            setSuccess({ general: "Đã Check-In cho khách hàng thành công!" });
+                            setSuccess({ general: "Đã nhận phòng cho khách hàng thành công!" });
                             setShowSuccess(true);
                         }
                         return response;
@@ -1117,7 +1117,7 @@ const CheckInOut = () => {
                             <form onSubmit={handleCreateRoomStayHistory}> {/* Attach handleSubmit here */}
 
                                 <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Check-In Cho Khách Hàng</h5>
+                                    <h5 className="modal-title">Nhận Phòng Cho Khách Hàng</h5>
                                     <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalPickRoom}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -1156,34 +1156,34 @@ const CheckInOut = () => {
                                         </div>
 
 
-                                        <div className="col-md-7">
+                                        <div className="col-md-7" style={{fontSize: '15px'}}>
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại phòng:</th>
-                                                        <td>{roomType.type?.typeName}</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.type?.typeName}</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Diện tích:</th>
-                                                        <td>{roomType.roomSize} m²</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.roomSize} m²</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tổng số phòng:</th>
-                                                        <td>{roomType.totalRooms} phòng</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.totalRooms} phòng</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng còn trống:</th>
-                                                        <td>{roomType.availableRooms} phòng</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{roomType.availableRooms} phòng</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số phòng cần đặt:</th>
-                                                        <td>{reservation.numberOfRooms} phòng</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{reservation.numberOfRooms} phòng</td>
                                                     </tr>
 
                                                 </tbody>
                                             </table>
                                             <div>
-                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh Sách Phòng</h3>
+                                                <h3 className="text-primary" style={{ textAlign: 'left', fontWeight: 'bold' }}>Danh sách phòng</h3>
                                                 <div className="room-list">
                                                     {roomList.map((room) => (
                                                         <div
@@ -1234,8 +1234,21 @@ const CheckInOut = () => {
                                                 <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
                                                     {
                                                         roomFacilities.length > 0 ? roomFacilities.map((item, index) => (
-                                                            <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                <span className="badge label-table badge-danger">{item.facility?.facilityName}</span>
+                                                            <div key={index} style={{
+                                                                position: 'relative',
+                                                                textAlign: 'center',
+                                                                flex: '0 1 auto',
+                                                                margin: '5px',
+                                                                padding: '8px 12px',
+                                                                backgroundColor: '#e57373',
+                                                                color: 'white',
+                                                                borderRadius: '15px',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'space-between',
+                                                                boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                                                            }}>
+                                                                <span >{item.facility?.facilityName}</span>
 
                                                             </div>
                                                         ))
@@ -2267,8 +2280,8 @@ const CheckInOut = () => {
 }
 
 .room-box {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;

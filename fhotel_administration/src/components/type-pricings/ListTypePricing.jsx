@@ -45,7 +45,7 @@ const ListTypePricing = () => {
                     return a.dayOfWeek - b.dayOfWeek;
                 });
                 setTypePricingList(sortedData);
-                
+
                 setLoading(false);
             })
             .catch((error) => {
@@ -76,7 +76,6 @@ const ListTypePricing = () => {
         .filter((typePricing) => {
             const matchesDistrict = selectedDistrictId ? typePricing.district?.districtName === selectedDistrictId : true;
             const matchesSearchTerm = (
-                typePricing.dayOfWeek.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase()) ||
                 typePricing.price.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase())
             );
             return matchesDistrict && matchesSearchTerm;
@@ -121,14 +120,6 @@ const ListTypePricing = () => {
         setShowModalTypePricing(false);
     };
 
-    //create type pricing modal
-    const [createTypePricing, setCreateTypePricing] = useState({
-        districtId: '',
-        percentageIncrease: '',
-        basePrice: '', // Single input for base price
-        from: '',
-        to: ''
-    });
 
     const [showModalCreateTypePricing, setShowModalCreateTypePricing] = useState(false);
 
@@ -139,6 +130,7 @@ const ListTypePricing = () => {
 
     const closeModalCreateTypePricing = () => {
         setShowModalCreateTypePricing(false);
+        setTypePricings([]);
     };
 
 
@@ -147,13 +139,8 @@ const ListTypePricing = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [success, setSuccess] = useState({});
 
-    // const handleChange = (e) => {
-    //     const value = e.target.value;
 
-    //     setCreateTypePricing({ ...createTypePricing, [e.target.name]: value });
-    // };
-
-    const handleChange = (e, index, field) => {
+    const handleChange = (e, index) => {
         const newTypePricings = [...typePricings];
 
         const { name, value } = e.target;
@@ -161,18 +148,6 @@ const ListTypePricing = () => {
 
         setTypePricings(newTypePricings);
     };
-
-    const addNewTypePricing = () => {
-        setTypePricings([...typePricings, {
-            districtId: '',
-            percentageIncrease: '',
-            basePrice: '', // Single input for base price
-            from: '',
-            to: ''
-        }]);
-    };
-
-
 
 
     const [cityList, setCityList] = useState([]);
@@ -188,7 +163,7 @@ const ListTypePricing = () => {
             .catch((error) => {
                 console.log(error);
             });
-        
+
 
     }, []);
 
@@ -213,16 +188,26 @@ const ListTypePricing = () => {
     const [typePricings, setTypePricings] = useState([
         {
             percentageIncrease: '',
-            basePrice: '', // Single input for base price
+            basePrice: '',
             from: '',
             to: '',
+            description: '' // Thêm trường description vào đây
         }
     ]);
+
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
 
+    // Add new function to add an empty pricing row
+    const addTypePricing = () => {
+        setTypePricings([...typePricings, { from: '', to: '', basePrice: '', percentageIncrease: '', description: '' }]);
+    };
 
+    const removeTypePricing = (index) => {
+        const newTypePricings = typePricings.filter((_, i) => i !== index);
+        setTypePricings(newTypePricings);
+    };
 
     // Updated form submission to use the new pricing setup
     const submitCreateTypePricing = async (e) => {
@@ -233,66 +218,52 @@ const ListTypePricing = () => {
         setIsSubmitting(true);
         try {
             for (const typePricing of typePricings) {
-                // Function to calculate weekend price based on percentage increase
-                const calculateWeekendPrice = () => {
-                    const basePrice = Number(typePricing.basePrice) || 0;
-                    const percentageIncrease = Number(typePricing.percentageIncrease) || 0;
-                    return basePrice * (1 + percentageIncrease / 100);
+
+                const pricingData = {
+                    price: typePricing.basePrice,
+                    typeId: typeId,
+                    from: typePricing.from,
+                    to: typePricing.to,
+                    percentageIncrease: typePricing.percentageIncrease,
+                    description: typePricing.description
                 };
-                for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
-                    const isWeekend = dayOfWeek >= 6; // Saturday & Sunday
-                    const price = isWeekend ? calculateWeekendPrice() : typePricing.basePrice;
 
-                    const pricingData = {
-                        price: price,
-                        dayOfWeek: dayOfWeek,
-                        typeId: typeId,
-                        from: typePricing.from,
-                        to: typePricing.to,
-                        percentageIncrease: typePricing.percentageIncrease,
-                        description: typePricing.description
-                    };
+                // Add owner info to each hotel object
+                const typePricingWithDistrictInfo = {
+                    ...pricingData,
+                    districtId,
+                };
+                console.log(JSON.stringify(typePricingWithDistrictInfo));
 
-                    // Add owner info to each hotel object
-                    const typePricingWithDistrictInfo = {
-                        ...pricingData,
-                        districtId,
-                    };
-                    console.log(JSON.stringify(typePricingWithDistrictInfo));
+                // Call API to save the pricing
+                // Call API to save the pricing
+                const typePricingResponse = await typePricingService.saveTypePricing(typePricingWithDistrictInfo);
 
-                    // Call API to save the pricing
-                    // Call API to save the pricing
-                    const typePricingResponse = await typePricingService.saveTypePricing(typePricingWithDistrictInfo);
-
-                    if (typePricingResponse.status !== 201) {
-                        handleResponseError(error.response);
-                    }
-
-                    typeService
-                        .getAllTypePricingByTypeId(typeId)
-                        .then((res) => {
-                            // Sorting by districtId and then dayOfWeek
-                            const sortedData = res.data.sort((a, b) => {
-                                // First, sort by districtId
-                                const districtComparison = a.districtId.localeCompare(b.districtId);
-                                if (districtComparison !== 0) {
-                                    return districtComparison;
-                                }
-                                // If districtId is the same, sort by dayOfWeek
-                                return a.dayOfWeek - b.dayOfWeek;
-                            });
-                            setTypePricingList(sortedData);
-                        })
-                        .catch((error) => {
-                            handleResponseError(error.response);
-                        });
-                    // Clear the state for the submitted day to prevent duplicate submission
-                    setCreateTypePricing(prevState => ({
-                        ...prevState,
-                        [`price_${dayOfWeek}`]: "" // Clear the price after submission
-                    }));
+                if (typePricingResponse.status !== 201) {
+                    handleResponseError(error.response);
                 }
+
+                typeService
+                    .getAllTypePricingByTypeId(typeId)
+                    .then((res) => {
+                        // Sorting by districtId and then dayOfWeek
+                        const sortedData = res.data.sort((a, b) => {
+                            // First, sort by districtId
+                            const districtComparison = a.districtId.localeCompare(b.districtId);
+                            if (districtComparison !== 0) {
+                                return districtComparison;
+                            }
+                            // If districtId is the same, sort by dayOfWeek
+                            return a.dayOfWeek - b.dayOfWeek;
+                        });
+                        setTypePricingList(sortedData);
+                    })
+                    .catch((error) => {
+                        handleResponseError(error.response);
+                    });
+
             }
+            setTypePricings([]);
 
 
             // Refresh or clear form after submission
@@ -453,7 +424,6 @@ const ListTypePricing = () => {
                                         <tr>
                                             <th><span>STT</span></th>
                                             <th><span>Loại phòng</span></th>
-                                            <th><span>Ngày trong tuần</span></th>
                                             <th><span>Giá (VND)</span></th>
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
@@ -469,13 +439,12 @@ const ListTypePricing = () => {
                                                     <tr key={item.typePricingId}>
                                                         <td>{index + 1}</td>
                                                         <td>{item.type?.typeName}</td>
-                                                        <td>{daysOfWeek[item.dayOfWeek]}</td>
                                                         <td>{item.price.toLocaleString()} </td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td>{new Date(item.from).toLocaleDateString('en-US')} - {new Date(item.to).toLocaleDateString('en-US')}</td>
                                                         <td>
-                                                           {item.description}
+                                                            {item.description}
                                                         </td>
 
                                                         <td>
@@ -654,15 +623,12 @@ const ListTypePricing = () => {
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                         <h4 className="header-title">Thông Tin</h4>
                                         <div className="row">
+                                            {/* City and District Select */}
                                             <div className="col-md-12">
                                                 <div className="form-row">
-                                                    {/* City Select */}
                                                     <div className="form-group col-md-6">
                                                         <label>Thành phố <span className="text-danger">*</span> :</label>
-                                                        <select name="cityId" className="form-control" onChange={(e) => {
-                                                            // handleChange(e);
-                                                            setSelectedCity(e.target.value);
-                                                        }} required>
+                                                        <select name="cityId" className="form-control" onChange={(e) => setSelectedCity(e.target.value)} required>
                                                             <option value="">Chọn thành phố</option>
                                                             {cityList.map(city => (
                                                                 <option key={city.cityId} value={city.cityId}>{city.cityName}</option>
@@ -670,7 +636,6 @@ const ListTypePricing = () => {
                                                         </select>
                                                     </div>
 
-                                                    {/* District Select */}
                                                     <div className="form-group col-md-6">
                                                         <label>Quận <span className="text-danger">*</span> :</label>
                                                         <select className="form-control" onChange={(e) => setDistrictId(e.target.value)} required>
@@ -682,71 +647,122 @@ const ListTypePricing = () => {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {/* Dynamic Type Pricing Rows */}
                                             {typePricings.map((typePricing, index) => (
-                                                <>
-                                                    <div className="col-md-6">
-                                                        <div className="form-row">
-                                                            {/* From Date */}
-                                                            <div className="form-group col-md-6">
-                                                                <label htmlFor="fromDate">Từ ngày <span className="text-danger">*</span> :</label>
-                                                                <input type="date" className="form-control" name="from" id="from" value={typePricing.from || ''} onChange={(e) => handleChange(e, index)} required />
-                                                            </div>
+                                                <div key={index} className="col-md-12">
+                                                    <div className="form-row mb-3">
+                                                        <div className="form-group col-md-2">
+                                                            <label>
+                                                                Từ ngày <span className="text-danger">*</span> :
+                                                            </label>
+                                                            <input
+                                                                type="date"
+                                                                className="form-control"
+                                                                name="from"
+                                                                value={typePricing.from || ''}
+                                                                onChange={(e) => handleChange(e, index)}
+                                                                required
+                                                            />
+                                                        </div>
 
-                                                            {/* To Date */}
-                                                            <div className="form-group col-md-6">
-                                                                <label htmlFor="toDate">Đến ngày <span className="text-danger">*</span> :</label>
-                                                                <input type="date" className="form-control" name="to" id="to" value={typePricing.to || ''} onChange={(e) => handleChange(e, index)} required />
+                                                        <div className="form-group col-md-2">
+                                                            <label>
+                                                                Đến ngày <span className="text-danger">*</span> :
+                                                            </label>
+                                                            <input
+                                                                type="date"
+                                                                className="form-control"
+                                                                name="to"
+                                                                value={typePricing.to || ''}
+                                                                onChange={(e) => handleChange(e, index)}
+                                                                required
+                                                            />
+                                                        </div>
+
+                                                        <div className="form-group col-md-2">
+                                                            <label>
+                                                                Giá cơ bản <span className="text-danger">*</span> :
+                                                            </label>
+                                                            <div className="input-group">
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    name="basePrice"
+                                                                    value={typePricing.basePrice || ''}
+                                                                    onChange={(e) => handleChange(e, index)}
+                                                                    min={0}
+                                                                    required
+                                                                />
+                                                                <div className="input-group-append">
+                                                                    <span className="input-group-text custom-append">VND</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="form-group col-md-2">
+                                                            <label>
+                                                                Tăng giá cuối tuần (%) <span className="text-danger">*</span> :
+                                                            </label>
+                                                            <div className="input-group">
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    name="percentageIncrease"
+                                                                    value={typePricing.percentageIncrease || ''}
+                                                                    onChange={(e) => handleChange(e, index)}
+                                                                    min={0}
+                                                                    required
+                                                                />
+                                                                <div className="input-group-append">
+                                                                    <span className="input-group-text custom-append">%</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="form-group col-md-2">
+                                                            <label>
+                                                                Mô tả <span className="text-danger">*</span> :
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control"
+                                                                name="description"
+                                                                value={typePricing.description || ''}
+                                                                onChange={(e) => handleChange(e, index)}
+                                                                required
+                                                            />
+                                                        </div>
+
+                                                        {/* Fix for button position */}
+                                                        <div className="form-group col-md-2">
+                                                            <label>&nbsp;</label>
+                                                            <div className="input-group">
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-danger w-100" // Ensure the button takes full width of its container
+                                                                    onClick={() => removeTypePricing(index)}
+                                                                >
+                                                                    Xóa
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="col-md-6">
-                                                        {/* Select fields for city and district */}
-                                                        <div className="form-row">
-                                                            <div className="form-group col-md-12">
-                                                                <label htmlFor="basePrice">Giá cơ bản <span className="text-danger">*</span> :</label>
-                                                                <div className="input-group">
-                                                                    <input type="number" className="form-control" name="basePrice" id="basePrice" value={typePricing.basePrice || ''} onChange={(e) => handleChange(e, index)} min={0} required />
-                                                                    <div className="input-group-append">
-                                                                        <span className="input-group-text custom-append">VND</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            {/* Percentage Increase for Weekend */}
-                                                            <div className="form-group col-md-12">
-                                                                <label htmlFor="percentageIncrease">Tăng giá cuối tuần (%) <span className="text-danger">*</span> :</label>
-                                                                <div className="input-group">
-                                                                    <input type="number" className="form-control" name="percentageIncrease" id="percentageIncrease" value={typePricing.percentageIncrease || ''} onChange={(e) => handleChange(e, index)} min={0} required />
-                                                                    <div className="input-group-append">
-                                                                        <span className="input-group-text custom-append">%</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="form-group col-md-12">
-                                                                <label htmlFor="description">Mô tả <span className="text-danger">*</span> :</label>
-                                                                <input type="text" className="form-control" name="description" id="description" value={typePricing.description || ''} onChange={(e) => handleChange(e, index)}required />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </>
+                                                </div>
                                             ))}
 
                                         </div>
-
-
-
                                     </div>
 
                                     <div className="modal-footer">
-                                        <button type="submit" className="btn btn-custom btn-sm" disabled={isSubmitting} ><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
-                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateTypePricing}>Đóng</button>
+                                        <button type="button" className="btn btn-primary" onClick={addTypePricing}><i className="fa fa-plus"></i> Thêm</button>
+                                        <button type="submit" className="btn btn-custom" disabled={isSubmitting}><i className="fa fa-floppy-o"></i> Lưu</button>
+                                        <button type="button" className="btn btn-dark" onClick={closeModalCreateTypePricing}>Đóng</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
-
                 )
             }
 
@@ -758,8 +774,8 @@ const ListTypePricing = () => {
                 }
 
                 .custom-modal-xl {
-    max-width:60%;
-    width: 60%;
+    max-width:80%;
+    width: 80%;
 }
     .btn-custom{
     background-color: #3498db;
@@ -768,7 +784,7 @@ const ListTypePricing = () => {
 
     .custom-append {
     display: inline-block;
-    width: 80px; /* Adjust this value based on your design needs */
+    width: 50px; /* Adjust this value based on your design needs */
     height: 100%; /* Makes it match the height of the input field */
     text-align: center;
     vertical-align: middle;

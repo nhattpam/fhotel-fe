@@ -725,7 +725,7 @@ const ListTypePricing = () => {
 
                                                             <div className="form-group col-md-12">
                                                                 <label htmlFor="description">Mô tả <span className="text-danger">*</span> :</label>
-                                                                <input type="number" className="form-control" name="description" id="description" value={typePricing.description || ''} onChange={(e) => handleChange(e, index)}required />
+                                                                <input type="text" className="form-control" name="description" id="description" value={typePricing.description || ''} onChange={(e) => handleChange(e, index)}required />
                                                             </div>
                                                         </div>
                                                     </div>

@@ -28,6 +28,7 @@ import RoomStatus from './components/rooms/RoomStatus';
 import ListRoom from './components/rooms/ListRoom';
 import ListStaffCustomer from './components/users/ListStaffCustomer';
 import ListOwnerCustomer from './components/users/ListOwnerCustomer';
+import ListRefund from './components/reservations/ListRefund';
 
 function App() {
   return (
@@ -71,6 +72,8 @@ function App() {
         <Route path="/room-status" element={<RoomStatus />} />
         {/* <Route path="/list-room/:roomTypeId" element={<ListRoom />} /> */}
         <Route path="/list-room/" element={<ListRoom />} />
+        {/* refund */}
+        <Route path="/list-refund/" element={<ListRefund />} />
       </Routes>
     </div>
   );

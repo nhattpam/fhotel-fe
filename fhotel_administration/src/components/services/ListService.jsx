@@ -554,7 +554,7 @@ const ListService = () => {
                                             </table>
                                         </div>
 
-                                        <div className="col-md-7">
+                                        <div className="col-md-7" style={{fontSize: '15px'}}>
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
@@ -562,14 +562,14 @@ const ListService = () => {
                                                         {
                                                             service.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
                                                                 <>
-                                                                    <td >{service.serviceName}</td>
+                                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{service.serviceName}</td>
                                                                 </>
                                                             )
                                                         }
                                                         {
                                                             service.serviceType?.serviceTypeName === "Trả phòng muộn" && (
                                                                 <>
-                                                                    <td>Muộn {service.serviceName} ngày</td>
+                                                                    <td style={{ textAlign: 'left', padding: '5px' }}>Muộn {service.serviceName} ngày</td>
                                                                 </>
                                                             )
                                                         }
@@ -577,15 +577,15 @@ const ListService = () => {
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn giá:</th>
-                                                        <td>{service.price} (VND)</td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{service.price} (VND)</td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
-                                                        <td>{service.description} </td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{service.description} </td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại dịch vụ:</th>
-                                                        <td>{service.serviceType?.serviceTypeName} </td>
+                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{service.serviceType?.serviceTypeName} </td>
                                                     </tr>
                                                 </tbody>
                                             </table>

@@ -52,6 +52,14 @@ class OrderDetailService {
           }
         });
       }
+
+      getAllRefund() {
+        return axios.get(API_URL + "/order-details/refunds", {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
     
 
 

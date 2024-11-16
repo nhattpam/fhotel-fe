@@ -592,12 +592,11 @@ const SideBar = () => {
                                             <span className="nav-label">Dịch vụ</span>
                                         </Link>
                                     </li>
-                                    {/* Billing Section */}
-                                    {/* <li>
-                                        <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
-                                            <span className="nav-label">Hóa đơn</span>
+                                    <li>
+                                        <Link to="/list-refund"><i className="sidebar-item-icon fa fa-money" aria-hidden="true" />
+                                            <span className="nav-label">Hoàn tiền</span>
                                         </Link>
-                                    </li> */}
+                                    </li>
 
                                 </>
                             )

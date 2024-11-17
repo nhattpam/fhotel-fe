@@ -395,7 +395,7 @@ const ListRefund = () => {
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Số tiền cần hoàn:</strong>
-                                        <span>{order.totalAmount.toLocaleString()} VND</span>
+                                        <span>{order.totalAmount} VND</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2">
                                         <strong>Ngày yêu cầu:</strong>
@@ -414,6 +414,10 @@ const ListRefund = () => {
                                         <span>{order.reservation?.code}</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Ngày đặt:</strong>
+                                        <span>{new Date(order.reservation?.createdDate).toLocaleString()}</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Ngày nhận phòng:</strong>
                                         <span>{new Date(order.reservation?.checkInDate).toLocaleDateString()}</span>
                                     </div>
@@ -423,11 +427,11 @@ const ListRefund = () => {
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Số lượng đặt:</strong>
-                                        <span>{order.reservation?.numberOfRooms}</span>
+                                        <span>{order.reservation?.numberOfRooms} phòng</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Tổng số tiền:</strong>
-                                        <span>{order.reservation?.totalAmount.toLocaleString()} VND</span>
+                                        <span>{order.reservation?.totalAmount} VND</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Trạng thái đặt phòng:</strong>

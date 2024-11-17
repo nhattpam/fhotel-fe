@@ -18,6 +18,25 @@ const ListCustomer = () => {
     const [currentUserPage, setCurrentUserPage] = useState(0);
     const [usersPerPage] = useState(10);
 
+    const loginUserId = sessionStorage.getItem('userId');
+    const [loginUser, setLoginUser] = useState({
+        email: "",
+        name: "",
+        image: ""
+    });
+
+    useEffect(() => {
+        if (loginUserId) {
+            userService
+                .getUserById(loginUserId)
+                .then((res) => {
+                    setLoginUser(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [loginUserId]);
 
     useEffect(() => {
         userService
@@ -285,30 +304,37 @@ const ListCustomer = () => {
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openUserModal(item.userId)} /></button>
-                                                            <form
-                                                                id="demo-form"
-                                                                onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
-                                                                className="d-inline"
-                                                            >
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs m-r-5"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Activate"
-                                                                    onClick={() => setUser({ ...user, isActive: true })} // Activate
-                                                                >
-                                                                    <i className="fa fa-check font-14 text-success" />
-                                                                </button>
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Deactivate"
-                                                                    onClick={() => setUser({ ...user, isActive: false })} // Deactivate
-                                                                >
-                                                                    <i className="fa fa-times font-14 text-danger" />
-                                                                </button>
-                                                            </form>
+                                                            {
+                                                                loginUser.role?.roleName === "Admin" && (
+                                                                    <>
+                                                                        <form
+                                                                            id="demo-form"
+                                                                            onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
+                                                                            className="d-inline"
+                                                                        >
+                                                                            <button
+                                                                                type="submit"
+                                                                                className="btn btn-default btn-xs m-r-5"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Activate"
+                                                                                onClick={() => setUser({ ...user, isActive: true })} // Activate
+                                                                            >
+                                                                                <i className="fa fa-check font-14 text-success" />
+                                                                            </button>
+                                                                            <button
+                                                                                type="submit"
+                                                                                className="btn btn-default btn-xs"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Deactivate"
+                                                                                onClick={() => setUser({ ...user, isActive: false })} // Deactivate
+                                                                            >
+                                                                                <i className="fa fa-times font-14 text-danger" />
+                                                                            </button>
+                                                                        </form>
+                                                                    </>
+                                                                )
+                                                            }
+
                                                         </td>
                                                     </tr>
                                                 </>

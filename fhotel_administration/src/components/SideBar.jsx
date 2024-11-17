@@ -597,6 +597,11 @@ const SideBar = () => {
                                             <span className="nav-label">Hoàn tiền</span>
                                         </Link>
                                     </li>
+                                    <li>
+                                        <Link to="/list-customer"><i className="sidebar-item-icon fa fa-users" aria-hidden="true"></i>
+                                            <span className="nav-label">Khách hàng</span>
+                                        </Link>
+                                    </li>
 
                                 </>
                             )

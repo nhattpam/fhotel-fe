@@ -442,7 +442,7 @@ const AdminHome = () => {
               <div className="ibox bg-info color-white widget-stat">
                 <div className="ibox-body">
                   <h2 className="m-b-5 font-strong">{hotelCount}</h2>
-                  <div className="m-b-5">TỐNG SỐ KHÁCH SẠN</div><i className="ti-bar-chart widget-stat-icon" />
+                  <div className="m-b-5">TỔNG SỐ KHÁCH SẠN</div><i className="ti-bar-chart widget-stat-icon" />
                   {/* <div><i className="fa fa-level-up m-r-5" /><small>17% higher</small></div> */}
                 </div>
               </div>
@@ -460,7 +460,7 @@ const AdminHome = () => {
               <div className="ibox bg-danger color-white widget-stat">
                 <div className="ibox-body">
                   <h2 className="m-b-5 font-strong">{userCount}</h2>
-                  <div className="m-b-5">TỐNG SỐ TÀI KHOẢN</div><i className="ti-user widget-stat-icon" />
+                  <div className="m-b-5">TỔNG SỐ TÀI KHOẢN</div><i className="ti-user widget-stat-icon" />
                   {/* <div><i className="fa fa-level-down m-r-5" /><small>-12% Lower</small></div> */}
                 </div>
               </div>

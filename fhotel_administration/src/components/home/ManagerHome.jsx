@@ -27,6 +27,7 @@ const ManagerHome = () => {
   const [reservationCount, setReservationCount] = useState(0);
   const [refundCount, setRefundCount] = useState(0);
   const [hotelCount, setHotelCount] = useState(0);
+  const [customerCount, setCustomerCount] = useState(0);
   const [transactionList, setTransactionList] = useState([]);
   const [feedbackList, setFeedbackList] = useState([]);
 
@@ -83,6 +84,20 @@ const ManagerHome = () => {
       .catch((error) => {
         console.log(error);
       });
+    userService
+      .getAllUser()
+      .then((res) => {
+        // Assuming res.data contains the list of users
+        const userCount = res.data.filter(user => user.role?.roleName === "Customer").length;
+
+        // Set the customer count in the state or display it as needed
+        setCustomerCount(userCount);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+
 
 
   }, [loginUserId]);
@@ -467,6 +482,15 @@ const ManagerHome = () => {
                   <h2 className="m-b-5 font-strong">{refundCount}</h2>
                   <div className="m-b-5">YÊU CẦU HOÀN TIỀN</div><i className="fa fa-money widget-stat-icon" />
                   {/* <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div> */}
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <div className="ibox bg-danger color-white widget-stat">
+                <div className="ibox-body">
+                  <h2 className="m-b-5 font-strong">{customerCount}</h2>
+                  <div className="m-b-5">TỔNG SỐ KHÁCH HÀNG</div><i className="ti-user widget-stat-icon" />
+                  {/* <div><i className="fa fa-level-down m-r-5" /><small>-12% Lower</small></div> */}
                 </div>
               </div>
             </div>

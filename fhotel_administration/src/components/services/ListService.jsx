@@ -441,7 +441,7 @@ const ListService = () => {
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openServiceModal(item.serviceId)} /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openServiceModal(item.serviceId)} /></button>
                                                             <form
                                                                 id="demo-form"
                                                                 onSubmit={(e) => submitUpdateService(e, item.serviceId, updateService.isActive)} // Use isActive from the local state

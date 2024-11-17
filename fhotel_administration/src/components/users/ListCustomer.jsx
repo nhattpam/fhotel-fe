@@ -284,7 +284,7 @@ const ListCustomer = () => {
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openUserModal(item.userId)} /></button>
                                                             <form
                                                                 id="demo-form"
                                                                 onSubmit={(e) => updateUser(e, item.userId, user.isActive)} // Use isActive from the local state
@@ -444,7 +444,7 @@ const ListCustomer = () => {
                                                                         <td>
                                                                             <button className="btn btn-default btn-xs m-r-5"
                                                                                 data-toggle="tooltip" data-original-title="Edit">
-                                                                                <i className="fa fa-pencil font-14"
+                                                                                <i className="fa fa-pencil font-14 text-primary"
                                                                                     onClick={() => openReservationModal(item.reservationId)} /></button>
                                                                         </td>
                                                                     </tr>

@@ -202,7 +202,7 @@ const ListRefund = () => {
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openRefundModal(item.refundId)} /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openRefundModal(item.refundId)} /></button>
                                                             {/* <form
                                                                 id="demo-form"
                                                                 onSubmit={(e) => submitUpdateRefund(e, item.refundId, updateRefund.refundStatus)} // Use isActive from the local state

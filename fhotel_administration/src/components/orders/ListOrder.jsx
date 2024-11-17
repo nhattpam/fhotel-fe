@@ -243,7 +243,7 @@ const ListOrder = () => {
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openOrderModal(item.orderId)} /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openOrderModal(item.orderId)} /></button>
                                                             <form
                                                                 id="demo-form"
                                                                 onSubmit={(e) => submitUpdateOrder(e, item.orderId, updateOrder.orderStatus)} // Use isActive from the local state

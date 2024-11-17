@@ -1543,7 +1543,7 @@ const EditHotel = () => {
                                                     <td>
                                                         <button className="btn btn-default btn-xs m-r-5"
                                                             data-toggle="tooltip" data-original-title="Edit">
-                                                            <i className="fa fa-pencil font-14"
+                                                            <i className="fa fa-pencil font-14 text-primary"
                                                                 onClick={() => openRoomTypeModal(item.roomTypeId)} />
                                                         </button>
                                                         <button className="btn btn-default btn-xs m-r-5"
@@ -2560,7 +2560,7 @@ const EditHotel = () => {
                                                                         </td>
                                                                         <td>
                                                                             <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip"
-                                                                                to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14" /></Link>
+                                                                                to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14 text-primary" /></Link>
                                                                         </td>
                                                                     </tr>
                                                                 </>
@@ -2648,7 +2648,7 @@ const EditHotel = () => {
                                                             <td>
                                                                 <button className="btn btn-default btn-xs m-r-5"
                                                                     data-toggle="tooltip" data-original-title="Edit">
-                                                                    <i className="fa fa-pencil font-14"
+                                                                    <i className="fa fa-pencil font-14 text-primary"
                                                                         onClick={() => openReservationModal(item.reservationId)} /></button>
                                                             </td>
                                                         </tr>

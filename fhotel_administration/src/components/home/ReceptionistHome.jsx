@@ -469,7 +469,7 @@ const ReceptionistHome = () => {
                               <td>
                                 <button className="btn btn-default btn-xs m-r-5"
                                   data-toggle="tooltip" data-original-title="Edit">
-                                  <i className="fa fa-pencil font-14"
+                                  <i className="fa fa-pencil font-14 text-primary"
                                     onClick={() => openReservationModal(item.reservationId)} /></button>
                               </td>
                             </tr>
@@ -507,7 +507,7 @@ const ReceptionistHome = () => {
                                 Mã đặt phòng: <a href="javascript:;" onClick={() => openReservationModal(item.reservationId)}>{item.reservation?.code}</a>
                                 <span className="font-16 float-right"><button className="btn btn-default btn-xs m-r-5"
                                   data-toggle="tooltip" data-original-title="Edit">
-                                  <i className="fa fa-pencil font-14" onClick={() => openOrderModal(item.orderId)} /></button></span>
+                                  <i className="fa fa-pencil font-14 text-primary" onClick={() => openOrderModal(item.orderId)} /></button></span>
                               </div>
                               <div className="font-13">Khách hàng: {item.reservation?.customer?.name}</div>
                             </div>

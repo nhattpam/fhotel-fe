@@ -546,7 +546,7 @@ const ListRoomAttendant = () => {
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14" onClick={() => openUserModal(item.userId)} /></button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openUserModal(item.userId)} /></button>
                                                             <form
                                                                 id="demo-form"
                                                                 onSubmit={(e) => updateUserStatus(e, item.user?.userId, user.isActive)} // Use isActive from the local state

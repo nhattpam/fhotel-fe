@@ -212,13 +212,24 @@ const ListTypePricing = () => {
     // Updated form submission to use the new pricing setup
     const submitCreateTypePricing = async (e) => {
         e.preventDefault();
-
-        // if (!validateForm()) return;
-
+    
+        // Validation function for "from" and "to" times
+        const isValidTimeRange = (from, to) => {
+            return new Date(from) <= new Date(to);
+        };
+    
         setIsSubmitting(true);
+    
         try {
             for (const typePricing of typePricings) {
-
+    
+                // Check if "To" time is after "From" time
+                if (!isValidTimeRange(typePricing.from, typePricing.to)) {
+                    alert("Xem lại khoảng thời gian!");
+                    setIsSubmitting(false);
+                    return; // Exit if validation fails
+                }
+    
                 const pricingData = {
                     price: typePricing.basePrice,
                     typeId: typeId,
@@ -227,52 +238,46 @@ const ListTypePricing = () => {
                     percentageIncrease: typePricing.percentageIncrease,
                     description: typePricing.description
                 };
-
-                // Add owner info to each hotel object
+    
                 const typePricingWithDistrictInfo = {
                     ...pricingData,
                     districtId,
                 };
+    
                 console.log(JSON.stringify(typePricingWithDistrictInfo));
-
-                // Call API to save the pricing
+    
                 // Call API to save the pricing
                 const typePricingResponse = await typePricingService.saveTypePricing(typePricingWithDistrictInfo);
-
+    
                 if (typePricingResponse.status !== 201) {
-                    handleResponseError(error.response);
+                    handleResponseError(typePricingResponse);
                 }
-
+    
+                // Fetch and sort updated type pricing list
                 typeService
                     .getAllTypePricingByTypeId(typeId)
                     .then((res) => {
-                        // Sorting by districtId and then dayOfWeek
                         const sortedData = res.data.sort((a, b) => {
-                            // First, sort by districtId
                             const districtComparison = a.districtId.localeCompare(b.districtId);
-                            if (districtComparison !== 0) {
-                                return districtComparison;
-                            }
-                            // If districtId is the same, sort by dayOfWeek
-                            return a.dayOfWeek - b.dayOfWeek;
+                            return districtComparison !== 0 ? districtComparison : a.dayOfWeek - b.dayOfWeek;
                         });
                         setTypePricingList(sortedData);
                     })
                     .catch((error) => {
                         handleResponseError(error.response);
                     });
-
             }
+    
             setTypePricings([]);
-
-
             // Refresh or clear form after submission
+    
         } catch (error) {
             handleResponseError(error.response);
         } finally {
             setIsSubmitting(false);
         }
     };
+    
 
 
     ///UPDATE TYPE PRICING
@@ -326,6 +331,40 @@ const ListTypePricing = () => {
         }
     };
 
+
+
+    //DELETE TYPE PRICING
+    const deleteTypePricing = (typePricingId) => {
+        if (typePricingId) {
+            typePricingService
+                .deleteTypePricing(typePricingId)
+                .then((res) => {
+                    if (res.status === 200) {
+                        typeService
+                            .getAllTypePricingByTypeId(typeId)
+                            .then((res) => {
+                                // Sorting by districtId and then dayOfWeek
+                                const sortedData = res.data.sort((a, b) => {
+                                    // First, sort by districtId
+                                    const districtComparison = a.districtId.localeCompare(b.districtId);
+                                    if (districtComparison !== 0) {
+                                        return districtComparison;
+                                    }
+                                    // If districtId is the same, sort by dayOfWeek
+                                    return a.dayOfWeek - b.dayOfWeek;
+                                });
+                                setTypePricingList(sortedData);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
 
 
     // Effect to handle error message visibility
@@ -428,6 +467,7 @@ const ListTypePricing = () => {
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
                                             <th><span>Thời gian áp dụng</span></th>
+                                            <th><span>Tăng cuối tuần (%)</span></th>
                                             <th><span>Mô tả</span></th>
                                             <th><span>Hành động</span></th>
                                         </tr>
@@ -444,12 +484,18 @@ const ListTypePricing = () => {
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td>{new Date(item.from).toLocaleDateString('en-US')} - {new Date(item.to).toLocaleDateString('en-US')}</td>
                                                         <td>
+                                                            {item.percentageIncrease}
+                                                        </td>
+                                                        <td>
                                                             {item.description}
                                                         </td>
 
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
-                                                                <i className="fa fa-pencil font-14" onClick={() => openTypePricingModal(item.typePricingId)} />
+                                                                <i className="fa fa-pencil font-14 text-primary" onClick={() => openTypePricingModal(item.typePricingId)} />
+                                                            </button>
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
+                                                                <i className="fa fa-trash font-14 text-danger" onClick={() => deleteTypePricing(item.typePricingId)} />
                                                             </button>
                                                         </td>
                                                     </tr>

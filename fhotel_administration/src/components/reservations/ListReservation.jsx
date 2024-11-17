@@ -248,7 +248,7 @@ const ListReservation = () => {
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5"
                                                                 data-toggle="tooltip" data-original-title="Edit">
-                                                                <i className="fa fa-pencil font-14"
+                                                                <i className="fa fa-pencil font-14 text-primary"
                                                                     onClick={() => openReservationModal(item.reservationId)} /></button>
                                                         </td>
                                                     </tr>

@@ -6,6 +6,7 @@ import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import userService from '../../services/user.service';
 import orderDetailService from '../../services/order-detail.service';
+import orderService from '../../services/order.service';
 
 const ListRefund = () => {
     //LOADING
@@ -27,11 +28,11 @@ const ListRefund = () => {
         orderDetailService
             .getAllRefund()
             .then((res) => {
-                // const sortedRefundList = [...res.data].sort((a, b) => {
-                //     // Assuming requestedDate is a string in ISO 8601 format
-                //     return new Date(b.refundedDate) - new Date(a.refundedDate);
-                // });
-                setRefundList(res.data);
+                const sortedRefundList = [...res.data].sort((a, b) => {
+                    // Assuming requestedDate is a string in ISO 8601 format
+                    return new Date(b.orderedDate) - new Date(a.orderedDate);
+                });
+                setRefundList(sortedRefundList);
                 setLoading(false);
             })
             .catch((error) => {
@@ -48,7 +49,7 @@ const ListRefund = () => {
     const filteredRefunds = refundList
         .filter((orderDetail) => {
             return (
-                orderDetail.order?.reservation?.code.toString().toLowerCase().includes(refundSearchTerm.toLowerCase()) 
+                orderDetail.order?.reservation?.code.toString().toLowerCase().includes(refundSearchTerm.toLowerCase())
             );
         });
 
@@ -66,17 +67,18 @@ const ListRefund = () => {
     //detail orderDetail modal 
     const [showModalRefund, setShowModalRefund] = useState(false);
 
-    
-    const [orderDetail, setOrderDetail] = useState();
+    const [order, setOrder] = useState({
+
+    });
 
 
-    const openRefundModal = (refundId) => {
+    const openRefundModal = (orderId) => {
         setShowModalRefund(true);
-        if (refundId) {
-            orderDetailService
-                .getOrderDetailById(refundId)
+        if (orderId) {
+            orderService
+                .getOrderById(orderId)
                 .then((res) => {
-                    setOrderDetail(res.data);
+                    setOrder(res.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -88,9 +90,74 @@ const ListRefund = () => {
         setShowModalRefund(false);
     };
 
-  
 
-    
+    //update order
+    const [updateOrder, setUpdateOrder] = useState({
+
+    });
+
+    //update hotel status
+    const submitUpdateOrder = async (e, orderId, orderStatus) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the user data
+            const res = await orderService.getOrderById(orderId);
+            const orderData = res.data;
+
+            // Update the local state with the fetched data and new isActive flag
+            setUpdateOrder({ ...orderData, orderStatus });
+
+            // Make the update request
+            const updateRes = await orderService.updateOrder(orderId, { ...orderData, orderStatus });
+            console.log(updateRes)
+            if (updateRes.status === 200) {
+                orderDetailService
+                    .getAllRefund()
+                    .then((res) => {
+                        const sortedRefundList = [...res.data].sort((a, b) => {
+                            // Assuming requestedDate is a string in ISO 8601 format
+                            return new Date(b.orderedDate) - new Date(a.orderedDate);
+                        });
+                        setRefundList(sortedRefundList);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                handleResponseError(error.response);
+            }
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+    const handleAcceptRefund = async (orderId) => {
+
+        try {
+            const updateRes = await orderService.acceptRefund(orderId);
+            console.log(updateRes)
+            if (updateRes.status === 201) {
+                orderDetailService
+                    .getAllRefund()
+                    .then((res) => {
+                        const sortedRefundList = [...res.data].sort((a, b) => {
+                            // Assuming requestedDate is a string in ISO 8601 format
+                            return new Date(b.orderedDate) - new Date(a.orderedDate);
+                        });
+                        setRefundList(sortedRefundList);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                handleResponseError(error.response);
+            }
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
 
     /// notification
     const [success, setSuccess] = useState({}); // State to hold error messages
@@ -202,31 +269,33 @@ const ListRefund = () => {
                                                             )}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openRefundModal(item.refundId)} /></button>
-                                                            {/* <form
+                                                            <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
+                                                                <i className="fa fa-pencil font-14 text-primary" onClick={() => openRefundModal(item.orderId)} /></button>
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-default btn-xs m-r-5"
+                                                                data-toggle="tooltip"
+                                                                data-original-title="Activate"
+                                                                onClick={() => handleAcceptRefund(item.orderId)} // Activate
+                                                            >
+                                                                <i className="fa fa-check font-14 text-success" />
+                                                            </button>
+                                                            <form
                                                                 id="demo-form"
-                                                                onSubmit={(e) => submitUpdateRefund(e, item.refundId, updateRefund.refundStatus)} // Use isActive from the local state
+                                                                onSubmit={(e) => submitUpdateOrder(e, item.orderId, updateOrder.orderStatus)} // Use isActive from the local state
                                                                 className="d-inline"
                                                             >
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs m-r-5"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Activate"
-                                                                    onClick={() => setUpdateRefund({ ...updateRefund, refundStatus: "Confirmed" })} // Activate
-                                                                >
-                                                                    <i className="fa fa-check font-14 text-success" />
-                                                                </button>
+
                                                                 <button
                                                                     type="submit"
                                                                     className="btn btn-default btn-xs"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="Deactivate"
-                                                                    onClick={() => setUpdateRefund({ ...updateRefund, refundStatus: "Cancelled" })} // Deactivate
+                                                                    onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Cancelled" })} // Deactivate
                                                                 >
                                                                     <i className="fa fa-times font-14 text-danger" />
                                                                 </button>
-                                                            </form> */}
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                 </>
@@ -285,32 +354,112 @@ const ListRefund = () => {
             </div>
 
             {showModalRefund && (
-                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                <div
+                    className="modal"
+                    tabIndex="-1"
+                    role="dialog"
+                    style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
+                >
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
+                            {/* Modal Header */}
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Chi Tiết</h5>
+                                <button
+                                    type="button"
+                                    className="close text-light"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                    onClick={closeModalRefund}
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
 
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Yêu Cầu</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRefund}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: 'left' }}>
-                                    
-                                </div>
+                            {/* Modal Body */}
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                {/* Order Information Section */}
+                                <section className="order-info mb-4">
+                                    <h5 className="text-primary">Thông Tin Yêu Cầu</h5>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Trạng thái:</strong>
+                                        {order.orderStatus === "Pending" && (
+                                            <span className="badge label-table badge-warning">Đang chờ</span>
+                                        )}
+                                        {order.orderStatus === "Confirmed" && (
+                                            <span className="badge label-table badge-success">Xác nhận</span>
+                                        )}
+                                        {order.orderStatus === "Cancelled" && (
+                                            <span className="badge label-table badge-danger">Đã hủy</span>
+                                        )}
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Số tiền cần hoàn:</strong>
+                                        <span>{order.totalAmount.toLocaleString()} VND</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2">
+                                        <strong>Ngày yêu cầu:</strong>
+                                        <span>{new Date(order.orderedDate).toLocaleString()}</span>
+                                    </div>
+                                </section>
+
+                                {/* Divider */}
+                                <hr />
+
+                                {/* Reservation Information Section */}
+                                <section className="reservation-info">
+                                    <h5 className="text-primary">Thông Tin Đặt Phòng</h5>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Mã số:</strong>
+                                        <span>{order.reservation?.code}</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Ngày nhận phòng:</strong>
+                                        <span>{new Date(order.reservation?.checkInDate).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Ngày trả phòng:</strong>
+                                        <span>{new Date(order.reservation?.checkOutDate).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Số lượng đặt:</strong>
+                                        <span>{order.reservation?.numberOfRooms}</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Tổng số tiền:</strong>
+                                        <span>{order.reservation?.totalAmount.toLocaleString()} VND</span>
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2 border-bottom">
+                                        <strong>Trạng thái đặt phòng:</strong>
+                                        {order.reservation?.reservationStatus === "Pending" && (
+                                            <span className="badge label-table badge-warning">Đang chờ</span>
+                                        )}
+                                        {order.reservation?.reservationStatus === "Confirmed" && (
+                                            <span className="badge label-table badge-success">Xác nhận</span>
+                                        )}
+                                        {order.reservation?.reservationStatus=== "Cancelled" && (
+                                            <span className="badge label-table badge-danger">Đã hủy</span>
+                                        )}
+                                    </div>
+                                    <div className="d-flex justify-content-between py-2">
+                                        <strong>Thanh toán:</strong>
+                                        <span>{order.reservation?.isPrePaid ? 'Đã trả trước' : 'Chưa thanh toán'}</span>
+                                    </div>
+                                </section>
+                            </div>
 
 
-                                <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRefund} >Đóng</button>
-                                </div>
-                            </form>
-
+                            {/* Modal Footer */}
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRefund}>
+                                    Đóng
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             )}
+
             <style>
                 {`
                     .page-item.active .page-link{

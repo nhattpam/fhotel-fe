@@ -8,6 +8,7 @@ import reservationService from "../../services/reservation.service";
 import { Link } from "react-router-dom";
 import hotelService from "../../services/hotel.service";
 import walletService from "../../services/wallet.service";
+import feedbackService from "../../services/feedback.service";
 
 const AdminHome = () => {
   const loginUserId = sessionStorage.getItem('userId');
@@ -26,6 +27,7 @@ const AdminHome = () => {
   const [userCount, setUserCount] = useState(0);
   const [hotelCount, setHotelCount] = useState(0);
   const [transactionList, setTransactionList] = useState([]);
+  const [feedbackList, setFeedbackList] = useState([]);
 
   useEffect(() => {
     reservationService
@@ -75,6 +77,14 @@ const AdminHome = () => {
           .catch((error) => {
             console.log(error);
           });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    feedbackService
+      .getAllFeedback()
+      .then((res) => {
+        setFeedbackList(res.data);
       })
       .catch((error) => {
         console.log(error);
@@ -511,12 +521,12 @@ const AdminHome = () => {
                 <div className="ibox-head">
                   <div className="ibox-title">Danh sách đặt phòng</div>
                   <div className="ibox-tools">
-                    <a className="ibox-collapse"><i className="fa fa-minus" /></a>
+                    {/* <a className="ibox-collapse"><i className="fa fa-minus" /></a>
                     <a className="dropdown-toggle" data-toggle="dropdown"><i className="fa fa-ellipsis-v" /></a>
                     <div className="dropdown-menu dropdown-menu-right">
                       <a className="dropdown-item">option 1</a>
                       <a className="dropdown-item">option 2</a>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="ibox-body">
@@ -585,63 +595,40 @@ const AdminHome = () => {
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Best Sellers</div>
+                  <div className="ibox-title">Đánh giá gần đây</div>
                 </div>
                 <div className="ibox-body">
-                  <ul className="media-list media-list-divider m-0">
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">Samsung</a>
-                          <span className="font-16 float-right">1200</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">iPhone</a>
-                          <span className="font-16 float-right">1150</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">iMac</a>
-                          <span className="font-16 float-right">800</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                    <li className="media">
-                      <a className="media-img" href="javascript:;">
-                        <img src="./assets/img/image.jpg" width="50px;" />
-                      </a>
-                      <div className="media-body">
-                        <div className="media-heading">
-                          <a href="javascript:;">apple Watch</a>
-                          <span className="font-16 float-right">705</span>
-                        </div>
-                        <div className="font-13">Lorem Ipsum is simply dummy text.</div>
-                      </div>
-                    </li>
-                  </ul>
+                  {
+                    feedbackList.length > 0 && feedbackList.map((item, index) => (
+                      <>
+                        <ul className="media-list media-list-divider m-0">
+                          <li className="media">
+                            <a className="media-img" href="javascript:;">
+                              <img src={item.reservation?.customer?.image} width="50px;" height={"60px"} />
+                            </a>
+                            <div className="media-body">
+                              <div className="media-heading">
+                                <a href="javascript:;">{item.reservation?.customer?.name}</a>
+                                <span className="font-16 float-right">{item.hotelRating} <i className="fa fa-star text-warning" aria-hidden="true"></i></span>
+                              </div>
+                              <span className="font-16 float-right">{item.reservation?.roomType?.hotel?.hotelName}</span>
+                              <div className="font-13">{item.comment}</div>
+                            </div>
+                          </li>
+                        </ul>
+                      </>
+                    )
+                    )}
+                  {
+                    feedbackList.length === 0 && (
+                      <>
+                        <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                      </>
+                    )
+                  }
+
                 </div>
-                <div className="ibox-footer text-center">
-                  <a href="javascript:;">View All Products</a>
-                </div>
+
               </div>
             </div>
           </div>

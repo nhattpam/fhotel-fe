@@ -92,7 +92,6 @@ const HotelManagerHome = () => {
       .getAllFeedbackByOwner(loginUserId)
       .then((res) => {
         setFeedbackList(res.data);
-        console.log("SO LUONG: " + feedbackList.length)
       })
       .catch((error) => {
         console.log(error);
@@ -509,12 +508,12 @@ const HotelManagerHome = () => {
                 <div className="ibox-head">
                   <div className="ibox-title">Danh sách đặt phòng</div>
                   <div className="ibox-tools">
-                    <a className="ibox-collapse"><i className="fa fa-minus" /></a>
+                    {/* <a className="ibox-collapse"><i className="fa fa-minus" /></a>
                     <a className="dropdown-toggle" data-toggle="dropdown"><i className="fa fa-ellipsis-v" /></a>
                     <div className="dropdown-menu dropdown-menu-right">
                       <a className="dropdown-item">option 1</a>
                       <a className="dropdown-item">option 2</a>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="ibox-body">

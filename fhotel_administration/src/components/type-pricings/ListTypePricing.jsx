@@ -268,7 +268,7 @@ const ListTypePricing = () => {
                     });
             }
     
-            setTypePricings([]);
+            // setTypePricings([]);
             // Refresh or clear form after submission
     
         } catch (error) {

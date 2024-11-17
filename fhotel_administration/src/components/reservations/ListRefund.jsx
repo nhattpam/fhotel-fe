@@ -271,31 +271,65 @@ const ListRefund = () => {
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit">
                                                                 <i className="fa fa-pencil font-14 text-primary" onClick={() => openRefundModal(item.orderId)} /></button>
-                                                            <button
-                                                                type="submit"
-                                                                className="btn btn-default btn-xs m-r-5"
-                                                                data-toggle="tooltip"
-                                                                data-original-title="Activate"
-                                                                onClick={() => handleAcceptRefund(item.orderId)} // Activate
-                                                            >
-                                                                <i className="fa fa-check font-14 text-success" />
-                                                            </button>
-                                                            <form
-                                                                id="demo-form"
-                                                                onSubmit={(e) => submitUpdateOrder(e, item.orderId, updateOrder.orderStatus)} // Use isActive from the local state
-                                                                className="d-inline"
-                                                            >
+                                                            {
+                                                                item.order?.orderStatus === "Pending" && (
+                                                                    <>
+                                                                        <button
+                                                                            type="submit"
+                                                                            className="btn btn-default btn-xs m-r-5"
+                                                                            data-toggle="tooltip"
+                                                                            data-original-title="Activate"
+                                                                            onClick={() => handleAcceptRefund(item.orderId)} // Activate
+                                                                        >
+                                                                            <i className="fa fa-check font-14 text-success" />
+                                                                        </button>
+                                                                        <form
+                                                                            id="demo-form"
+                                                                            onSubmit={(e) => submitUpdateOrder(e, item.orderId, updateOrder.orderStatus)} // Use isActive from the local state
+                                                                            className="d-inline"
+                                                                        >
 
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Deactivate"
-                                                                    onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Cancelled" })} // Deactivate
-                                                                >
-                                                                    <i className="fa fa-times font-14 text-danger" />
-                                                                </button>
-                                                            </form>
+                                                                            <button
+                                                                                type="submit"
+                                                                                className="btn btn-default btn-xs"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Deactivate"
+                                                                                onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Cancelled" })} // Deactivate
+                                                                            >
+                                                                                <i className="fa fa-times font-14 text-danger" />
+                                                                            </button>
+                                                                        </form>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                item.order?.orderStatus !== "Pending" && (
+                                                                    <>
+                                                                        <button
+                                                                            type="submit"
+                                                                            className="btn btn-default btn-xs m-r-5"
+                                                                            data-toggle="tooltip"
+                                                                            data-original-title="Activate"
+                                                                            disabled
+                                                                        >
+                                                                            <i className="fa fa-check font-14 text-success" />
+                                                                        </button>
+
+
+                                                                        <button
+                                                                            type="submit"
+                                                                            className="btn btn-default btn-xs"
+                                                                            data-toggle="tooltip"
+                                                                            data-original-title="Deactivate"
+                                                                            disabled
+                                                                        >
+                                                                            <i className="fa fa-times font-14 text-danger" />
+                                                                        </button>
+                                                                    </>
+                                                                )
+                                                            }
+
+
                                                         </td>
                                                     </tr>
                                                 </>
@@ -441,7 +475,7 @@ const ListRefund = () => {
                                         {order.reservation?.reservationStatus === "Confirmed" && (
                                             <span className="badge label-table badge-success">Xác nhận</span>
                                         )}
-                                        {order.reservation?.reservationStatus=== "Cancelled" && (
+                                        {order.reservation?.reservationStatus === "Cancelled" && (
                                             <span className="badge label-table badge-danger">Đã hủy</span>
                                         )}
                                     </div>

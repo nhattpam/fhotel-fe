@@ -1156,7 +1156,7 @@ const CheckInOut = () => {
                                         </div>
 
 
-                                        <div className="col-md-7" style={{fontSize: '15px'}}>
+                                        <div className="col-md-7" style={{ fontSize: '15px' }}>
                                             <table className="table table-responsive table-hover mt-3">
                                                 <tbody>
                                                     <tr>
@@ -1379,6 +1379,8 @@ const CheckInOut = () => {
                                         </div>
                                         <div className="col-md-4" style={{ textAlign: 'left' }}>
                                             <h5>Thông Tin Phòng</h5>
+                                            <p className="mb-1"><strong className='mr-2'> Ngày nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                            <p className="mb-1"><strong className='mr-2'> Ngày trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                             <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}
                                                 <button className="btn btn-default btn-xs m-l-5 text-primary"
                                                     data-toggle="tooltip" data-original-title="Edit">

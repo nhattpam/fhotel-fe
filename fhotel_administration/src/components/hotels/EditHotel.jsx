@@ -736,7 +736,7 @@ const EditHotel = () => {
         try {
             // Call the API to delete the image by roomImageId
             const roomFacilityResponse = await roomFacilityService.deleteRoomFacilityById(roomFacilityId);
-            if(roomFacilityResponse.status === 200){
+            if (roomFacilityResponse.status === 200) {
                 setRoomFacilities(prevList => prevList.filter(item => item.roomFacilityId !== roomFacilityId));
             }
             // After successful deletion, remove the image from the imageList
@@ -1801,7 +1801,7 @@ const EditHotel = () => {
                                     </div>
 
 
-                                    <div className="col-md-7" style={{fontSize: '15px'}}>
+                                    <div className="col-md-7" style={{ fontSize: '15px' }}>
                                         <table className="table table-responsive table-hover mt-3">
                                             <tbody>
                                                 <tr>
@@ -1829,10 +1829,10 @@ const EditHotel = () => {
                                                             whiteSpace: 'pre-wrap',
                                                             maxWidth: '300px', // Adjust width as needed
                                                             textAlign: 'left',
-                                                             padding: '5px' 
+                                                            padding: '5px'
                                                         }}
                                                         className="wordwrap"
-                                                        
+
                                                     ></td>
                                                 </tr>
 
@@ -2740,6 +2740,8 @@ const EditHotel = () => {
                                         </div>
                                         <div className="col-md-4" style={{ textAlign: 'left' }}>
                                             <h5>Thông Tin Phòng</h5>
+                                            <p className="mb-1"><strong className='mr-2'> Ngày nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                            <p className="mb-1"><strong className='mr-2'> Ngày trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                             <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
                                             <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
                                             <div className="room-list">

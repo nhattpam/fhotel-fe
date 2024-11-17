@@ -534,6 +534,8 @@ const ListCustomer = () => {
                                             </div>
                                             <div className="col-md-4" style={{ textAlign: 'left' }}>
                                                 <h5>Thông Tin Phòng</h5>
+                                                <p className="mb-1"><strong className='mr-2'> Ngày nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                                <p className="mb-1"><strong className='mr-2'> Ngày trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                                 <p className="mb-1"><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
                                                 <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
                                                 <div className="room-list">

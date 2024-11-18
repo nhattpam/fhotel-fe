@@ -173,7 +173,7 @@ const ListRoom = () => {
                                                 {room.status === 'Occupied' && occupiedRoom && (
                                                     <div>
                                                         <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
-                                                        <p>Khách: {occupiedRoom.reservation.customer.name}</p>
+                                                        <p>Khách: {occupiedRoom.reservation?.customer?.name}</p>
                                                     </div>
                                                 )}
                                                 {room.status === 'Maintenance' && (

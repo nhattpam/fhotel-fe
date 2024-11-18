@@ -560,11 +560,11 @@ const SideBar = () => {
                                     </li>
 
                                     {/* Billing Section */}
-                                    {/* <li>
-                                        <Link to="/billing"><i className="sidebar-item-icon fa fa-money" />
-                                            <span className="nav-label">Hóa đơn</span>
+                                    <li>
+                                        <Link to="/list-hotel-room"><i className="sidebar-item-icon fa fa-money" />
+                                            <span className="nav-label">Quản lý phòng</span>
                                         </Link>
-                                    </li> */}
+                                    </li>
 
                                 </>
                             )

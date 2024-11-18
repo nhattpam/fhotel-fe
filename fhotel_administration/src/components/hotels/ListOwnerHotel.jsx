@@ -609,9 +609,9 @@ const ListOwnerHotel = () => {
                         <div className="modal-content">
                             <form>
 
-                                <div className="modal-header">
+                                <div className="modal-header bg-dark text-light">
                                     <h5 className="modal-title">Hình Ảnh</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>

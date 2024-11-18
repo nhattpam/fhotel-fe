@@ -1738,42 +1738,50 @@ const CheckInOut = () => {
                             </div>
 
 
-                            <div className="modal-footer">
-                                {loginUser.role?.roleName === "Receptionist" && (
-                                    <button
-                                        type="button"
-                                        className="btn btn-danger"
-                                        onClick={() => handlePay(reservation.reservationId, totalAmount)}
-                                        disabled={loading} // Disable the button while loading
-                                    >
-                                        {loading ? (
-                                            <span>
-                                                <i className="fa fa-spinner fa-spin"></i>&nbsp;Đang xử lý
-                                            </span>
-                                        ) : (
-                                            <span>
-                                                <i className="fa fa-money" aria-hidden="true"></i>&nbsp;Thanh Toán
-                                            </span>
-                                        )}
-                                    </button>
-                                )}
+                            {
+                                reservation.reservationStatus === "CheckIn" && (
+                                    <>
+                                        <div className="modal-footer">
+                                            {loginUser.role?.roleName === "Receptionist" && (
+                                                
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-danger"
+                                                    onClick={() => handlePay(reservation.reservationId, totalAmount)}
+                                                    disabled={loading} // Disable the button while loading
+                                                >
+                                                    {loading ? (
+                                                        <span>
+                                                            <i className="fa fa-spinner fa-spin"></i>&nbsp;Đang xử lý
+                                                        </span>
+                                                    ) : (
+                                                        <span>
+                                                            <i className="fa fa-money" aria-hidden="true"></i>&nbsp;Thanh Toán
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            )}
 
-                                {loginUser.role?.roleName === "Receptionist" && (
-                                    <form
-                                        id="demo-form"
-                                        onSubmit={(e) => submitUpdateReservationStatus(e, reservation.reservationId, updateReservationStatus.reservationStatus)}
-                                        className="d-inline"
-                                    >
-                                        <button
-                                            type="submit"
-                                            className="btn btn-primary"
-                                            onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
-                                        >
-                                            <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả Phòng
-                                        </button>
-                                    </form>
-                                )}
-                            </div>
+                                            {loginUser.role?.roleName === "Receptionist" && (
+                                                <form
+                                                    id="demo-form"
+                                                    onSubmit={(e) => submitUpdateReservationStatus(e, reservation.reservationId, updateReservationStatus.reservationStatus)}
+                                                    className="d-inline"
+                                                >
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-primary"
+                                                        onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
+                                                    >
+                                                        <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả Phòng
+                                                    </button>
+                                                </form>
+                                            )}
+                                        </div>
+                                    </>
+                                )
+                            }
+
 
                         </div>
                     </div>

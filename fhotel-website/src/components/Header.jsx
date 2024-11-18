@@ -548,9 +548,6 @@ const Header = () => {
                                     <p><strong>7. Báo Cáo Doanh Thu:</strong> Chủ khách sạn có thể xem báo cáo chi tiết theo tháng và năm.</p>
                                 </div>
 
-
-
-
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-dark btn-sm" onClick={(e) => setShowPolicyModal(false)}>Đóng</button>

@@ -54,7 +54,7 @@ const PaymentCallBack = () => {
                 const matchingReservation = reservationList.find(reservation => reservation.reservationId === orderId);
 
                 if (matchingReservation) {
-                    const updatedReservation = { ...matchingReservation, paymentStatus: "Paid" };
+                    const updatedReservation = { ...matchingReservation, paymentStatus: "Paid", isPrePaid: true };
                     reservationService.updateReservation(orderId, updatedReservation)
                         .then((updateResponse) => {
                             if (updateResponse.status === 200) {

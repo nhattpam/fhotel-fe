@@ -113,7 +113,7 @@ const ListStaffCustomer = () => {
                     console.log(error);
                 });
             userService
-                .getAllReservationByCustomer(userId)
+                .getAllCustomerStaffReservation(userId, loginUserId)
                 .then((res) => {
                     const sortedReservationList = [...res.data].sort((a, b) => {
                         // Assuming requestedDate is a string in ISO 8601 format

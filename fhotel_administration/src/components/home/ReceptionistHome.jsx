@@ -277,7 +277,7 @@ const ReceptionistHome = () => {
       chartRef.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Available', 'Occupied', 'Maintenance'],
+          labels: ['Còn trống', 'Không có sẵn', 'Bảo trì'],
           datasets: [
             {
               data: [availableCount, occupiedCount, maintenanceCount],

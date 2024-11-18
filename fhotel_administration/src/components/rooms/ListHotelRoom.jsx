@@ -314,7 +314,7 @@ const ListHotelRoom = () => {
                                                                 history.roomId === room.roomId &&
                                                                 history.checkInDate &&
                                                                 !history.checkOutDate &&
-                                                                history.reservation?.reservationStatus === 'CheckIn'
+                                                                history.reservation?.reservationStatus === 'CheckIn' || history.reservation?.reservationStatus === 'CheckOut'
                                                         );
 
                                                         return (

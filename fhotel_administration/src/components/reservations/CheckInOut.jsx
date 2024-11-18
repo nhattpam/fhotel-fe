@@ -569,7 +569,7 @@ const CheckInOut = () => {
     const [loading, setLoading] = useState(false);
 
     const totalAmount = orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-        + (reservation.paymentStatus === "Not Paid" ? reservation.totalAmount : 0);
+        + (reservation.isPrePaid === false ? reservation.totalAmount : 0);
 
     const handlePay = async (reservationId, totalAmount) => {
         const createBill = {
@@ -990,6 +990,20 @@ const CheckInOut = () => {
                                                             <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
                                                             <p><strong className='mr-2'>Số lượng đặt:</strong> {reservation.numberOfRooms} phòng</p>
                                                             <p><strong className='mr-2'>Tổng số tiền:</strong> {reservation.totalAmount} (VND)</p>
+                                                            <p>
+                                                                <strong className='mr-2'>Trạng thái đặt phòng:</strong>
+                                                                {reservation.reservationStatus === "CheckIn" ? (
+                                                                    <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                                                ) : reservation.reservationStatus === "Cancelled" ? (
+                                                                    <span className="badge label-table badge-danger">Đã hủy</span>
+                                                                ) : reservation.reservationStatus === "Pending" ? (
+                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
+                                                                ) : reservation.reservationStatus === "CheckOut" ? (
+                                                                    <span className="badge label-table badge-danger">Đã trả phòng</span>
+                                                                ) : (
+                                                                    <span className="badge label-table badge-warning">Unknown Status</span>
+                                                                )}
+                                                            </p>
                                                             <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
                                                                 {
                                                                     reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
@@ -1024,29 +1038,7 @@ const CheckInOut = () => {
                                                                 }
 
                                                             </p>
-                                                            <p>
-                                                                <strong className='mr-2'>Trạng thái đặt phòng:</strong>
-                                                                {reservation.reservationStatus === "CheckIn" ? (
-                                                                    <span className="badge label-table badge-success">Đã nhận phòng</span>
-                                                                ) : reservation.reservationStatus === "Cancelled" ? (
-                                                                    <span className="badge label-table badge-danger">Đã hủy</span>
-                                                                ) : reservation.reservationStatus === "Pending" ? (
-                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
-                                                                ) : reservation.reservationStatus === "CheckOut" ? (
-                                                                    <span className="badge label-table badge-danger">Đã trả phòng</span>
-                                                                ) : (
-                                                                    <span className="badge label-table badge-warning">Unknown Status</span>
-                                                                )}
-                                                            </p>
-                                                            {/* <p><strong className='mr-2'>Ngày thực tế nhận phòng:</strong> {reservation.actualCheckInTime
-                                                                ? new Date(reservation.actualCheckInTime).toLocaleString('en-US')
-                                                                : "Chưa có"}</p>
-                                                            <p>
-                                                                <strong className='mr-2'>Ngày thực tế trả phòng:</strong>
-                                                                {reservation.actualCheckOutDate
-                                                                    ? new Date(reservation.actualCheckOutDate).toLocaleString('en-US')
-                                                                    : "Chưa có"}
-                                                            </p> */}
+                                                            
                                                             <p><strong className='mr-2'>Khách sạn:</strong> {reservation.roomType?.hotel?.hotelName}</p>
                                                             <p><strong className='mr-2'>Ngày đặt:</strong> {new Date(reservation.createdDate).toLocaleString('en-US')}</p>
 
@@ -1743,12 +1735,11 @@ const CheckInOut = () => {
                                     <>
                                         <div className="modal-footer">
                                             {loginUser.role?.roleName === "Receptionist" && (
-                                                
                                                 <button
                                                     type="button"
                                                     className="btn btn-danger"
                                                     onClick={() => handlePay(reservation.reservationId, totalAmount)}
-                                                    disabled={loading} // Disable the button while loading
+                                                    disabled={loading || reservation.paymentStatus === "Paid"} // Disable if loading or payment is already "Paid"
                                                 >
                                                     {loading ? (
                                                         <span>
@@ -1761,6 +1752,7 @@ const CheckInOut = () => {
                                                     )}
                                                 </button>
                                             )}
+
 
                                             {loginUser.role?.roleName === "Receptionist" && (
                                                 <form

@@ -402,111 +402,107 @@ const ListHotelRoom = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Thông Tin Khách Sạn</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                        <table className="table table-responsive table-hover mt-3">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Hình ảnh:</th>
+                                                    <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                        {
+                                                            hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
+                                                                <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                    <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }}
+                                                                        onClick={() => handleImageLargerClick(item.image)}
+                                                                    />
 
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Khách Sạn</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-5">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <tbody>
-                                                    <tr>
-                                                        <th>Hình ảnh:</th>
-                                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
-                                                            {
-                                                                hotelImageList.length > 0 ? hotelImageList.map((item, index) => (
-                                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }}
-                                                                            onClick={() => handleImageLargerClick(item.image)}
-                                                                        />
-
+                                                                </div>
+                                                            ))
+                                                                : (
+                                                                    <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                        Không Tìm Thấy.
                                                                     </div>
-                                                                ))
-                                                                    : (
-                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                            Không Tìm Thấy.
-                                                                        </div>
-                                                                    )
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Giấy tờ khách sạn:</th>
-                                                        <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
-                                                            {
-                                                                hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
-                                                                    <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
-                                                                        <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }}
-                                                                            onClick={() => handleImageLargerClick(item.image)}
-                                                                        />
+                                                                )
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Giấy tờ khách sạn:</th>
+                                                    <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                        {
+                                                            hotelDocumentList.length > 0 ? hotelDocumentList.map((item, index) => (
+                                                                <div key={index} style={{ position: 'relative', textAlign: 'center', flex: '0 1 auto', margin: '5px' }}>
+                                                                    <img src={item.image} alt="amenity" style={{ width: "150px", margin: '0 5px' }}
+                                                                        onClick={() => handleImageLargerClick(item.image)}
+                                                                    />
 
+                                                                </div>
+                                                            ))
+                                                                : (
+                                                                    <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
+                                                                        Không Tìm Thấy.
                                                                     </div>
-                                                                ))
-                                                                    : (
-                                                                        <div style={{ textAlign: 'center', fontSize: '16px', color: 'gray' }}>
-                                                                            Không Tìm Thấy.
-                                                                        </div>
-                                                                    )
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                        </div>
-
-                                        <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3" style={{ fontSize: '20px' }}>
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.hotelName}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.phone ? hotel.phone : 'Không tìm thấy'}</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Quận:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Không tìm thấy'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Không tìm thấy'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.address ? hotel.address : 'Không tìm thấy'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.ownerName ? hotel.ownerName : 'Không tìm thấy'}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                        </div>
+                                                                )
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 
                                     </div>
 
+                                    <div className="col-md-7">
+                                        <table className="table table-responsive table-hover mt-3" style={{ fontSize: '20px' }}>
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.hotelName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotel.email}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.phone ? hotel.phone : 'Không tìm thấy'}</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Quận:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.districtName ? hotel.district?.districtName : 'Không tìm thấy'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.district?.city?.cityName ? hotel.district?.city?.cityName : 'Không tìm thấy'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.address ? hotel.address : 'Không tìm thấy'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotel && hotel.ownerName ? hotel.ownerName : 'Không tìm thấy'}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
 
                                 </div>
-                                <div className="modal-footer">
-                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
-                                </div>
-                            </form>
 
+
+                            </div>
+                            <div className="modal-footer">
+                                <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -516,24 +512,20 @@ const ListHotelRoom = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Hình Ảnh</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Hình Ảnh</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={handleCloseImageLargeModal}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    {selectedImageLarger && <img src={selectedImageLarger} alt="Large preview" style={{ width: '100%' }} />}
                                 </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        {selectedImageLarger && <img src={selectedImageLarger} alt="Large preview" style={{ width: '100%' }} />}
-                                    </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={handleCloseImageLargeModal} >Đóng</button>
-                                </div>
-                            </form>
-
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={handleCloseImageLargeModal} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

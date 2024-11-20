@@ -385,7 +385,7 @@ const ListService = () => {
                                             <th><span>STT</span></th>
                                             <th><span>Hình ảnh</span></th>
                                             <th><span>Tên dịch vụ</span></th>
-                                            <th><span>Đơn giá (VND)</span></th>
+                                            <th><span>Đơn giá (₫)</span></th>
                                             <th><span>Mô tả</span></th>
                                             <th><span>Loại dịch vụ</span></th>
                                             <th><span>Trạng thái</span></th>
@@ -520,86 +520,82 @@ const ListService = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div className="modal-content">
-                            <form>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Thông Tin Dịch Vụ</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalService}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                        <table className="table table-responsive table-hover mt-3">
+                                            <tbody>
+                                                {
+                                                    service.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                        <>
+                                                            <img src={service.image} alt="avatar" style={{ width: '50%' }} />
 
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Dịch Vụ</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalService}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-5">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <tbody>
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    service.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                        <>
+                                                            <i className="fa fa-calendar-times-o fa-5x" aria-hidden="true"></i>
+                                                        </>
+                                                    )
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div className="col-md-7" style={{ fontSize: '15px' }}>
+                                        <table className="table table-responsive table-hover mt-3">
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên dịch vụ:</th>
                                                     {
                                                         service.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
                                                             <>
-                                                                <img src={service.image} alt="avatar" style={{ width: '50%' }} />
-
+                                                                <td style={{ textAlign: 'left', padding: '5px' }}>{service.serviceName}</td>
                                                             </>
                                                         )
                                                     }
                                                     {
                                                         service.serviceType?.serviceTypeName === "Trả phòng muộn" && (
                                                             <>
-                                                                <i className="fa fa-calendar-times-o fa-5x" aria-hidden="true"></i>
+                                                                <td style={{ textAlign: 'left', padding: '5px' }}>Muộn {service.serviceName} ngày</td>
                                                             </>
                                                         )
                                                     }
 
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn giá:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{service.price} (₫)</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{service.description} </td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại dịch vụ:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{service.serviceType?.serviceTypeName} </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <div className="col-md-7" style={{fontSize: '15px'}}>
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên dịch vụ:</th>
-                                                        {
-                                                            service.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
-                                                                <>
-                                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{service.serviceName}</td>
-                                                                </>
-                                                            )
-                                                        }
-                                                        {
-                                                            service.serviceType?.serviceTypeName === "Trả phòng muộn" && (
-                                                                <>
-                                                                    <td style={{ textAlign: 'left', padding: '5px' }}>Muộn {service.serviceName} ngày</td>
-                                                                </>
-                                                            )
-                                                        }
-
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn giá:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{service.price} (VND)</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{service.description} </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Loại dịch vụ:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{service.serviceType?.serviceTypeName} </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                        </div>
                                     </div>
-
-
                                 </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalService} >Đóng</button>
-                                </div>
-                            </form>
 
+
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalService} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -709,7 +705,7 @@ const ListService = () => {
                                                                 required
                                                             />
                                                             <div className="input-group-append">
-                                                                <span className="input-group-text custom-append">VND</span>
+                                                                <span className="input-group-text custom-append">₫</span>
                                                             </div>
                                                         </div>
 

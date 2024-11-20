@@ -569,7 +569,8 @@ const CheckInOut = () => {
     const [loading, setLoading] = useState(false);
 
     const totalAmount = orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-        + (reservation.isPrePaid === false ? reservation.totalAmount : 0);
+        + reservation.totalAmount;
+
 
     const handlePay = async (reservationId, totalAmount) => {
         const createBill = {
@@ -972,7 +973,7 @@ const CheckInOut = () => {
                                 {/* Reservation Details */}
                                 {reservationDetails && reservationDetails.length > 0 ? (
                                     <div className="reservation-details mt-4">
-                                        <h5 className="mb-4">Chi Tiết Đặt Phòng</h5>
+                                        <h5 className="mb-4 mt-2 ml-2" style={{ fontWeight: 'bold' }}>Chi Tiết Đặt Phòng</h5>
                                         {reservationDetails.map((reservation, index) => (
                                             <div key={index} className="card mb-3 border-light shadow-sm">
                                                 <div className="card-body">
@@ -989,7 +990,7 @@ const CheckInOut = () => {
                                                         <div className="col-md-6">
                                                             <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
                                                             <p><strong className='mr-2'>Số lượng đặt:</strong> {reservation.numberOfRooms} phòng</p>
-                                                            <p><strong className='mr-2'>Tổng số tiền:</strong> {reservation.totalAmount} (VND)</p>
+                                                            <p><strong className='mr-2'>Tổng số tiền:</strong> {reservation.totalAmount} (₫)</p>
                                                             <p>
                                                                 <strong className='mr-2'>Trạng thái đặt phòng:</strong>
                                                                 {reservation.reservationStatus === "CheckIn" ? (
@@ -1038,7 +1039,7 @@ const CheckInOut = () => {
                                                                 }
 
                                                             </p>
-                                                            
+
                                                             <p><strong className='mr-2'>Khách sạn:</strong> {reservation.roomType?.hotel?.hotelName}</p>
                                                             <p><strong className='mr-2'>Ngày đặt:</strong> {new Date(reservation.createdDate).toLocaleString('en-US')}</p>
 
@@ -1459,10 +1460,10 @@ const CheckInOut = () => {
 
                                             </p>
                                             {reservation.isPrePaid === true && (
-                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 ₫</p>
                                             )}
                                             {reservation.isPrePaid === false && (
-                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} ₫</p>
                                             )}
 
                                         </div>
@@ -1471,7 +1472,16 @@ const CheckInOut = () => {
                                             <hr />
                                         </div>
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h5><i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng: <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}</span></h5>
+                                            <h5>
+                                                <i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng:&nbsp;
+                                                <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}
+                                                </span> {
+                                                    reservation.isPrePaid === true && (
+
+                                                        <span style={{ fontStyle: 'italic' }}>(Đã thanh toán trước)</span>
+                                                    )
+                                                }
+                                            </h5>
                                         </div>
                                         {/* Divider */}
                                         <div className="col-md-12">
@@ -1489,7 +1499,7 @@ const CheckInOut = () => {
                                                             <th><span>Tên dịch vụ</span></th>
                                                             <th><span>Số lượng</span></th>
                                                             <th><span>Loại dịch vụ</span></th>
-                                                            <th><span>Giá (VND)</span></th>
+                                                            <th><span>Giá (₫)</span></th>
                                                             {
 
                                                                 reservation.reservationStatus === "CheckIn" && (
@@ -1599,9 +1609,9 @@ const CheckInOut = () => {
                                             {/* Calculate and display total amount */}
                                             <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                 <h5>
-                                                    <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
+                                                    <span style={{ fontWeight: 'bold' }}>Số tiền cần thanh toán: &nbsp;</span>
                                                     {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                                        + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} VND
+                                                        + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} ₫
                                                 </h5>
                                             </div>
 
@@ -1954,77 +1964,73 @@ const CheckInOut = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Upload Hình Ảnh Chuyển Tiền</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateBillTransactionImage}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                            {
-                                                billTransactionImageList.length > 0 ? (
-                                                    billTransactionImageList.map((item, index) => (
-                                                        <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                            <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
-                                                            {
-                                                                loginUser.role?.roleName === "Receptionist" && (
-                                                                    <>
-                                                                        {/* Delete Icon/Button */}
-                                                                        <button
-                                                                            type="button"
-                                                                            className="btn btn-danger"
-                                                                            style={{
-                                                                                position: 'absolute',
-                                                                                top: '10px',
-                                                                                right: '10px',
-                                                                                background: 'transparent',
-                                                                                border: 'none',
-                                                                                color: 'red',
-                                                                                fontSize: '20px',
-                                                                                cursor: 'pointer',
-                                                                            }}
-                                                                            onClick={() => handleDeleteImage4(item.hotelDocumentId)}
-                                                                        >
-                                                                            &times; {/* This represents the delete icon (X symbol) */}
-                                                                        </button>
-                                                                    </>
-                                                                )
-                                                            }
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <>
-                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </>
-                                                )
-                                            }
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Tải Lên Hình Ảnh Chuyển Tiền</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalCreateBillTransactionImage}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {
+                                            billTransactionImageList.length > 0 ? (
+                                                billTransactionImageList.map((item, index) => (
+                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                        <img src={item.image} alt="Room" style={{ width: "250px", height: "200px" }} />
+                                                        {
+                                                            loginUser.role?.roleName === "Receptionist" && (
+                                                                <>
+                                                                    {/* Delete Icon/Button */}
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '10px',
+                                                                            right: '10px',
+                                                                            background: 'transparent',
+                                                                            border: 'none',
+                                                                            color: 'red',
+                                                                            fontSize: '20px',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                        onClick={() => handleDeleteImage4(item.hotelDocumentId)}
+                                                                    >
+                                                                        &times; {/* This represents the delete icon (X symbol) */}
+                                                                    </button>
+                                                                </>
+                                                            )
+                                                        }
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )
+                                        }
 
 
-                                            {
-                                                loginUser.role?.roleName === "Receptionist" && (
-                                                    <>
-                                                        <div className="form-group mt-3">
-                                                            <input type="file" onChange={handleFileChange4} />
-                                                            <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost4}>
-                                                                + Tải file
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                )
-                                            }
+                                        {
+                                            loginUser.role?.roleName === "Receptionist" && (
+                                                <>
+                                                    <div className="form-group mt-3">
+                                                        <input type="file" onChange={handleFileChange4} />
+                                                        <button type="button" className="btn btn-success mt-2" onClick={handleUploadAndPost4}>
+                                                            + Tải file
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )
+                                        }
 
-                                        </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
-                                </div>
-                            </form>
-
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

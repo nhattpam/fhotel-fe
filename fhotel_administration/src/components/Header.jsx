@@ -230,7 +230,7 @@ const Header = () => {
                     <thead>
                       <tr>
                         <th><span>STT</span></th>
-                        <th><span>Số tiền (VND)</span></th>
+                        <th><span>Số tiền (₫)</span></th>
                         <th><span>Mô tả</span></th>
                         <th><span>Ngày giao dịch</span></th>
                       </tr>

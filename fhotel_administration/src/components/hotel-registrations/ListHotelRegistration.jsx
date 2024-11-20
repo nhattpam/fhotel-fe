@@ -194,33 +194,29 @@ const ListHotelRegistration = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
+                            <div className="modal-header">
+                                <h5 className="modal-title">Hotel Registration Information</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotelRegistration}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
 
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Registration Information</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotelRegistration}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-
-                                    <div className='row'>
-                                        <div className="col-md-12">
-                                            {hotelRegistration.numberOfRooms} rooms
-                                        </div>
-                                        <div className="col-md-12">
-                                            <div dangerouslySetInnerHTML={{ __html: hotelRegistration.description }} />
-                                        </div>
-
+                                <div className='row'>
+                                    <div className="col-md-12">
+                                        {hotelRegistration.numberOfRooms} rooms
+                                    </div>
+                                    <div className="col-md-12">
+                                        <div dangerouslySetInnerHTML={{ __html: hotelRegistration.description }} />
                                     </div>
 
                                 </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-custom">Save</button>
-                                    <button type="button" className="btn btn-dark" onClick={closeModalHotelRegistration} >Close</button>
-                                </div>
-                            </form>
 
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-custom">Save</button>
+                                <button type="button" className="btn btn-dark" onClick={closeModalHotelRegistration} >Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>

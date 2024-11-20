@@ -429,7 +429,7 @@ const ListRefund = () => {
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Số tiền cần hoàn:</strong>
-                                        <span>{order.totalAmount} VND</span>
+                                        <span>{order.totalAmount} ₫</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2">
                                         <strong>Ngày yêu cầu:</strong>
@@ -465,7 +465,7 @@ const ListRefund = () => {
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Tổng số tiền:</strong>
-                                        <span>{order.reservation?.totalAmount} VND</span>
+                                        <span>{order.reservation?.totalAmount} ₫</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Trạng thái đặt phòng:</strong>

@@ -410,10 +410,10 @@ const ListReservation = () => {
 
                                             </p>
                                             {reservation.isPrePaid === true && (
-                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 VND</p>
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 ₫</p>
                                             )}
                                             {reservation.isPrePaid === false && (
-                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} VND</p>
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} ₫</p>
                                             )}
 
                                         </div>
@@ -422,7 +422,16 @@ const ListReservation = () => {
                                             <hr />
                                         </div>
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h5><i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng: <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}</span></h5>
+                                            <h5>
+                                                <i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng:&nbsp;
+                                                <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}
+                                                </span> {
+                                                    reservation.isPrePaid === true && (
+
+                                                        <span style={{ fontStyle: 'italic' }}>(Đã thanh toán trước)</span>
+                                                    )
+                                                }
+                                            </h5>
                                         </div>
                                         {/* Divider */}
                                         <div className="col-md-12">
@@ -440,7 +449,7 @@ const ListReservation = () => {
                                                             <th><span>Tên dịch vụ</span></th>
                                                             <th><span>Số lượng</span></th>
                                                             <th><span>Loại dịch vụ</span></th>
-                                                            <th><span>Giá (VND)</span></th>
+                                                            <th><span>Giá (₫)</span></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -513,9 +522,9 @@ const ListReservation = () => {
                                             {/* Calculate and display total amount */}
                                             <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                 <h5>
-                                                    <span style={{ fontWeight: 'bold' }}>Tổng cộng: &nbsp;</span>
+                                                    <span style={{ fontWeight: 'bold' }}>Số tiền cần thanh toán: &nbsp;</span>
                                                     {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                                        + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} VND
+                                                        + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} ₫
                                                 </h5>
                                             </div>
                                         </div>

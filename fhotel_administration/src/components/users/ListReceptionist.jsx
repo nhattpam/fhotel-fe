@@ -473,7 +473,7 @@ const ListReceptionist = () => {
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateUserModal} // This will trigger the modal for creating a new hotel
                                 >
-                                   <i class="fa fa-user-plus" aria-hidden="true"></i> Tạo lễ tân
+                                    <i class="fa fa-user-plus" aria-hidden="true"></i> Tạo lễ tân
                                 </button>
                             </div>
                         </div>
@@ -585,7 +585,7 @@ const ListReceptionist = () => {
                                 {
                                     currentUsers.length === 0 && (
                                         <>
-                                            <p className='text-center mt-3' style={{fontStyle: 'italic', color: 'gray'}}>Không có</p>
+                                            <p className='text-center mt-3' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                                         </>
                                     )
                                 }
@@ -799,89 +799,85 @@ const ListReceptionist = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Hotel Information</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-5">
-                                            <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
-                                            <div className='row mt-2'>
-                                                <div className='col-md-12'>
-                                                    <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
-                                                </div>
-                                                <div className='col-md-12'>
-                                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                                                        {
-                                                            hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
-                                                                <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
-                                                                    <img src={item.image} alt="avatar" style={{ width: "40px" }} />
-                                                                </div>
-                                                            ))
-                                                        }
-                                                    </div>
+                            <div className="modal-header">
+                                <h5 className="modal-title">Hotel Information</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeModalHotel}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                        <img src={hotel.image} alt="avatar" style={{ width: '100%' }} />
+                                        <div className='row mt-2'>
+                                            <div className='col-md-12'>
+                                                <h3 style={{ fontWeight: "bold" }}>Amenities</h3>
+                                            </div>
+                                            <div className='col-md-12'>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                                                    {
+                                                        hotelAmenityList.length > 0 && hotelAmenityList.map((item, index) => (
+                                                            <div key={index} style={{ textAlign: 'center', flex: '1 1 20%' }}>
+                                                                <img src={item.image} alt="avatar" style={{ width: "40px" }} />
+                                                            </div>
+                                                        ))
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div className="col-md-7">
-                                            <table className="table table-responsive table-hover mt-3">
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '30%' }}>Name:</th>
-                                                        <td>{hotel.hotelName}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Email:</th>
-                                                        <td>{hotel.email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Phone Number:</th>
-                                                        <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Business License Number:</th>
-                                                        <td>{hotel && hotel.businessLicenseNumber ? hotel.businessLicenseNumber : 'Unknown Business License Number'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Tax Identification Number:</th>
-                                                        <td>{hotel && hotel.taxIdentificationNumber ? hotel.taxIdentificationNumber : 'Unknown Tax Identification Number'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>City:</th>
-                                                        <td>{hotel && hotel.city?.cityName ? hotel.city?.cityName : 'Unknown City'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Address:</th>
-                                                        <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Description:</th>
-                                                        <td>{hotel && hotel.description ? hotel.description : 'Unknown Description'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Owner:</th>
-                                                        <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                        </div>
                                     </div>
 
+                                    <div className="col-md-7">
+                                        <table className="table table-responsive table-hover mt-3">
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '30%' }}>Name:</th>
+                                                    <td>{hotel.hotelName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Email:</th>
+                                                    <td>{hotel.email}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Phone Number:</th>
+                                                    <td>{hotel && hotel.phone ? hotel.phone : 'Unknown Phone Number'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Business License Number:</th>
+                                                    <td>{hotel && hotel.businessLicenseNumber ? hotel.businessLicenseNumber : 'Unknown Business License Number'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Tax Identification Number:</th>
+                                                    <td>{hotel && hotel.taxIdentificationNumber ? hotel.taxIdentificationNumber : 'Unknown Tax Identification Number'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>City:</th>
+                                                    <td>{hotel && hotel.city?.cityName ? hotel.city?.cityName : 'Unknown City'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Address:</th>
+                                                    <td>{hotel && hotel.address ? hotel.address : 'Unknown Address'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Description:</th>
+                                                    <td>{hotel && hotel.description ? hotel.description : 'Unknown Description'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Owner:</th>
+                                                    <td>{hotel && hotel.ownerName ? hotel.ownerName : 'Unknown Owner'}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 
+                                    </div>
                                 </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
-                                </div>
-                            </form>
 
+
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-custom btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

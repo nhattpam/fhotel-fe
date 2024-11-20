@@ -329,95 +329,91 @@ const ListOrder = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Yêu Cầu</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalOrder}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Thông Tin Yêu Cầu</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalOrder}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: 'left' }}>
+                                <div className="table-responsive">
+                                    <table className="table table-borderless table-hover table-wrap table-centered">
+                                        <thead>
+                                            <tr>
+                                                <th><span>STT</span></th>
+                                                <th><span>Hình ảnh</span></th>
+                                                <th><span>Tên dịch vụ</span></th>
+                                                <th><span>Số lượng</span></th>
+                                                <th><span>Loại dịch vụ</span></th>
+                                                <th><span>Giá (₫)</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                orderDetailList.length > 0 && orderDetailList.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        {
+                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>
+                                                                        <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
+                                                                    </td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>
+                                                                        <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
+                                                                    </td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>Muộn {item.service?.serviceName} ngày</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>{item.service?.serviceName}</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        <td>{item.quantity}</td>
+                                                        <td>{item.service?.serviceType?.serviceTypeName}</td>
+                                                        {
+                                                            item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>{item.order?.totalAmount}</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {
+                                                            item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
+                                                                <>
+                                                                    <td>{item.order?.totalAmount}</td>
+                                                                </>
+                                                            )
+                                                        }
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: 'left' }}>
-                                    <div className="table-responsive">
-                                        <table className="table table-borderless table-hover table-wrap table-centered">
-                                            <thead>
-                                                <tr>
-                                                    <th><span>STT</span></th>
-                                                    <th><span>Hình ảnh</span></th>
-                                                    <th><span>Tên dịch vụ</span></th>
-                                                    <th><span>Số lượng</span></th>
-                                                    <th><span>Loại dịch vụ</span></th>
-                                                    <th><span>Giá (VND)</span></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    orderDetailList.length > 0 && orderDetailList.map((item, index) => (
-                                                        <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            {
-                                                                item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
-                                                                    <>
-                                                                        <td>
-                                                                            <i className="fa fa-calendar-times-o fa-4x" aria-hidden="true"></i>
-                                                                        </td>
-                                                                    </>
-                                                                )
-                                                            }
-                                                            {
-                                                                item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
-                                                                    <>
-                                                                        <td>
-                                                                            <img src={item.service?.image} alt="avatar" style={{ width: "120px", height: '100px' }} />
-                                                                        </td>
-                                                                    </>
-                                                                )
-                                                            }
-                                                            {
-                                                                item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
-                                                                    <>
-                                                                        <td>Muộn {item.service?.serviceName} ngày</td>
-                                                                    </>
-                                                                )
-                                                            }
-                                                            {
-                                                                item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
-                                                                    <>
-                                                                        <td>{item.service?.serviceName}</td>
-                                                                    </>
-                                                                )
-                                                            }
-                                                            <td>{item.quantity}</td>
-                                                            <td>{item.service?.serviceType?.serviceTypeName}</td>
-                                                            {
-                                                                item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
-                                                                    <>
-                                                                        <td>{item.order?.totalAmount}</td>
-                                                                    </>
-                                                                )
-                                                            }
-                                                            {
-                                                                item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
-                                                                    <>
-                                                                        <td>{item.order?.totalAmount}</td>
-                                                                    </>
-                                                                )
-                                                            }
-                                                        </tr>
-                                                    ))
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                            </div>
 
 
-                                <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalOrder} >Đóng</button>
-                                </div>
-                            </form>
-
+                            <div className="modal-footer">
+                                {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalOrder} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

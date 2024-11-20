@@ -182,7 +182,7 @@ const RoomManagement = () => {
                                                             <button className="btn btn-default btn-xs m-r-5"
                                                                 data-toggle="tooltip" data-original-title="Edit">
                                                                 <Link className="fa fa-pencil font-14 text-primary" to={`/list-room/${item.roomTypeId}`}
-                                                                   ></Link></button>
+                                                                ></Link></button>
                                                         </td>
                                                     </tr>
                                                 </>
@@ -242,46 +242,44 @@ const RoomManagement = () => {
                 >
                     <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
                         <div className="modal-content shadow-lg rounded">
-                            <form>
-                                <div className="modal-header bg-dark text-light">
-                                    <h5 className="modal-title">Chi Tiết Phòng</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoomType}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Chi Tiết Phòng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalRoomType}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
 
-                                <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
-                                    <div className="container-fluid">
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <div className="room-list">
-                                                    {roomList.map((room) => (
-                                                        <div
-                                                            key={room.roomNumber}
-                                                            className="room-box"
-                                                            style={{ backgroundColor: room.status === 'Available' ? 'green' : 'red' }}
-                                                        >
-                                                            <p>{room.roomNumber}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                {roomList.length === 0 && (
-                                                    <>
-                                                        <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                    </>
-                                                )}
+                            <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
+                                <div className="container-fluid">
+                                    <div className="row">
+                                        <div className="col-md-12">
+                                            <div className="room-list">
+                                                {roomList.map((room) => (
+                                                    <div
+                                                        key={room.roomNumber}
+                                                        className="room-box"
+                                                        style={{ backgroundColor: room.status === 'Available' ? 'green' : 'red' }}
+                                                    >
+                                                        <p>{room.roomNumber}</p>
+                                                    </div>
+                                                ))}
                                             </div>
+                                            {roomList.length === 0 && (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
 
 
-                                <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-primary btn-sm">Lưu</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoomType} >Đóng</button>
-                                </div>
-                            </form>
+                            <div className="modal-footer">
+                                {/* <button type="button" className="btn btn-primary btn-sm">Lưu</button> */}
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalRoomType} >Đóng</button>
+                            </div>
                         </div>
                     </div>
                 </div>

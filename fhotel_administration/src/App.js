@@ -30,6 +30,8 @@ import ListStaffCustomer from './components/users/ListStaffCustomer';
 import ListOwnerCustomer from './components/users/ListOwnerCustomer';
 import ListRefund from './components/reservations/ListRefund';
 import ListHotelRoom from './components/rooms/ListHotelRoom';
+import ListOwnerBill from './components/bills/ListOwnerBill';
+import ListBill from './components/bills/ListBill';
 
 function App() {
   return (
@@ -76,6 +78,9 @@ function App() {
         <Route path="/list-hotel-room/" element={<ListHotelRoom />} />
         {/* refund */}
         <Route path="/list-refund/" element={<ListRefund />} />
+         {/* bill */}
+         <Route path="/list-owner-bill/" element={<ListOwnerBill />} />
+         <Route path="/list-bill/" element={<ListBill />} />
       </Routes>
     </div>
   );

@@ -547,12 +547,7 @@ const SideBar = () => {
                                             <span className="nav-label">Khách sạn</span>
                                         </Link>
                                     </li>
-                                    {/* Room Management Section */}
-                                    {/* <li>
-                                        <Link to="/room-management"><i className="sidebar-item-icon fa fa-bed" />
-                                            <span className="nav-label">Quản Lý Phòng</span>
-                                        </Link>
-                                    </li> */}
+                                  
                                     <li>
                                         <Link to="/list-owner-customer"><i className="sidebar-item-icon fa fa-user" />
                                             <span className="nav-label">Khách hàng</span>
@@ -561,8 +556,13 @@ const SideBar = () => {
 
                                     {/* Billing Section */}
                                     <li>
-                                        <Link to="/list-hotel-room"><i className="sidebar-item-icon fa fa-money" />
+                                        <Link to="/list-hotel-room"><i className="sidebar-item-icon fa fa-bed" />
                                             <span className="nav-label">Quản lý phòng</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/list-owner-bill"><i className="sidebar-item-icon fa fa-money" />
+                                            <span className="nav-label">Thanh toán/Hóa đơn</span>
                                         </Link>
                                     </li>
 
@@ -791,7 +791,7 @@ const SideBar = () => {
                                                         required
                                                     />
                                                     <div className="input-group-append">
-                                                        <span className="input-group-text custom-append">VND</span>
+                                                        <span className="input-group-text custom-append">₫</span>
                                                     </div>
                                                 </div>
                                             </div>

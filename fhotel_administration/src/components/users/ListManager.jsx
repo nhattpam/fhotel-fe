@@ -517,51 +517,48 @@ const ListManager = () => {
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
                     <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div className="modal-content">
-                            <form>
-
-                                <div className="modal-header  bg-dark text-light">
-                                    <h5 className="modal-title">Thông Tin Tài Khoản</h5>
-                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                    <div className="row">
-                                        <div className="col-md-4 d-flex align-items-center flex-column">
-                                            <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
-                                        </div>
-                                        <div className="col-md-8">
-                                            <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
-                                                <tbody>
-                                                    <tr>
-                                                        <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
-                                                        <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
+                            <div className="modal-header  bg-dark text-light">
+                                <h5 className="modal-title">Thông Tin Tài Khoản</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUser}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-4 d-flex align-items-center flex-column">
+                                        <img src={user.image} alt="avatar" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} className="mt-3" />
+                                    </div>
+                                    <div className="col-md-8">
+                                        <table className="table table-borderless table-hover table-centered mt-3" style={{ width: '100%' }}>
+                                            <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Họ và tên:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user.name}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user.email}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.phoneNumber ? user.phoneNumber : 'Không tìm thấy Số Điện Thoại'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style={{ fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{user && user.address ? user.address : 'Không tìm thấy Địa Chỉ'}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
 
+                                </div>
 
-                                </div>
-                                <div className="modal-footer">
-                                    {/* <button type="button" className="btn btn-custom">Save</button> */}
-                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
-                                </div>
-                            </form>
+
+                            </div>
+                            <div className="modal-footer">
+                                {/* <button type="button" className="btn btn-custom">Save</button> */}
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUser} >Đóng</button>
+                            </div>
 
                         </div>
                     </div >

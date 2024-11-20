@@ -463,7 +463,7 @@ const ListTypePricing = () => {
                                         <tr>
                                             <th><span>STT</span></th>
                                             <th><span>Loại phòng</span></th>
-                                            <th><span>Giá (VND)</span></th>
+                                            <th><span>Giá (₫)</span></th>
                                             <th><span>Quận</span></th>
                                             <th><span>Thành phố</span></th>
                                             <th><span>Thời gian áp dụng</span></th>
@@ -599,7 +599,7 @@ const ListTypePricing = () => {
                                                     </tr>
                                                     <tr>
                                                         <th>Giá hiện tại:</th>
-                                                        <td>{typePricing.price} (VND)</td> {/* Display current price */}
+                                                        <td>{typePricing.price} (₫)</td> {/* Display current price */}
                                                     </tr>
                                                     <tr>
                                                         <th>Giá mới:</th>
@@ -741,7 +741,7 @@ const ListTypePricing = () => {
                                                                     required
                                                                 />
                                                                 <div className="input-group-append">
-                                                                    <span className="input-group-text custom-append">VND</span>
+                                                                    <span className="input-group-text custom-append">₫</span>
                                                                 </div>
                                                             </div>
                                                         </div>

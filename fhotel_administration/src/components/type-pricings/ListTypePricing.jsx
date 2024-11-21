@@ -609,6 +609,7 @@ const ListTypePricing = () => {
                                                                 type="number"
                                                                 value={updateTypePricing.price || ''}
                                                                 onChange={(e) => handleChangeUpdateTypePricing(e)}
+                                                                min={0}
                                                                 required
                                                             />
                                                         </td>

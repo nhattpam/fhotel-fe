@@ -23,6 +23,7 @@ import hotelDocumentService from '../../services/hotel-document.service';
 import documentService from '../../services/document.service';
 import reservationService from '../../services/reservation.service';
 import billService from '../../services/bill.service';
+import roomService from '../../services/room.service';
 
 const EditHotel = () => {
     //LOADING
@@ -171,6 +172,7 @@ const EditHotel = () => {
 
     const openRoomTypeModal = (roomTypeId) => {
         setShowModalRoomType(true);
+        setSelectedRoomTypeId(roomTypeId); // Set the roomTypeId in the state
         // Clear the image list first to avoid showing images from the previous room type
         setRoomImageList([]); // Reset roomImageList to an empty array
         if (roomTypeId) {
@@ -1199,6 +1201,74 @@ const EditHotel = () => {
 
     };
 
+    //UPDATE ROOM NUMBER
+    const [showModalUpdateRoom, setShowModalUpdateRoom] = useState(false);
+    const [room, setRoom] = useState({
+
+    });
+
+
+    const openUpdateRoomModal = (roomId) => {
+        setShowModalUpdateRoom(true);
+        if (roomId) {
+            roomService
+                .getRoomById(roomId)
+                .then((res) => {
+                    setRoom(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+        }
+    };
+
+    const closeModalUpdateRoom = () => {
+        setShowModalUpdateRoom(false);
+    };
+
+    ///UPDATE TYPE PRICING
+    const [updateRoom, setUpdateRoom] = useState({
+        roomNumber: ''
+    });
+
+    const handleChangeUpdateRoom = (e) => {
+        const { name, value } = e.target;
+        setUpdateRoom(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const submitUpdateRoom = async (e, roomId) => {
+        e.preventDefault();
+
+        try {
+            // Fetch the current type pricing data
+            const res = await roomService.getRoomById(roomId);
+            const roomData = res.data;
+
+            // Make the update request
+            const updateRes = await roomService.updateRoom(roomId, { ...roomData, roomNumber: updateRoom.roomNumber });
+
+            if (updateRes.status === 200) {
+                // Use a notification library for better user feedback
+                setSuccess({ general: "Cập nhật thành công!" });
+                setShowSuccess(true); // Show error
+                roomTypeService
+                    .getAllRoombyRoomTypeId(selectedRoomTypeId)
+                    .then((res) => {
+                        const sortedRooms = res.data.sort((a, b) => a.roomNumber - b.roomNumber);
+                        setRoomList(sortedRooms);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+            } else {
+                handleResponseError(updateRes);
+            }
+        } catch (error) {
+            handleResponseError(error.response);
+        }
+    };
     return (
         <>
             <Header />
@@ -1868,13 +1938,27 @@ const EditHotel = () => {
                                                         style={{
                                                             backgroundColor: room.status === 'Available' ? 'green' :
                                                                 room.status === 'Occupied' ? 'red' :
-                                                                    '#E4A11B'
+                                                                    '#E4A11B',
+                                                            position: 'relative', // Required for proper positioning of the icon
                                                         }}
                                                     >
                                                         <p>{room.roomNumber}</p>
+                                                        <i
+                                                            className="fa fa-pencil"
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: '5px',
+                                                                right: '5px',
+                                                                cursor: 'pointer',
+                                                                color: '#fff', // Adjust icon color
+                                                                fontSize: '16px', // Adjust icon size
+                                                            }}
+                                                            onClick={() => openUpdateRoomModal(room.roomId)} // Edit handler
+                                                        ></i>
                                                     </div>
                                                 ))}
                                             </div>
+
                                             {roomList.length === 0 && (
                                                 <>
                                                     <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
@@ -3140,6 +3224,98 @@ const EditHotel = () => {
                 </div>
             )
             }
+
+            {showModalUpdateRoom && (
+                <div
+                    className="modal fade show"
+                    tabIndex="-1"
+                    role="dialog"
+                    style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}
+                >
+                    <div className="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div className="modal-content shadow-lg rounded">
+                            <form onSubmit={(e) => submitUpdateRoom(e, room.roomId, updateRoom.roomNumber)}>
+                                <div className="modal-header bg-dark text-light">
+                                    <h5 className="modal-title">Chi Tiết Phòng</h5>
+                                    <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUpdateRoom}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {showError && Object.entries(error).length > 0 && (
+                                        <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="modal-body p-4" style={{ maxHeight: '70vh', overflowY: 'auto', textAlign: 'left' }}>
+                                    <div className="container-fluid">
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <h5 className="mb-3">
+                                                    <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Phòng số:</span>
+                                                    <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomNumber}</span>
+                                                </h5>
+                                                <h5 className="mb-3">
+                                                    <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Số phòng mới:</span>
+                                                    <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}> <input
+                                                        name='roomNumber'
+                                                        type="number"
+                                                        value={updateRoom.roomNumber || ''}
+                                                        onChange={(e) => handleChangeUpdateRoom(e)}
+                                                        min={0}
+                                                        required
+                                                    /></span>
+                                                </h5>
+                                                <h5 className="mb-3">
+                                                    <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Loại phòng:</span>
+                                                    <span style={{ fontWeight: 'bold', color: '#388e3c', marginLeft: '10px' }}>{room.roomType?.type?.typeName}</span>
+                                                </h5>
+
+                                                <h5 className="mb-3">
+                                                    <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Trạng thái:</span>
+                                                    <span style={{ marginLeft: '10px' }}>
+                                                        {room.status === "Available" && (
+                                                            <span style={{ backgroundColor: '#4caf50', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Có sẵn</span>
+                                                        )}
+                                                        {room.status === "Occupied" && (
+                                                            <span style={{ backgroundColor: '#f44336', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Không có sẵn</span>
+                                                        )}
+                                                        {room.status === "Maintenance" && (
+                                                            <span style={{ backgroundColor: '#ff9800', color: 'white', padding: '5px 10px', borderRadius: '5px' }}>Bảo trì</span>
+                                                        )}
+                                                    </span>
+                                                </h5>
+
+                                                <h5 className="mb-3">
+                                                    <span style={{ color: '#00796b', fontWeight: 'bold', fontSize: '1.25rem' }}>Ghi chú:</span>
+                                                    <div style={{ marginTop: '8px', paddingLeft: '20px', fontStyle: 'italic', color: '#616161' }}
+                                                        dangerouslySetInnerHTML={{ __html: room.note ?? 'Không có' }}
+                                                    ></div>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="modal-footer">
+                                    <button type="submit" className="btn btn-primary btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
+                                    <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUpdateRoom} >Đóng</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            )}
             <style>
                 {`
                     .page-item.active .page-link{

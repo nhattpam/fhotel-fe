@@ -590,6 +590,8 @@ const CheckInOut = () => {
     const totalAmount = orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
         + reservation.totalAmount;
 
+    const amountToPay = orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+        + (reservation.isPrePaid === false ? reservation.totalAmount : 0)
 
     const handlePay = async (reservationId, totalAmount) => {
         const createBill = {
@@ -597,54 +599,63 @@ const CheckInOut = () => {
             totalAmount: totalAmount
         };
 
-        setLoading(true); // Set loading to true when payment is initiated
-
         try {
-            console.log("Payload to create bill:", JSON.stringify(createBill));
-            const billResponse = await billService.saveBill(createBill);
+            if (amountToPay === 0) {
+                setError({ general: `Số tiền không hợp lệ` });
+                setShowError(true);
+                setLoading(false);
+                return;
+            }
+            else {
+                setLoading(true); // Set loading to true when payment is initiated
 
-            if (billResponse.status === 201) {
-                // Proceed with payment logic
-                try {
-                    const paymentResponse = await billService.payBill(billResponse.data.billId);
-                    window.open(paymentResponse.data, '_blank');
+                console.log("Payload to create bill:", JSON.stringify(createBill));
+                const billResponse = await billService.saveBill(createBill);
 
-                    // Refresh the bill info after payment
-                    reservationService
-                        .getBillByReservation(reservationId)
-                        .then((res) => {
-                            setBillByReservation(res.data);
-                            console.log(res.data);
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
+                if (billResponse.status === 201) {
+                    // Proceed with payment logic
+                    try {
+                        const paymentResponse = await billService.payBill(billResponse.data.billId);
+                        window.open(paymentResponse.data, '_blank');
 
-                    // Optionally, you can check for reservation status here and stop loading
-                    const checkReservationStatus = setInterval(() => {
-                        reservationService.getReservationById(reservationId)
+                        // Refresh the bill info after payment
+                        reservationService
+                            .getBillByReservation(reservationId)
                             .then((res) => {
-                                if (res.data.paymentStatus === "Paid") {
-                                    clearInterval(checkReservationStatus); // Stop checking when paid
-                                    setLoading(false); // Set loading to false once paid
-                                    // Optionally, refresh reservation info
-                                    openCheckOutModal(reservationId);
-
-                                }
+                                setBillByReservation(res.data);
+                                console.log(res.data);
                             })
                             .catch((error) => {
                                 console.log(error);
                             });
-                    }, 2000); // Check every 2 seconds
-                } catch (paymentError) {
-                    console.error("Payment Error:", paymentError.response.data);
-                    window.alert("Error processing payment!");
-                    setLoading(false); // Stop loading if payment fails
+
+                        // Optionally, you can check for reservation status here and stop loading
+                        const checkReservationStatus = setInterval(() => {
+                            reservationService.getReservationById(reservationId)
+                                .then((res) => {
+                                    if (res.data.paymentStatus === "Paid") {
+                                        clearInterval(checkReservationStatus); // Stop checking when paid
+                                        setLoading(false); // Set loading to false once paid
+                                        // Optionally, refresh reservation info
+                                        openCheckOutModal(reservationId);
+
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        }, 2000); // Check every 2 seconds
+                    } catch (paymentError) {
+                        console.error("Payment Error:", paymentError.response.data);
+                        window.alert("Error processing payment!");
+                        setLoading(false); // Stop loading if payment fails
+                    }
+                } else {
+                    window.alert("Đã tồn tại hóa đơn!");
+                    setLoading(false); // Stop loading if the bill already exists
                 }
-            } else {
-                window.alert("Đã tồn tại hóa đơn!");
-                setLoading(false); // Stop loading if the bill already exists
             }
+
         } catch (error) {
             window.alert("Đã tồn tại hóa đơn!");
             setLoading(false); // Stop loading if there is an error creating the bill
@@ -1024,8 +1035,6 @@ const CheckInOut = () => {
                                                             <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
                                                             <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
                                                             <p><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                                            <p><strong className='mr-2'>Ngày dự kiến nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
-                                                            <p><strong className='mr-2'>Ngày dự kiến trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
@@ -1430,8 +1439,6 @@ const CheckInOut = () => {
                                                         onClick={() => openReservationByRoomTypeModal(reservation.roomTypeId)} />
                                                 </button>
                                             </p>
-                                            <p className="mb-1"><strong className='mr-2'>Ngày dự kiến nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
-                                            <p className="mb-1"><strong className='mr-2'>Ngày dự kiến trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                             <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
                                             <div className="room-list">
                                                 {roomStayHistoryList.map((roomStayHistory) => (

@@ -8,7 +8,7 @@ import userService from '../../services/user.service';
 import { Link, useParams } from 'react-router-dom';
 import billService from '../../services/bill.service';
 
-const ListBill = () => {
+const ListOwnerBill = () => {
   //LOADING
   const [loading, setLoading] = useState(true); // State to track loading
 
@@ -484,4 +484,4 @@ const ListBill = () => {
   )
 }
 
-export default ListBill
+export default ListOwnerBill

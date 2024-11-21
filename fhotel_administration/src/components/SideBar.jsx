@@ -512,6 +512,11 @@ const SideBar = () => {
 
                                         </ul>
                                     </li>
+                                    <li>
+                                        <Link to="/list-bill"><i className="sidebar-item-icon fa fa-money" />
+                                            <span className="nav-label">Thanh toán/Hóa đơn</span>
+                                        </Link>
+                                    </li>
 
                                 </>
                             )

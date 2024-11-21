@@ -179,6 +179,14 @@ const ListHotelVerification = () => {
                     .then((res) => {
                         setHotelVerification(res.data);
                     })
+                hotelService
+                    .getAllHotelVerificationByHotelId(hotelVerification.hotelId)
+                    .then((res) => {
+                        setHotelVerificationList2(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             } else {
                 setError({ general: "Có lỗi xảy ra..." });
                 setShowError(true);

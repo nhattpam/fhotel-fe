@@ -977,6 +977,34 @@ const CheckInOut = () => {
 
     };
 
+
+    const handlePrint = () => {
+        const printContent = document.getElementById('print-section').innerHTML;
+        const iframe = document.createElement('iframe');
+    
+        iframe.style.position = 'absolute';
+        iframe.style.top = '-10000px'; // Hide the iframe
+        document.body.appendChild(iframe);
+    
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(`
+            <html>
+                <head><title>Print</title></head>
+                <body>${printContent}</body>
+            </html>
+        `);
+        doc.close();
+    
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+    
+        // Remove the iframe after printing
+        setTimeout(() => document.body.removeChild(iframe), 1000);
+    };
+        
+
+
     return (
         <>
             <Header />
@@ -1411,7 +1439,7 @@ const CheckInOut = () => {
                             <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                 <div className="container-fluid">
                                     {/* Reservation Information */}
-                                    <div className='row'>
+                                    <div className='row' id='print-section'>
                                         <div className="col-md-4" style={{ textAlign: 'left' }}>
                                             <h5>Thông Tin Khách Hàng</h5>
                                             <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
@@ -1676,6 +1704,10 @@ const CheckInOut = () => {
                                         <div className="col-md-12">
                                             <hr />
                                         </div>
+
+
+                                    </div>
+                                    <div className='row'>
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
                                             <h5>
                                                 <i className="fa fa-file-text text-success"></i>  Hóa đơn:
@@ -1790,16 +1822,24 @@ const CheckInOut = () => {
                                                 }
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
 
+                            <div className="modal-footer">
+                                {loginUser.role?.roleName === "Receptionist" && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-success"
+                                        onClick={handlePrint}
+                                    >
+                                        <i className="fa fa-print" aria-hidden="true"></i>&nbsp;In
+                                    </button>
+                                )}
 
-                            {
-                                reservation.reservationStatus === "CheckIn" && (
-                                    <>
-                                        <div className="modal-footer">
+                                {
+                                    reservation.reservationStatus === "CheckIn" && (
+                                        <>
                                             {loginUser.role?.roleName === "Receptionist" && (
                                                 <button
                                                     type="button"
@@ -1835,10 +1875,11 @@ const CheckInOut = () => {
                                                     </button>
                                                 </form>
                                             )}
-                                        </div>
-                                    </>
-                                )
-                            }
+                                        </>
+                                    )
+                                }
+                            </div>
+
 
 
                         </div>

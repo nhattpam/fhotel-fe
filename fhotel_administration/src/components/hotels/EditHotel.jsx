@@ -1252,6 +1252,14 @@ const EditHotel = () => {
                 // Use a notification library for better user feedback
                 setSuccess({ general: "Cập nhật thành công!" });
                 setShowSuccess(true); // Show error
+                roomService
+                    .getRoomById(roomId)
+                    .then((res) => {
+                        setRoom(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
                 roomTypeService
                     .getAllRoombyRoomTypeId(selectedRoomTypeId)
                     .then((res) => {

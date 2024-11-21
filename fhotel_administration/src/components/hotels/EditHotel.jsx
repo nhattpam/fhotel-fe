@@ -1246,7 +1246,7 @@ const EditHotel = () => {
             const roomData = res.data;
 
             // Make the update request
-            const updateRes = await roomService.updateRoom(roomId, { ...roomData, roomNumber: updateRoom.roomNumber });
+            const updateRes = await roomService.updateRoom2(roomId, { ...roomData, roomNumber: updateRoom.roomNumber });
 
             if (updateRes.status === 200) {
                 // Use a notification library for better user feedback

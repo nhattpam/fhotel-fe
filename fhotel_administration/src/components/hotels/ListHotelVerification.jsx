@@ -489,7 +489,7 @@ const ListHotelVerification = () => {
                                                     <td>
                                                         {hotelVerification.verificationStatus === "Pending" && (
                                                             <span className="badge label-table ">
-                                                                <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                <span className="badge label-table badge-warning">Đang chờ</span>
                                                             </span>
                                                         )}
                                                         {hotelVerification.verificationStatus === "Verified" && (
@@ -534,17 +534,17 @@ const ListHotelVerification = () => {
                                                                         <td>
                                                                             {item.verificationStatus === "Pending" && (
                                                                                 <span className="badge label-table ">
-                                                                                    <span className="badge label-table badge-warning">Đang Chờ</span>
+                                                                                    <span className="badge label-table badge-warning">Đang chờ</span>
                                                                                 </span>
                                                                             )}
                                                                             {item.verificationStatus === "Verified" && (
                                                                                 <span className="badge label-table">
-                                                                                    <span className="badge label-table badge-success">Đã Xác Minh</span>
+                                                                                    <span className="badge label-table badge-success">Đã xác minh</span>
                                                                                 </span>
                                                                             )}
                                                                             {item.verificationStatus === "Rejected" && (
                                                                                 <span className="badge label-table">
-                                                                                    <span className="badge label-table badge-danger">Từ Chối</span>
+                                                                                    <span className="badge label-table badge-danger">Từ chối</span>
                                                                                 </span>)}
                                                                         </td>
 
@@ -650,10 +650,10 @@ const ListHotelVerification = () => {
                                                                 >
                                                                     <option value="">Chọn Trạng Thái</option>
                                                                     <option key="verified" value="Verified">
-                                                                        Đã Xác Minh
+                                                                        Đã xác minh
                                                                     </option>
                                                                     <option key="rejected" value="Rejected">
-                                                                        Từ Chối
+                                                                        Từ chối
                                                                     </option>
                                                                 </select>
                                                             </td>

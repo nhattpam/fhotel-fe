@@ -154,10 +154,15 @@ const ListOwnerBill = () => {
                         </>
                       ))
                     }
-
-
                   </tbody>
                 </table>
+                {
+                  currentBills.length === 0 && (
+                    <>
+                      <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                    </>
+                  )
+                }
               </div>
             </div>
           </div>

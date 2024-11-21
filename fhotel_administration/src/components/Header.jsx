@@ -182,7 +182,42 @@ const Header = () => {
                 <img src={user.image} style={{ width: "30px", height: "30px" }} />
                 <span />{user.name}<i className="fa fa-angle-down m-l-5" /></a>
               <ul className="dropdown-menu dropdown-menu-right">
-                <a className="dropdown-item" ><i className="fa fa-user" />Thông Tin</a>
+                {
+                  user.role?.roleName === "Admin" && (
+                    <>
+                      <a className="dropdown-item" ><i className="fa fa-user" />Thông Tin</a>
+                    </>
+                  )
+                }
+                {
+                  user.role?.roleName === "Manager" && (
+                    <>
+                      <a className="dropdown-item" ><i className="fa fa-user" />Thông Tin</a>
+                    </>
+                  )
+                }
+                {
+                  user.role?.roleName === "Hotel Manager" && (
+                    <>
+                      <a className="dropdown-item" ><i className="fa fa-user" />Thông Tin</a>
+                    </>
+                  )
+                }
+                {
+                  user.role?.roleName === "Receptionist" && (
+                    <>
+                      <a className="dropdown-item" ><i className="fa fa-user" />Thông Tin</a>
+                    </>
+                  )
+                }
+                {
+                  user.role?.roleName === "Room Attendant" && (
+                    <>
+                      <a className="dropdown-item" ><i className="fa fa-user" />Thông Tin</a>
+                    </>
+                  )
+                }
+
                 {
                   user.role?.roleName === "Admin" && (
                     <>

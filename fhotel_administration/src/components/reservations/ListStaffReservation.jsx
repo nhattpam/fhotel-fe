@@ -187,6 +187,29 @@ const ListStaffReservation = () => {
 
     };
 
+
+    const [userDocumentList, setUserDocumentList] = useState([]);
+
+    const [showModalUserDocument, setShowModalUserDocument] = useState(false);
+    const closeModalUserDocument = () => {
+        setShowModalUserDocument(false);
+        setUserDocumentList([]);
+    };
+
+
+    const openUserDocumentModal = (reservationId) => {
+        setShowModalUserDocument(true);
+        reservationService
+            .getAllUserDocumentByReservation(reservationId)
+            .then((res) => {
+                setUserDocumentList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    };
+
     return (
         <>
             <Header />
@@ -361,10 +384,19 @@ const ListStaffReservation = () => {
                                     <div className='row'>
                                         <div className="col-md-4" style={{ textAlign: 'left' }}>
                                             <h5>Thông Tin Khách Hàng</h5>
-                                            <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name}</p>
+                                            <p className="mb-1" ><strong className='mr-2'>Họ và tên:</strong> {reservation.customer?.name} </p>
                                             <p className="mb-1"><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
                                             <p className="mb-1"><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
-                                            <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
+                                            <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}&nbsp;<button
+                                                type="button"
+                                                className="btn btn-default btn-xs"
+                                                data-toggle="tooltip"
+                                                data-original-title="Activate"
+                                                onClick={() => openUserDocumentModal(reservation.reservationId)}
+                                            >
+                                                <i class="fa fa-file-image-o text-warning" aria-hidden="true"></i>
+
+                                            </button></p>
                                         </div>
                                         <div className="col-md-4" style={{ textAlign: 'left' }}>
                                             <h5>Thông Tin Phòng</h5>
@@ -761,6 +793,44 @@ const ListStaffReservation = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateBillTransactionImage} >Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+            }
+            {showModalUserDocument && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Hình Ảnh Giấy Tờ Của Khách Hàng</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUserDocument}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                <div className="row">
+                                    <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {
+                                            userDocumentList.length > 0 ? (
+                                                userDocumentList.map((item, index) => (
+                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                                                        <img src={item.image} alt="Room" style={{ width: "500px", height: "500px" }} />
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                </>
+                                            )
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUserDocument} >Đóng</button>
                             </div>
                         </div>
                     </div>

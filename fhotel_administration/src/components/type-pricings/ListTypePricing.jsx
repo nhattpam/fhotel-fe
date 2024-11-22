@@ -34,14 +34,14 @@ const ListTypePricing = () => {
         typeService
             .getAllTypePricingByTypeId(typeId)
             .then((res) => {
-                // Sorting by districtId and then dayOfWeek
+                // Sorting by districtName and then dayOfWeek
                 const sortedData = res.data.sort((a, b) => {
-                    // First, sort by districtId
-                    const districtComparison = a.districtId.localeCompare(b.districtId);
+                    // First, sort by districtName
+                    const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
                     if (districtComparison !== 0) {
                         return districtComparison;
                     }
-                    // If districtId is the same, sort by dayOfWeek
+                    // If districtName is the same, sort by dayOfWeek
                     return a.dayOfWeek - b.dayOfWeek;
                 });
                 setTypePricingList(sortedData);
@@ -49,9 +49,10 @@ const ListTypePricing = () => {
                 setLoading(false);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 setLoading(false);
             });
+
         typeService
             .getTypeById(typeId)
             .then((res) => {
@@ -212,24 +213,24 @@ const ListTypePricing = () => {
     // Updated form submission to use the new pricing setup
     const submitCreateTypePricing = async (e) => {
         e.preventDefault();
-    
+
         // Validation function for "from" and "to" times
         const isValidTimeRange = (from, to) => {
             return new Date(from) <= new Date(to);
         };
-    
+
         setIsSubmitting(true);
-    
+
         try {
             for (const typePricing of typePricings) {
-    
+
                 // Check if "To" time is after "From" time
                 if (!isValidTimeRange(typePricing.from, typePricing.to)) {
                     alert("Xem lại khoảng thời gian!");
                     setIsSubmitting(false);
                     return; // Exit if validation fails
                 }
-    
+
                 const pricingData = {
                     price: typePricing.basePrice,
                     typeId: typeId,
@@ -238,46 +239,55 @@ const ListTypePricing = () => {
                     percentageIncrease: typePricing.percentageIncrease,
                     description: typePricing.description
                 };
-    
+
                 const typePricingWithDistrictInfo = {
                     ...pricingData,
                     districtId,
                 };
-    
+
                 console.log(JSON.stringify(typePricingWithDistrictInfo));
-    
+
                 // Call API to save the pricing
                 const typePricingResponse = await typePricingService.saveTypePricing(typePricingWithDistrictInfo);
-    
+
                 if (typePricingResponse.status !== 201) {
                     handleResponseError(typePricingResponse);
                 }
-    
+
                 // Fetch and sort updated type pricing list
                 typeService
                     .getAllTypePricingByTypeId(typeId)
                     .then((res) => {
+                        // Sorting by districtName and then dayOfWeek
                         const sortedData = res.data.sort((a, b) => {
-                            const districtComparison = a.districtId.localeCompare(b.districtId);
-                            return districtComparison !== 0 ? districtComparison : a.dayOfWeek - b.dayOfWeek;
+                            // First, sort by districtName
+                            const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
+                            if (districtComparison !== 0) {
+                                return districtComparison;
+                            }
+                            // If districtName is the same, sort by dayOfWeek
+                            return a.dayOfWeek - b.dayOfWeek;
                         });
                         setTypePricingList(sortedData);
+
+                        setLoading(false);
                     })
                     .catch((error) => {
-                        handleResponseError(error.response);
+                        console.error(error);
+                        setLoading(false);
                     });
             }
-    
+
             // setTypePricings([]);
             // Refresh or clear form after submission
-    
+
         } catch (error) {
             handleResponseError(error.response);
         } finally {
             setIsSubmitting(false);
         }
     };
-    
+
 
 
     ///UPDATE TYPE PRICING
@@ -308,20 +318,23 @@ const ListTypePricing = () => {
                 typeService
                     .getAllTypePricingByTypeId(typeId)
                     .then((res) => {
-                        // Sorting by districtId and then dayOfWeek
+                        // Sorting by districtName and then dayOfWeek
                         const sortedData = res.data.sort((a, b) => {
-                            // First, sort by districtId
-                            const districtComparison = a.districtId.localeCompare(b.districtId);
+                            // First, sort by districtName
+                            const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
                             if (districtComparison !== 0) {
                                 return districtComparison;
                             }
-                            // If districtId is the same, sort by dayOfWeek
+                            // If districtName is the same, sort by dayOfWeek
                             return a.dayOfWeek - b.dayOfWeek;
                         });
                         setTypePricingList(sortedData);
+
+                        setLoading(false);
                     })
                     .catch((error) => {
-                        console.log(error);
+                        console.error(error);
+                        setLoading(false);
                     });
             } else {
                 handleResponseError(updateRes);
@@ -343,20 +356,23 @@ const ListTypePricing = () => {
                         typeService
                             .getAllTypePricingByTypeId(typeId)
                             .then((res) => {
-                                // Sorting by districtId and then dayOfWeek
+                                // Sorting by districtName and then dayOfWeek
                                 const sortedData = res.data.sort((a, b) => {
-                                    // First, sort by districtId
-                                    const districtComparison = a.districtId.localeCompare(b.districtId);
+                                    // First, sort by districtName
+                                    const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
                                     if (districtComparison !== 0) {
                                         return districtComparison;
                                     }
-                                    // If districtId is the same, sort by dayOfWeek
+                                    // If districtName is the same, sort by dayOfWeek
                                     return a.dayOfWeek - b.dayOfWeek;
                                 });
                                 setTypePricingList(sortedData);
+
+                                setLoading(false);
                             })
                             .catch((error) => {
-                                console.log(error);
+                                console.error(error);
+                                setLoading(false);
                             });
                     }
                 })

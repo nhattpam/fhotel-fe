@@ -442,12 +442,25 @@ const EditHotel = () => {
                 hotelService
                     .getAllRoomTypeByHotelId(hotelId)
                     .then((res) => {
-                        setRoomTypeList(res.data);
+                        const roomTypes = res.data;
+                        setRoomTypeList(roomTypes);
+                        // Fetch price for each room type
+                        roomTypes.forEach((roomType) => {
+                            roomTypeService.getTodayPricebyRoomTypeId(roomType.roomTypeId)
+                                .then((priceRes) => {
+                                    setRoomPrices(prevPrices => ({
+                                        ...prevPrices,
+                                        [roomType.roomTypeId]: priceRes.data // Save the price by room type ID
+                                    }));
+                                })
+                                .catch((error) => {
+                                    console.log("Error fetching price for roomTypeId:", roomType.roomTypeId, error);
+                                });
+                        });
                     })
                     .catch((error) => {
                         console.log(error);
                     });
-
             } else {
                 handleResponseError(roomTypeResponse);
             }

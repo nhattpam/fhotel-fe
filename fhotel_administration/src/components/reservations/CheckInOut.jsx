@@ -470,12 +470,17 @@ const CheckInOut = () => {
             serviceTypeService
                 .getAllServiceType()
                 .then((res) => {
-                    setServiceTypeList(res.data);
+                    // Filter out services with the name "Hoàn tiền hủy đặt phòng"
+                    const filteredServiceTypes = res.data.filter(
+                        (serviceType) => serviceType.serviceTypeName !== "Hoàn tiền hủy đặt phòng"
+                    );
+                    setServiceTypeList(filteredServiceTypes);
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.error(error);
                 });
         }
+
     };
 
 
@@ -981,11 +986,11 @@ const CheckInOut = () => {
     const handlePrint = () => {
         const printContent = document.getElementById('print-section').innerHTML;
         const iframe = document.createElement('iframe');
-    
+
         iframe.style.position = 'absolute';
         iframe.style.top = '-10000px'; // Hide the iframe
         document.body.appendChild(iframe);
-    
+
         const doc = iframe.contentWindow.document;
         doc.open();
         doc.write(`
@@ -995,14 +1000,14 @@ const CheckInOut = () => {
             </html>
         `);
         doc.close();
-    
+
         iframe.contentWindow.focus();
         iframe.contentWindow.print();
-    
+
         // Remove the iframe after printing
         setTimeout(() => document.body.removeChild(iframe), 1000);
     };
-        
+
 
 
     return (

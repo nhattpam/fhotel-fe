@@ -116,40 +116,40 @@ const RoomStatus = () => {
 
     const submitUpdateRoom = async (e, roomId) => {
         e.preventDefault();
-      
+
         if (!updateRoom.status || !updateRoom.note) {
-          console.error("Status or note is missing!");
-          return; // Ensure that both fields have valid values
+            console.error("Status or note is missing!");
+            return; // Ensure that both fields have valid values
         }
-      
+
         try {
-          const res = await roomService.getRoomById(roomId);
-          const roomData = res.data;
-      
-          const updateRes = await roomService.updateRoom(roomId, {
-            ...roomData, 
-            status: updateRoom.status, 
-            note: updateRoom.note 
-          });
-      
-          if (updateRes.status === 200) {
-            setSuccess({ general: "Cập nhật thành công!" });
-            setShowSuccess(true);
-            // Update room data
-            roomService.getRoomById(roomId).then((res) => setRoom(res.data));
-            // Update room list
-            userService.getAllRoomByStaff(loginUserId).then((res) => {
-              const sortedRoomList = [...res.data].sort((a, b) => a.roomNumber - b.roomNumber);
-              setRoomList(sortedRoomList);
+            const res = await roomService.getRoomById(roomId);
+            const roomData = res.data;
+
+            const updateRes = await roomService.updateRoom(roomId, {
+                ...roomData,
+                status: updateRoom.status,
+                note: updateRoom.note
             });
-          } else {
-            handleResponseError(updateRes);
-          }
+
+            if (updateRes.status === 200) {
+                setSuccess({ general: "Cập nhật thành công!" });
+                setShowSuccess(true);
+                // Update room data
+                roomService.getRoomById(roomId).then((res) => setRoom(res.data));
+                // Update room list
+                userService.getAllRoomByStaff(loginUserId).then((res) => {
+                    const sortedRoomList = [...res.data].sort((a, b) => a.roomNumber - b.roomNumber);
+                    setRoomList(sortedRoomList);
+                });
+            } else {
+                handleResponseError(updateRes);
+            }
         } catch (error) {
-          handleResponseError(error.response);
+            handleResponseError(error.response);
         }
-      };
-      
+    };
+
 
     const [error, setError] = useState({}); // State to hold error messages
     const [showError, setShowError] = useState(false); // State to manage error visibility
@@ -308,11 +308,17 @@ const RoomStatus = () => {
                                                     {room.status === 'Available' && (
                                                         <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
                                                     )}
-                                                    {room.status === 'Occupied' && occupiedRoom && (
-                                                        <div>
-                                                            <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
-                                                            <p>Khách: {occupiedRoom.reservation.customer.name}</p>
-                                                        </div>
+                                                    {room.status === 'Occupied' ? (
+                                                        occupiedRoom ? (
+                                                            <div>
+                                                                <h4 style={{ fontWeight: 'bold' }}>Đang sử dụng</h4>
+                                                                <p>Khách: {occupiedRoom.reservation?.customer?.name}</p>
+                                                            </div>
+                                                        ) : (
+                                                            <h4 style={{ fontWeight: 'bold' }}>Không có sẵn</h4>
+                                                        )
+                                                    ) : (
+                                                        <></>
                                                     )}
                                                     {room.status === 'Maintenance' && (
                                                         <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
@@ -383,7 +389,7 @@ const RoomStatus = () => {
                                                     value={updateRoom.status || ''} // add fallback value
                                                     required
                                                 >
-                                                     <option value="">Chọn trạng thái</option>
+                                                    <option value="">Chọn trạng thái</option>
                                                     <option value="Available">Có sẵn</option>
                                                     <option value="Occupied">Không có sẵn</option>
                                                     <option value="Maintenance">Bảo trì</option>

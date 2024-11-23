@@ -84,6 +84,14 @@ class RoomTypeService {
         });
       }
 
+      deleteRoomTypeById(id) {
+        return axios.delete(API_URL + "/room-types/" + id, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new RoomTypeService;

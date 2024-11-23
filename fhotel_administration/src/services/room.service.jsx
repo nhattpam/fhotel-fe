@@ -65,6 +65,17 @@ class RoomService {
         });
       }
 
+      checkDuplicate(room, hotelId) {
+        return axios.post(API_URL + "/rooms/check-duplicates", room, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          },
+          params: { hotelId: hotelId } // Pass the hotelId as a query parameter
+        })
+        
+      }
+      
+
 
 }
 export default new RoomService;

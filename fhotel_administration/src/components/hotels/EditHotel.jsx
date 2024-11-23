@@ -312,6 +312,8 @@ const EditHotel = () => {
         totalRooms: 0,
 
     });
+    const [roomNumbers, setRoomNumbers] = useState([]);
+
     const [roomImageList2, setRoomImageList2] = useState([]);
     const [createRoomImage, setCreateRoomImage] = useState({
         roomTypeId: "",
@@ -325,13 +327,28 @@ const EditHotel = () => {
     const [formSubmitted, setFormSubmitted] = useState(false); // State to track submission status
 
     const handleChange = (e) => {
-        const value = e.target.value;
+        const { name, value } = e.target;
 
-        setCreateRoomType({ ...createRoomType, [e.target.name]: value });
+        setCreateRoomType((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+
+        // If the totalRooms field changes, update the roomNumbers array
+        if (name === "totalRooms") {
+            const total = parseInt(value, 10) || 0;
+            setRoomNumbers(Array.from({ length: total }, (_, i) => ""));
+        }
     };
 
     const handleCreateRoomTypeDescriptionChange = (value) => {
         setCreateRoomType({ ...createRoomType, description: value });
+    };
+
+    const handleRoomNumberChange = (index, value) => {
+        const updatedRoomNumbers = [...roomNumbers];
+        updatedRoomNumbers[index] = value;
+        setRoomNumbers(updatedRoomNumbers);
     };
 
     // Validation function
@@ -348,7 +365,6 @@ const EditHotel = () => {
             try {
                 const res = await typeService.getTypeById(createRoomType.typeId);
                 const type = res.data; // Assuming `typeService.getTypeById` returns an object with `data` that includes `minSize` and `maxSize`
-                console.log("DMM: " + res.data.minSize)
                 // Check if createRoomType.roomSize is within the range
                 if (createRoomType.roomSize < type.minSize || createRoomType.roomSize > type.maxSize) {
                     errors.roomSize = `Diện tích phải từ ${type.minSize}m² tới ${type.maxSize}m²`;
@@ -389,85 +405,112 @@ const EditHotel = () => {
         setImagePreviewsRoomImage((prev) => [...prev, ...newImagePreviews]);
         setFilesRoomImage((prev) => [...prev, ...acceptedFiles]); // Add this line
     };
+    const resetForm = () => {
+        setCreateRoomType({
+            typeId: "",
+            roomSize: "",
+            totalRooms: "",
+            description: "",
+        }); // Reset `createRoomType` fields
+        setFilesRoomImage([]); // Clear uploaded files
+        // setRoomNumbers([]); // Reset dynamic room numbers
+        setSelectedFacilities([]); // Clear selected facilities
+        setImagePreviewsRoomImage([]); // Reset image previews
+        setSelectedImageIndexRoomImage(null); // Clear selected image index
+    };
+
 
     const submitCreateRoomType = async (e) => {
         e.preventDefault();
 
-        // Validate the form before submitting
-        const isValid = await validateForm();
-        if (!isValid) {
-            setShowError(true);
-            return;
-        }
-
-        // If validation passes, proceed with the form submission
-        console.log(JSON.stringify(createRoomType));
-
         try {
-            // Post the hotel first
-            const roomTypeResponse = await roomTypeService.saveRoomType(createRoomType);
-
-            // Handle 201 success
-            if (roomTypeResponse.status === 201) {
-                const roomTypeId = roomTypeResponse.data.roomTypeId;
-
-                // Upload each hotel image
-                for (let file of filesRoomImage) {
-                    const imageData = new FormData();
-                    imageData.append('file', file);
-
-                    const imageResponse = await hotelImageService.uploadImage(imageData);
-                    const imageUrl = imageResponse.data.link; // Assuming this gives you the URL
-                    // Create hotel image object
-                    const createRoomImageData = { roomTypeId, image: imageUrl };
-
-                    await roomImageService.saveRoomImage(createRoomImageData);
-                }
-
-                selectedFacilities.forEach(async (facilityId) => {
-                    try {
-                        const response = await roomFacilityService.saveRoomFacility({ roomTypeId: roomTypeId, facilityId });
-                        console.log("Facility added:", response);
-                        // Optionally refresh the facilities list or perform other actions
-                        fetchRoomFacilities(selectedRoomTypeId);
-                    } catch (error) {
-                        console.error("Error adding facility:", error);
-                    }
-                });
-
-                // Optionally clear selections and close modal
-                setSelectedFacilities([]);
-                setSuccess({ general: "Tạo Thành Công!" });
-                setShowSuccess(true); // Show success
-                hotelService
-                    .getAllRoomTypeByHotelId(hotelId)
-                    .then((res) => {
-                        const roomTypes = res.data;
-                        setRoomTypeList(roomTypes);
-                        // Fetch price for each room type
-                        roomTypes.forEach((roomType) => {
-                            roomTypeService.getTodayPricebyRoomTypeId(roomType.roomTypeId)
-                                .then((priceRes) => {
-                                    setRoomPrices(prevPrices => ({
-                                        ...prevPrices,
-                                        [roomType.roomTypeId]: priceRes.data // Save the price by room type ID
-                                    }));
-                                })
-                                .catch((error) => {
-                                    console.log("Error fetching price for roomTypeId:", roomType.roomTypeId, error);
-                                });
-                        });
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-            } else {
-                handleResponseError(roomTypeResponse);
+            const isValid = await validateForm();
+            if (!isValid) {
+                setShowError(true);
+                return;
             }
+
+            const roomTypeResponse = await roomTypeService.saveRoomType(createRoomType);
+            if (roomTypeResponse.status !== 201) {
+                return handleResponseError(roomTypeResponse);
+            }
+
+            const roomTypeId = roomTypeResponse.data.roomTypeId;
+
+            // Save room numbers
+            const checkDuplicate = await roomService.checkDuplicate(roomNumbers, roomTypeResponse.data.hotelId);
+            if (checkDuplicate.data) {
+                setError({ validation: "Số phòng đã tồn tại trong khách sạn!" });
+                setShowError(true);
+                await roomTypeService.deleteRoomTypeById(roomTypeId);
+            } else {
+                await Promise.all(
+                    roomNumbers.map(async (room) => {
+                        const roomResponse = await roomService.saveRoom({ roomTypeId, roomNumber: room });
+                        if (roomResponse.status !== 201) {
+                            throw new Error(`Failed to save room number ${room}.`);
+                        }
+                    })
+                );
+
+
+                // Upload images in parallel
+                const imageUrls = await Promise.all(
+                    filesRoomImage.map(async (file) => {
+                        const imageData = new FormData();
+                        imageData.append("file", file);
+                        const imageResponse = await hotelImageService.uploadImage(imageData);
+                        return imageResponse.data.link;
+                    })
+                );
+
+                // Save uploaded image URLs
+                await Promise.all(
+                    imageUrls.map((url) =>
+                        roomImageService.saveRoomImage({ roomTypeId, image: url })
+                    )
+                );
+
+                // Add facilities
+                await Promise.all(
+                    selectedFacilities.map((facilityId) =>
+                        roomFacilityService.saveRoomFacility({ roomTypeId, facilityId })
+                    )
+                );
+
+
+
+                // Refresh data
+                const roomTypes = await hotelService.getAllRoomTypeByHotelId(hotelId);
+                setRoomTypeList(roomTypes.data);
+
+                // Fetch and update prices
+                await Promise.all(
+                    roomTypes.data.map(async (roomType) => {
+                        try {
+                            const priceRes = await roomTypeService.getTodayPricebyRoomTypeId(
+                                roomType.roomTypeId
+                            );
+                            setRoomPrices((prev) => ({
+                                ...prev,
+                                [roomType.roomTypeId]: priceRes.data,
+                            }));
+                        } catch (error) {
+                            console.error("Error fetching price for roomTypeId:", roomType.roomTypeId, error);
+                        }
+                    })
+                );
+
+                setSuccess({ general: "Tạo Thành Công!" });
+                setShowSuccess(true);
+                resetForm();
+            }
+
         } catch (error) {
-            handleResponseError(error.response);
+            handleResponseError(error.response || error.message || "An error occurred");
         }
     };
+
 
     // Function to fetch room images based on roomTypeId
     const fetchRoomImages2 = (roomTypeId) => {
@@ -2205,6 +2248,25 @@ const EditHotel = () => {
                                                     ))}
                                                 </select>
                                             </div>
+                                            {/* Dynamically render input fields for room numbers */}
+                                            {roomNumbers.map((room, index) => (
+                                                <div className="form-group col-md-12 d-flex align-items-center gap-3" key={index}>
+                                                    <label htmlFor={`roomNumber-${index}`} className="form-label">
+                                                        Phòng thứ {index + 1}:&nbsp;
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control w-50"
+                                                        id={`roomNumber-${index}`}
+                                                        name={`roomNumber-${index}`}
+                                                        placeholder={`Nhập số phòng ${index + 1}`}
+                                                        value={room}
+                                                        onChange={(e) => handleRoomNumberChange(index, e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                            ))}
+
 
                                             <div className="form-group col-md-12">
                                                 <label htmlFor="description">Mô tả * :</label>

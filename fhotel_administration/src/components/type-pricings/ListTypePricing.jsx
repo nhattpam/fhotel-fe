@@ -783,7 +783,7 @@ const ListTypePricing = () => {
                                                             </div>
                                                         </div>
 
-                                                        <div className="form-group col-md-2">
+                                                        <div className="form-group col-md-3">
                                                             <label>
                                                                 Mô tả <span className="text-danger">*</span> :
                                                             </label>
@@ -798,15 +798,15 @@ const ListTypePricing = () => {
                                                         </div>
 
                                                         {/* Fix for button position */}
-                                                        <div className="form-group col-md-2">
+                                                        <div className="form-group col-md-1">
                                                             <label>&nbsp;</label>
                                                             <div className="input-group">
                                                                 <button
                                                                     type="button"
-                                                                    className="btn btn-danger w-100" // Ensure the button takes full width of its container
+                                                                    className="btn btn-danger w-50" // Ensure the button takes full width of its container
                                                                     onClick={() => removeTypePricing(index)}
                                                                 >
-                                                                    Xóa
+                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
                                                                 </button>
                                                             </div>
                                                         </div>

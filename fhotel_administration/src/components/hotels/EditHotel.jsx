@@ -1333,6 +1333,8 @@ const EditHotel = () => {
             handleResponseError(error.response);
         }
     };
+
+    const formatter = new Intl.NumberFormat('en-US'); 
     return (
         <>
             <Header />
@@ -1683,7 +1685,7 @@ const EditHotel = () => {
                                                     <td>
                                                         {
                                                             roomPrices[item.roomTypeId] !== undefined
-                                                                ? `${roomPrices[item.roomTypeId]}` // Show price if available
+                                                                ? `${formatter.format(roomPrices[item.roomTypeId])}` // Show price if available
                                                                 : "Loading..." // Show loading message while fetching price
                                                         }
                                                     </td>
@@ -3016,10 +3018,10 @@ const EditHotel = () => {
 
                                             </p>
                                             {reservation.isPrePaid === true && (
-                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 ₫</p>
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong>0₫</p>
                                             )}
                                             {reservation.isPrePaid === false && (
-                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} ₫</p>
+                                                <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong>{formatter.format(reservation.totalAmount)}₫</p>
                                             )}
 
                                         </div>
@@ -3030,7 +3032,7 @@ const EditHotel = () => {
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
                                             <h5>
                                                 <i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng:&nbsp;
-                                                <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}
+                                                <span style={{ fontWeight: 'bold' }}>{formatter.format(reservation.totalAmount)}₫
                                                 </span> {
                                                     reservation.isPrePaid === true && (
 
@@ -3044,8 +3046,8 @@ const EditHotel = () => {
                                             <hr />
                                         </div>
                                         <div className="col-md-12" style={{ textAlign: 'left' }}>
-                                            <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                            }</span></h5>
+                                            <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{formatter.format(orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0))
+                                            }₫</span></h5>
                                             <div className="table-responsive">
                                                 <table className="table table-borderless table-hover table-wrap table-centered">
                                                     <thead>
@@ -3100,14 +3102,14 @@ const EditHotel = () => {
                                                                     {
                                                                         item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
                                                                             <>
-                                                                                <td>{item.order?.totalAmount}</td>
+                                                                                <td>{formatter.format(item.order?.totalAmount)}</td>
                                                                             </>
                                                                         )
                                                                     }
                                                                     {
                                                                         item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
                                                                             <>
-                                                                                <td>{item.order?.totalAmount}</td>
+                                                                                <td>{formatter.format(item.order?.totalAmount)}</td>
                                                                             </>
                                                                         )
                                                                     }
@@ -3129,8 +3131,8 @@ const EditHotel = () => {
                                             <div style={{ textAlign: 'right', marginTop: '10px' }}>
                                                 <h5>
                                                     <span style={{ fontWeight: 'bold' }}>Số tiền cần thanh toán: &nbsp;</span>
-                                                    {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                                                        + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} ₫
+                                                    {formatter.format(orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                                                        + (reservation.isPrePaid === false ? reservation.totalAmount : 0))}₫
                                                 </h5>
                                             </div>
                                         </div>
@@ -3148,7 +3150,7 @@ const EditHotel = () => {
                                                         <tr>
                                                             <th><span>STT</span></th>
                                                             <th><span>Ngày tạo</span></th>
-                                                            <th><span>Tổng số tiền</span></th>
+                                                            <th><span>Tổng số tiền (₫)</span></th>
                                                             <th><span>Trạng thái</span></th>
                                                             {
                                                                 billByReservation && (
@@ -3169,7 +3171,7 @@ const EditHotel = () => {
                                                                 <tr>
                                                                     <td>1</td>
                                                                     <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
-                                                                    <td>{billByReservation.totalAmount}</td>
+                                                                    <td>{formatter.format(billByReservation.totalAmount)}</td>
                                                                     {
                                                                         billByReservation.billStatus === "Pending" && (
                                                                             <>

@@ -197,6 +197,8 @@ const ListRefund = () => {
         }
         setShowError(true); // Show error modal or message
     };
+
+    const formatter = new Intl.NumberFormat('en-US'); 
     return (
         <>
             <Header />
@@ -429,7 +431,7 @@ const ListRefund = () => {
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Số tiền cần hoàn:</strong>
-                                        <span>{order.totalAmount} ₫</span>
+                                        <span>{formatter.format(order.totalAmount)}₫</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2">
                                         <strong>Ngày yêu cầu:</strong>
@@ -465,7 +467,7 @@ const ListRefund = () => {
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Tổng số tiền:</strong>
-                                        <span>{order.reservation?.totalAmount} ₫</span>
+                                        <span>{formatter.format(order.reservation?.totalAmount)}₫</span>
                                     </div>
                                     <div className="d-flex justify-content-between py-2 border-bottom">
                                         <strong>Trạng thái đặt phòng:</strong>

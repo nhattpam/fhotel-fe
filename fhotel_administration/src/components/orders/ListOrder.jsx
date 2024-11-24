@@ -171,6 +171,8 @@ const ListOrder = () => {
         }
         setShowError(true); // Show error modal or message
     };
+
+    const formatter = new Intl.NumberFormat('en-US'); 
     return (
         <>
             <Header />
@@ -390,14 +392,14 @@ const ListOrder = () => {
                                                         {
                                                             item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
                                                                 <>
-                                                                    <td>{item.order?.totalAmount}</td>
+                                                                    <td>{formatter.format(item.order?.totalAmount)}</td>
                                                                 </>
                                                             )
                                                         }
                                                         {
                                                             item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
                                                                 <>
-                                                                    <td>{item.order?.totalAmount}</td>
+                                                                    <td>{formatter.format(item.order?.totalAmount)}</td>
                                                                 </>
                                                             )
                                                         }

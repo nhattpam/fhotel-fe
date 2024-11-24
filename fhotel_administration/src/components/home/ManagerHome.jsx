@@ -16,7 +16,7 @@ const ManagerHome = () => {
 
   Chart.register(PieController, ArcElement);
   Chart.register(...registerables);
-
+  const formatter = new Intl.NumberFormat('en-US'); 
 
   //count reservation by owner
   const [reservationList, setReservationList] = useState([]);
@@ -288,14 +288,7 @@ const ManagerHome = () => {
             zeroLineColor: "rgba(0, 0, 0, 0.1)",
           },
           ticks: {
-            callback: (value) => {
-              if (value >= 1000000) {
-                return `${value}₫`;
-              } else if (value >= 1000) {
-                return `${value}₫`;
-              }
-              return `${value}₫`;
-            },
+            callback: (value) => `${formatter.format(value)}₫`,
           },
         },
       },
@@ -761,10 +754,10 @@ const ManagerHome = () => {
 
                       </p>
                       {reservation.isPrePaid === true && (
-                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 ₫</p>
+                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong>0₫</p>
                       )}
                       {reservation.isPrePaid === false && (
-                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} ₫</p>
+                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong>{formatter.format(reservation.totalAmount)}₫</p>
                       )}
 
                     </div>
@@ -775,7 +768,7 @@ const ManagerHome = () => {
                     <div className="col-md-12" style={{ textAlign: 'left' }}>
                       <h5>
                         <i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng:&nbsp;
-                        <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}
+                        <span style={{ fontWeight: 'bold' }}>{formatter.format(reservation.totalAmount)}₫
                         </span> {
                           reservation.isPrePaid === true && (
 
@@ -789,8 +782,8 @@ const ManagerHome = () => {
                       <hr />
                     </div>
                     <div className="col-md-12" style={{ textAlign: 'left' }}>
-                      <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                      }</span></h5>
+                      <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{formatter.format(orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0))
+                      }₫</span></h5>
                       <div className="table-responsive">
                         <table className="table table-borderless table-hover table-wrap table-centered">
                           <thead>
@@ -845,14 +838,14 @@ const ManagerHome = () => {
                                   {
                                     item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
                                       <>
-                                        <td>{item.order?.totalAmount}</td>
+                                        <td>{formatter.format(item.order?.totalAmount)}</td>
                                       </>
                                     )
                                   }
                                   {
                                     item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
                                       <>
-                                        <td>{item.order?.totalAmount}</td>
+                                        <td>{formatter.format(item.order?.totalAmount)}</td>
                                       </>
                                     )
                                   }
@@ -874,8 +867,8 @@ const ManagerHome = () => {
                       <div style={{ textAlign: 'right', marginTop: '10px' }}>
                         <h5>
                           <span style={{ fontWeight: 'bold' }}>Số tiền cần thanh toán: &nbsp;</span>
-                          {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                            + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} ₫
+                          {formatter.format(orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                            + (reservation.isPrePaid === false ? reservation.totalAmount : 0))}₫
                         </h5>
                       </div>
                     </div>
@@ -893,7 +886,7 @@ const ManagerHome = () => {
                             <tr>
                               <th><span>STT</span></th>
                               <th><span>Ngày tạo</span></th>
-                              <th><span>Tổng số tiền</span></th>
+                              <th><span>Tổng số tiền (₫)</span></th>
                               <th><span>Trạng thái</span></th>
                             </tr>
                           </thead>
@@ -903,7 +896,7 @@ const ManagerHome = () => {
                                 <tr>
                                   <td>1</td>
                                   <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
-                                  <td>{billByReservation.totalAmount}</td>
+                                  <td>{formatter.format(billByReservation.totalAmount)}</td>
                                   {
                                     billByReservation.billStatus === "Pending" && (
                                       <>

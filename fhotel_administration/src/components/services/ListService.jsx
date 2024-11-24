@@ -321,6 +321,7 @@ const ListService = () => {
         setShowError(true); // Show error modal or message
     };
 
+    const formatter = new Intl.NumberFormat('en-US'); 
     return (
         <>
             <Header />
@@ -430,7 +431,7 @@ const ListService = () => {
                                                                 </>
                                                             )
                                                         }
-                                                        <td>{item.price}</td>
+                                                        <td>{formatter.format(item.price)}</td>
                                                         <td className='wordwrap'>{item.description}</td>
                                                         <td>{item.serviceType?.serviceTypeName}</td>
                                                         <td>
@@ -575,7 +576,7 @@ const ListService = () => {
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Đơn giá:</th>
-                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{service.price} (₫)</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{formatter.format(service.price)}₫</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mô tả:</th>
@@ -735,7 +736,7 @@ const ListService = () => {
                                                             onChange={(e) => handleChange(e)}
                                                             required
                                                         >
-                                                            <option value="">Chọn Loại</option>
+                                                            <option value="">Chọn loại</option>
                                                             {serviceTypeList.map((type) => (
                                                                 <option key={type.serviceTypeId} value={type.serviceTypeId}>
                                                                     {type.serviceTypeName}

@@ -13,7 +13,7 @@ const HotelManagerHome = () => {
 
   Chart.register(PieController, ArcElement);
   Chart.register(...registerables);
-
+  const formatter = new Intl.NumberFormat('en-US');
 
   //count reservation by owner
   const [reservationList, setReservationList] = useState([]);
@@ -91,7 +91,10 @@ const HotelManagerHome = () => {
     userService
       .getAllFeedbackByOwner(loginUserId)
       .then((res) => {
-        setFeedbackList(res.data);
+        const sortedFeedback = res.data
+          .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate)); // Sort by createdDate descending
+        const latestFiveFeedback = sortedFeedback.slice(0, 5); // Get the first 5 entries
+        setFeedbackList(latestFiveFeedback); // Update state with the latest 5 feedbacks
       })
       .catch((error) => {
         console.log(error);
@@ -263,14 +266,7 @@ const HotelManagerHome = () => {
             zeroLineColor: "rgba(0, 0, 0, 0.1)",
           },
           ticks: {
-            callback: (value) => {
-              if (value >= 1000000) {
-                return `${value}₫`;
-              } else if (value >= 1000) {
-                return `${value}₫`;
-              }
-              return `${value}₫`;
-            },
+            callback: (value) => `${formatter.format(value)}₫`,
           },
         },
       },
@@ -474,7 +470,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-warning color-white widget-stat">
                 <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">{wallet.balance}₫</h2>
+                  <h2 className="m-b-5 font-strong">{formatter.format(wallet.balance)}₫</h2>
                   <div className="m-b-5">THU NHẬP</div><i className="fa fa-money widget-stat-icon" />
                   {/* <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div> */}
                 </div>
@@ -772,10 +768,10 @@ const HotelManagerHome = () => {
 
                       </p>
                       {reservation.isPrePaid === true && (
-                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> 0 ₫</p>
+                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong>0₫</p>
                       )}
                       {reservation.isPrePaid === false && (
-                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {reservation.totalAmount} ₫</p>
+                        <p className="mb-1"><strong className='mr-2'>Cần thanh toán:</strong> {formatter.format(reservation.totalAmount)}₫</p>
                       )}
 
                     </div>
@@ -786,7 +782,7 @@ const HotelManagerHome = () => {
                     <div className="col-md-12" style={{ textAlign: 'left' }}>
                       <h5>
                         <i className="fa fa-clock-o text-primary" aria-hidden="true"></i> Tiền phòng:&nbsp;
-                        <span style={{ fontWeight: 'bold' }}>{reservation.totalAmount}
+                        <span style={{ fontWeight: 'bold' }}>{formatter.format(reservation.totalAmount)}₫
                         </span> {
                           reservation.isPrePaid === true && (
 
@@ -800,8 +796,8 @@ const HotelManagerHome = () => {
                       <hr />
                     </div>
                     <div className="col-md-12" style={{ textAlign: 'left' }}>
-                      <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                      }</span></h5>
+                      <h5><i className="fa fa-life-ring text-danger" aria-hidden="true"></i> Tiền dịch vụ: <span style={{ fontWeight: 'bold' }}>{formatter.format(orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0))
+                      }₫</span></h5>
                       <div className="table-responsive">
                         <table className="table table-borderless table-hover table-wrap table-centered">
                           <thead>
@@ -856,14 +852,14 @@ const HotelManagerHome = () => {
                                   {
                                     item.service?.serviceType?.serviceTypeName === "Trả phòng muộn" && (
                                       <>
-                                        <td>{item.order?.totalAmount}</td>
+                                        <td>{formatter.format(item.order?.totalAmount)}</td>
                                       </>
                                     )
                                   }
                                   {
                                     item.service?.serviceType?.serviceTypeName !== "Trả phòng muộn" && (
                                       <>
-                                        <td>{item.order?.totalAmount}</td>
+                                        <td>{formatter.format(item.order?.totalAmount)}</td>
                                       </>
                                     )
                                   }
@@ -885,8 +881,8 @@ const HotelManagerHome = () => {
                       <div style={{ textAlign: 'right', marginTop: '10px' }}>
                         <h5>
                           <span style={{ fontWeight: 'bold' }}>Số tiền cần thanh toán: &nbsp;</span>
-                          {orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
-                            + (reservation.isPrePaid === false ? reservation.totalAmount : 0)} ₫
+                          {formatter.format(orderDetailList.reduce((total, item) => total + (item.order?.totalAmount || 0), 0)
+                            + (reservation.isPrePaid === false ? reservation.totalAmount : 0))}₫
                         </h5>
                       </div>
                     </div>
@@ -904,7 +900,7 @@ const HotelManagerHome = () => {
                             <tr>
                               <th><span>STT</span></th>
                               <th><span>Ngày tạo</span></th>
-                              <th><span>Tổng số tiền</span></th>
+                              <th><span>Tổng số tiền (₫)</span></th>
                               <th><span>Trạng thái</span></th>
                             </tr>
                           </thead>
@@ -914,7 +910,7 @@ const HotelManagerHome = () => {
                                 <tr>
                                   <td>1</td>
                                   <td>{new Date(billByReservation.createdDate).toLocaleString('en-US')}</td>
-                                  <td>{billByReservation.totalAmount}</td>
+                                  <td>{formatter.format(billByReservation.totalAmount)}</td>
                                   {
                                     billByReservation.billStatus === "Pending" && (
                                       <>
@@ -958,43 +954,43 @@ const HotelManagerHome = () => {
         </div>
       )}
       {showModalUserDocument && (
-                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header bg-dark text-light">
-                                <h5 className="modal-title">Hình Ảnh Giấy Tờ Của Khách Hàng</h5>
-                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUserDocument}>
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                                <div className="row">
-                                    <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                        {
-                                            userDocumentList.length > 0 ? (
-                                                userDocumentList.map((item, index) => (
-                                                    <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
-                                                        <img src={item.image} alt="Room" style={{ width: "500px", height: "500px" }} />
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <>
-                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
-                                                </>
-                                            )
-                                        }
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+          <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+            <div className="modal-content">
+              <div className="modal-header bg-dark text-light">
+                <h5 className="modal-title">Hình Ảnh Giấy Tờ Của Khách Hàng</h5>
+                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalUserDocument}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                <div className="row">
+                  <div className="col-md-12" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {
+                      userDocumentList.length > 0 ? (
+                        userDocumentList.map((item, index) => (
+                          <div key={index} style={{ flex: '1 0 50%', textAlign: 'center', margin: '10px 0', position: 'relative' }}>
+                            <img src={item.image} alt="Room" style={{ width: "500px", height: "500px" }} />
+                          </div>
+                        ))
+                      ) : (
+                        <>
+                          <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                        </>
+                      )
+                    }
 
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUserDocument} >Đóng</button>
-                            </div>
-                        </div>
-                    </div>
+                  </div>
                 </div>
-            )
-            }
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalUserDocument} >Đóng</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+      }
       <style>
         {`
                     .page-item.active .page-link{

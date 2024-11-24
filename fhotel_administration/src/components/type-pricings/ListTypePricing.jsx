@@ -414,6 +414,8 @@ const ListTypePricing = () => {
         setShowError(true); // Show error modal or message
     };
 
+    const formatter = new Intl.NumberFormat('en-US'); 
+
 
     return (
         <>
@@ -495,7 +497,7 @@ const ListTypePricing = () => {
                                                     <tr key={item.typePricingId}>
                                                         <td>{index + 1}</td>
                                                         <td>{item.type?.typeName}</td>
-                                                        <td>{item.price.toLocaleString()} </td>
+                                                        <td>{formatter.format(item.price)} </td>
                                                         <td>{item.district?.districtName}</td>
                                                         <td>{item.district?.city?.cityName}</td>
                                                         <td>{new Date(item.from).toLocaleDateString('en-US')} - {new Date(item.to).toLocaleDateString('en-US')}</td>

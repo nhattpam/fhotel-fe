@@ -96,6 +96,8 @@ const Header = () => {
     setTransactionList([])
   };
 
+  const formatter = new Intl.NumberFormat('en-US'); 
+
   return (
     <>
       {/* START HEADER*/}
@@ -221,7 +223,7 @@ const Header = () => {
                 {
                   user.role?.roleName === "Admin" && (
                     <>
-                      <a className="dropdown-item" onClick={() => openWalletModal(wallet.walletId)}>Số dư: {wallet.balance}</a>
+                      <a className="dropdown-item" onClick={() => openWalletModal(wallet.walletId)}>Số dư: {formatter.format(wallet.balance)}₫</a>
 
                     </>
                   )
@@ -229,7 +231,7 @@ const Header = () => {
                 {
                   user.role?.roleName === "Hotel Manager" && (
                     <>
-                      <a className="dropdown-item" onClick={() => openWalletModal(wallet.walletId)}>Số dư: {wallet.balance}</a>
+                      <a className="dropdown-item" onClick={() => openWalletModal(wallet.walletId)}>Số dư: {formatter.format(wallet.balance)}₫</a>
 
                     </>
                   )

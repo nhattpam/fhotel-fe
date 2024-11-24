@@ -93,6 +93,7 @@ const ListOwnerBill = () => {
   };
 
 
+  const formatter = new Intl.NumberFormat('en-US'); 
 
   return (
     <>
@@ -131,7 +132,7 @@ const ListOwnerBill = () => {
                             <td>{index + 1}</td>
                             <td>{item.reservation?.code}</td>
                             <td>
-                              {item.totalAmount}
+                              {formatter.format(item.totalAmount)}
                             </td>
                             <td>{item.reservation?.customer?.name}</td>
                             <td> {new Date(item.createdDate).toLocaleString('en-US')}</td>
@@ -195,7 +196,7 @@ const ListOwnerBill = () => {
                   <div className="col-md-12">
                     <h6 className="text-primary"> Chi tiết</h6>
                     <p><strong>Mã đặt phòng:</strong> {bill.reservation?.code || 'N/A'}</p>
-                    <p><strong>Tổng số tiền:</strong> {bill.totalAmount}₫</p>
+                    <p><strong>Tổng số tiền:</strong> {formatter.format(bill.totalAmount)}₫</p>
                     <p><strong>Ngày tạo:</strong> {new Date(bill.createdDate).toLocaleString()}</p>
                     <p><strong>Trạng thái:</strong> {
                       bill.billStatus === "Pending" && (

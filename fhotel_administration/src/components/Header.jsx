@@ -274,7 +274,7 @@ const Header = () => {
                     </thead>
                     <tbody>
                       {
-                        currentTransactions.length > 0 && currentTransactions.map((item, index) => (
+                        transactionList.length > 0 && transactionList.map((item, index) => (
                           <>
                             <tr>
                               <td>{index + 1}</td>
@@ -291,7 +291,7 @@ const Header = () => {
                     </tbody>
                   </table>
                   {
-                    currentTransactions.length === 0 && (
+                    transactionList.length === 0 && (
                       <>
                         <p className='text-center mt-2' style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
                       </>

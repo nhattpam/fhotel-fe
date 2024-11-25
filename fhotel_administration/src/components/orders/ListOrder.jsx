@@ -118,7 +118,7 @@ const ListOrder = () => {
                     .then((res) => {
                         const sortedOrderList = [...res.data].sort((a, b) => {
                             // Assuming requestedDate is a string in ISO 8601 format
-                            return new Date(b.createdDate) - new Date(a.createdDate);
+                            return new Date(b.orderedDate) - new Date(a.orderedDate);
                         });
                         setOrderList(sortedOrderList);
                     })

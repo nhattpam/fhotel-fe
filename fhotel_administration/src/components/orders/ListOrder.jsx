@@ -172,7 +172,7 @@ const ListOrder = () => {
         setShowError(true); // Show error modal or message
     };
 
-    const formatter = new Intl.NumberFormat('en-US'); 
+    const formatter = new Intl.NumberFormat('en-US');
     return (
         <>
             <Header />
@@ -246,30 +246,37 @@ const ListOrder = () => {
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i className="fa fa-pencil font-14 text-primary" onClick={() => openOrderModal(item.orderId)} /></button>
-                                                            <form
-                                                                id="demo-form"
-                                                                onSubmit={(e) => submitUpdateOrder(e, item.orderId, updateOrder.orderStatus)} // Use isActive from the local state
-                                                                className="d-inline"
-                                                            >
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs m-r-5"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Activate"
-                                                                    onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Confirmed" })} // Activate
-                                                                >
-                                                                    <i className="fa fa-check font-14 text-success" />
-                                                                </button>
-                                                                <button
-                                                                    type="submit"
-                                                                    className="btn btn-default btn-xs"
-                                                                    data-toggle="tooltip"
-                                                                    data-original-title="Deactivate"
-                                                                    onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Cancelled" })} // Deactivate
-                                                                >
-                                                                    <i className="fa fa-times font-14 text-danger" />
-                                                                </button>
-                                                            </form>
+                                                            {
+                                                                item.reservation?.reservationStatus != "CheckOut" && (
+                                                                    <>
+                                                                        <form
+                                                                            id="demo-form"
+                                                                            onSubmit={(e) => submitUpdateOrder(e, item.orderId, updateOrder.orderStatus)} // Use isActive from the local state
+                                                                            className="d-inline"
+                                                                        >
+                                                                            <button
+                                                                                type="submit"
+                                                                                className="btn btn-default btn-xs m-r-5"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Activate"
+                                                                                onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Confirmed" })} // Activate
+                                                                            >
+                                                                                <i className="fa fa-check font-14 text-success" />
+                                                                            </button>
+                                                                            <button
+                                                                                type="submit"
+                                                                                className="btn btn-default btn-xs"
+                                                                                data-toggle="tooltip"
+                                                                                data-original-title="Deactivate"
+                                                                                onClick={() => setUpdateOrder({ ...updateOrder, orderStatus: "Cancelled" })} // Deactivate
+                                                                            >
+                                                                                <i className="fa fa-times font-14 text-danger" />
+                                                                            </button>
+                                                                        </form>
+                                                                    </>
+                                                                )
+                                                            }
+
                                                         </td>
                                                     </tr>
                                                 </>

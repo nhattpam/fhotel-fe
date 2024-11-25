@@ -336,7 +336,7 @@ const ListOrder = () => {
 
             {showModalOrder && (
                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div className="modal-content">
                             <div className="modal-header bg-dark text-light">
                                 <h5 className="modal-title">Thông Tin Yêu Cầu</h5>

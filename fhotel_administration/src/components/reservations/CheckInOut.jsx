@@ -680,9 +680,67 @@ const CheckInOut = () => {
                 .catch((error) => {
                     console.log(error);
                 });
+            // Optionally, you can check for reservation status here and stop loading
+            const checkReservationStatus = setInterval(() => {
+                reservationService.getReservationById(reservationId)
+                    .then((res) => {
+                        if (res.data.paymentStatus === "Paid") {
+                            clearInterval(checkReservationStatus); // Stop checking when paid
+                            // Optionally, refresh reservation info
+                            openCheckOutModal(reservationId);
+
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }, 2000); // Check every 2 seconds
 
         } catch (error) {
             handleResponseError(error.response);
+        }
+    };
+
+    const handleCreatebill = async (reservationId, totalAmount) => {
+        const createBill = {
+            reservationId: reservationId,
+            totalAmount: totalAmount
+        };
+        try {
+            console.log("Payload to create bill:", JSON.stringify(createBill));
+            const billResponse = await billService.saveBill(createBill);
+
+            if (billResponse.status === 201) {
+                // Proceed with payment logic
+                try {
+                    reservationService
+                        .getBillByReservation(reservationId)
+                        .then((res) => {
+                            setBillByReservation(res.data);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    reservationService
+                        .getReservationById(reservationId)
+                        .then((res) => {
+                            setReservation(res.data);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
+                } catch (paymentError) {
+                    console.error("Payment Error:", paymentError.response.data);
+                }
+            } else {
+                window.alert("Đã tồn tại hóa đơn!");
+                setLoading(false); // Stop loading if the bill already exists
+            }
+
+        } catch (error) {
+            window.alert("Đã tồn tại hóa đơn!");
+            setLoading(false); // Stop loading if there is an error creating the bill
         }
     };
 
@@ -1008,7 +1066,7 @@ const CheckInOut = () => {
         setTimeout(() => document.body.removeChild(iframe), 1000);
     };
 
-    const formatter = new Intl.NumberFormat('en-US'); 
+    const formatter = new Intl.NumberFormat('en-US');
 
 
     return (
@@ -1073,7 +1131,7 @@ const CheckInOut = () => {
                                                         <div className="col-md-6">
                                                             <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
                                                             <p><strong className='mr-2'>Số lượng đặt:</strong> {reservation.numberOfRooms} phòng</p>
-                                                            <p><strong className='mr-2'>Tổng số tiền:</strong> {formatter.format(reservation.totalAmount)}(₫)</p>
+                                                            <p><strong className='mr-2'>Tổng số tiền:</strong> {formatter.format(reservation.totalAmount)}₫</p>
                                                             <p>
                                                                 <strong className='mr-2'>Trạng thái đặt phòng:</strong>
                                                                 {reservation.reservationStatus === "CheckIn" ? (
@@ -1795,7 +1853,7 @@ const CheckInOut = () => {
                                                                                         className="btn btn-default btn-xs m-r-5"
                                                                                         data-toggle="tooltip"
                                                                                         data-original-title="Activate"
-                                                                                        onClick={() => handlePayBill(billByReservation.billId)} // Activate
+                                                                                        onClick={() => handlePayBill(billByReservation.billId, billByReservation.reservationId)} // Activate
                                                                                     >
                                                                                         <i className="fa fa-credit-card-alt text-success" aria-hidden="true"></i>
                                                                                     </button>
@@ -1850,18 +1908,12 @@ const CheckInOut = () => {
                                                 <button
                                                     type="button"
                                                     className="btn btn-danger"
-                                                    onClick={() => handlePay(reservation.reservationId, totalAmount)}
-                                                    disabled={loading || reservation.paymentStatus === "Paid"} // Disable if loading or payment is already "Paid"
+                                                    onClick={() => handleCreatebill(reservation.reservationId, totalAmount)}
                                                 >
-                                                    {loading ? (
-                                                        <span>
-                                                            <i className="fa fa-spinner fa-spin"></i>&nbsp;Đang xử lý
-                                                        </span>
-                                                    ) : (
-                                                        <span>
-                                                            <i className="fa fa-money" aria-hidden="true"></i>&nbsp;Thanh Toán
-                                                        </span>
-                                                    )}
+
+                                                    <span>
+                                                        <i className="fa fa-money" aria-hidden="true"></i>&nbsp;Tạo hóa đơn
+                                                    </span>
                                                 </button>
                                             )}
 

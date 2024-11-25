@@ -278,7 +278,7 @@ const Header = () => {
                           <>
                             <tr>
                               <td>{index + 1}</td>
-                              <td>{item.amount}</td>
+                              <td>{formatter.format(item.amount)}</td>
                               <td>{item.description}</td>
                               <td>{new Date(item.transactionDate).toLocaleString('en-US')}</td>
 

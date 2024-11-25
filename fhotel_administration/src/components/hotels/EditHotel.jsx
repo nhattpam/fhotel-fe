@@ -1334,7 +1334,7 @@ const EditHotel = () => {
         }
     };
 
-    const formatter = new Intl.NumberFormat('en-US'); 
+    const formatter = new Intl.NumberFormat('en-US');
     return (
         <>
             <Header />
@@ -2243,7 +2243,7 @@ const EditHotel = () => {
 
                                                 >
                                                     <option value="">Chọn</option>
-                                                    {[...Array(10).keys()].map((_, index) => (
+                                                    {[...Array(50).keys()].map((_, index) => (
                                                         <option key={index + 1} value={index + 1}>
                                                             {index + 1}
                                                         </option>
@@ -2251,23 +2251,58 @@ const EditHotel = () => {
                                                 </select>
                                             </div>
                                             {/* Dynamically render input fields for room numbers */}
-                                            {roomNumbers.map((room, index) => (
-                                                <div className="form-group col-md-12 d-flex align-items-center gap-3" key={index}>
-                                                    <label htmlFor={`roomNumber-${index}`} className="form-label">
-                                                        Phòng thứ {index + 1}:&nbsp;
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control w-50"
-                                                        id={`roomNumber-${index}`}
-                                                        name={`roomNumber-${index}`}
-                                                        placeholder={`Nhập số phòng ${index + 1}`}
-                                                        value={room}
-                                                        onChange={(e) => handleRoomNumberChange(index, e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                            ))}
+                                            <div className="room-number-list">
+                                                {roomNumbers.map((room, index) => (
+                                                    <div
+                                                        className="room-number-item"
+                                                        key={index}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            padding: '10px 12px',
+                                                            marginBottom: '8px',
+                                                            backgroundColor: '#f9f9f9',
+                                                            border: '1px solid #e0e0e0',
+                                                            borderRadius: '6px',
+                                                        }}
+                                                    >
+                                                        <label
+                                                            htmlFor={`roomNumber-${index}`}
+                                                            style={{
+                                                                fontWeight: '500',
+                                                                fontSize: '14px',
+                                                                color: '#333',
+                                                                marginRight: '10px',
+                                                                whiteSpace: 'nowrap',
+                                                            }}
+                                                        >
+                                                            Phòng {index + 1}:
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            id={`roomNumber-${index}`}
+                                                            name={`roomNumber-${index}`}
+                                                            className="form-control"
+                                                            placeholder={`Nhập số phòng ${index + 1}`}
+                                                            value={room}
+                                                            onChange={(e) => handleRoomNumberChange(index, e.target.value)}
+                                                            required
+                                                            style={{
+                                                                flex: 1,
+                                                                padding: '8px 10px',
+                                                                fontSize: '14px',
+                                                                color: '#555',
+                                                                border: '1px solid #ccc',
+                                                                borderRadius: '4px',
+                                                                outline: 'none',
+                                                            }}
+                                                            onFocus={(e) => e.target.style.borderColor = '#007bff'}
+                                                            onBlur={(e) => e.target.style.borderColor = '#ccc'}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+
 
 
                                             <div className="form-group col-md-12">
@@ -2336,27 +2371,44 @@ const EditHotel = () => {
                                             <div className="form-group col-md-12">
                                                 <label htmlFor="">Thêm tiện ích * :</label>
                                                 <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                                    <i className="fa fa-check-square" aria-hidden="true"
+                                                    <i className="fa fa-check-square" aria-hidden="true" style={{ fontStyle: 'none' }}
                                                         onClick={handleSelectAllFacility}>
                                                         {selectedFacilities.length === facilityList.length ? ' Bỏ chọn tất cả' : ' Chọn tất cả'}
                                                     </i>
-                                                    {facilityList.length > 0 && facilityList.map((item, index) => (
-                                                        <>
-
-                                                            <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                                                    <div style={{
+                                                        display: 'flex',
+                                                        flexWrap: 'wrap', // Wraps items to the next line if they exceed the container width
+                                                        gap: '10px', // Adds space between items
+                                                        justifyContent: 'flex-start', // Aligns items to the left; use 'center' or 'space-between' as needed
+                                                    }}>
+                                                        {facilityList.length > 0 && facilityList.map((item, index) => (
+                                                            <div
+                                                                key={index}
+                                                                style={{
+                                                                    position: 'relative',
+                                                                    textAlign: 'center',
+                                                                    flex: '0 1 auto', // Allows items to grow or shrink within the row
+                                                                    margin: '5px',
+                                                                    padding: '8px 12px',
+                                                                    backgroundColor: '#e57373',
+                                                                    color: 'white',
+                                                                    borderRadius: '15px',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'space-between',
+                                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                                                                }}
+                                                            >
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
                                                                     onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
                                                                     style={{ marginRight: '10px' }} // Add space between checkbox and text
                                                                 />
-                                                                <span className="badge label-table badge-danger">{item.facilityName}</span>
-                                                                {/* <h3 style={{ margin: 0 }}>{item.facilityName}</h3> */}
+                                                                <span>{item.facilityName}</span>
                                                             </div>
-                                                        </>
-
-
-                                                    ))}
+                                                        ))}
+                                                    </div>
                                                 </div>
 
                                             </div>
@@ -2452,27 +2504,45 @@ const EditHotel = () => {
                                     <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
                                         <div className="row">
                                             <div className='ml-4' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                                <i className="fa fa-check-square" aria-hidden="true"
+                                                <i className="fa fa-check-square " aria-hidden="true" style={{ fontStyle: 'none' }}
                                                     onClick={handleSelectAllFacility}>
                                                     {selectedFacilities.length === facilityList.length ? ' Bỏ Chọn Tất Cả' : ' Chọn Tất Cả'}
                                                 </i>
-                                                {facilityList.length > 0 && facilityList.map((item, index) => (
-                                                    <>
-
-                                                        <div key={index} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    flexWrap: 'wrap', // Wraps items to the next line if they exceed the container width
+                                                    gap: '10px', // Adds space between items
+                                                    justifyContent: 'flex-start', // Aligns items to the left; use 'center' or 'space-between' as needed
+                                                }}>
+                                                    {facilityList.length > 0 && facilityList.map((item, index) => (
+                                                        <div
+                                                            key={index}
+                                                            style={{
+                                                                position: 'relative',
+                                                                textAlign: 'center',
+                                                                flex: '0 1 auto', // Allows items to grow or shrink within the row
+                                                                margin: '5px',
+                                                                padding: '8px 12px',
+                                                                backgroundColor: '#e57373',
+                                                                color: 'white',
+                                                                borderRadius: '15px',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'space-between',
+                                                                boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                                                            }}
+                                                        >
                                                             <input
                                                                 type="checkbox"
                                                                 checked={selectedFacilities.includes(item.facilityId)} // Check if this facility is selected
                                                                 onChange={() => handleFacilitySelect(item.facilityId)} // Toggle selection
                                                                 style={{ marginRight: '10px' }} // Add space between checkbox and text
                                                             />
-                                                            <span className="badge label-table badge-danger">{item.facilityName}</span>
-                                                            {/* <h3 style={{ margin: 0 }}>{item.facilityName}</h3> */}
+                                                            <span>{item.facilityName}</span>
                                                         </div>
-                                                    </>
+                                                    ))}
+                                                </div>
 
-
-                                                ))}
                                             </div>
 
 
@@ -2481,7 +2551,7 @@ const EditHotel = () => {
                                     <div className="modal-footer">
                                         {
                                             loginUser.role?.roleName === "Hotel Manager" && (
-                                                <button type="submit" className="btn btn-custom btn-sm">Lưu</button>
+                                                <button type="submit" className="btn btn-custom btn-sm"><i className="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
                                             )
                                         }
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateRoomFacility}>Đóng</button>

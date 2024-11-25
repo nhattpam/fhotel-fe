@@ -114,156 +114,106 @@ const Login = () => {
     return (
         <>
             <div className="login-container">
-                <div className="sidenav">
-                    <div className="login-main-image">
-                        <img src="/my_img/admin_login.jpg" alt="Welcome" className="welcome-image" />
-                        <div className="centered-text">
-                            <h2>FHOTEL System</h2>
-                            <p>Đăng nhập để tiếp tục.</p>
-                        </div>
-                    </div>
+                <div className="centered-text">
+                    <h2 style={{fontWeight: 'bold'}}>Hệ thống FHOTEL</h2>
+                    {/* <p>Đăng nhập để tiếp tục.</p> */}
                 </div>
-                <div className="main">
-                    <div className="col-md-6 col-sm-12">
-                        <div className="login-form" style={{ textAlign: 'left' }}>
-                            <form onSubmit={handleLogin}>
-                                <div className="form-group">
-                                    <label>Email</label>
-                                    <input
-                                        type="email"
-                                        className="form-control"
-                                        placeholder="Nhập địa chỉ email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Mật Khẩu</label>
-                                    <input
-                                        type="password"
-                                        className="form-control"
-                                        placeholder="Nhập mật khẩu"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                </div>
-                                {error && <div className="error-text">{error}</div>}
-                                <button type="submit" className="btn btn-black">Đăng Nhập</button>
-                            </form>
+                <div className="login-form">
+                    <form onSubmit={handleLogin}>
+                        <div className="form-group" style={{textAlign: 'left'}}>
+                            <label className='text-primary' >Email</label>
+                            <input
+                                type="email"
+                                className="form-control"
+                                placeholder="Nhập địa chỉ email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
                         </div>
-                    </div>
+                        <div className="form-group" style={{textAlign: 'left'}}>
+                            <label className='text-primary'>Mật Khẩu</label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                placeholder="Nhập mật khẩu"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                        {error && <div className="error-text">{error}</div>}
+                        <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Đăng Nhập</button>
+                    </form>
                 </div>
             </div>
-    
+
             <style>
                 {`
-                    body {
-                        font-family: "Lato", sans-serif;
-                    }
-                    
-                    .login-container {
-                        display: flex;
-                        height: 100vh;
-                    }
-                    
-                    .main {
-                        padding: 50px;
-                        flex: 1;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
-                    
-                    .sidenav {
-                        width: 40%;
-                        background-color: #000;
-                        color: white;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        position: relative;
-                    }
-                    
-                    .login-main-image {
-                        position: relative;
-                        text-align: center;
-                    }
-    
-                    .welcome-image {
-                        max-width: 100%; 
-                        height: 1500px;
-                        display: block;
-                    }
-    
-                    .centered-text {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        color: white;
-                        text-align: center;
-                    }
-    
-                    .centered-text h2 {
-                        font-weight: bold;
-                        margin-bottom: 10px;
-                    }
-    
-                    .centered-text p {
-                        font-size: 18px;
-                    }
-    
-                    .login-form {
-                        width: 100%;
-                        max-width: 400px;
-                    }
-    
-                    .form-group label {
-                        font-weight: bold;
-                    }
-    
-                    .form-control {
-                        margin-bottom: 15px;
-                        padding: 10px;
-                        font-size: 16px;
-                        border: 1px solid #ccc;
-                        border-radius: 4px;
-                    }
-    
-                    .error-text {
-                        color: red;
-                        margin-bottom: 10px;
-                    }
-    
-                    .btn-black {
-                        background-color: #000;
-                        color: white;
-                        padding: 10px 15px;
-                        border: none;
-                        cursor: pointer;
-                        transition: background-color 0.3s;
-                        width: 100%;
-                        margin-top: 10px;
-                    }
-    
-                    .btn-black:hover {
-                        background-color: #333;
-                    }
-    
-                    @media screen and (max-width: 768px) {
-                        .sidenav {
-                            display: none;
-                        }
-    
-                        .login-container {
-                            justify-content: center;
-                        }
-                    }
-                `}
+        body {
+            font-family: "Lato", sans-serif;
+            margin: 0;
+        }
+        
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url('/my_img/backgroundkkk.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .centered-text {
+            margin-bottom: 20px;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for the form */
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #000;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .error-text {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .login-container {
+                padding: 10px;
+            }
+
+            .login-form {
+                width: 100%;
+            }
+        }
+    `}
             </style>
+
         </>
     );
-    
+
 
 };
 

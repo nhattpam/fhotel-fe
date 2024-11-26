@@ -1924,13 +1924,20 @@ const CheckInOut = () => {
                                                     onSubmit={(e) => submitUpdateReservationStatus(e, reservation.reservationId, updateReservationStatus.reservationStatus)}
                                                     className="d-inline"
                                                 >
-                                                    <button
-                                                        type="submit"
-                                                        className="btn btn-primary"
-                                                        onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
-                                                    >
-                                                        <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả Phòng
-                                                    </button>
+                                                    {
+                                                        reservation.paymentStatus === "Paid" && (
+                                                            <>
+                                                                <button
+                                                                    type="submit"
+                                                                    className="btn btn-primary"
+                                                                    onClick={() => setUpdateReservationStatus({ ...setUpdateReservationStatus, reservationStatus: "CheckOut" })}
+                                                                >
+                                                                    <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả Phòng
+                                                                </button>
+                                                            </>
+                                                        )
+                                                    }
+
                                                 </form>
                                             )}
                                         </>

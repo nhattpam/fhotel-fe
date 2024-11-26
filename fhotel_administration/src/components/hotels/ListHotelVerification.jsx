@@ -277,6 +277,7 @@ const ListHotelVerification = () => {
                                     <thead>
                                         <tr>
                                             <th><span>STT</span></th>
+                                            <th><span>Mã số</span></th>
                                             <th><span>Khách sạn</span></th>
                                             <th><span>Email</span></th>
                                             <th><span>Ngày tạo</span></th>
@@ -290,6 +291,7 @@ const ListHotelVerification = () => {
                                                 <>
                                                     <tr>
                                                         <td>{index + 1}</td>
+                                                        <td>{item.hotel?.code}</td>
                                                         <td>{item.hotel?.hotelName}</td>
                                                         <td>{item.hotel?.email}</td>
                                                         <td>{new Date(item.createdDate).toLocaleDateString('en-US')}</td>
@@ -451,6 +453,10 @@ const ListHotelVerification = () => {
                                     <div className="col-md-7">
                                         <table className="table table-responsive table-hover mt-3">
                                             <tbody>
+                                                <tr>
+                                                    <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mã số:</th>
+                                                    <td>{hotelVerification.hotel?.code}</td>
+                                                </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
                                                     <td>{hotelVerification.hotel?.hotelName}</td>

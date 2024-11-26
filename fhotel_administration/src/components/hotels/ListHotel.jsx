@@ -958,6 +958,10 @@ const ListHotel = () => {
                                                 <table className="table table-responsive table-hover mt-3">
                                                     <tbody>
                                                         <tr>
+                                                            <th style={{ width: '30%' }}>Mã số:</th>
+                                                            <td>{hotel.code}</td>
+                                                        </tr>
+                                                        <tr>
                                                             <th style={{ width: '30%' }}>Tên khách sạn:</th>
                                                             <td>{hotel.hotelName}</td>
                                                         </tr>

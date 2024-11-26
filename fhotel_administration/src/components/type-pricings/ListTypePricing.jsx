@@ -34,18 +34,30 @@ const ListTypePricing = () => {
         typeService
             .getAllTypePricingByTypeId(typeId)
             .then((res) => {
-                // Sorting by districtName and then dayOfWeek
                 const sortedData = res.data.sort((a, b) => {
-                    // First, sort by districtName
+                    // First, sort by `districtName`
                     const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
                     if (districtComparison !== 0) {
-                        return districtComparison;
+                        return districtComparison; // Return result if districts are different
                     }
-                    // If districtName is the same, sort by dayOfWeek
-                    return a.dayOfWeek - b.dayOfWeek;
-                });
-                setTypePricingList(sortedData);
 
+                    // If `districtName` is the same, sort by `from` date
+                    const fromA = new Date(a.from);
+                    const fromB = new Date(b.from);
+                    if (fromA < fromB) return -1;
+                    if (fromA > fromB) return 1;
+
+                    // If `from` dates are the same, sort by `to` date
+                    const toA = new Date(a.to);
+                    const toB = new Date(b.to);
+                    if (toA < toB) return -1;
+                    if (toA > toB) return 1;
+
+                    // If everything is the same, maintain original order
+                    return 0;
+                });
+
+                setTypePricingList(sortedData);
                 setLoading(false);
             })
             .catch((error) => {
@@ -62,6 +74,7 @@ const ListTypePricing = () => {
                 console.log(error);
             });
     }, [typeId]);
+
 
 
 
@@ -254,27 +267,39 @@ const ListTypePricing = () => {
                     handleResponseError(typePricingResponse);
                 }
 
+                setSuccess({ general: "Tạo thành công!" });
+                setShowSuccess(true); // Show error
                 // Fetch and sort updated type pricing list
                 typeService
                     .getAllTypePricingByTypeId(typeId)
                     .then((res) => {
-                        // Sorting by districtName and then dayOfWeek
                         const sortedData = res.data.sort((a, b) => {
-                            // First, sort by districtName
+                            // First, sort by `districtName`
                             const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
                             if (districtComparison !== 0) {
-                                return districtComparison;
+                                return districtComparison; // Return result if districts are different
                             }
-                            // If districtName is the same, sort by dayOfWeek
-                            return a.dayOfWeek - b.dayOfWeek;
-                        });
-                        setTypePricingList(sortedData);
 
-                        setLoading(false);
+                            // If `districtName` is the same, sort by `from` date
+                            const fromA = new Date(a.from);
+                            const fromB = new Date(b.from);
+                            if (fromA < fromB) return -1;
+                            if (fromA > fromB) return 1;
+
+                            // If `from` dates are the same, sort by `to` date
+                            const toA = new Date(a.to);
+                            const toB = new Date(b.to);
+                            if (toA < toB) return -1;
+                            if (toA > toB) return 1;
+
+                            // If everything is the same, maintain original order
+                            return 0;
+                        });
+
+                        setTypePricingList(sortedData);
                     })
                     .catch((error) => {
                         console.error(error);
-                        setLoading(false);
                     });
             }
 
@@ -318,23 +343,33 @@ const ListTypePricing = () => {
                 typeService
                     .getAllTypePricingByTypeId(typeId)
                     .then((res) => {
-                        // Sorting by districtName and then dayOfWeek
                         const sortedData = res.data.sort((a, b) => {
-                            // First, sort by districtName
+                            // First, sort by `districtName`
                             const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
                             if (districtComparison !== 0) {
-                                return districtComparison;
+                                return districtComparison; // Return result if districts are different
                             }
-                            // If districtName is the same, sort by dayOfWeek
-                            return a.dayOfWeek - b.dayOfWeek;
-                        });
-                        setTypePricingList(sortedData);
 
-                        setLoading(false);
+                            // If `districtName` is the same, sort by `from` date
+                            const fromA = new Date(a.from);
+                            const fromB = new Date(b.from);
+                            if (fromA < fromB) return -1;
+                            if (fromA > fromB) return 1;
+
+                            // If `from` dates are the same, sort by `to` date
+                            const toA = new Date(a.to);
+                            const toB = new Date(b.to);
+                            if (toA < toB) return -1;
+                            if (toA > toB) return 1;
+
+                            // If everything is the same, maintain original order
+                            return 0;
+                        });
+
+                        setTypePricingList(sortedData);
                     })
                     .catch((error) => {
                         console.error(error);
-                        setLoading(false);
                     });
             } else {
                 handleResponseError(updateRes);
@@ -356,23 +391,33 @@ const ListTypePricing = () => {
                         typeService
                             .getAllTypePricingByTypeId(typeId)
                             .then((res) => {
-                                // Sorting by districtName and then dayOfWeek
                                 const sortedData = res.data.sort((a, b) => {
-                                    // First, sort by districtName
+                                    // First, sort by `districtName`
                                     const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
                                     if (districtComparison !== 0) {
-                                        return districtComparison;
+                                        return districtComparison; // Return result if districts are different
                                     }
-                                    // If districtName is the same, sort by dayOfWeek
-                                    return a.dayOfWeek - b.dayOfWeek;
-                                });
-                                setTypePricingList(sortedData);
 
-                                setLoading(false);
+                                    // If `districtName` is the same, sort by `from` date
+                                    const fromA = new Date(a.from);
+                                    const fromB = new Date(b.from);
+                                    if (fromA < fromB) return -1;
+                                    if (fromA > fromB) return 1;
+
+                                    // If `from` dates are the same, sort by `to` date
+                                    const toA = new Date(a.to);
+                                    const toB = new Date(b.to);
+                                    if (toA < toB) return -1;
+                                    if (toA > toB) return 1;
+
+                                    // If everything is the same, maintain original order
+                                    return 0;
+                                });
+
+                                setTypePricingList(sortedData);
                             })
                             .catch((error) => {
                                 console.error(error);
-                                setLoading(false);
                             });
                     }
                 })
@@ -414,7 +459,7 @@ const ListTypePricing = () => {
         setShowError(true); // Show error modal or message
     };
 
-    const formatter = new Intl.NumberFormat('en-US'); 
+    const formatter = new Intl.NumberFormat('en-US');
 
 
     return (
@@ -486,7 +531,7 @@ const ListTypePricing = () => {
                                             <th><span>Thành phố</span></th>
                                             <th><span>Thời gian áp dụng</span></th>
                                             <th><span>Tăng cuối tuần (%)</span></th>
-                                            <th><span>Mô tả</span></th>
+                                            <th><span>Ngày</span></th>
                                             <th><span>Hành động</span></th>
                                         </tr>
                                     </thead>

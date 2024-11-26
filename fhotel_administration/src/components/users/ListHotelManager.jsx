@@ -553,6 +553,7 @@ const ListHotelManager = () => {
                                                     <thead>
                                                         <tr>
                                                             <th><span>STT</span></th>
+                                                            <th><span>Mã số</span></th>
                                                             <th><span>Tên khách sạn</span></th>
                                                             <th><span>Chủ sở hữu</span></th>
                                                             <th><span>Quận</span></th>
@@ -568,6 +569,7 @@ const ListHotelManager = () => {
                                                                     <tr>
                                                                         <td>{index + 1}</td>
 
+                                                                        <td>{item.code}</td>
                                                                         <td>{item.hotelName}</td>
                                                                         <td>{item.owner?.name}</td>
                                                                         <td>{item.district?.districtName}</td>

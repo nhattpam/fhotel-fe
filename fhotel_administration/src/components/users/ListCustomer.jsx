@@ -484,7 +484,7 @@ const ListCustomer = () => {
                                         </table>
                                     </div>
                                     <div className='col-md-12' style={{ textAlign: 'left' }}>
-                                        <h4>Đặt Phòng Gần Đây</h4>
+                                        <h4 style={{ fontWeight: 'bold' }}>Đặt Phòng Gần Đây</h4>
                                         <div className="table-responsive">
                                             <table className="table table-borderless table-hover table-wrap table-centered">
                                                 <thead>

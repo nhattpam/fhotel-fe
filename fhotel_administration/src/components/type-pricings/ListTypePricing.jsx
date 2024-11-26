@@ -90,7 +90,9 @@ const ListTypePricing = () => {
         .filter((typePricing) => {
             const matchesDistrict = selectedDistrictId ? typePricing.district?.districtName === selectedDistrictId : true;
             const matchesSearchTerm = (
-                typePricing.price.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase())
+                typePricing.price.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase()) ||
+                typePricing.from.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase()) ||
+                typePricing.to.toString().toLowerCase().includes(typePricingSearchTerm.toLowerCase())
             );
             return matchesDistrict && matchesSearchTerm;
         });
@@ -105,6 +107,60 @@ const ListTypePricing = () => {
     const offsetTypePricing = currentTypePricingPage * typePricingsPerPage;
     const currentTypePricings = filteredTypePricings.slice(offsetTypePricing, offsetTypePricing + typePricingsPerPage);
 
+    const [filterFrom, setFilterFrom] = useState(""); // Initial 'from' date
+    const [filterTo, setFilterTo] = useState("");     // Initial 'to' date
+
+    const handleFilter = () => {
+        const filteredData = typePricingList.filter((item) => {
+            const itemFrom = new Date(item.from);
+            const itemTo = new Date(item.to);
+            const filterFromDate = new Date(filterFrom);
+            const filterToDate = new Date(filterTo);
+
+            // Check if the item's range overlaps with the filter range
+            return itemFrom <= filterToDate && itemTo >= filterFromDate;
+        });
+
+        setTypePricingList(filteredData);
+    };
+
+    const resetFilter = () => {
+        setFilterFrom(""); // Clear the from date
+        setFilterTo("");   // Clear the to date
+
+        // Reload the full data
+        typeService
+            .getAllTypePricingByTypeId(typeId)
+            .then((res) => {
+                const sortedData = res.data.sort((a, b) => {
+                    // First, sort by `districtName`
+                    const districtComparison = a.district?.districtName.localeCompare(b.district?.districtName);
+                    if (districtComparison !== 0) {
+                        return districtComparison; // Return result if districts are different
+                    }
+
+                    // If `districtName` is the same, sort by `from` date
+                    const fromA = new Date(a.from);
+                    const fromB = new Date(b.from);
+                    if (fromA < fromB) return -1;
+                    if (fromA > fromB) return 1;
+
+                    // If `from` dates are the same, sort by `to` date
+                    const toA = new Date(a.to);
+                    const toB = new Date(b.to);
+                    if (toA < toB) return -1;
+                    if (toA > toB) return 1;
+
+                    // If everything is the same, maintain original order
+                    return 0;
+                });
+
+                setTypePricingList(sortedData);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
 
 
     //detail typePricing modal 
@@ -485,8 +541,11 @@ const ListTypePricing = () => {
                     {/* start ibox */}
                     <div className="ibox">
                         <div className="ibox-head bg-dark text-light">
-                            <div className="ibox-title">Bảng Giá Cho Loại Phòng: {type.typeName}</div>
+                            <div className="ibox-title">
+                                Bảng Giá Cho Loại Phòng: {type.typeName}
+                            </div>
                             <div className="form-group d-flex align-items-center">
+                                {/* Dropdown for selecting district */}
                                 <select
                                     value={selectedDistrictId}
                                     onChange={(e) => setSelectedDistrictId(e.target.value)}
@@ -497,6 +556,8 @@ const ListTypePricing = () => {
                                         <option key={index} value={districtName}>{districtName}</option>
                                     ))}
                                 </select>
+
+                                {/* Search Bar */}
                                 <div className="search-bar ml-3">
                                     <i className="fa fa-search search-icon" aria-hidden="true"></i>
                                     <input
@@ -509,15 +570,47 @@ const ListTypePricing = () => {
                                         onChange={handleTypePricingSearch}
                                     />
                                 </div>
+
+                                {/* Date Filters */}
+                                <div className="ml-3 d-flex align-items-center">
+                                    <label className="mr-2 mb-0">Từ:</label>
+                                    <input
+                                        type="date"
+                                        value={filterFrom}
+                                        onChange={(e) => setFilterFrom(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <label className="ml-3 mr-2 mb-0">Đến:</label>
+                                    <input
+                                        type="date"
+                                        value={filterTo}
+                                        onChange={(e) => setFilterTo(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <button
+                                        className="btn btn-primary ml-3 btn-sm"
+                                        onClick={handleFilter}
+                                    >
+                                        Lọc
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary ml-2 btn-sm"
+                                        onClick={resetFilter}
+                                    >
+                                        Đặt lại
+                                    </button>
+                                </div>
+
+                                {/* Add Pricing Button */}
                                 <button
                                     className="btn btn-primary ml-3 btn-sm"
                                     onClick={openCreateTypePricingModal}
                                 >
-                                    <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm giá
+                                    <i className="fa fa-plus-square" aria-hidden="true"></i> Thêm giá
                                 </button>
-
                             </div>
                         </div>
+
 
                         <div className="ibox-body">
                             <div className="table-responsive">

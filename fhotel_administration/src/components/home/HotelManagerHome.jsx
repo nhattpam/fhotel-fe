@@ -514,7 +514,20 @@ const HotelManagerHome = () => {
                 </div>
                 <div className="ibox-body">
                   <div className="row align-items-center">
-                    <canvas ref={pieChartRef} id="myPieChart3"></canvas>
+                    {
+                      sumForCurrentMonth !== 0 && sumForPreviousMonth !== 0 && (
+                        <>
+                          <canvas ref={pieChartRef} id="myPieChart3"></canvas>
+                        </>
+                      )
+                    }
+                    {
+                      sumForCurrentMonth === 0 || sumForPreviousMonth === 0 && (
+                        <>
+                          <p className="no-data-text">Không có</p>
+                        </>
+                      )
+                    }
                   </div>
                 </div>
               </div>
@@ -1248,6 +1261,17 @@ const HotelManagerHome = () => {
     padding-left: 30px; /* Adjust padding to make room for the icon */
     width: 150px
 }
+    .no-data-text {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  font-style: italic; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+  height: 100%;            /* Make sure it takes full height of the parent */
+  text-align: center;      /* Center the text */
+  width: 100%;             /* Ensure it takes full width of the parent */
+  color: #888;             /* Optional: Adjust text color */
+}
+
 
                                             `}
       </style>

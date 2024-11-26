@@ -21,7 +21,7 @@ const ListRefund = () => {
     const [refundList, setRefundList] = useState([]);
     const [refundSearchTerm, setRefundSearchTerm] = useState('');
     const [currentRefundPage, setCurrentRefundPage] = useState(0);
-    const [refundsPerPage] = useState(5);
+    const [refundsPerPage] = useState(10);
 
 
     useEffect(() => {
@@ -30,7 +30,7 @@ const ListRefund = () => {
             .then((res) => {
                 const sortedRefundList = [...res.data].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
-                    return new Date(b.orderedDate) - new Date(a.orderedDate);
+                    return new Date(b.order?.orderedDate) - new Date(a.order?.orderedDate);
                 });
                 setRefundList(sortedRefundList);
                 setLoading(false);
@@ -143,7 +143,7 @@ const ListRefund = () => {
                     .then((res) => {
                         const sortedRefundList = [...res.data].sort((a, b) => {
                             // Assuming requestedDate is a string in ISO 8601 format
-                            return new Date(b.orderedDate) - new Date(a.orderedDate);
+                            return new Date(b.order?.orderedDate) - new Date(a.order?.orderedDate);
                         });
                         setRefundList(sortedRefundList);
                     })

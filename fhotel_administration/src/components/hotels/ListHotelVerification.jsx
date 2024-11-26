@@ -455,44 +455,44 @@ const ListHotelVerification = () => {
                                             <tbody>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Mã số:</th>
-                                                    <td>{hotelVerification.hotel?.code}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.code}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Tên khách sạn:</th>
-                                                    <td>{hotelVerification.hotel?.hotelName}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.hotelName}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email:</th>
-                                                    <td>{hotelVerification.hotel?.email}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.email}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Số điện thoại:</th>
-                                                    <td>{hotelVerification.hotel?.phone}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.phone}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Quận:</th>
-                                                    <td>{hotelVerification.hotel?.district?.districtName}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.district?.districtName}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Thành phố:</th>
-                                                    <td>{hotelVerification.hotel?.district?.city?.cityName}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.district?.city?.cityName}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Địa chỉ:</th>
-                                                    <td>{hotelVerification.hotel?.address}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.address}</td>
                                                 </tr>
 
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Chủ sở hữu:</th>
-                                                    <td>{hotelVerification.hotel?.ownerName}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.ownerName}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Email chủ sở hữu:</th>
-                                                    <td>{hotelVerification.hotel?.ownerEmail}</td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>{hotelVerification.hotel?.ownerEmail}</td>
                                                 </tr>
                                                 <tr>
                                                     <th style={{ width: '20%', fontWeight: 'bold', textAlign: 'left', padding: '5px', color: '#333' }}>Xác minh:</th>
-                                                    <td>
+                                                    <td style={{ textAlign: 'left', padding: '5px' }}>
                                                         {hotelVerification.verificationStatus === "Pending" && (
                                                             <span className="badge label-table ">
                                                                 <span className="badge label-table badge-warning">Đang chờ</span>

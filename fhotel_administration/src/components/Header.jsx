@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import userService from '../services/user.service';
 import { Link, useNavigate } from 'react-router-dom';
 import walletService from '../services/wallet.service';
+import hotelStaffService from '../services/hotel-staff.service';
 
 const Header = () => {
 
@@ -16,7 +17,7 @@ const Header = () => {
   const [wallet, setWallet] = useState({
     balance: "",
   });
-
+  const [hotelStaffList, setHotelStaffList] = useState([]);
   useEffect(() => {
     if (userId) {
       userService
@@ -31,6 +32,14 @@ const Header = () => {
         .getWalletByUser(userId)
         .then((res) => {
           setWallet(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      hotelStaffService
+        .getAllHotelStaff()
+        .then((res) => {
+          setHotelStaffList(res.data);
         })
         .catch((error) => {
           console.log(error);
@@ -102,20 +111,20 @@ const Header = () => {
   const openUserModal = (userId) => {
     setShowModalUser(true);
     if (userId) {
-        userService
-            .getUserById(userId)
-            .then((res) => {
-                setUser(res.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+      userService
+        .getUserById(userId)
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
-};
+  };
 
-const closeModalUser = () => {
+  const closeModalUser = () => {
     setShowModalUser(false);
-};
+  };
 
   return (
     <>
@@ -227,6 +236,19 @@ const closeModalUser = () => {
                 {
                   user.role?.roleName === "Receptionist" && (
                     <>
+                      {
+                        hotelStaffList.length > 0 && hotelStaffList.map((item) => (
+                          <>
+                            {
+                              user.userId === item.userId && (
+                                <a  className="dropdown-item" style={{fontWeight: 'bold'}}>
+                                  {item.hotel?.hotelName}
+                                </a>
+                              )
+                            }
+                          </>
+                        ))
+                      }
                       <a className="dropdown-item" onClick={() => openUserModal(user.userId)}><i className="fa fa-user" />Thông Tin</a>
                     </>
                   )

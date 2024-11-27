@@ -16,14 +16,14 @@ const ManagerHome = () => {
 
   Chart.register(PieController, ArcElement);
   Chart.register(...registerables);
-  const formatter = new Intl.NumberFormat('en-US'); 
+  const formatter = new Intl.NumberFormat('en-US');
 
   //count reservation by owner
   const [reservationList, setReservationList] = useState([]);
   const [billList, setBillList] = useState([]);
   const [reservationSearchTerm, setReservationSearchTerm] = useState('');
   const [currentReservationPage, setCurrentReservationPage] = useState(0);
-  const [reservationsPerPage] = useState(5);
+  const [reservationsPerPage] = useState(10);
   const [reservationCount, setReservationCount] = useState(0);
   const [refundCount, setRefundCount] = useState(0);
   const [hotelCount, setHotelCount] = useState(0);
@@ -79,11 +79,15 @@ const ManagerHome = () => {
     feedbackService
       .getAllFeedback()
       .then((res) => {
-        setFeedbackList(res.data);
+        const sortedFeedback = res.data
+          .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
+          .slice(0, 10);
+        setFeedbackList(sortedFeedback);
       })
       .catch((error) => {
-        console.log(error);
+        console.error('Error fetching feedback:', error);
       });
+
     userService
       .getAllUser()
       .then((res) => {
@@ -575,6 +579,9 @@ const ManagerHome = () => {
                                 {item.reservationStatus === "Cancelled" && (
                                   <span className="badge label-table badge-danger">Đã hủy</span>
                                 )}
+                                {item.reservationStatus === "Refunded" && (
+                                  <span className="badge label-table badge-danger">Đã hoàn tiền</span>
+                                )}
                               </td>
                               <td>
                                 <button className="btn btn-default btn-xs m-r-5"
@@ -717,6 +724,9 @@ const ManagerHome = () => {
                         )}
                         {reservation.reservationStatus === "Cancelled" && (
                           <span className="badge label-table badge-danger">Đã hủy</span>
+                        )}
+                        {reservation.reservationStatus === "Refunded" && (
+                          <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                         )}
                       </p>
                       <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>

@@ -474,11 +474,17 @@ const ListRefund = () => {
                                         {order.reservation?.reservationStatus === "Pending" && (
                                             <span className="badge label-table badge-warning">Đang chờ</span>
                                         )}
-                                        {order.reservation?.reservationStatus === "Confirmed" && (
-                                            <span className="badge label-table badge-success">Xác nhận</span>
+                                        {order.reservation?.reservationStatus === "CheckIn" && (
+                                            <span className="badge label-table badge-success">Đã nhận phòng</span>
+                                        )}
+                                        {order.reservation?.reservationStatus === "CheckOut" && (
+                                            <span className="badge label-table badge-success">Đã trả phòng</span>
                                         )}
                                         {order.reservation?.reservationStatus === "Cancelled" && (
                                             <span className="badge label-table badge-danger">Đã hủy</span>
+                                        )}
+                                        {order.reservation?.reservationStatus === "Refunded" && (
+                                            <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                                         )}
                                     </div>
                                     <div className="d-flex justify-content-between py-2">

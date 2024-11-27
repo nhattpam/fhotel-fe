@@ -16,7 +16,7 @@ const ReceptionistHome = () => {
 
   Chart.register(PieController, ArcElement);
   Chart.register(...registerables);
-  const formatter = new Intl.NumberFormat('en-US'); 
+  const formatter = new Intl.NumberFormat('en-US');
 
   //count reservation by owner
   const [reservationList, setReservationList] = useState([]);
@@ -488,6 +488,9 @@ const ReceptionistHome = () => {
                                 {item.reservationStatus === "Cancelled" && (
                                   <span className="badge label-table badge-danger">Đã hủy</span>
                                 )}
+                                {item.reservationStatus === "Refunded" && (
+                                  <span className="badge label-table badge-danger">Đã hoàn tiền</span>
+                                )}
                               </td>
                               <td>
                                 <button className="btn btn-default btn-xs m-r-5"
@@ -640,6 +643,9 @@ const ReceptionistHome = () => {
                         )}
                         {reservation.reservationStatus === "Cancelled" && (
                           <span className="badge label-table badge-danger">Đã hủy</span>
+                        )}
+                        {reservation.reservationStatus === "Refunded" && (
+                          <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                         )}
                       </p>
                       <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
@@ -1041,6 +1047,9 @@ const ReceptionistHome = () => {
                         )}
                         {reservation.reservationStatus === "Cancelled" && (
                           <span className="badge label-table badge-danger">Đã hủy</span>
+                        )}
+                        {reservation.reservationStatus === "Refunded" && (
+                          <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                         )}
                       </p>
                       <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>

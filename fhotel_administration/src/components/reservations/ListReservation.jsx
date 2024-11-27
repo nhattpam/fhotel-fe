@@ -268,6 +268,9 @@ const ListReservation = () => {
                                                             {item.reservationStatus === "Cancelled" && (
                                                                 <span className="badge label-table badge-danger">Đã hủy</span>
                                                             )}
+                                                            {item.reservationStatus === "Refunded" && (
+                                                                <span className="badge label-table badge-danger">Đã hoàn tiền</span>
+                                                            )}
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-default btn-xs m-r-5"
@@ -406,6 +409,9 @@ const ListReservation = () => {
                                                 )}
                                                 {reservation.reservationStatus === "Cancelled" && (
                                                     <span className="badge label-table badge-danger">Đã hủy</span>
+                                                )}
+                                                 {reservation.reservationStatus === "Refunded" && (
+                                                    <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                                                 )}
                                             </p>
                                             <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>

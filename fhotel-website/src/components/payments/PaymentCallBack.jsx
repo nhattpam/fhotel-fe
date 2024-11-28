@@ -117,9 +117,9 @@ const PaymentCallBack = () => {
 
 
     return (
-        <div>
-            <h2>PaymentCallBack</h2>
-            <p>This component displays payment details:</p>
+        <>
+            <h2>Đang xử lý...</h2>
+            <div className="spinner"></div> 
             <ul>
                 {Object.entries(paymentDetails).map(([key, value]) => (
                     <li key={key}>
@@ -127,7 +127,27 @@ const PaymentCallBack = () => {
                     </li>
                 ))}
             </ul>
-        </div>
+            <style>
+                {`
+                     /* Add styling for the loading spinner */
+        .spinner {
+            border: 4px solid #f3f3f3; /* Light gray background */
+            border-top: 4px solid #3498db; /* Blue color for the spinner */
+            border-radius: 50%; /* Make it circular */
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite; /* Make it spin endlessly */
+            margin: 20px auto; /* Center the spinner */
+        }
+
+        /* Define the spin animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+                `}
+            </style>
+        </>
     );
 };
 

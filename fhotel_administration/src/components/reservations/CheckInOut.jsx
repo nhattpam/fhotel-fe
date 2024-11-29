@@ -1127,6 +1127,8 @@ const CheckInOut = () => {
                                                             <p><strong className='mr-2'>Số căn cước:</strong> {reservation.customer?.identificationNumber}</p>
                                                             <p><strong className='mr-2'>Email:</strong> {reservation.customer?.email}</p>
                                                             <p><strong className='mr-2'>Số điện thoại:</strong> {reservation.customer?.phoneNumber}</p>
+                                                            <p><strong className='mr-2'>Ngày dự kiến nhận phòng:</strong> {new Date(reservation.checkInDate).toLocaleDateString('en-US')}</p>
+                                                            <p><strong className='mr-2'>Ngày dự kiến trả phòng:</strong> {new Date(reservation.checkOutDate).toLocaleDateString('en-US')}</p>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <p><strong className='mr-2'>Loại phòng:</strong> {reservation.roomType?.type?.typeName}</p>
@@ -1148,7 +1150,7 @@ const CheckInOut = () => {
                                                                     <span className="badge label-table badge-warning">Unknown Status</span>
                                                                 )}
                                                             </p>
-                                                            <p className="mb-1"><strong className='mr-2'>Trạng thái thanh toán:</strong>
+                                                            <p className="mb-2"><strong className='mr-2'>Trạng thái thanh toán:</strong>
                                                                 {
                                                                     reservation.isPrePaid && reservation.paymentStatus === "Paid" && (
                                                                         <span className="badge label-table badge-success">

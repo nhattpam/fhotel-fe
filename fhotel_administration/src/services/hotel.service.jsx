@@ -131,5 +131,22 @@ class HotelService {
       }
     });
   }
+
+  getAllCancellationPolicyHotelById(id) {
+    return axios.get(API_URL + `/hotels/${id}/cancellation-policies`, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
+
+  getAllRevenuePolicyHotelById(id) {
+    return axios.get(API_URL + `/hotels/${id}/revenue-policies`, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
+
 }
 export default new HotelService;

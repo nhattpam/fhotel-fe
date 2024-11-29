@@ -344,6 +344,12 @@ const SideBar = () => {
     }, [showSuccess]); // Only run effect if showError changes
 
 
+    //POLICIES
+    const [isPolyMenuOpen, setIsPolyMenuOpen] = useState(false); // Track the state of the User submenu
+
+    const togglePolyMenu = () => {
+        setIsPolyMenuOpen(!isPolyMenuOpen); // Toggle the state between true/false
+    };
     return (
         <>
             {/* START SIDEBAR*/}
@@ -518,6 +524,23 @@ const SideBar = () => {
                                         </Link>
                                     </li>
 
+                                    <li>
+                                        <a href="javascript:;" onClick={togglePolyMenu}>
+                                            <i className="sidebar-item-icon fa fa-gavel" />
+                                            <span className="nav-label">Chính sách</span>
+                                            <i className={`fa fa-angle-left arrow ${isPolyMenuOpen ? '' : 'collapsed'}`} />
+                                        </a>
+                                        {/* Conditionally apply collapse class based on the state */}
+                                        <ul className={`nav-2-level collapse ${isPolyMenuOpen ? 'show' : ''}`}>
+                                            <li>
+                                                <a href={`/list-revenue-policy`}>Chia doanh thu</a>
+                                            </li>
+                                            <li>
+                                                <a href={`/list-cancellation-policy`}>Hoàn tiền</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+
                                 </>
                             )
                         }
@@ -552,7 +575,7 @@ const SideBar = () => {
                                             <span className="nav-label">Khách sạn</span>
                                         </Link>
                                     </li>
-                                  
+
                                     <li>
                                         <Link to="/list-owner-customer"><i className="sidebar-item-icon fa fa-user" />
                                             <span className="nav-label">Khách hàng</span>

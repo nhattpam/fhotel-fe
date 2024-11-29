@@ -32,6 +32,8 @@ import ListRefund from './components/reservations/ListRefund';
 import ListHotelRoom from './components/rooms/ListHotelRoom';
 import ListOwnerBill from './components/bills/ListOwnerBill';
 import ListBill from './components/bills/ListBill';
+import ListRevenuePolicy from './components/policies/ListRevenuePolicy';
+import ListCancellationPolicy from './components/policies/ListCancellationPolicy';
 
 function App() {
   return (
@@ -81,6 +83,9 @@ function App() {
          {/* bill */}
          <Route path="/list-owner-bill/" element={<ListOwnerBill />} />
          <Route path="/list-bill/" element={<ListBill />} />
+         {/* policy */}
+         <Route path="/list-revenue-policy/" element={<ListRevenuePolicy />} />
+         <Route path="/list-cancellation-policy/" element={<ListCancellationPolicy />} />
       </Routes>
     </div>
   );

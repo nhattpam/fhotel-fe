@@ -118,7 +118,7 @@ const ListRevenuePolicy = () => {
 
         // Validate Last Name
         if (createRevenuePolicy.hotelId.trim() === "") {
-            newError.name = "Hotel là bắt buộc";
+            newError.hotelId = "Hotel là bắt buộc";
             isValid = false;
         }
 

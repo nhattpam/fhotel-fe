@@ -52,6 +52,10 @@ const ListRevenuePolicy = () => {
             });
     }, []);
 
+    const [selectedHotelId, setSelectedHotelId] = useState('');
+    const uniqueHotels = [...new Set(revenuePolicyList.map((revenue) => revenue.hotel?.hotelName))]
+        .filter(Boolean);
+
 
     const handleRevenuePolicySearch = (event) => {
         setRevenuePolicySearchTerm(event.target.value);
@@ -59,7 +63,8 @@ const ListRevenuePolicy = () => {
 
     const filteredRevenuePolicys = revenuePolicyList
         .filter((revenuePolicy) => {
-            return (
+            const matchesHotel = selectedHotelId ? revenuePolicy.hotel?.hotelName === selectedHotelId : true;
+            const matchesSearchTerm = (
                 revenuePolicy.adminPercentage.toString().toLowerCase().includes(revenuePolicySearchTerm.toLowerCase()) ||
                 revenuePolicy.hotelPercentage.toString().toLowerCase().includes(revenuePolicySearchTerm.toLowerCase()) ||
                 revenuePolicy.hotel?.code.toString().toLowerCase().includes(revenuePolicySearchTerm.toLowerCase()) ||
@@ -67,6 +72,7 @@ const ListRevenuePolicy = () => {
                 revenuePolicy.effectiveDate.toString().toLowerCase().includes(revenuePolicySearchTerm.toLowerCase()) ||
                 revenuePolicy.expiryDate.toString().toLowerCase().includes(revenuePolicySearchTerm.toLowerCase())
             );
+            return matchesHotel && matchesSearchTerm;
         });
 
     const pageRevenuePolicyCount = Math.ceil(filteredRevenuePolicys.length / revenuePolicysPerPage);
@@ -278,6 +284,16 @@ const ListRevenuePolicy = () => {
                         <div className="ibox-head bg-dark text-light">
                             <div className="ibox-title">Danh Sách Chính sách Chia Doanh Thu</div>
                             <div className="form-group d-flex align-items-center">
+                                <select
+                                    value={selectedHotelId}
+                                    onChange={(e) => setSelectedHotelId(e.target.value)}
+                                    className="form-control form-control-sm"
+                                >
+                                    <option value="">Tất cả khách sạn</option>
+                                    {uniqueHotels.map((hotelName, index) => (
+                                        <option key={index} value={hotelName}>{hotelName}</option>
+                                    ))}
+                                </select>
                                 <div className="search-bar ml-3">
                                     <i className="fa fa-search search-icon" aria-hidden="true"></i>
                                     <input
@@ -306,6 +322,7 @@ const ListRevenuePolicy = () => {
                                         <tr>
                                             <th><span>STT</span></th>
                                             <th><span>Mã số khách sạn</span></th>
+                                            <th><span>Tên khách sạn</span></th>
                                             <th><span>Hệ thống (%)</span></th>
                                             <th><span>Khách sạn (%)</span></th>
                                             <th><span>Ngày áp dụng</span></th>
@@ -321,6 +338,7 @@ const ListRevenuePolicy = () => {
                                                     <tr>
                                                         <td>{index + 1}</td>
                                                         <td>{item.hotel?.code}</td>
+                                                        <td>{item.hotel?.hotelName}</td>
                                                         <td>{item.adminPercentage}</td>
                                                         <td>{item.hotelPercentage}</td>
                                                         <td>{new Date(item.effectiveDate).toLocaleDateString('en-US')}</td>
@@ -342,6 +360,13 @@ const ListRevenuePolicy = () => {
                                     </tbody>
 
                                 </table>
+                                {
+                                    currentRevenuePolicys.length === 0 && (
+                                        <>
+                                            <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                                        </>
+                                    )
+                                }
                             </div>
                         </div>
 
@@ -467,6 +492,7 @@ const ListRevenuePolicy = () => {
                                                     value={createRevenuePolicy.adminPercentage}
                                                     onChange={(e) => handleChange(e)}
                                                     min={0}
+                                                    max={100}
                                                     required
                                                 />
                                             </div>
@@ -482,6 +508,7 @@ const ListRevenuePolicy = () => {
                                                         value={createRevenuePolicy.hotelPercentage}
                                                         onChange={(e) => handleChange(e)}
                                                         min={0}
+                                                        max={100}
                                                         required
                                                     />
                                                 </div>

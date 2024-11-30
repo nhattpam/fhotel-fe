@@ -350,6 +350,12 @@ const SideBar = () => {
     const togglePolyMenu = () => {
         setIsPolyMenuOpen(!isPolyMenuOpen); // Toggle the state between true/false
     };
+
+    const [isPolyMenuOpen2, setIsPolyMenuOpen2] = useState(false); // Track the state of the User submenu
+
+    const togglePolyMenu2 = () => {
+        setIsPolyMenuOpen2(!isPolyMenuOpen2); // Toggle the state between true/false
+    };
     return (
         <>
             {/* START SIDEBAR*/}
@@ -593,6 +599,22 @@ const SideBar = () => {
                                             <span className="nav-label">Thanh toán/Hóa đơn</span>
                                         </Link>
                                     </li>
+                                    <li>
+                                        <a href="javascript:;" onClick={togglePolyMenu2}>
+                                            <i className="sidebar-item-icon fa fa-gavel" />
+                                            <span className="nav-label">Chính sách</span>
+                                            <i className={`fa fa-angle-left arrow ${isPolyMenuOpen2 ? '' : 'collapsed'}`} />
+                                        </a>
+                                        {/* Conditionally apply collapse class based on the state */}
+                                        <ul className={`nav-2-level collapse ${isPolyMenuOpen2 ? 'show' : ''}`}>
+                                            <li>
+                                                <a href={`/hotel-revenue-policy`}>Chia doanh thu</a>
+                                            </li>
+                                            <li>
+                                                <a href={`/hotel-cancellation-policy`}>Hoàn tiền</a>
+                                            </li>
+                                        </ul>
+                                    </li>
 
                                 </>
                             )
@@ -620,11 +642,7 @@ const SideBar = () => {
                                             <span className="nav-label">Dịch vụ</span>
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link to="/list-refund"><i className="sidebar-item-icon fa fa-money" aria-hidden="true" />
-                                            <span className="nav-label">Hoàn tiền</span>
-                                        </Link>
-                                    </li>
+                                    
                                     <li>
                                         <Link to="/list-customer"><i className="sidebar-item-icon fa fa-users" aria-hidden="true"></i>
                                             <span className="nav-label">Khách hàng</span>
@@ -913,7 +931,6 @@ const SideBar = () => {
                                                     className="mr-2"
                                                     checked={createServiceType.isVisibleToCustomer}
                                                     onChange={(e) => handleChangeServiceType(e)}
-                                                    required
                                                 />
                                                 <label htmlFor="isVisibleToCustomer">Hiện cho khách hàng</label>
                                             </div>

@@ -2009,18 +2009,25 @@ const EditHotel = () => {
                                                         }}
                                                     >
                                                         <p>{room.roomNumber}</p>
-                                                        <i
-                                                            className="fa fa-pencil"
-                                                            style={{
-                                                                position: 'absolute',
-                                                                top: '5px',
-                                                                right: '5px',
-                                                                cursor: 'pointer',
-                                                                color: '#fff', // Adjust icon color
-                                                                fontSize: '16px', // Adjust icon size
-                                                            }}
-                                                            onClick={() => openUpdateRoomModal(room.roomId)} // Edit handler
-                                                        ></i>
+                                                        {
+                                                            loginUser.role?.roleName === "Hotel Manager" && (
+                                                                <>
+                                                                    <i
+                                                                        className="fa fa-pencil"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            top: '5px',
+                                                                            right: '5px',
+                                                                            cursor: 'pointer',
+                                                                            color: '#fff', // Adjust icon color
+                                                                            fontSize: '16px', // Adjust icon size
+                                                                        }}
+                                                                        onClick={() => openUpdateRoomModal(room.roomId)} // Edit handler
+                                                                    ></i>
+                                                                </>
+                                                            )
+                                                        }
+
                                                     </div>
                                                 ))}
                                             </div>
@@ -2903,7 +2910,7 @@ const EditHotel = () => {
                                                                 {item.reservationStatus === "Cancelled" && (
                                                                     <span className="badge label-table badge-danger">Đã hủy</span>
                                                                 )}
-                                                                 {item.reservationStatus === "Refunded" && (
+                                                                {item.reservationStatus === "Refunded" && (
                                                                     <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                                                                 )}
                                                             </td>

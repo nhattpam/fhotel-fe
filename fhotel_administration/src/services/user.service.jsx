@@ -197,6 +197,22 @@ class UserService {
         });
       }
 
+      getAllCancellationPolicyByOwner(id) {
+        return axios.get(API_URL + `/users/${id}/cancellation-policies`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
+      getAllRevenuePolicyByOwner(id) {
+        return axios.get(API_URL + `/users/${id}/revenue-policies`, {
+          headers: {
+            Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+          }
+        });
+      }
+
 
 }
 export default new UserService;

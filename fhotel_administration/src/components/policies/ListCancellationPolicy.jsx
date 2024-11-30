@@ -52,6 +52,9 @@ const ListCancellationPolicy = () => {
       });
   }, []);
 
+  const [selectedHotelId, setSelectedHotelId] = useState('');
+  const uniqueHotels = [...new Set(cancellationPolicyList.map((revenue) => revenue.hotel?.hotelName))]
+    .filter(Boolean);
 
   const handleCancellationPolicySearch = (event) => {
     setCancellationPolicySearchTerm(event.target.value);
@@ -59,13 +62,15 @@ const ListCancellationPolicy = () => {
 
   const filteredCancellationPolicys = cancellationPolicyList
     .filter((cancellationPolicy) => {
-      return (
+      const matchesHotel = selectedHotelId ? cancellationPolicy.hotel?.hotelName === selectedHotelId : true;
+      const matchesSearchTerm = (
         cancellationPolicy.refundPercentage.toString().toLowerCase().includes(cancellationPolicySearchTerm.toLowerCase()) ||
         cancellationPolicy.cancellationDays.toString().toLowerCase().includes(cancellationPolicySearchTerm.toLowerCase()) ||
         cancellationPolicy.hotel?.code.toString().toLowerCase().includes(cancellationPolicySearchTerm.toLowerCase()) ||
         cancellationPolicy.hotel?.name.toString().toLowerCase().includes(cancellationPolicySearchTerm.toLowerCase()) ||
         cancellationPolicy.cancellationTime.toString().toLowerCase().includes(cancellationPolicySearchTerm.toLowerCase())
       );
+      return matchesHotel && matchesSearchTerm;
     });
 
   const pageCancellationPolicyCount = Math.ceil(filteredCancellationPolicys.length / cancellationPolicysPerPage);
@@ -156,7 +161,7 @@ const ListCancellationPolicy = () => {
 
     // Convert to a C# TimeSpan-compatible string
     return `PT${hours}H${minutes}M`;
-};
+  };
 
 
   const submitCancellationPolicy = async (e) => {
@@ -285,6 +290,16 @@ const ListCancellationPolicy = () => {
             <div className="ibox-head bg-dark text-light">
               <div className="ibox-title">Danh Sách Chính sách Hoàn tiền</div>
               <div className="form-group d-flex align-items-center">
+                <select
+                  value={selectedHotelId}
+                  onChange={(e) => setSelectedHotelId(e.target.value)}
+                  className="form-control form-control-sm"
+                >
+                  <option value="">Tất cả khách sạn</option>
+                  {uniqueHotels.map((hotelName, index) => (
+                    <option key={index} value={hotelName}>{hotelName}</option>
+                  ))}
+                </select>
                 <div className="search-bar ml-3">
                   <i className="fa fa-search search-icon" aria-hidden="true"></i>
                   <input
@@ -349,6 +364,13 @@ const ListCancellationPolicy = () => {
                   </tbody>
 
                 </table>
+                {
+                  currentCancellationPolicys.length === 0 && (
+                    <>
+                      <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
+                    </>
+                  )
+                }
               </div>
             </div>
 
@@ -474,6 +496,7 @@ const ListCancellationPolicy = () => {
                           value={createCancellationPolicy.refundPercentage}
                           onChange={(e) => handleChange(e)}
                           min={0}
+                          max={100}
                           required
                         />
                       </div>

@@ -34,6 +34,8 @@ import ListOwnerBill from './components/bills/ListOwnerBill';
 import ListBill from './components/bills/ListBill';
 import ListRevenuePolicy from './components/policies/ListRevenuePolicy';
 import ListCancellationPolicy from './components/policies/ListCancellationPolicy';
+import HotelCancellationPolicy from './components/policies/HotelCancellationPolicy';
+import HotelRevenuePolicy from './components/policies/HotelRevenuePolicy';
 
 function App() {
   return (
@@ -86,6 +88,9 @@ function App() {
          {/* policy */}
          <Route path="/list-revenue-policy/" element={<ListRevenuePolicy />} />
          <Route path="/list-cancellation-policy/" element={<ListCancellationPolicy />} />
+         <Route path="/hotel-cancellation-policy/" element={<HotelCancellationPolicy />} />
+         <Route path="/hotel-revenue-policy/" element={<HotelRevenuePolicy />} />
+
       </Routes>
     </div>
   );

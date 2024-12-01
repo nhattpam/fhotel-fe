@@ -4,29 +4,28 @@ import reservationService from '../../services/reservation.service';
 import billService from '../../services/bill.service';
 import paymentService from '../../services/payment.service';
 import paymentMethodService from '../../services/payment-method.service';
+import escrowWalletService from '../../services/escrow-wallet.service';
 
 const PaymentCallBack = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
     const [paymentDetails, setPaymentDetails] = useState({});
-    const [reservation, setReservation] = useState({
-    });
 
     const [billList, setBillList] = useState([]);
     const [reservationList, setReservationList] = useState([]);
     const [paymentMethodList, setPaymentMethodList] = useState([]);
     const [dataLoaded, setDataLoaded] = useState(false);
 
-      // Fetch reservation, bill, and payment method data on mount
-      useEffect(() => {
+    // Fetch reservation, bill, and payment method data on mount
+    useEffect(() => {
         Promise.all([
             reservationService.getAllReservation().then((res) => setReservationList(res.data)),
             billService.getAllBill().then((res) => setBillList(res.data)),
             paymentMethodService.getAllPaymentMethod().then((res) => setPaymentMethodList(res.data))
         ])
-        .then(() => setDataLoaded(true))
-        .catch((error) => console.log(error));
+            .then(() => setDataLoaded(true))
+            .catch((error) => console.log(error));
     }, []);
 
 
@@ -58,7 +57,16 @@ const PaymentCallBack = () => {
                     reservationService.updateReservation(orderId, updatedReservation)
                         .then((updateResponse) => {
                             if (updateResponse.status === 200) {
-                                navigate(`/success-payment`);
+                                const createIncreaseEscrowWallet = {
+                                    reservationId: matchingReservation.reservationId,
+                                    amount: matchingReservation.totalAmount
+                                }
+                                escrowWalletService.increaseEscrowWallet(createIncreaseEscrowWallet)
+                                    .then((createIncreaseEscrowWalletResponse) => {
+                                        if (createIncreaseEscrowWalletResponse.status = 201) {
+                                            navigate(`/success-payment`);
+                                        }
+                                    })
                             }
                         })
                         .catch((error) => {
@@ -89,7 +97,77 @@ const PaymentCallBack = () => {
                                                             reservationService.updateReservation(matchingBill.reservationId, updatedReservation)
                                                                 .then((updateResponse) => {
                                                                     if (updateResponse.status === 200) {
-                                                                        navigate(`/success-payment`);
+                                                                        reservationService
+                                                                            .getAllOrderByReservationId(response.data?.reservationId)
+                                                                            .then(orderResponse => {
+                                                                                const fetchedOrders = orderResponse.data; // Use the fetched data directly
+                                                                                if (response.data?.isPrePaid === true && fetchedOrders.length !== 0) {
+                                                                                    let totalAmount = 0;
+                                                                                    fetchedOrders.forEach(order => {
+                                                                                        totalAmount += order.totalAmount;
+                                                                                    });
+                                                                                    const increaseEscrowWalletCreate = {
+                                                                                        reservationId: matchingBill.reservationId,
+                                                                                        amount: totalAmount
+                                                                                    }
+                                                                                    console.log(JSON.stringify(increaseEscrowWalletCreate))
+                                                                                    escrowWalletService.increaseEscrowWallet(increaseEscrowWalletCreate)
+                                                                                        .then((escrowWalletResponse) => {
+                                                                                            if (escrowWalletResponse.status === 201) {
+                                                                                                navigate(`/success-payment`);
+                                                                                            }
+                                                                                        })
+                                                                                        .catch(error => {
+                                                                                            console.error('Failed to increase escrow wallet balance:', error);
+                                                                                        });
+                                                                                }
+                                                                                if (response.data?.isPrePaid === false && fetchedOrders.length === 0) {
+                                                                                    let totalAmount = response.data?.totalAmount;
+                                                                                    fetchedOrders.forEach(order => {
+                                                                                        totalAmount += order.totalAmount;
+                                                                                    });
+                                                                                    const increaseEscrowWalletCreate = {
+                                                                                        reservationId: matchingBill.reservationId,
+                                                                                        amount: totalAmount
+                                                                                    }
+                                                                                    console.log(JSON.stringify(increaseEscrowWalletCreate))
+                                                                                    escrowWalletService.increaseEscrowWallet(increaseEscrowWalletCreate)
+                                                                                        .then((escrowWalletResponse) => {
+                                                                                            if (escrowWalletResponse.status === 201) {
+                                                                                                navigate(`/success-payment`);
+                                                                                            }
+                                                                                        })
+                                                                                        .catch(error => {
+                                                                                            console.error('Failed to increase escrow wallet balance:', error);
+                                                                                        });
+                                                                                }
+                                                                                if (response.data?.isPrePaid === false && fetchedOrders.length !== 0) {
+                                                                                    let totalAmount = response.data?.totalAmount;
+        
+                                                                                    fetchedOrders.forEach(order => {
+                                                                                        totalAmount += order.totalAmount;
+                                                                                    });
+        
+                                                                                    const increaseEscrowWalletCreate = {
+                                                                                        reservationId: matchingBill.reservationId,
+                                                                                        amount: totalAmount,
+                                                                                    };
+                                                                                    console.log(JSON.stringify(increaseEscrowWalletCreate))
+                                                                                    escrowWalletService
+                                                                                        .increaseEscrowWallet(increaseEscrowWalletCreate)
+                                                                                        .then(escrowWalletResponse => {
+                                                                                            if (escrowWalletResponse.status === 201) {
+                                                                                                navigate('/success-payment');
+                                                                                            }
+                                                                                        })
+                                                                                        .catch(error => {
+                                                                                            console.error('Failed to increase escrow wallet balance:', error);
+                                                                                        });
+                                                                                }
+                                                                            })
+                                                                        
+
+
                                                                     }
                                                                 });
                                                         });
@@ -112,14 +190,14 @@ const PaymentCallBack = () => {
             window.alert("Có lỗi xảy ra khi xử lý thông tin thanh toán.");
         }
     }, [dataLoaded, location.search, reservationList, billList]);
-    
+
 
 
 
     return (
         <>
             <h2>Đang xử lý...</h2>
-            <div className="spinner"></div> 
+            <div className="spinner"></div>
             <ul>
                 {Object.entries(paymentDetails).map(([key, value]) => (
                     <li key={key}>

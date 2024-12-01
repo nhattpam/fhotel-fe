@@ -1,33 +1,25 @@
 import axios from "axios";
 
-// const API_URL = "https://localhost:7215/api";
 import { API_URL } from './api-config';  // Adjust the path as necessary
 
-class ReservationService {
+
+class EscrowWalletService {
 
   token = '';
 
   setToken(token) {
     this.token = token;
   }
-  saveReservation(reservation) {
-    return axios.post(API_URL + "/reservations/", reservation, {
+
+  saveEscrowWallet(escrowWallet) {
+    return axios.post(API_URL + "/escrow-wallets/", escrowWallet, {
       headers: {
         Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
       }
     });
   }
-  getAllReservation() {
-    return axios.get(API_URL + "/reservations", {
-      headers: {
-        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
-      }
-    });
-  }
-
-
-  updateReservation(id, reservation) {
-    return axios.put(API_URL + "/reservations/" + id, reservation, {
+  getAllEscrowWallet() {
+    return axios.get(API_URL + "/escrow-wallets", {
       headers: {
         Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
       }
@@ -35,24 +27,31 @@ class ReservationService {
   }
 
 
-  getReservationById(id) {
-    return axios.get(API_URL + "/reservations/" + id, {
+  updateEscrowWallet(id, escrowWallet) {
+    return axios.put(API_URL + "/escrow-wallets/" + id, escrowWallet, {
       headers: {
         Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
       }
     });
   }
 
-  getAllOrderByReservationId(id) {
-    return axios.get(API_URL + `/reservations/${id}/orders`, {
+
+  getEscrowWalletById(id) {
+    return axios.get(API_URL + "/escrow-wallets/" + id, {
       headers: {
         Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
       }
     });
   }
 
- 
 
+  increaseEscrowWallet(increaseEscrowWallet) {
+    return axios.post(API_URL + "/escrow-wallets/increase-balance", increaseEscrowWallet, {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
 
 }
-export default new ReservationService;
+export default new EscrowWalletService;

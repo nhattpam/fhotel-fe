@@ -96,7 +96,8 @@ const RoomStatus = () => {
     //update room status
     const [updateRoom, setUpdateRoom] = useState({
         status: "",   // ensure this field has a valid initial value
-        note: ""      // same for note
+        note: "",      // same for note
+        isCleaned: false
     });
 
 
@@ -104,9 +105,10 @@ const RoomStatus = () => {
         const { name, value } = e.target;
         setUpdateRoom((prev) => ({
             ...prev,
-            [name]: value
+            [name]: name === "isCleaned" ? value === "true" : value,
         }));
     };
+
 
 
     const handleUpdateRoomNoteChange = (value) => {
@@ -116,11 +118,12 @@ const RoomStatus = () => {
 
     const submitUpdateRoom = async (e, roomId) => {
         e.preventDefault();
+        console.log(JSON.stringify(updateRoom))
 
-        if (!updateRoom.status || !updateRoom.note) {
-            console.error("Status or note is missing!");
-            return; // Ensure that both fields have valid values
-        }
+        // if (!updateRoom.status || !updateRoom.note || !updateRoom.isCleaned) {
+        //     console.error("Status or note is missing!");
+        //     return; // Ensure that both fields have valid values
+        // }
 
         try {
             const res = await roomService.getRoomById(roomId);
@@ -129,7 +132,8 @@ const RoomStatus = () => {
             const updateRes = await roomService.updateRoom(roomId, {
                 ...roomData,
                 status: updateRoom.status,
-                note: updateRoom.note
+                note: updateRoom.note,
+                isCleaned: updateRoom.isCleaned
             });
 
             if (updateRes.status === 200) {
@@ -323,6 +327,23 @@ const RoomStatus = () => {
                                                     {room.status === 'Maintenance' && (
                                                         <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
                                                     )}
+                                                    {/* Display for isCleaned */}
+                                                    <div
+                                                        style={{
+                                                            marginTop: '20px',
+                                                            padding: '5px',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: room.isCleaned ? '#d4edda' : '#f8d7da',
+                                                            color: room.isCleaned ? '#155724' : '#721c24',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                        }}
+                                                    >
+                                                        <h5 style={{ fontWeight: 'bold', margin: 0 }}>
+                                                            {room.isCleaned ? 'Đã dọn' : 'Chưa dọn'}
+                                                        </h5>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -371,7 +392,7 @@ const RoomStatus = () => {
                                             <div className="col-md-12">
                                                 <h5>Phòng số: <span style={{ fontWeight: 'bold', color: 'green' }}>{room.roomNumber}</span> </h5>
                                                 <h5>Loại phòng: <span style={{ fontWeight: 'bold', color: 'green' }}>{room.roomType?.type?.typeName}</span> </h5>
-                                                <h5>Trạng thái: &nbsp;
+                                                <h5>Trạng thái phòng: &nbsp;
                                                     {room.status === "Available" && (
                                                         <span className="badge label-table badge-success">Có sẵn</span>
                                                     )}
@@ -386,7 +407,7 @@ const RoomStatus = () => {
                                                     name="status"
                                                     className='form-control'
                                                     onChange={(e) => handleChange(e)}
-                                                    value={updateRoom.status || ''} // add fallback value
+                                                    value={updateRoom.status ? "Available" : "Occupied"} // add fallback value
                                                     required
                                                 >
                                                     <option value="">Chọn trạng thái</option>
@@ -394,8 +415,29 @@ const RoomStatus = () => {
                                                     <option value="Occupied">Không có sẵn</option>
                                                     <option value="Maintenance">Bảo trì</option>
                                                 </select>
+                                                <h5 className='mt-2'>Trạng thái dọn phòng: &nbsp;
+                                                    {room.isCleaned === true && (
+                                                        <span className="badge label-table badge-success">Đã dọn</span>
+                                                    )}
+                                                    {room.isCleaned === false && (
+                                                        <span className="badge label-table badge-danger">Chưa dọn</span>
+                                                    )}
 
-                                                <label htmlFor="note">Ghi chú * :</label>
+                                                </h5>
+                                                <select
+                                                    name="isCleaned"
+                                                    className="form-control"
+                                                    onChange={handleChange}
+                                                    value={updateRoom.isCleaned ? "true" : "false"} // Ensure boolean is converted to string for the dropdown
+                                                    required
+                                                >
+                                                    <option value="">Chọn trạng thái</option>
+                                                    <option value="true">Đã dọn</option>
+                                                    <option value="false">Chưa dọn</option>
+                                                </select>
+
+
+                                                <h5 htmlFor="note" className='mt-2'>Ghi chú * :</h5>
                                                 <ReactQuill
                                                     value={updateRoom.note}
                                                     onChange={handleUpdateRoomNoteChange}

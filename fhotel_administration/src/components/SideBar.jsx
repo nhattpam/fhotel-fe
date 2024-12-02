@@ -5,6 +5,11 @@ import typeService from '../services/type.service';
 import cityService from '../services/city.service';
 import typePricingService from '../services/type-pricing.service';
 import serviceTypeService from '../services/service-type.service';
+import amenityService from '../services/amenity.service';
+import facilityService from '../services/facility.service';
+import Dropzone from 'react-dropzone';
+import roomTypeService from '../services/room-type.service';
+import roomImageService from '../services/room-image.service';
 
 const SideBar = () => {
 
@@ -356,6 +361,144 @@ const SideBar = () => {
     const togglePolyMenu2 = () => {
         setIsPolyMenuOpen2(!isPolyMenuOpen2); // Toggle the state between true/false
     };
+
+
+    //CREATE AMENITY, FACILITY
+    const [showModalCreateAmenity, setShowModalCreateAmenity] = useState(false);
+    const [amenityList, setAmenityList] = useState([]);
+    const closeModalCreateAmenity = () => {
+        setShowModalCreateAmenity(false);
+    };
+    const openCreateAmenityModal = () => {
+        setShowModalCreateAmenity(true);
+        amenityService
+            .getAllAmenity()
+            .then((res) => {
+                setAmenityList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    const [createAmenity, setCreateAmenity] = useState({
+        amenityName: "",
+        image: ""
+    });
+
+
+    const handleChangeCreateAmenity = (e) => {
+        const { name, value } = e.target;
+        setCreateAmenity(prevState => ({ ...prevState, [name]: value }));
+    };
+
+
+    const [file, setFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState("");
+
+    const handleFileDrop = (acceptedFiles) => {
+        if (acceptedFiles && acceptedFiles.length > 0) {
+            setFile(acceptedFiles[0]);
+
+            // Set the image preview URL
+            const previewUrl = URL.createObjectURL(acceptedFiles[0]);
+            setImagePreview(previewUrl);
+        }
+    };
+
+    const submitCreateAmenity = async (e) => {
+        e.preventDefault();
+
+        try {
+            // Save account
+            let image = createAmenity.image; // Keep the existing imageUrl if available
+
+            if (file) {
+                // Upload image and get the link
+                const imageData = new FormData();
+                imageData.append('file', file);
+                const imageResponse = await roomImageService.uploadImage(imageData);
+                console.log(imageResponse.data.link)
+
+                // Update the imageUrl with the link obtained from the API
+                image = imageResponse.data.link;
+
+                // Log the imageUrl after updating
+            }
+            const amenityData = { ...createAmenity, image }; // Create a new object with updated imageUrl
+            const amenityResponse = await amenityService.saveAmenity(amenityData);
+            if (amenityResponse.status === 201) {
+                amenityService
+                    .getAllAmenity()
+                    .then((res) => {
+                        setAmenityList(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                handleResponseError(error.response);
+            }
+
+        }
+        catch (error) {
+            handleResponseError(error.response);
+        }
+    };
+
+    const [showModalCreateFacility, setShowModalCreateFacility] = useState(false);
+    const closeModalCreateFacility = () => {
+        setShowModalCreateFacility(false);
+    };
+    const [facilityList, setFacilityList] = useState([]);
+
+    const [createFacility, setCreateFacility] = useState({
+        facilityName: "",
+    });
+
+
+    const handleChangeCreateFacility = (e) => {
+        const { name, value } = e.target;
+        setCreateFacility(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const submitCreateFacility = async (e) => {
+        e.preventDefault();
+
+        try {
+
+            const facilityResponse = await facilityService.saveFacility(createFacility);
+            if (facilityResponse.status === 201) {
+                facilityService
+                    .getAllFacility()
+                    .then((res) => {
+                        setFacilityList(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                handleResponseError(error.response);
+            }
+
+        }
+        catch (error) {
+            handleResponseError(error.response);
+        }
+    }
+
+    const openCreateFacilityModal = () => {
+        setShowModalCreateFacility(true);
+        facilityService
+            .getAllFacility()
+            .then((res) => {
+                setFacilityList(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+
     return (
         <>
             {/* START SIDEBAR*/}
@@ -434,15 +577,6 @@ const SideBar = () => {
                                 </li>
                             )
                         }
-                        {/* {
-                            user.role?.roleName === "Room Attendant" && (
-                                <li>
-                                    <Link className="active" to={`/room-attendant-home`}><i className="sidebar-item-icon fa fa-th-large" />
-                                        <span className="nav-label">Báo Cáo/Thống Kê</span>
-                                    </Link>
-                                </li>
-                            )
-                        } */}
 
                         <li className="heading">Quản Lý</li>
                         {
@@ -491,6 +625,12 @@ const SideBar = () => {
                                             </li>
                                             <li>
                                                 <Link onClick={openCreateServiceTypeModal}>Thêm loại dịch vụ</Link>
+                                            </li>
+                                            <li>
+                                                <Link onClick={openCreateAmenityModal}>Thêm tiện nghi</Link>
+                                            </li>
+                                            <li>
+                                                <Link onClick={openCreateFacilityModal}>Thêm tiện ích</Link>
                                             </li>
                                         </ul>
                                     </li>
@@ -646,7 +786,7 @@ const SideBar = () => {
                                             <span className="nav-label">Dịch vụ</span>
                                         </Link>
                                     </li>
-                                    
+
                                     <li>
                                         <Link to="/list-customer"><i className="sidebar-item-icon fa fa-users" aria-hidden="true"></i>
                                             <span className="nav-label">Khách hàng</span>
@@ -999,6 +1139,272 @@ const SideBar = () => {
                                             <i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu
                                         </button>
                                         <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateServiceType}>Đóng</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div >
+
+                )
+            }
+            {
+                showModalCreateAmenity && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+
+                            <div className="modal-content">
+                                <form
+                                    method="post"
+                                    id="myAwesomeDropzone"
+                                    data-plugin="dropzone"
+                                    data-previews-container="#file-previews"
+                                    data-upload-preview-template="#uploadPreviewTemplate"
+                                    data-parsley-validate
+                                    onSubmit={(e) => submitCreateAmenity(e)}
+                                    style={{ textAlign: "left" }}
+                                >
+                                    <div className="modal-header bg-dark text-light">
+                                        <h5 className="modal-title">Tạo Tiện Nghi</h5>
+                                        <button
+                                            type="button"
+                                            className="close text-light"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={closeModalCreateAmenity}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        {showError && Object.entries(error).length > 0 && (
+                                            <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                                {Object.entries(error).map(([key, message]) => (
+                                                    <p key={key} style={{ margin: '0' }}>{message}</p>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
+                                        <h4 className="header-title text-center mb-4">Thông Tin</h4>
+
+                                        <div className="form-row">
+                                            <div className="form-group col-md-12 mb-3">
+                                                <label className="font-weight-bold">
+                                                    Tên tiện nghi <span className="text-danger">*</span> :
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="amenityName"
+                                                    className="form-control"
+                                                    value={createAmenity.amenityName}
+                                                    onChange={(e) => handleChangeCreateAmenity(e)}
+                                                    required
+                                                    style={{
+                                                        padding: '10px',
+                                                        borderRadius: '5px',
+                                                        border: '1px solid #ced4da',
+                                                        backgroundColor: '#f9f9f9',
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="form-group col-md-12">
+                                                <label className="font-weight-bold">
+                                                    Hình ảnh <span className="text-danger">*</span> :
+                                                </label>
+                                                <Dropzone
+                                                    onDrop={handleFileDrop}
+                                                    accept="image/*" multiple={false}
+                                                    maxSize={5000000} // Maximum file size (5MB)
+                                                >
+                                                    {({ getRootProps, getInputProps }) => (
+                                                        <div {...getRootProps()} className="fallback">
+                                                            <input {...getInputProps()} />
+                                                            <div className="dz-message needsclick">
+                                                                <i className="h1 text-muted dripicons-cloud-upload" />
+                                                                <h3>Tải file.</h3>
+                                                            </div>
+                                                            {imagePreview && (
+                                                                <img src={imagePreview} alt="Preview" style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "10px" }} />
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </Dropzone>
+                                            </div>
+
+
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="serviceTypes" className="font-weight-bold">
+                                                    Danh Sách Tiện Nghi
+                                                </label>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    flexWrap: 'nowrap',
+                                                    overflowX: 'auto',
+                                                    padding: '10px',
+                                                    gap: '10px'
+                                                }}>
+                                                    {amenityList.length > 0 && amenityList.map((item, index) => (
+                                                        <div
+                                                            key={index}
+                                                            style={{
+                                                                position: 'relative',
+                                                                textAlign: 'center',
+                                                                flex: '0 0 auto',
+                                                                margin: '5px'
+                                                            }}
+                                                        >
+                                                            <img
+                                                                src={item.image}
+                                                                alt="amenity"
+                                                                style={{
+                                                                    width: "40px",
+                                                                    height: "40px",
+                                                                    objectFit: 'cover',
+                                                                    borderRadius: '5px'
+                                                                }}
+                                                            />
+                                                            <div style={{
+                                                                marginTop: '5px',
+                                                                fontSize: '12px',
+                                                                color: '#333'
+                                                            }}>
+                                                                {item.name}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div className="modal-footer">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-custom btn-sm"
+                                            disabled={isSubmitting}  // Disable button when submitting
+                                        >
+                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu
+                                        </button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateAmenity}>Đóng</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div >
+
+                )
+            }
+            {
+                showModalCreateFacility && (
+                    <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+
+                            <div className="modal-content">
+                                <form
+                                    method="post"
+                                    id="myAwesomeDropzone"
+                                    data-plugin="dropzone"
+                                    data-previews-container="#file-previews"
+                                    data-upload-preview-template="#uploadPreviewTemplate"
+                                    data-parsley-validate
+                                    onSubmit={(e) => submitCreateFacility(e)}
+                                    style={{ textAlign: "left" }}
+                                >
+                                    <div className="modal-header bg-dark text-light">
+                                        <h5 className="modal-title">Tạo Tiện Ích</h5>
+                                        <button
+                                            type="button"
+                                            className="close text-light"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={closeModalCreateFacility}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        {showError && Object.entries(error).length > 0 && (
+                                            <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                                {Object.entries(error).map(([key, message]) => (
+                                                    <p key={key} style={{ margin: '0' }}>{message}</p>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="modal-body" style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
+                                        <h4 className="header-title text-center mb-4">Thông Tin</h4>
+
+                                        <div className="form-row">
+                                            <div className="form-group col-md-12 mb-3">
+                                                <label className="font-weight-bold">
+                                                    Tên tiện ích <span className="text-danger">*</span> :
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="facilityName"
+                                                    className="form-control"
+                                                    value={createFacility.facilityName}
+                                                    onChange={(e) => handleChangeCreateFacility(e)}
+                                                    required
+                                                    style={{
+                                                        padding: '10px',
+                                                        borderRadius: '5px',
+                                                        border: '1px solid #ced4da',
+                                                        backgroundColor: '#f9f9f9',
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className="form-group col-md-12">
+                                                <label htmlFor="serviceTypes" className="font-weight-bold">
+                                                    Danh Sách Tiện Ích
+                                                </label>
+                                                <td style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', margin: 0 }}>
+                                                    {
+                                                        facilityList.length > 0 ? facilityList.map((item, index) => (
+                                                            <div key={index} style={{
+                                                                position: 'relative',
+                                                                textAlign: 'center',
+                                                                flex: '0 1 auto',
+                                                                margin: '5px',
+                                                                padding: '8px 12px',
+                                                                backgroundColor: '#e57373',
+                                                                color: 'white',
+                                                                borderRadius: '15px',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'space-between',
+                                                                boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                                                            }}>
+                                                                <span >{item.facilityName}</span>
+
+                                                            </div>
+                                                        ))
+                                                            : (
+                                                                <>
+                                                                    <p className='text-center' style={{ color: 'gray', fontStyle: 'italic' }}>Không có</p>
+                                                                </>
+                                                            )
+                                                    }
+
+                                                </td>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div className="modal-footer">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-custom btn-sm"
+                                            disabled={isSubmitting}  // Disable button when submitting
+                                        >
+                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu
+                                        </button>
+                                        <button type="button" className="btn btn-dark btn-sm" onClick={closeModalCreateFacility}>Đóng</button>
                                     </div>
                                 </form>
 

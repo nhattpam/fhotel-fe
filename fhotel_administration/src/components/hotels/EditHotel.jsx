@@ -242,7 +242,7 @@ const EditHotel = () => {
     // Upload image and refresh the room image list without closing the modal
     const handleUploadAndPost = async () => {
         if (!selectedFile) {
-            alert("Please select an image");
+            alert("Chưa chọn hình ảnh");
             return;
         }
 
@@ -539,7 +539,7 @@ const EditHotel = () => {
     // Upload image and refresh the room image list without closing the modal
     const handleUploadAndPost2 = async () => {
         if (!selectedFile2) {
-            alert("Please select an image");
+            alert("Chưa chọn hình ảnh");
             return;
         }
 
@@ -840,7 +840,7 @@ const EditHotel = () => {
     // Upload image and refresh the room image list without closing the modal
     const handleUploadAndPost3 = async () => {
         if (!selectedFile3) {
-            alert("Please select an image");
+            alert("Chưa chọn hình ảnh");
             return;
         }
 
@@ -936,7 +936,7 @@ const EditHotel = () => {
     // Upload image and refresh the room image list without closing the modal
     const handleUploadAndPost4 = async () => {
         if (!selectedFile4) {
-            alert("Please select an image");
+            alert("Chưa chọn hình ảnh");
             return;
         }
 

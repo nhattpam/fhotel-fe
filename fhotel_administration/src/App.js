@@ -36,6 +36,7 @@ import ListRevenuePolicy from './components/policies/ListRevenuePolicy';
 import ListCancellationPolicy from './components/policies/ListCancellationPolicy';
 import HotelCancellationPolicy from './components/policies/HotelCancellationPolicy';
 import HotelRevenuePolicy from './components/policies/HotelRevenuePolicy';
+import EscrowWalletTransaction from './components/transactions/EscrowWalletTransaction';
 
 function App() {
   return (
@@ -62,7 +63,7 @@ function App() {
         <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
         {/* service */}
         <Route path="/list-service" element={<ListService />} />
-      
+
         {/* type-pricing */}
         <Route path="/list-type-pricing/:typeId" element={<ListTypePricing />} />
         {/* reservation */}
@@ -82,15 +83,16 @@ function App() {
         <Route path="/list-hotel-room/" element={<ListHotelRoom />} />
         {/* refund */}
         <Route path="/list-refund/" element={<ListRefund />} />
-         {/* bill */}
-         <Route path="/list-owner-bill/" element={<ListOwnerBill />} />
-         <Route path="/list-bill/" element={<ListBill />} />
-         {/* policy */}
-         <Route path="/list-revenue-policy/" element={<ListRevenuePolicy />} />
-         <Route path="/list-cancellation-policy/" element={<ListCancellationPolicy />} />
-         <Route path="/hotel-cancellation-policy/" element={<HotelCancellationPolicy />} />
-         <Route path="/hotel-revenue-policy/" element={<HotelRevenuePolicy />} />
-
+        {/* bill */}
+        <Route path="/list-owner-bill/" element={<ListOwnerBill />} />
+        <Route path="/list-bill/" element={<ListBill />} />
+        {/* policy */}
+        <Route path="/list-revenue-policy/" element={<ListRevenuePolicy />} />
+        <Route path="/list-cancellation-policy/" element={<ListCancellationPolicy />} />
+        <Route path="/hotel-cancellation-policy/" element={<HotelCancellationPolicy />} />
+        <Route path="/hotel-revenue-policy/" element={<HotelRevenuePolicy />} />
+        {/* transaction */}
+        <Route path="/escrow-wallet-transaction/" element={<EscrowWalletTransaction />} />
       </Routes>
     </div>
   );

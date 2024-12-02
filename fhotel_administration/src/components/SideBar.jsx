@@ -529,7 +529,11 @@ const SideBar = () => {
                                             <span className="nav-label">Thanh toán/Hóa đơn</span>
                                         </Link>
                                     </li>
-
+                                    <li>
+                                        <Link to="/escrow-wallet-transaction"><i className="sidebar-item-icon fa fa-exchange" />
+                                            <span className="nav-label">Giao dịch ví trung gian</span>
+                                        </Link>
+                                    </li>
                                     <li>
                                         <a href="javascript:;" onClick={togglePolyMenu}>
                                             <i className="sidebar-item-icon fa fa-gavel" />

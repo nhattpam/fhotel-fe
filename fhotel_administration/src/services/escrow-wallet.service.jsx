@@ -44,6 +44,14 @@ class EscrowWalletService {
     });
   }
 
+  getAllTransactionByEscrowWallet() {
+    return axios.get(API_URL + "/escrow-wallets/transactions", {
+      headers: {
+        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+      }
+    });
+  }
+
 
 
 

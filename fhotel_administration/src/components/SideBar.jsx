@@ -793,6 +793,12 @@ const SideBar = () => {
                                         </Link>
                                     </li>
 
+                                    <li>
+                                        <Link to="/list-system-room"><i className="sidebar-item-icon fa fa-bed" aria-hidden="true"></i>
+                                            <span className="nav-label">Quản lý phòng</span>
+                                        </Link>
+                                    </li>
+
                                 </>
                             )
                         }

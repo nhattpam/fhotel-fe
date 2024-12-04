@@ -37,6 +37,7 @@ import ListCancellationPolicy from './components/policies/ListCancellationPolicy
 import HotelCancellationPolicy from './components/policies/HotelCancellationPolicy';
 import HotelRevenuePolicy from './components/policies/HotelRevenuePolicy';
 import EscrowWalletTransaction from './components/transactions/EscrowWalletTransaction';
+import ListSystemRoom from './components/rooms/ListSystemRoom';
 
 function App() {
   return (
@@ -81,6 +82,7 @@ function App() {
         {/* <Route path="/list-room/:roomTypeId" element={<ListRoom />} /> */}
         <Route path="/list-room/" element={<ListRoom />} />
         <Route path="/list-hotel-room/" element={<ListHotelRoom />} />
+        <Route path="/list-system-room/" element={<ListSystemRoom />} />
         {/* refund */}
         <Route path="/list-refund/" element={<ListRefund />} />
         {/* bill */}

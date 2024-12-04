@@ -2,19 +2,13 @@ import React, { useEffect, useState } from 'react'
 import Header from '../Header'
 import SideBar from '../SideBar'
 import hotelService from '../../services/hotel.service';
-import ReactPaginate from 'react-paginate';
-import { IconContext } from 'react-icons';
-import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import userService from '../../services/user.service';
 import { Link } from 'react-router-dom';
 import cityService from '../../services/city.service';
 import documentService from '../../services/document.service';
-import hotelImageService from '../../services/hotel-image.service';
-import hotelDocumentService from '../../services/hotel-document.service';
-import ReactQuill from 'react-quill';
-import Dropzone from 'react-dropzone';
+
 import roomStayHistoryService from '../../services/room-stay-history.service';
-const ListHotelRoom = () => {
+const ListSystemRoom = () => {
     //LOADING
     const [loading, setLoading] = useState(true); // State to track loading
 
@@ -54,8 +48,8 @@ const ListHotelRoom = () => {
 
 
     useEffect(() => {
-        userService
-            .getAllHotelByUserId(loginUserId)
+        hotelService
+            .getAllHotel()
             .then((res) => {
                 const sortedHotelList = [...res.data].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
                 setHotelList(sortedHotelList);
@@ -792,4 +786,4 @@ const ListHotelRoom = () => {
     )
 }
 
-export default ListHotelRoom
+export default ListSystemRoom

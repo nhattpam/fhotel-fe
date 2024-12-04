@@ -77,12 +77,18 @@ class ReservationService {
   }
 
   searchReservation(staffId, query) {
-    return axios.post(API_URL + `/reservations/search?staffId=${staffId}&query=${query}`, {
-      headers: {
-        Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+    return axios.post(API_URL + `/reservations/search`, 
+      {
+        userId: staffId,
+        query: query
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}` // Include the bearer token in the headers
+        }
       }
-    });
-  }
+    );
+}
 
 
 

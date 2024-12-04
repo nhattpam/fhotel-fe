@@ -95,9 +95,9 @@ const RoomStatus = () => {
 
     //update room status
     const [updateRoom, setUpdateRoom] = useState({
-        status: "",   // ensure this field has a valid initial value
-        note: "",      // same for note
-        isCleaned: false
+        status: room.status || "Available", // default status to room's current status or 'Available'
+        note: room.note || "",              // default note to room's current note or an empty string
+        isCleaned: room.isCleaned || false  // default cleaned status
     });
 
 
@@ -308,7 +308,18 @@ const RoomStatus = () => {
                                                     ></i>
                                                 </div>
                                                 {/* Right section (3/4 of the card) for additional information */}
-                                                <div style={{ flex: '3', padding: '20px' }}>
+                                                <div style={{ flex: '3', padding: '20px', position: 'relative' }}>
+                                                    {/* Positioning icon at the top right */}
+                                                    <i
+                                                        className={`fa ${room.isCleaned ? 'fa-thumbs-o-up' : 'fa-thumbs-o-down'}`}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: '10px',
+                                                            right: '10px',
+                                                            fontSize: '1.5em',
+                                                            color: 'white',
+                                                        }}
+                                                    ></i>
                                                     {room.status === 'Available' && (
                                                         <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
                                                     )}
@@ -328,7 +339,7 @@ const RoomStatus = () => {
                                                         <h4 style={{ fontWeight: 'bold' }}>Đang bảo trì</h4>
                                                     )}
                                                     {/* Display for isCleaned */}
-                                                    <div
+                                                    {/* <div
                                                         style={{
                                                             marginTop: '20px',
                                                             padding: '5px',
@@ -343,7 +354,7 @@ const RoomStatus = () => {
                                                         <h5 style={{ fontWeight: 'bold', margin: 0 }}>
                                                             {room.isCleaned ? 'Đã dọn' : 'Chưa dọn'}
                                                         </h5>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -407,7 +418,7 @@ const RoomStatus = () => {
                                                     name="status"
                                                     className='form-control'
                                                     onChange={(e) => handleChange(e)}
-                                                    value={updateRoom.status ? "Available" : "Occupied"} // add fallback value
+                                                    value={updateRoom.status} // add fallback value
                                                     required
                                                 >
                                                     <option value="">Chọn trạng thái</option>

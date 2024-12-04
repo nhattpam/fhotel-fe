@@ -166,7 +166,17 @@ const ListRoom = () => {
                                                         style={{ fontSize: '1.5em', marginTop: '5px' }}
                                                     ></i>
                                                 </div>
-                                                <div style={{ flex: '3', padding: '20px' }}>
+                                                <div style={{ flex: '3', padding: '20px', position: 'relative' }}>
+                                                    <i
+                                                        className={`fa ${room.isCleaned ? 'fa-thumbs-o-up' : 'fa-thumbs-o-down'}`}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: '10px',
+                                                            right: '10px',
+                                                            fontSize: '1.5em',
+                                                            color: 'white',
+                                                        }}
+                                                    ></i>
                                                     {room.status === 'Available' && (
                                                         <h4 style={{ fontWeight: 'bold' }}>Trống</h4>
                                                     )}

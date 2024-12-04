@@ -45,6 +45,7 @@ class RoomService {
             createdDate: roomData.createdDate, // Preserve created date
             updatedDate: new Date().toISOString(), // Set updated date to now
             note: roomData.note,      // Include note if applicable
+            isCleaned: roomData.isCleaned
           },
           {
             headers: {

@@ -8,7 +8,7 @@ import userService from '../../services/user.service';
 import roleService from '../../services/role.service';
 import hotelService from '../../services/hotel.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ListHotelManager = () => {
     //LOADING
@@ -320,6 +320,13 @@ const ListHotelManager = () => {
         }
     };
 
+    //FIX LINK
+    const navigate = useNavigate();
+
+    const goToEditHotel = (hotelId) => {
+        navigate("/edit-hotel", { state: { hotelId } });
+    };
+
     return (
         <>
             <Header />
@@ -582,9 +589,8 @@ const ListHotelManager = () => {
                                                                             )}
                                                                         </td>
                                                                         <td>
-                                                                            <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"
-                                                                                to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14 text-primary" /></Link>
-                                                                            {/* <button className="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"><i className="fa fa-trash font-14" /></button> */}
+                                                                            <a className="btn btn-default btn-xs m-r-5 text-white" data-toggle="tooltip" data-original-title="Edit"
+                                                                                onClick={() => goToEditHotel(item.hotelId)}><i className="fa fa-pencil font-14 text-primary" /></a>
                                                                         </td>
                                                                     </tr>
                                                                 </>

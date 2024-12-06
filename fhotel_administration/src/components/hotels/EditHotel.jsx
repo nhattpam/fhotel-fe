@@ -9,7 +9,7 @@ import Dropzone from "react-dropzone";
 import cityService from '../../services/city.service';
 import userService from '../../services/user.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import roomTypeService from '../../services/room-type.service';
 import roomImageService from '../../services/room-image.service';
 import ReactQuill from 'react-quill';
@@ -48,7 +48,8 @@ const EditHotel = () => {
             });
     }, loginUserId);
 
-    const { hotelId } = useParams();
+    const location = useLocation();
+    const hotelId = location.state?.hotelId;
 
     const [hotel, setHotel] = useState({
 
@@ -1335,6 +1336,14 @@ const EditHotel = () => {
     };
 
     const formatter = new Intl.NumberFormat('en-US');
+
+
+    //FIX LINK
+    const navigate = useNavigate();
+
+    const goToEditHotel = (hotelId) => {
+        navigate("/edit-hotel", { state: { hotelId } });
+    };
     return (
         <>
             <Header />
@@ -2825,8 +2834,8 @@ const EditHotel = () => {
                                                                             )}
                                                                         </td>
                                                                         <td>
-                                                                            <Link className="btn btn-default btn-xs m-r-5" data-toggle="tooltip"
-                                                                                to={`/edit-hotel/${item.hotelId}`}><i className="fa fa-pencil font-14 text-primary" /></Link>
+                                                                            <a className="btn btn-default btn-xs m-r-5" data-toggle="tooltip"
+                                                                                onClick={() => goToEditHotel(item.hotelId)}><i className="fa fa-pencil font-14 text-primary" /></a>
                                                                         </td>
                                                                     </tr>
                                                                 </>

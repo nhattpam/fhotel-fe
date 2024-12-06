@@ -160,9 +160,9 @@ function App() {
           }
         />
         <Route
-          path="/edit-hotel/:hotelId"
+          path="/edit-hotel"
           element={
-            <ProtectedRoute requiredRoles={["Admin", "Manager", "Hotel Manager"]}>
+            <ProtectedRoute requiredRoles={["Admin", "Manager", "Hotel Manager", "Receptionist", "Room Attendant"]}>
               <EditHotel />
             </ProtectedRoute>
           }

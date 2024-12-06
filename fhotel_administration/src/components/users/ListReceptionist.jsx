@@ -9,7 +9,7 @@ import roleService from '../../services/role.service';
 import hotelService from '../../services/hotel.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
 import hotelStaffService from '../../services/hotel-staff.service';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ListReceptionist = () => {
     //LOADING
@@ -420,6 +420,13 @@ const ListReceptionist = () => {
         }
     };
 
+    //FIX LINK
+    const navigate = useNavigate();
+
+    const goToEditHotel = (hotelId) => {
+        navigate("/edit-hotel", { state: { hotelId } });
+    };
+
 
     return (
         <>
@@ -537,7 +544,7 @@ const ListReceptionist = () => {
                                                             )
                                                         }
                                                         <td>
-                                                            <Link to={`/edit-hotel/${item.hotelId}`}>{item.hotel?.hotelName}</Link>
+                                                            <a className="text-primary" onClick={() => goToEditHotel(item.hotelId)}>{item.hotel?.hotelName}</a>
                                                         </td>
                                                         <td>
                                                             {item.user?.isActive ? (

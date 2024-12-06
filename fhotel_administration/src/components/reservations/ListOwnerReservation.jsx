@@ -5,7 +5,7 @@ import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import reservationService from '../../services/reservation.service';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import userService from '../../services/user.service';
 
 const ListOwnerReservation = () => {
@@ -157,7 +157,14 @@ const ListOwnerReservation = () => {
     };
 
 
-    const formatter = new Intl.NumberFormat('en-US'); 
+    const formatter = new Intl.NumberFormat('en-US');
+
+    //FIX LINK
+  const navigate = useNavigate();
+
+  const goToEditHotel = (hotelId) => {
+    navigate("/edit-hotel", { state: { hotelId } });
+  };
     return (
         <>
             <Header />
@@ -229,9 +236,9 @@ const ListOwnerReservation = () => {
                                                             {item.customer?.name}
                                                         </td>
                                                         <td>
-                                                            <Link to={`/edit-hotel/${item.roomType?.hotelId}`}>
+                                                            <a className='text-primary' onClick={() => goToEditHotel(item.roomType?.hotelId)}>
                                                                 {item.roomType?.hotel?.hotelName}
-                                                            </Link>
+                                                            </a>
                                                         </td>
                                                         <td>{item.roomType?.type?.typeName}</td>
                                                         <td>{item.numberOfRooms}</td>
@@ -249,7 +256,7 @@ const ListOwnerReservation = () => {
                                                             {item.reservationStatus === "Cancelled" && (
                                                                 <span className="badge label-table badge-danger">Đã hủy</span>
                                                             )}
-                                                             {item.reservationStatus === "Refunded" && (
+                                                            {item.reservationStatus === "Refunded" && (
                                                                 <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                                                             )}
                                                         </td>
@@ -396,7 +403,7 @@ const ListOwnerReservation = () => {
                                                 {reservation.reservationStatus === "Cancelled" && (
                                                     <span className="badge label-table badge-danger">Đã hủy</span>
                                                 )}
-                                                 {reservation.reservationStatus === "Refunded" && (
+                                                {reservation.reservationStatus === "Refunded" && (
                                                     <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                                                 )}
                                             </p>

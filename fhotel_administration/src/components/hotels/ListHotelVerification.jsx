@@ -7,7 +7,7 @@ import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import hotelVerificationService from '../../services/hotel-verification.service';
 import userService from '../../services/user.service';
 import hotelService from '../../services/hotel.service';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 
 const ListHotelVerification = () => {
@@ -242,6 +242,12 @@ const ListHotelVerification = () => {
     }, [showError]); // Only run effect if showError changes
 
 
+    //FIX LINK
+  const navigate = useNavigate();
+
+  const goToEditHotel = (hotelId) => {
+    navigate("/edit-hotel", { state: { hotelId } });
+  };
     return (
         <>
             <Header />
@@ -579,7 +585,7 @@ const ListHotelVerification = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-success btn-sm" onClick={() => openUpdateHotelVerificationModal(hotelVerification.hotelVerificationId)} ><i class="fa fa-check-square-o" aria-hidden="true"></i> Xác Minh</button>
-                                <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotelVerification.hotel?.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
+                                <a type="button" className="btn btn-custom btn-sm text-white" onClick={() => goToEditHotel(hotelVerification.hotel?.hotelId)}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</a>
                                 <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotelVerification} >Đóng</button>
                             </div>
 

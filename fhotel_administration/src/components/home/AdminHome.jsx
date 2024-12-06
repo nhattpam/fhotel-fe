@@ -5,7 +5,7 @@ import Footer from '../Footer'
 import { Chart, PieController, ArcElement, registerables } from "chart.js";
 import userService from "../../services/user.service";
 import reservationService from "../../services/reservation.service";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import hotelService from "../../services/hotel.service";
 import walletService from "../../services/wallet.service";
 import feedbackService from "../../services/feedback.service";
@@ -441,6 +441,13 @@ const AdminHome = () => {
 
   };
 
+  //FIX LINK
+  const navigate = useNavigate();
+
+  const goToEditHotel = (hotelId) => {
+    navigate("/edit-hotel", { state: { hotelId } });
+  };
+
   return (
     <>
       <Header />
@@ -576,9 +583,9 @@ const AdminHome = () => {
                                 {item.customer?.name}
                               </td>
                               <td>
-                                <Link to={`/edit-hotel/${item.roomType?.hotelId}`}>
+                                <a className="text-primary" onClick={() => goToEditHotel(item.roomType?.hotelId)}>
                                   {item.roomType?.hotel?.hotelName}
-                                </Link>
+                                </a>
                               </td>
                               <td>{item.roomType?.type?.typeName}</td>
                               <td>{item.numberOfRooms}</td>

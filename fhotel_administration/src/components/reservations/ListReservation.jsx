@@ -5,7 +5,7 @@ import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import reservationService from '../../services/reservation.service';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import billService from '../../services/bill.service';
 
 const ListReservation = () => {
@@ -177,6 +177,13 @@ const ListReservation = () => {
 
     const formatter = new Intl.NumberFormat('en-US'); 
 
+    //FIX LINK
+  const navigate = useNavigate();
+
+  const goToEditHotel = (hotelId) => {
+    navigate("/edit-hotel", { state: { hotelId } });
+  };
+
     return (
         <>
             <Header />
@@ -248,9 +255,9 @@ const ListReservation = () => {
                                                             {item.customer?.name}
                                                         </td>
                                                         <td>
-                                                            <Link to={`/edit-hotel/${item.roomType?.hotelId}`}>
+                                                            <a className="text-primary" onClick={() => goToEditHotel(item.roomType?.hotelId)}>
                                                                 {item.roomType?.hotel?.hotelName}
-                                                            </Link>
+                                                            </a>
                                                         </td>
                                                         <td>{item.roomType?.type?.typeName}</td>
                                                         <td>{item.numberOfRooms}</td>

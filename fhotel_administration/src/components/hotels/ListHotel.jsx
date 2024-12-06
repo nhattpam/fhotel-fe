@@ -9,7 +9,7 @@ import Dropzone from "react-dropzone";
 import cityService from '../../services/city.service';
 import userService from '../../services/user.service';
 import hotelAmenityService from '../../services/hotel-amenity.service';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import roleService from '../../services/role.service';
 import hotelVerificationService from '../../services/hotel-verification.service';
 
@@ -471,6 +471,13 @@ const ListHotel = () => {
     };
 
 
+    //FIX LINK
+    const navigate = useNavigate();
+
+    const goToEditHotel = (hotelId) => {
+        navigate("/edit-hotel", { state: { hotelId } });
+    };
+
     return (
         <>
             <Header />
@@ -878,7 +885,7 @@ const ListHotel = () => {
                                         )
                                     }
 
-                                    <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
+                                    <a type="button" style={{color: 'white'}} className="btn btn-custom btn-sm" onClick={() => goToEditHotel(hotel.hotelId)}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</a>
                                     <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                                 </div>
                             </form>

@@ -6,7 +6,7 @@ import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import userService from '../../services/user.service';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import cityService from '../../services/city.service';
 import documentService from '../../services/document.service';
 import hotelImageService from '../../services/hotel-image.service';
@@ -347,6 +347,13 @@ const ListOwnerHotel = () => {
         }
     }, [showError]); // Only run effect if showError changes
 
+
+    //FIX LINK
+  const navigate = useNavigate();
+
+  const goToEditHotel = (hotelId) => {
+    navigate("/edit-hotel", { state: { hotelId } });
+  };
     return (
         <>
             <Header />
@@ -591,7 +598,7 @@ const ListOwnerHotel = () => {
 
                             </div>
                             <div className="modal-footer">
-                                <Link type="button" className="btn btn-custom btn-sm" to={`/edit-hotel/${hotel.hotelId}`}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</Link>
+                                <a type="button" className="btn btn-custom btn-sm text-white" onClick={() => goToEditHotel(hotel.hotelId)}><i class="fa fa-info-circle" aria-hidden="true"></i> Xem chi tiết</a>
                                 <button type="button" className="btn btn-dark btn-sm" onClick={closeModalHotel} >Đóng</button>
                             </div>
                         </div>

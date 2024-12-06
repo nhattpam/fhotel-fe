@@ -55,7 +55,7 @@ const HotelPolicy = () => {
                 </section>
 
                 <section>
-                    <h4>Trả phòng trễ</h4>
+                    <h4>Trả phòng muộn</h4>
                     <table>
                         <thead>
                             <tr><th>Giờ trả phòng</th><th>Phí</th></tr>

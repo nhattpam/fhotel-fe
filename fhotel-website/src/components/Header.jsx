@@ -540,9 +540,9 @@ const Header = () => {
                             <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', textAlign: "left" }}>
                                 <div className="form-group">
                                     <h5><i className="fa fa-question-circle"></i> Chính Sách Doanh Thu</h5>
-                                    <p><strong>1. Phân Chia Doanh Thu:</strong> FHotel giữ lại 20% doanh thu đặt phòng, khách sạn nhận 80%.</p>
+                                    <p><strong>1. Phân Chia Doanh Thu:</strong> Dựa vào hợp đồng 2 bên.</p>
                                     <p><strong>2. Doanh Thu Bao Gồm:</strong> Chi phí phòng, đồ ăn, nước uống, và các dịch vụ liên quan.</p>
-                                    <p><strong>3. Quy Trình Khấu Trừ:</strong> Phí 20% được khấu trừ tự động trước khi tiền về ví khách sạn.</p>
+                                    <p><strong>3. Quy Trình Khấu Trừ:</strong> Phí được khấu trừ tự động trước khi tiền về ví khách sạn.</p>
                                     <p><strong>4. Quy Trình Thanh Toán:</strong> Số tiền còn lại sẽ được chuyển vào ví của khách sạn hằng tuần.</p>
                                     <p><strong>6. Giải Quyết Khiếu Nại:</strong> Khách sạn có thể yêu cầu hỗ trợ nếu có sai lệch trong doanh thu.</p>
                                     <p><strong>7. Báo Cáo Doanh Thu:</strong> Chủ khách sạn có thể xem báo cáo chi tiết theo tháng và năm.</p>

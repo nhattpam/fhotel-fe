@@ -20,12 +20,10 @@ const ManagerHome = () => {
 
   //count reservation by owner
   const [reservationList, setReservationList] = useState([]);
-  const [billList, setBillList] = useState([]);
   const [reservationSearchTerm, setReservationSearchTerm] = useState('');
   const [currentReservationPage, setCurrentReservationPage] = useState(0);
-  const [reservationsPerPage] = useState(10);
+  const [reservationsPerPage] = useState(5);
   const [reservationCount, setReservationCount] = useState(0);
-  const [refundCount, setRefundCount] = useState(0);
   const [hotelCount, setHotelCount] = useState(0);
   const [customerCount, setCustomerCount] = useState(0);
   const [transactionList, setTransactionList] = useState([]);
@@ -143,23 +141,7 @@ const ManagerHome = () => {
   const [wallet, setWallet] = useState({
 
   });
-  useEffect(() => {
-    orderDetailService
-      .getAllOrderDetail()
-      .then((res) => {
-        // Filter order details where serviceName is "Hoàn tiền" and count them
-        const refundCount = res.data.filter(orderDetail =>
-          orderDetail.service?.serviceName === "Hoàn tiền"
-        ).length;
-
-        // Set the refund count in state or display it as needed
-        setRefundCount(refundCount);
-        console.log("REFUND: " + refundCount)
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  
 
 
   const openReservationModal = (reservationId) => {
@@ -208,6 +190,7 @@ const ManagerHome = () => {
   };
 
   const pieChartRef = useRef(null);
+  const pieChartRef2 = useRef(null);
   const areaChartRef = useRef(null);
 
   const [monthlyData, setMonthlyData] = useState([]);
@@ -475,6 +458,105 @@ const ManagerHome = () => {
   const goToEditHotel = (hotelId) => {
     navigate("/edit-hotel", { state: { hotelId } });
   };
+
+  //pie chart 2
+  const [sumDoneForCurrentMonth, setSumDoneForCurrentMonth] = useState(0);
+  const [sumCancelForCurrentMonth, setSumCancelForCurrentMonth] = useState(0);
+
+  const calculateStatusByMonth = (reservations) => {
+    // Lấy tháng hiện tại
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+
+    // Khởi tạo giá trị ban đầu
+    let doneCount = 0;
+    let cancelCount = 0;
+
+    // Duyệt qua từng reservation
+    reservations.forEach((reservation) => {
+      const reservationDate = new Date(reservation.createdDate);
+      const reservationMonth = reservationDate.getMonth(); // Không cần cộng thêm 1
+
+      // Kiểm tra nếu reservation thuộc tháng hiện tại
+      if (reservationMonth === currentMonth) {
+        if (reservation.reservationStatus === "CheckOut") {
+          doneCount++;
+        }
+        if (
+          reservation.reservationStatus === "Cancelled" ||
+          reservation.reservationStatus === "Refunded"
+        ) {
+          cancelCount++;
+        }
+      }
+    });
+
+    // Trả về kết quả
+    return { doneCount, cancelCount };
+  };
+
+  const createPieChart2 = () => {
+    const pieChartCanvas = pieChartRef2.current.getContext("2d");
+
+    // Xóa biểu đồ trước nếu đã tồn tại
+    if (pieChartRef2.current.chart) {
+      pieChartRef2.current.chart.destroy();
+    }
+
+    // Dữ liệu cho biểu đồ
+    const data = {
+      labels: ["Hoàn tất", "Đã hủy/hoàn tiền"],
+      datasets: [
+        {
+          data: [sumDoneForCurrentMonth, sumCancelForCurrentMonth],
+          backgroundColor: ["#007BFF", "#FF5733"],
+          hoverBackgroundColor: ["#0056B3", "#C70039"],
+        },
+      ],
+    };
+
+
+    const options = {
+      plugins: {
+        legend: {
+          display: true,
+        },
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            label: (context) => {
+              const label = context.label;
+              const value = context.formattedValue;
+              return `${label}: ${value}`;
+            },
+          },
+        },
+      },
+    };
+
+    // Tạo biểu đồ
+    pieChartRef2.current.chart = new Chart(pieChartCanvas, {
+      type: "pie",
+      data: data,
+      options: options,
+    });
+  };
+
+  // useEffect để tính toán và cập nhật trạng thái
+  useEffect(() => {
+    if (reservationList.length > 0) {
+      const { doneCount, cancelCount } = calculateStatusByMonth(reservationList);
+      setSumDoneForCurrentMonth(doneCount);
+      setSumCancelForCurrentMonth(cancelCount);
+    }
+  }, [reservationList]);
+
+  // useEffect để vẽ biểu đồ khi dữ liệu thay đổi
+  useEffect(() => {
+    if (sumDoneForCurrentMonth > 0 || sumCancelForCurrentMonth > 0) {
+      createPieChart2();
+    }
+  }, [sumDoneForCurrentMonth, sumCancelForCurrentMonth]);
   return (
     <>
       <Header />
@@ -501,15 +583,7 @@ const ManagerHome = () => {
                 </div>
               </div>
             </div>
-            <div className="col-lg-3 col-md-6">
-              <div className="ibox bg-warning color-white widget-stat">
-                <div className="ibox-body">
-                  <h2 className="m-b-5 font-strong">{refundCount}</h2>
-                  <div className="m-b-5">YÊU CẦU HOÀN TIỀN</div><i className="fa fa-money widget-stat-icon" />
-                  {/* <div><i className="fa fa-level-up m-r-5" /><small>22% higher</small></div> */}
-                </div>
-              </div>
-            </div>
+            
             <div className="col-lg-3 col-md-6">
               <div className="ibox bg-danger color-white widget-stat">
                 <div className="ibox-body">
@@ -531,12 +605,7 @@ const ManagerHome = () => {
                 <div className="ibox-head">
                   <div className="ibox-title">Danh sách đặt phòng</div>
                   <div className="ibox-tools">
-                    {/* <a className="ibox-collapse"><i className="fa fa-minus" /></a>
-                    <a className="dropdown-toggle" data-toggle="dropdown"><i className="fa fa-ellipsis-v" /></a>
-                    <div className="dropdown-menu dropdown-menu-right">
-                      <a className="dropdown-item">option 1</a>
-                      <a className="dropdown-item">option 2</a>
-                    </div> */}
+
                   </div>
                 </div>
                 <div className="ibox-body">
@@ -608,42 +677,98 @@ const ManagerHome = () => {
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Đánh giá gần đây</div>
+                  <div className="ibox-title">Chi tiết {new Date().toLocaleString("vi-VN", { month: "long" })}</div>
                 </div>
                 <div className="ibox-body">
-                  {
-                    feedbackList.length > 0 && feedbackList.map((item, index) => (
-                      <>
-                        <ul className="media-list media-list-divider m-0">
-                          <li className="media">
-                            <a className="media-img" href="javascript:;">
-                              <img src={item.reservation?.customer?.image} width="50px;" height={"60px"} />
-                            </a>
-                            <div className="media-body">
-                              <div className="media-heading">
-                                <a href="javascript:;">{item.reservation?.customer?.name}</a>
-                                <span className="font-16 float-right">{item.hotelRating} <i className="fa fa-star text-warning" aria-hidden="true"></i></span>
-                              </div>
-                              <span className="font-16 float-right">{item.reservation?.roomType?.hotel?.hotelName}</span>
-                              <div className="font-13">{item.comment}</div>
-                            </div>
-                          </li>
-                        </ul>
-                      </>
-                    )
-                    )}
-                  {
-                    feedbackList.length === 0 && (
-                      <>
-                        <p className="text-center mt-3" style={{ fontStyle: 'italic', color: 'gray' }}>Không có</p>
-                      </>
-                    )
-                  }
-
+                  <div className="row align-items-center">
+                    <canvas ref={pieChartRef2} id="myPieChart4"></canvas>
+                  </div>
                 </div>
-
               </div>
             </div>
+            <div className="col-lg-12">
+              <div className="ibox">
+                <div className="ibox-head">
+                  <div className="ibox-title" style={{ fontSize: "18px", fontWeight: "bold" }}>
+                    Đánh giá gần đây
+                  </div>
+                </div>
+                <div className="ibox-body" style={{ padding: "20px" }}>
+                  {feedbackList.length > 0 ? (
+                    feedbackList.map((item, index) => (
+                      <ul
+                        key={index}
+                        className="media-list media-list-divider m-0"
+                        style={{ marginBottom: "15px", padding: "10px 0", borderBottom: "1px solid #eaeaea" }}
+                      >
+                        <li className="media" style={{ alignItems: "flex-start" }}>
+                          <a className="media-img" href="javascript:;" style={{ marginRight: "15px" }}>
+                            <img
+                              src={item.reservation?.customer?.image || "/default-avatar.png"} // Default image if none provided
+                              width="50"
+                              height="60"
+                              style={{ borderRadius: "5px", objectFit: "cover", border: "1px solid #ccc" }}
+                              alt="Customer"
+                            />
+                          </a>
+                          <div className="media-body">
+                            <div className="media-heading" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <a
+                                href="javascript:;"
+                                style={{
+                                  fontSize: "16px",
+                                  fontWeight: "bold",
+                                  color: "#333",
+                                  textDecoration: "none",
+                                  transition: "color 0.3s",
+                                }}
+                                onMouseEnter={(e) => (e.target.style.color = "#007bff")}
+                                onMouseLeave={(e) => (e.target.style.color = "#333")}
+                              >
+                                {item.reservation?.customer?.name || "Khách không rõ"}
+                              </a>
+                              <span style={{ fontSize: "16px" }}>
+                                {item.hotelRating} <i className="fa fa-star" aria-hidden="true" style={{ color: "#ffa500" }}></i>
+                              </span>
+                            </div>
+                            <div style={{ fontSize: "14px", color: "#666", marginTop: "5px" }}>
+                              {item.reservation?.roomType?.hotel?.hotelName || "Không rõ khách sạn"}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "13px",
+                                color: "#444",
+                                marginTop: "10px",
+                                background: "#f9f9f9",
+                                padding: "10px",
+                                borderRadius: "5px",
+                                border: "1px solid #eaeaea",
+                              }}
+                            >
+                              {item.comment || "Không có bình luận"}
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    ))
+                  ) : (
+                    <p
+                      className="text-center mt-3"
+                      style={{
+                        fontStyle: "italic",
+                        color: "gray",
+                        padding: "20px",
+                        background: "#f9f9f9",
+                        borderRadius: "5px",
+                      }}
+                    >
+                      Không có đánh giá nào gần đây.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>

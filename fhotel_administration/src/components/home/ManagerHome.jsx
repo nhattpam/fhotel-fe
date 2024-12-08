@@ -603,7 +603,7 @@ const ManagerHome = () => {
             <div className="col-lg-8">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Danh sách đặt phòng</div>
+                  <div className="ibox-title">Đặt phòng gần đây</div>
                   <div className="ibox-tools">
 
                   </div>
@@ -677,7 +677,7 @@ const ManagerHome = () => {
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Chi tiết {new Date().toLocaleString("vi-VN", { month: "long" })}</div>
+                  <div className="ibox-title">Hoạt động đặt phòng {new Date().toLocaleString("vi-VN", { month: "long" })}</div>
                 </div>
                 <div className="ibox-body">
                   <div className="row align-items-center">

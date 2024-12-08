@@ -600,7 +600,7 @@ const HotelManagerHome = () => {
                 <div className="ibox-body">
                   <div className="flexbox mb-4">
                     <div>
-                      <h3 className="m-0">Thống kê</h3>
+                      <h3 className="m-0">Thống kê thu nhập</h3>
                       {/* <div>Your shop sales analytics</div> */}
                     </div>
                     <div className="d-inline-flex">
@@ -618,7 +618,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">So sánh</div>
+                  <div className="ibox-title">So sánh thu nhập</div>
                 </div>
                 <div className="ibox-body">
                   <div className="row align-items-center">
@@ -646,7 +646,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-8">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Danh sách đặt phòng</div>
+                  <div className="ibox-title">Đặt phòng gần đây</div>
                   <div className="ibox-tools">
                 
                   </div>
@@ -727,7 +727,7 @@ const HotelManagerHome = () => {
             <div className="col-lg-4">
               <div className="ibox">
                 <div className="ibox-head">
-                  <div className="ibox-title">Chi tiết {new Date().toLocaleString("vi-VN", { month: "long" })}</div>
+                  <div className="ibox-title">Hoạt động đặt phòng {new Date().toLocaleString("vi-VN", { month: "long" })}</div>
                 </div>
                 <div className="ibox-body">
                   <div className="row align-items-center">

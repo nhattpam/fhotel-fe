@@ -2267,7 +2267,7 @@ const EditHotel = () => {
                                                 </select>
                                             </div>
                                             {/* Dynamically render input fields for room numbers */}
-                                            <div className="room-number-list">
+                                            <div className="room-number-list col-md-6 mt-4">
                                                 {roomNumbers.map((room, index) => (
                                                     <div
                                                         className="room-number-item"

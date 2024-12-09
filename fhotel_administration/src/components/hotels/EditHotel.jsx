@@ -1344,6 +1344,56 @@ const EditHotel = () => {
     const goToEditHotel = (hotelId) => {
         navigate("/edit-hotel", { state: { hotelId } });
     };
+
+
+    //sort reservation
+    const [filterFrom, setFilterFrom] = useState(""); // Initial 'from' date
+    const [filterTo, setFilterTo] = useState("");     // Initial 'to' date
+
+    const handleFilter = () => {
+        const filteredData = reservationByRoomTypeList.filter((item) => {
+            const itemFrom = new Date(item.checkInDate);
+            const itemTo = new Date(item.checkOutDate);
+            const filterFromDate = new Date(filterFrom);
+            const filterToDate = new Date(filterTo);
+
+            // Check if the item's range overlaps with the filter range
+            return itemFrom <= filterToDate && itemTo >= filterFromDate;
+        });
+
+        setReservationByRoomTypeList(filteredData);
+    };
+
+    const resetFilter = (roomTypeId) => {
+        setFilterFrom(""); // Clear the from date
+        setFilterTo("");   // Clear the to date
+
+        // Reload the full data
+        if (roomTypeId) {
+            roomTypeService
+                .getAllReservationByRoomTypeId(roomTypeId)
+                .then((res) => {
+                    const sortedReservationList = [...res.data].sort((a, b) => {
+                        // Sort by createdDate (descending)
+                        const createdDateA = new Date(a.createdDate);
+                        const createdDateB = new Date(b.createdDate);
+                        if (createdDateA < createdDateB) return 1;
+                        if (createdDateA > createdDateB) return -1;
+
+                        // If all else is the same, maintain the original order
+                        return 0;
+                    });
+
+                    // Set the sorted list to the state
+                    setReservationByRoomTypeList(sortedReservationList);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+
     return (
         <>
             <Header />
@@ -2874,6 +2924,36 @@ const EditHotel = () => {
                                 </button>
                             </div>
                             <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                {/* Date Filters */}
+                                <div className="ml-3 d-flex align-items-center">
+                                    <label className="mr-2 mb-0">Từ:</label>
+                                    <input
+                                        type="date"
+                                        value={filterFrom}
+                                        onChange={(e) => setFilterFrom(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <label className="ml-3 mr-2 mb-0">Đến:</label>
+                                    <input
+                                        type="date"
+                                        value={filterTo}
+                                        onChange={(e) => setFilterTo(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <button
+                                        className="btn btn-primary ml-3 btn-sm"
+                                        onClick={handleFilter}
+                                    >
+                                        Lọc
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary ml-2 btn-sm"
+                                        onClick={() => resetFilter(selectedRoomTypeId)}
+                                    >
+                                        Đặt lại
+                                    </button>
+
+                                </div>
                                 {/* start ibox */}
                                 <div className="table-responsive">
                                     <table className="table table-borderless table-hover table-wrap table-centered">

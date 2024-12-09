@@ -2153,7 +2153,7 @@ const EditHotel = () => {
             {
                 showModalCreateRoomType && (
                     <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
-                        <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                        <div className="modal-dialog modal-dialog-scrollable modal-lg" role="document">
 
                             <div className="modal-content">
                                 <form
@@ -2213,7 +2213,7 @@ const EditHotel = () => {
                                                     <option value="">Chọn loại</option>
                                                     {typeList.map((type) => (
                                                         <option key={type.typeId} value={type.typeId}>
-                                                            {type.typeName}
+                                                            {type.typeName}&nbsp;(Tối đa: {type.maxOccupancy} người)
                                                         </option>
                                                     ))}
                                                 </select>

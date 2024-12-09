@@ -916,7 +916,7 @@ const CheckInOut = () => {
 
     // RESERVATION BY ROOM TYPE
     const [reservationByRoomTypeList, setReservationByRoomTypeList] = useState([]);
-
+    const [selectedRoomTypeId, setSelectedRoomTypeId] = useState('');
     const [showModalReservationByRoomType, setShowModalReservationByRoomType] = useState(false);
     const closeModalReservationByRoomType = () => {
         setShowModalReservationByRoomType(false);
@@ -926,6 +926,7 @@ const CheckInOut = () => {
     const openReservationByRoomTypeModal = (roomTypeId) => {
         setShowModalReservationByRoomType(true);
         // Clear the image list first to avoid showing images from the previous room type
+        setSelectedRoomTypeId(roomTypeId);
         // setRoomImageList([]); // Reset roomImageList to an empty array
         if (roomTypeId) {
             roomTypeService
@@ -967,7 +968,7 @@ const CheckInOut = () => {
                 reservation.roomType?.hotel?.code.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.roomType?.hotel?.hotelName.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
                 reservation.createdDate.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase()) ||
-                reservation.numberOfRooms?.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())
+                reservation.numberOfRooms.toString().toLowerCase().includes(reservationSearchTerm.toLowerCase())
             );
             return matchesType && matchesSearchTerm;
         });
@@ -1067,6 +1068,55 @@ const CheckInOut = () => {
     };
 
     const formatter = new Intl.NumberFormat('en-US');
+
+    //sort reservation
+    const [filterFrom, setFilterFrom] = useState(""); // Initial 'from' date
+    const [filterTo, setFilterTo] = useState("");     // Initial 'to' date
+
+    const handleFilter = () => {
+        const filteredData = reservationByRoomTypeList.filter((item) => {
+            const itemFrom = new Date(item.checkInDate);
+            const itemTo = new Date(item.checkOutDate);
+            const filterFromDate = new Date(filterFrom);
+            const filterToDate = new Date(filterTo);
+
+            // Check if the item's range overlaps with the filter range
+            return itemFrom <= filterToDate && itemTo >= filterFromDate;
+        });
+
+        setReservationByRoomTypeList(filteredData);
+    };
+
+    const resetFilter = (roomTypeId) => {
+        setFilterFrom(""); // Clear the from date
+        setFilterTo("");   // Clear the to date
+
+        // Reload the full data
+        if (roomTypeId) {
+            roomTypeService
+                .getAllReservationByRoomTypeId(roomTypeId)
+                .then((res) => {
+                    const sortedReservationList = [...res.data].sort((a, b) => {
+                        // Sort by createdDate (descending)
+                        const createdDateA = new Date(a.createdDate);
+                        const createdDateB = new Date(b.createdDate);
+                        if (createdDateA < createdDateB) return 1;
+                        if (createdDateA > createdDateB) return -1;
+
+                        // If all else is the same, maintain the original order
+                        return 0;
+                    });
+
+                    // Set the sorted list to the state
+                    setReservationByRoomTypeList(sortedReservationList);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+
 
 
     return (
@@ -1484,7 +1534,7 @@ const CheckInOut = () => {
                     <div className="modal-dialog modal-dialog-scrollable custom-modal-xl" role="document">
                         <div className="modal-content">
                             <div className="modal-header bg-dark text-light">
-                                <h5 className="modal-title">Thanh Toán Phòng {reservation.roomType?.type?.typeName}</h5>
+                                <h5 className="modal-title">Thanh Toán Phòng {reservation.code}</h5>
                                 <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeCheckOutModal}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -2216,6 +2266,36 @@ const CheckInOut = () => {
                                 </button>
                             </div>
                             <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                                {/* Date Filters */}
+                                <div className="ml-3 d-flex align-items-center">
+                                    <label className="mr-2 mb-0">Từ:</label>
+                                    <input
+                                        type="date"
+                                        value={filterFrom}
+                                        onChange={(e) => setFilterFrom(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <label className="ml-3 mr-2 mb-0">Đến:</label>
+                                    <input
+                                        type="date"
+                                        value={filterTo}
+                                        onChange={(e) => setFilterTo(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <button
+                                        className="btn btn-primary ml-3 btn-sm"
+                                        onClick={handleFilter}
+                                    >
+                                        Lọc
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary ml-2 btn-sm"
+                                        onClick={() => resetFilter(selectedRoomTypeId)}
+                                    >
+                                        Đặt lại
+                                    </button>
+
+                                </div>
                                 {/* start ibox */}
                                 <div className="table-responsive">
                                     <table className="table table-borderless table-hover table-wrap table-centered">
@@ -2265,12 +2345,6 @@ const CheckInOut = () => {
                                                                     <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                                                                 )}
                                                             </td>
-                                                            {/* <td>
-                                                                <button className="btn btn-default btn-xs m-r-5"
-                                                                    data-toggle="tooltip" data-original-title="Edit">
-                                                                    <i className="fa fa-pencil font-14 text-primary"
-                                                                        onClick={() => openReservationModal(item.reservationId)} /></button>
-                                                            </td> */}
                                                         </tr>
                                                     </>
                                                 ))

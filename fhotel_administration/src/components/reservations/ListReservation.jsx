@@ -158,7 +158,7 @@ const ListReservation = () => {
     const [showModalUserDocument, setShowModalUserDocument] = useState(false);
     const closeModalUserDocument = () => {
         setShowModalUserDocument(false);
-		setUserDocumentList([]);
+        setUserDocumentList([]);
     };
 
 
@@ -175,15 +175,60 @@ const ListReservation = () => {
 
     };
 
-    const formatter = new Intl.NumberFormat('en-US'); 
+    const formatter = new Intl.NumberFormat('en-US');
 
     //FIX LINK
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const goToEditHotel = (hotelId) => {
-    navigate("/edit-hotel", { state: { hotelId } });
-  };
+    const goToEditHotel = (hotelId) => {
+        navigate("/edit-hotel", { state: { hotelId } });
+    };
 
+    //sort reservation
+    const [filterFrom, setFilterFrom] = useState(""); // Initial 'from' date
+    const [filterTo, setFilterTo] = useState("");     // Initial 'to' date
+
+    const handleFilter = () => {
+        const filteredData = reservationList.filter((item) => {
+            const itemFrom = new Date(item.checkInDate);
+            const itemTo = new Date(item.checkOutDate);
+            const filterFromDate = new Date(filterFrom);
+            const filterToDate = new Date(filterTo);
+
+            // Check if the item's range overlaps with the filter range
+            return itemFrom <= filterToDate && itemTo >= filterFromDate;
+        });
+
+        setReservationList(filteredData);
+    };
+
+    const resetFilter = () => {
+        setFilterFrom(""); // Clear the from date
+        setFilterTo("");   // Clear the to date
+
+        // Reload the full data
+        reservationService
+            .getAllReservation()
+            .then((res) => {
+                const sortedReservationList = [...res.data].sort((a, b) => {
+                    // Sort by createdDate (descending)
+                    const createdDateA = new Date(a.createdDate);
+                    const createdDateB = new Date(b.createdDate);
+                    if (createdDateA < createdDateB) return 1;
+                    if (createdDateA > createdDateB) return -1;
+
+
+                    // If all else is the same, maintain the original order
+                    return 0;
+                });
+
+                // Set the sorted list to the state
+                setReservationList(sortedReservationList);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
     return (
         <>
             <Header />
@@ -224,6 +269,36 @@ const ListReservation = () => {
                                     <input id="demo-foo-search" type="text" placeholder="Tìm kiếm" className="form-control form-control-sm"
                                         autoComplete="on" value={reservationSearchTerm}
                                         onChange={handleReservationSearch} />
+                                </div>
+                                {/* Date Filters */}
+                                <div className="ml-3 d-flex align-items-center">
+                                    <label className="mr-2 mb-0">Từ:</label>
+                                    <input
+                                        type="date"
+                                        value={filterFrom}
+                                        onChange={(e) => setFilterFrom(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <label className="ml-3 mr-2 mb-0">Đến:</label>
+                                    <input
+                                        type="date"
+                                        value={filterTo}
+                                        onChange={(e) => setFilterTo(e.target.value)}
+                                        className="form-control form-control-sm"
+                                    />
+                                    <button
+                                        className="btn btn-primary ml-3 btn-sm"
+                                        onClick={handleFilter}
+                                    >
+                                        Lọc
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary ml-2 btn-sm"
+                                        onClick={() => resetFilter()}
+                                    >
+                                        Đặt lại
+                                    </button>
+
                                 </div>
 
                             </div>
@@ -417,7 +492,7 @@ const ListReservation = () => {
                                                 {reservation.reservationStatus === "Cancelled" && (
                                                     <span className="badge label-table badge-danger">Đã hủy</span>
                                                 )}
-                                                 {reservation.reservationStatus === "Refunded" && (
+                                                {reservation.reservationStatus === "Refunded" && (
                                                     <span className="badge label-table badge-danger">Đã hoàn tiền</span>
                                                 )}
                                             </p>

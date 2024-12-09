@@ -13,7 +13,10 @@ const EscrowWalletTransaction = () => {
     const [currentTransactionPage, setCurrentTransactionPage] = useState(0);
     const [transactionsPerPage] = useState(10);
     const [transactionSearchTerm, setTransactionSearchTerm] = useState('');
-    
+    const [escrowWallet, setEscrowWallet] = useState({
+
+    });
+
     useEffect(() => {
         escrowWalletService
             .getAllTransactionByEscrowWallet()
@@ -21,16 +24,37 @@ const EscrowWalletTransaction = () => {
                 const sortedTransactionList = [...res.data].sort((a, b) => {
                     // Assuming requestedDate is a string in ISO 8601 format
                     return new Date(b.transactionDate) - new Date(a.transactionDate);
-                  });
-                  setTransactionList(sortedTransactionList);
-                  setLoading(false);
+                });
+                setTransactionList(sortedTransactionList);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
                 setLoading(false);
             });
-       
+        escrowWalletService
+            .getAllEscrowWallet()
+            .then((escrowWallets) => {
+                const escrowWalletId = escrowWallets.data[0]?.escrowWalletId;
+
+                if (!escrowWalletId) {
+                  throw new Error("No escrow wallet found.");
+                }
+                else{
+                    escrowWalletService
+                        .getEscrowWalletById(escrowWalletId)
+                        .then((res) => {
+                            setEscrowWallet(res.data);
+                        })
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
     }, []);
+
+
     const handleTransactionSearch = (event) => {
         setTransactionSearchTerm(event.target.value);
     };
@@ -95,6 +119,7 @@ const EscrowWalletTransaction = () => {
                             </div>
                         </div>
                         <div className="ibox-body">
+                            <span style={{fontWeight: 'bold'}}>Số dư hiện tại:</span> {escrowWallet.balance}₫
                             <div className="table-responsive">
                                 <div className="table-responsive">
                                     <table className="table table-borderless table-hover table-wrap table-centered">

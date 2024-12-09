@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import userService from '../services/user.service';
 import typeService from '../services/type.service';
 import cityService from '../services/city.service';
@@ -499,6 +499,12 @@ const SideBar = () => {
     };
 
 
+    //FIX LINK
+    const navigate = useNavigate();
+
+    const goToListTypePricing = (typeId) => {
+        navigate("/list-type-pricing", { state: { typeId } });
+    };
     return (
         <>
             {/* START SIDEBAR*/}
@@ -644,17 +650,22 @@ const SideBar = () => {
                                         {/* Conditionally apply collapse class based on the state */}
                                         <ul className={`nav-2-level collapse ${isPricingMenuOpen ? 'show' : ''}`}>
                                             {
-                                                typeList.length > 0 && typeList.map((item, index) => (
+                                                typeList.length > 0 && typeList.map((item) => (
                                                     <li>
-                                                        <a href={`/list-type-pricing/${item.typeId}`}>{item.typeName}</a>
+                                                        <a style={{ color: "#b4bcc8" }}
+                                                            onClick={() => goToListTypePricing(item.typeId)}
+                                                            onMouseEnter={(e) => e.target.style.color = "white"}
+                                                            onMouseLeave={(e) => e.target.style.color = "#b4bcc8"}>{item.typeName}</a>
                                                     </li>
                                                 ))
                                             }
                                             {
                                                 typeList.length === 0 && (
                                                     <li>
-                                                        <a className='text-white'
+                                                        <a style={{ color: "#b4bcc8" }}
                                                             onClick={openCreateTypePricingModal} // This will trigger the modal for creating a new hotel
+                                                            onMouseEnter={(e) => e.target.style.color = "white"}
+                                                            onMouseLeave={(e) => e.target.style.color = "#b4bcc8"}
                                                         >
                                                             Tạo bảng giá
                                                         </a>

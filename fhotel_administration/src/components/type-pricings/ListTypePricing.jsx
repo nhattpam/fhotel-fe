@@ -5,7 +5,7 @@ import ReactPaginate from 'react-paginate';
 import { IconContext } from 'react-icons';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import typePricingService from '../../services/type-pricing.service';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import typeService from '../../services/type.service';
 import cityService from '../../services/city.service';
 import districtService from '../../services/district.service';
@@ -23,8 +23,9 @@ const ListTypePricing = () => {
     const [typePricingsPerPage] = useState(10);
     const daysOfWeek = ["", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
 
+    const location = useLocation();
+    const typeId = location.state?.typeId;
 
-    const { typeId } = useParams();
     const [type, setType] = useState({
 
     });

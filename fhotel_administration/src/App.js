@@ -178,7 +178,7 @@ function App() {
         />
         {/* type-pricing */}
         <Route
-          path="/list-type-pricing/:typeId"
+          path="/list-type-pricing/"
           element={
             <ProtectedRoute requiredRoles={["Admin"]}>
               <ListTypePricing />

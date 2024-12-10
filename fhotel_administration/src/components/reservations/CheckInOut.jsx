@@ -1118,7 +1118,30 @@ const CheckInOut = () => {
 
 
 
+    //view available rooms
+    const [availableRooms, setAvailableRooms] = useState(null);
+    const fetchAvailableRooms = () => {
+        if (reservation.roomTypeId && reservation.checkInDate && reservation.checkOutDate) {
+            roomTypeService
+                .checkAvailableRoomByRoomTypeId(
+                    reservation.roomTypeId,
+                    reservation.checkInDate,
+                    reservation.checkOutDate
+                )
+                .then((response) => {
+                    console.log("DMM: " + response.data.availableRooms)
+                    setAvailableRooms(response.data.availableRooms || 0); // Adjust based on the actual API response
+                })
+                .catch((error) => {
+                    console.error("Error fetching available rooms:", error);
+                    setAvailableRooms(0); // Default to 0 on error
+                });
+        }
+    };
 
+    useEffect(() => {
+        fetchAvailableRooms();
+    });
     return (
         <>
             <Header />
@@ -1584,6 +1607,10 @@ const CheckInOut = () => {
                                                     <i className="fa fa-eye font-14"
                                                         onClick={() => openReservationByRoomTypeModal(reservation.roomTypeId)} />
                                                 </button>
+                                            </p>
+                                            <p className="mb-1">
+                                                <strong className="mr-2">Số phòng còn trống:</strong>{" "}
+                                                {availableRooms !== null ? availableRooms : "Đang tải..."}
                                             </p>
                                             <p className="mb-1"><strong className='mr-2'>Lịch sử phòng:</strong> </p>
                                             <div className="room-list">

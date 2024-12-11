@@ -1394,6 +1394,63 @@ const EditHotel = () => {
     };
 
 
+    const [availableRooms, setAvailableRooms] = useState(null);
+
+    // RESERVATION BY ROOM TYPE
+    const [showModalAvailableByRoomType, setShowModalAvailableByRoomType] = useState(false);
+    const closeModalAvailableByRoomType = () => {
+        setShowModalAvailableByRoomType(false);
+    };
+
+    const [roomTypeInfo, setRoomTypeInfo] = useState({
+    });
+
+    const openAvailableByRoomTypeModal = (roomTypeId) => {
+        setShowModalAvailableByRoomType(true);
+        // Clear the image list first to avoid showing images from the previous room type
+        setSelectedRoomTypeId(roomTypeId);
+        if (roomTypeId) {
+            roomTypeService
+                .getRoomTypeById(roomTypeId)
+                .then((res) => {
+                    setRoomTypeInfo(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    const [filterFrom2, setFilterFrom2] = useState(""); // Initial 'from' date
+    const [filterTo2, setFilterTo2] = useState("");     // Initial 'to' date
+
+    const handleFilter2 = (roomTypeId) => {
+        if (roomTypeId) {
+            roomTypeService
+                .checkAvailableRoomByRoomTypeId(
+                    roomTypeId,
+                    filterFrom2,
+                    filterTo2
+                )
+                .then((response) => {
+                    setAvailableRooms(response.data.availableRooms || 0); // Adjust based on the actual API response
+                })
+                .catch((error) => {
+                    console.error("Error fetching available rooms:", error);
+                    setAvailableRooms(0); // Default to 0 on error
+                });
+        }
+    };
+
+    const resetFilter2 = (roomTypeId) => {
+        setFilterFrom2(""); // Clear the from date
+        setFilterTo2("");   // Clear the to date
+        setAvailableRooms(0);
+
+    };
+
+
+
     return (
         <>
             <Header />
@@ -1765,6 +1822,11 @@ const EditHotel = () => {
                                                             data-toggle="tooltip" data-original-title="Edit">
                                                             <i className="fa fa-eye font-14"
                                                                 onClick={() => openReservationByRoomTypeModal(item.roomTypeId)} />
+                                                        </button>
+                                                        <button className="btn btn-default btn-xs m-r-5 text-warning"
+                                                            data-toggle="tooltip" data-original-title="Edit">
+                                                            <i className="fa fa-search font-14"
+                                                                onClick={() => openAvailableByRoomTypeModal(item.roomTypeId)} />
                                                         </button>
                                                         {
 
@@ -3573,6 +3635,80 @@ const EditHotel = () => {
                     </div>
                 </div>
             )}
+
+            {showModalAvailableByRoomType && (
+                <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(29, 29, 29, 0.75)' }}>
+                    <div className="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                        <div className="modal-content" style={{ textAlign: 'left' }}>
+                            <div className="modal-header bg-dark text-light">
+                                <h5 className="modal-title">Kiểm Tra Số Lượng Phòng Trống</h5>
+                                <button type="button" className="close text-light" data-dismiss="modal" aria-label="Close" onClick={closeModalAvailableByRoomType}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div
+                                className="modal-body"
+                                style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', padding: '20px' }}
+                            >
+                                {/* Room Type Selection */}
+                                <div className="d-flex align-items-center mb-3">
+                                    <label className="mr-2 mb-0 font-weight-bold">Loại phòng:</label>
+                                    <span>{roomTypeInfo.type?.typeName}</span>
+                                </div>
+
+                                {/* Date Filters */}
+                                <div className="d-flex flex-wrap align-items-center mb-3">
+                                    <label className="mr-2 mb-0 font-weight-bold">Từ:</label>
+                                    <input
+                                        type="date"
+                                        value={filterFrom2}
+                                        onChange={(e) => setFilterFrom2(e.target.value)}
+                                        className="form-control form-control-sm mr-3"
+                                    />
+                                    <label className="mr-2 mb-0 font-weight-bold mt-3">Đến:</label>
+                                    <input
+                                        type="date"
+                                        value={filterTo2}
+                                        onChange={(e) => setFilterTo2(e.target.value)}
+                                        className="form-control form-control-sm mr-3"
+                                    />
+                                    <button
+                                        className="btn btn-primary btn-sm mr-2 mt-3"
+                                        onClick={() => handleFilter2(selectedRoomTypeId)}
+                                    >
+                                        Lọc
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary btn-sm mt-3"
+                                        onClick={() => resetFilter2(selectedRoomTypeId)}
+                                    >
+                                        Đặt lại
+                                    </button>
+                                </div>
+
+                                {/* Available Rooms */}
+                                <div className="table-responsive">
+                                    <div className="d-flex align-items-center mb-3">
+                                        <input
+                                            type="text"
+                                            value={availableRooms}
+                                            readOnly
+                                            className="form-control form-control-sm mr-2"
+                                            style={{ width: '10%' }}
+                                        />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-dark btn-sm" onClick={closeModalAvailableByRoomType} >Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+            }
             <style>
                 {`
                     .page-item.active .page-link{

@@ -1287,63 +1287,70 @@ const CheckInOut = () => {
                                                     </div>
                                                     {/* Action Buttons for Each Reservation */}
                                                     <div className="mt-4 d-flex gap-3">
-                                                        {/* {reservation.reservationStatus === "Pending" && (
-                                                            <button className="btn btn-success " onClick={() =>
-                                                                openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
-                                                            </button>
-                                                        )} */}
-                                                        {reservation.reservationStatus === "Pending" &&
-                                                            (new Date(reservation.checkInDate).getTime() + 14 * 60 * 60 * 1000) <= new Date().getTime() ? (
-                                                            <button
-                                                                className="btn btn-success"
-                                                                onClick={() => openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)}
-                                                            >
-                                                                <i className="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
-                                                            </button>
-                                                        ) : (
-                                                            <button
-                                                                className="btn btn-success disabled"
-                                                                disabled
-                                                            >
-                                                                <i className="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
-                                                            </button>
-                                                        )
-                                                        }
-                                                        {reservation.reservationStatus === "CheckIn" && (
-                                                            <button disabled className="btn btn-success mr-2" onClick={() =>
-                                                                openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)} >
-                                                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
-                                                            </button>
-                                                        )}
-                                                        {reservation.reservationStatus === "CheckOut" && (
-                                                            <button disabled className="btn btn-success mr-2">
-                                                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
-                                                            </button>
-                                                        )}
-                                                        {reservation.reservationStatus === "CheckOut" && (
-                                                            <button className="btn btn-danger mr-2" onClick={() =>
-                                                                openCheckOutModal(reservation.reservationId)}>
-                                                                <i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
-                                                            </button>
-                                                        )}
-
-                                                        {reservation.reservationStatus === "CheckIn" && (
-                                                            <button className="btn btn-danger ml-2" onClick={() =>
-                                                                openCheckOutModal(reservation.reservationId)}>
-                                                                <i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
-                                                            </button>
-                                                        )}
                                                         {reservation.reservationStatus === "Pending" && (
-                                                            <button disabled className="btn btn-danger ml-2" onClick={() =>
-                                                                openCheckOutModal(reservation.reservationId)}>
-                                                                <i class="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
-                                                            </button>
+                                                            <>
+                                                                {(new Date(reservation.checkInDate).getTime() + 14 * 60 * 60 * 1000) <= new Date().getTime() ? (
+                                                                    <button
+                                                                        className="btn btn-success"
+                                                                        onClick={() => openPickRoomModal(reservation.roomTypeId, reservation.numberOfRooms, reservation.reservationId)}
+                                                                    >
+                                                                        <i className="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
+                                                                    </button>
+                                                                ) : (
+                                                                    <button
+                                                                        className="btn btn-success disabled"
+                                                                        disabled
+                                                                    >
+                                                                        <i className="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
+                                                                    </button>
+                                                                )}
+                                                                <button
+                                                                    disabled
+                                                                    className="btn btn-danger ml-2"
+                                                                >
+                                                                    <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
+                                                                </button>
+                                                            </>
                                                         )}
 
+                                                        {reservation.reservationStatus === "CheckIn" && (
+                                                            <>
+                                                                <button
+                                                                    className="btn btn-success disabled"
+                                                                    disabled
+                                                                >
+                                                                    <i className="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
+                                                                </button>
+                                                                <button
+                                                                    className="btn btn-danger ml-2"
+                                                                    onClick={() => openCheckOutModal(reservation.reservationId)}
+                                                                >
+                                                                    <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
+                                                                </button>
+                                                            </>
+                                                        )}
 
+                                                        {reservation.reservationStatus === "CheckOut" && (
+                                                            <>
+                                                                {/* Disabled Check-In Button */}
+                                                                <button
+                                                                    disabled
+                                                                    className="btn btn-success mr-2"
+                                                                >
+                                                                    <i className="fa fa-calendar-check-o" aria-hidden="true"></i> Nhận phòng
+                                                                </button>
 
+                                                                {/* Enabled Check-Out Button */}
+                                                                <button
+                                                                    className="btn btn-danger mr-2"
+                                                                    onClick={() => openCheckOutModal(reservation.reservationId)}
+                                                                >
+                                                                    <i className="fa fa-calendar-times-o" aria-hidden="true"></i> Trả phòng
+                                                                </button>
+                                                            </>
+                                                        )}
                                                     </div>
+
                                                 </div>
                                             </div>
                                         ))}

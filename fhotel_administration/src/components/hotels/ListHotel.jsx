@@ -397,6 +397,7 @@ const ListHotel = () => {
     //list hotel amenities
     const openCreateHotelVerificationModal = (hotelId, assignedManagerId) => {
         setShowModalCreateHotelVerification(true);
+        setShowModalHotel(false);
         if (hotelId) {
             createHotelVerification.hotelId = hotelId;
             createHotelVerification.assignedManagerId = assignedManagerId;
@@ -405,6 +406,7 @@ const ListHotel = () => {
 
     const closeModalCreateHotelVerification = () => {
         setShowModalCreateHotelVerification(false);
+        setShowModalHotel(true);
     };
 
 
@@ -951,6 +953,13 @@ const ListHotel = () => {
                                     {showError && Object.entries(error).length > 0 && (
                                         <div className="error-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
                                             {Object.entries(error).map(([key, message]) => (
+                                                <p key={key} style={{ margin: '0' }}>{message}</p>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {showSuccess && Object.entries(success).length > 0 && (
+                                        <div className="success-messages" style={{ position: 'absolute', top: '10px', right: '10px', background: 'green', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                                            {Object.entries(success).map(([key, message]) => (
                                                 <p key={key} style={{ margin: '0' }}>{message}</p>
                                             ))}
                                         </div>

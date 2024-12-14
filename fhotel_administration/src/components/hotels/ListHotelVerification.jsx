@@ -128,11 +128,13 @@ const ListHotelVerification = () => {
 
     const openUpdateHotelVerificationModal = () => {
         setShowModalUpdateHotelVerification(true);
+        setShowModalHotelVerification(false);
 
     };
 
     const closeModalUpdateHotelVerification = () => {
         setShowModalUpdateHotelVerification(false);
+        setShowModalHotelVerification(true);
     };
 
     const handleInputChangeHotelVerification = (e) => {

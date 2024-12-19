@@ -119,7 +119,7 @@ const EscrowWalletTransaction = () => {
                             </div>
                         </div>
                         <div className="ibox-body">
-                            <span style={{fontWeight: 'bold'}}>Số dư hiện tại:</span> {escrowWallet.balance}₫
+                            <span style={{fontWeight: 'bold'}}>Số dư hiện tại:</span> {formatter.format(escrowWallet.balance)}₫
                             <div className="table-responsive">
                                 <div className="table-responsive">
                                     <table className="table table-borderless table-hover table-wrap table-centered">

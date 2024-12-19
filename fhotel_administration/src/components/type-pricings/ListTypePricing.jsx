@@ -45,14 +45,14 @@ const ListTypePricing = () => {
                     // If `districtName` is the same, sort by `from` date
                     const fromA = new Date(a.from);
                     const fromB = new Date(b.from);
-                    if (fromA < fromB) return -1;
-                    if (fromA > fromB) return 1;
+                    if (fromA < fromB) return 1;
+                    if (fromA > fromB) return -1;
 
                     // If `from` dates are the same, sort by `to` date
                     const toA = new Date(a.to);
                     const toB = new Date(b.to);
-                    if (toA < toB) return -1;
-                    if (toA > toB) return 1;
+                    if (toA < toB) return 1;
+                    if (toA > toB) return -1;
 
                     // If everything is the same, maintain original order
                     return 0;
@@ -143,14 +143,14 @@ const ListTypePricing = () => {
                     // If `districtName` is the same, sort by `from` date
                     const fromA = new Date(a.from);
                     const fromB = new Date(b.from);
-                    if (fromA < fromB) return -1;
-                    if (fromA > fromB) return 1;
+                    if (fromA < fromB) return 1;
+                    if (fromA > fromB) return -1;
 
                     // If `from` dates are the same, sort by `to` date
                     const toA = new Date(a.to);
                     const toB = new Date(b.to);
-                    if (toA < toB) return -1;
-                    if (toA > toB) return 1;
+                    if (toA < toB) return 1;
+                    if (toA > toB) return -1;
 
                     // If everything is the same, maintain original order
                     return 0;
@@ -340,14 +340,14 @@ const ListTypePricing = () => {
                             // If `districtName` is the same, sort by `from` date
                             const fromA = new Date(a.from);
                             const fromB = new Date(b.from);
-                            if (fromA < fromB) return -1;
-                            if (fromA > fromB) return 1;
+                            if (fromA < fromB) return 1;
+                            if (fromA > fromB) return -1;
 
                             // If `from` dates are the same, sort by `to` date
                             const toA = new Date(a.to);
                             const toB = new Date(b.to);
-                            if (toA < toB) return -1;
-                            if (toA > toB) return 1;
+                            if (toA < toB) return 1;
+                            if (toA > toB) return -1;
 
                             // If everything is the same, maintain original order
                             return 0;
@@ -410,14 +410,14 @@ const ListTypePricing = () => {
                             // If `districtName` is the same, sort by `from` date
                             const fromA = new Date(a.from);
                             const fromB = new Date(b.from);
-                            if (fromA < fromB) return -1;
-                            if (fromA > fromB) return 1;
+                            if (fromA < fromB) return 1;
+                            if (fromA > fromB) return -1;
 
                             // If `from` dates are the same, sort by `to` date
                             const toA = new Date(a.to);
                             const toB = new Date(b.to);
-                            if (toA < toB) return -1;
-                            if (toA > toB) return 1;
+                            if (toA < toB) return 1;
+                            if (toA > toB) return -1;
 
                             // If everything is the same, maintain original order
                             return 0;
@@ -458,14 +458,14 @@ const ListTypePricing = () => {
                                     // If `districtName` is the same, sort by `from` date
                                     const fromA = new Date(a.from);
                                     const fromB = new Date(b.from);
-                                    if (fromA < fromB) return -1;
-                                    if (fromA > fromB) return 1;
+                                    if (fromA < fromB) return 1;
+                                    if (fromA > fromB) return -1;
 
                                     // If `from` dates are the same, sort by `to` date
                                     const toA = new Date(a.to);
                                     const toB = new Date(b.to);
-                                    if (toA < toB) return -1;
-                                    if (toA > toB) return 1;
+                                    if (toA < toB) return 1;
+                                    if (toA > toB) return -1;
 
                                     // If everything is the same, maintain original order
                                     return 0;
